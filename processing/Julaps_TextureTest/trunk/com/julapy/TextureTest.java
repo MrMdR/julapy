@@ -16,7 +16,6 @@ import javax.media.opengl.glu.GLU;
 import com.sun.opengl.util.BufferUtil;
 import java.nio.ByteBuffer;
 
-import demos.common.TextureReader;
 import processing.opengl.PGraphicsOpenGL;
 import processing.core.*;
 import toxi.geom.Vec3D;
