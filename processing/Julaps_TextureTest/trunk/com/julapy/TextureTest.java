@@ -28,8 +28,8 @@ public class TextureTest extends PApplet {
 	GLU glu = new GLU();
 
 	PImage img;
-	
 	int texture;
+	
     float xrot;				// X Rotation ( NEW )
     float yrot;				// Y Rotation ( NEW )
     float zrot;				// Z Rotation ( NEW )
@@ -40,7 +40,7 @@ public class TextureTest extends PApplet {
 
 		frameRate(25);
 
-		img = loadImage("data/exp.png");
+		img = loadImage("data/particle.png");
 		
 		pgl = (PGraphicsOpenGL) g;
 		gl = pgl.gl;
@@ -54,7 +54,7 @@ public class TextureTest extends PApplet {
         gl.glEnable(GL.GL_TEXTURE_2D);
         texture = genTexture(gl);
         gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, img.width, img.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, getTextureByteBuffer( false ) );
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, img.width, img.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getTextureByteBuffer( true ) );
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 	}
@@ -97,7 +97,7 @@ public class TextureTest extends PApplet {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();									// Reset The View
         gl.glScalef( 100, 100, 100);
-        gl.glTranslatef(0.0f, 0.0f, -5.0f);
+        gl.glTranslatef(0.0f, 0.0f, -0.0f);
 
         gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f);
         gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);
@@ -105,8 +105,8 @@ public class TextureTest extends PApplet {
 
         gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
 		
-		glDrawCube();
-		glDrawSphere( 1, 30 );
+//		glDrawCube();
+		glDrawSphere( 30 );
 		
 		pgl.endGL();
 		
@@ -175,18 +175,16 @@ public class TextureTest extends PApplet {
         gl.glEnd();
 	}
 	
-	public void glDrawSphere ( float r, int n )
+	public void glDrawSphere ( int n )
 	{
 	   int i,j;
 	   float theta1, theta2, theta3;
 	   Vec3D e = new Vec3D();
 	   Vec3D p = new Vec3D();
 	   
-	   if (r < 0)
-	      r = -r;
 	   if (n < 0)
 	      n = -n;
-	   if (n < 4 || r <= 0) 
+	   if (n < 4) 
 	   {
 	      gl.glBegin( GL.GL_POINTS );
 	      gl.glColor3f( 1, 1, 1 );
@@ -209,9 +207,9 @@ public class TextureTest extends PApplet {
 	         e.x = cos(theta2) * cos(theta3);
 	         e.y = sin(theta2);
 	         e.z = cos(theta2) * sin(theta3);
-	         p.x = r * e.x;
-	         p.y = r * e.y;
-	         p.z = r * e.z;
+	         p.x = e.x;
+	         p.y = e.y;
+	         p.z = e.z;
 
 	         gl.glNormal3f( e.x, e.y, e.z );
 	         gl.glTexCoord2f( i/(float)n, 2*(j+1)/(float)n);
@@ -220,9 +218,9 @@ public class TextureTest extends PApplet {
 	         e.x = cos(theta1) * cos(theta3);
 	         e.y = sin(theta1);
 	         e.z = cos(theta1) * sin(theta3);
-	         p.x = r * e.x;
-	         p.y = r * e.y;
-	         p.z = r * e.z;
+	         p.x = e.x;
+	         p.y = e.y;
+	         p.z = e.z;
 
 	         gl.glNormal3f(e.x,e.y,e.z);
 	         gl.glTexCoord2f( i/(float)n, 2*j/(float)n );
