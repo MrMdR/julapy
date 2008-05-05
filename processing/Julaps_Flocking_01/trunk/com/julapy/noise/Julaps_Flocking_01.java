@@ -19,7 +19,7 @@ import processing.core.*;
 import processing.opengl.*;
 import toxi.geom.Vec3D;
 
-public class NoiseField3D extends PApplet 
+public class Julaps_Flocking_01 extends PApplet 
 {
 	PGraphicsOpenGL pgl;
 	GL gl;

@@ -3,7 +3,7 @@ package com.julapy.noise;
 import processing.core.PApplet;
 import java.util.ArrayList;
 
-import com.julapy.noise.NoiseField3D.Particle;
+import com.julapy.noise.Julaps_Flocking_01.Particle;
 
 import toxi.geom.Vec3D;
 
