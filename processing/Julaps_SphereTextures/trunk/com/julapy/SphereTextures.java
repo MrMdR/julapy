@@ -9,6 +9,8 @@ package com.julapy;
 ////////////////////////////////////////////////////////////////////////////////
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
 import javax.media.opengl.GL;
 import com.sun.opengl.util.BufferUtil;
 
@@ -23,6 +25,15 @@ public class SphereTextures extends PApplet
 	GL gl;
 	
 	int[] textures;
+	
+	boolean light = false;
+	boolean fog = false;
+    float[] lightAmbient = 	{0.0f, 0.0f, 0.0f, 1.0f};
+    float[] lightDiffuse = 	{1.0f, 1.0f, 1.0f, 1.0f};
+    float[] lightPosition = {0.0f, 0.0f, 1.0f, 1.0f};
+    float[] lightSpotDir =	{-1.0f, -1.0f, 1.0f};
+	
+	float fogColor[] = {0.2f, 0.9f, 0.5f, 1.0f};
 	
 	Camera cam;
 	Vec3D camVec;
@@ -42,7 +53,7 @@ public class SphereTextures extends PApplet
 
 		frameRate(25);
 
-		PImage glow 	= loadImage("data/glow_spheretex.png");
+		PImage glow 	= loadImage("data/glow_linear.png");
 		PImage nebula 	= loadImage("data/nebula_spheretex.png");
 		
 		pgl = (PGraphicsOpenGL) g;
@@ -67,6 +78,24 @@ public class SphereTextures extends PApplet
         glTexImage2D( nebula, true );
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+        
+        gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);		 
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient, 0);		// Setup The Ambient Light
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0);		// Setup The Diffuse Light
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0);	// Position The Light
+        gl.glLightf(GL.GL_LIGHT1, GL.GL_SPOT_CUTOFF, 45.0f);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPOT_DIRECTION, lightSpotDir, 0);
+        gl.glLightf(GL.GL_LIGHT1, GL.GL_SPOT_EXPONENT, 2.0f);
+        gl.glEnable(GL.GL_LIGHT1);										// Enable Light One
+        gl.glEnable(GL.GL_NORMALIZE);									// Normalise vertice normals.
+        
+        gl.glFogi(GL.GL_FOG_MODE, GL.GL_LINEAR );				// Fog Mode
+        gl.glFogfv(GL.GL_FOG_COLOR, fogColor, 0);				// Set Fog Color
+        gl.glFogf(GL.GL_FOG_DENSITY, 0.35f);					// How Dense Will The Fog Be
+        gl.glHint(GL.GL_FOG_HINT, GL.GL_DONT_CARE);				// Fog Hint Value
+        gl.glFogf(GL.GL_FOG_START, 1.0f);						// Fog Start Depth
+        gl.glFogf(GL.GL_FOG_END, 5.0f);							// Fog End Depth
+        gl.glEnable(GL.GL_FOG);									// Enables GL.GL_FOG
         
 //		cam 		= new Camera( this, width/2, height/2, 1200, width/2, height/2, width/2);
 //		camVec		= new Vec3D();
@@ -115,13 +144,22 @@ public class SphereTextures extends PApplet
         return  unpackedPixels;
     }
 
-	
 	public void draw()
 	{    
 		background(0);
 		
 		pgl.beginGL();
 
+        if (light)
+        	gl.glEnable(GL.GL_LIGHTING);
+        else
+        	gl.glDisable(GL.GL_LIGHTING);
+
+        if( fog )
+        	gl.glEnable(GL.GL_FOG);
+        else
+        	gl.glDisable(GL.GL_FOG);
+		
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();									// Reset The View
         
@@ -129,22 +167,22 @@ public class SphereTextures extends PApplet
         gl.glRotatef( 270 - rotationY, 0, 1, 0 );
         
         gl.glPushMatrix();
-        gl.glScalef( 100, 100, 100);
+        gl.glScalef( 100, 100, 100 );
         gl.glTranslatef(0.0f, 0.0f, 0.0f);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textures[0]);
         glDrawSphere( 30 );
         gl.glPopMatrix();
         
         gl.glPushMatrix();
-        gl.glScalef( 99, 99, 99 );
+        gl.glScalef( 100, 100, 100 );
         gl.glTranslatef(0.0f, 0.0f, 0.0f);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textures[1]);
         glDrawSphere( 30 );
         gl.glPopMatrix();
-		
+        
 		pgl.endGL();
 		
-		rotationX += velocityX;
+		rotationX -= velocityX;
 		rotationY += velocityY;
 		velocityX *= 0.95;
 		velocityY *= 0.95;
@@ -203,6 +241,19 @@ public class SphereTextures extends PApplet
 	      }
 	      gl.glEnd();
 	   }
-	}	
+	}
+	
+	public void keyPressed()
+	{
+		if(key == 'l')
+		{
+			light = !light;
+		}
+		
+		if(key == 'f')
+		{
+			fog = !fog;
+		}
+	}
 	
 }
