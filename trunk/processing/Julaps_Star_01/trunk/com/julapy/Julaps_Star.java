@@ -90,8 +90,9 @@ public class Julaps_Star extends PApplet
 //		gl.glTexEnvf( GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE );
 		
 		// additive blending.
-		gl.glDisable( GL.GL_DEPTH_TEST );
+		gl.glDepthMask( false );
 		gl.glEnable( GL.GL_BLEND );
+		gl.glDisable( GL.GL_DEPTH_TEST );
 		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
 		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_COLOR );
 		
@@ -126,7 +127,7 @@ public class Julaps_Star extends PApplet
 		shockwaves.add( new Shockwave() );
 		
 		stars = new ArrayList<Star>();
-		stars.add( new Star( new Vec3D( 0, 0, 0 ), 4 ) );
+		stars.add( new Star( new Vec3D( 0, 0, 0 ), 20 ) );
 		
 		cameraParticle = new SphericalParticle( 300, 0.01f, 0.01f );
 	}
@@ -195,14 +196,6 @@ public class Julaps_Star extends PApplet
 		renderShockwaves();
 		renderStars();
 		
-//		gl.glPushMatrix();
-//		gl.glScalef( 10, -100, 10 );
-//		gl.glEnable( GL.GL_TEXTURE_2D );
-//		gl.glBindTexture( GL.GL_TEXTURE_2D, textures[0] );
-//		gl.glCallList( cylds );
-//		gl.glPopMatrix();
-		
-		
 		pgl.endGL();
 		
 		if(isRecording) save("export/image" + frameCount++ + ".png");
@@ -247,8 +240,10 @@ public class Julaps_Star extends PApplet
 			gl.glColor4f( 1, 1, 1, 1 );
 			for(int j=0; j<cylvert[0].length; j++)
 			{
+				gl.glColor4f( 1, 0, 0, 0.5f );
 				gl.glTexCoord2f( j / ( cylvert[0].length - 1 ), 0 );
 				gl.glVertex3f( cylvert[0][j].x, cylvert[0][j].y, cylvert[0][j].z );
+				gl.glColor4f( 1, 1, 1, 0.1f );
 				gl.glTexCoord2f( j/ (float)( cylvert[1].length - 1 ), 1 );
 				gl.glVertex3f( cylvert[1][j].x, cylvert[1][j].y, cylvert[1][j].z );
 			}
@@ -260,6 +255,7 @@ public class Julaps_Star extends PApplet
 	private void renderShockwaves ( )
 	{
 		gl.glDisable( GL.GL_TEXTURE_2D );
+//		gl.glDepthMask( true );
 		
 		for( int i=0; i<shockwaves.size(); i++ )
 		{
@@ -334,8 +330,6 @@ public class Julaps_Star extends PApplet
 			
 			for (int i = 0; i < ang; i++) 
 			{
-				float p = 1.0f - (float)i/(float)(ang-1);
-
 				gl.glNormal3f( 0, 1, 0 );
 				gl.glColor4f( 1, 1, 1, 0 );
 				gl.glVertex3f( cosLUT[i]*(r)+x, sinLUT[i]*(r)+y, 0 );
@@ -373,7 +367,7 @@ public class Julaps_Star extends PApplet
 			float phi = 0.0f;
 			float theta = 0.0f;
 			float step = 360 / detail;
-			float rayWidth = 5.0f;
+			float rayWidth = 4.0f;
 			float rayHeight = 100.0f;
 			
 			rays = new ArrayList<RayLight>();
@@ -472,19 +466,18 @@ public class Julaps_Star extends PApplet
 			gl.glPushMatrix();
 			gl.glRotatef( theta, 0, 1, 0 );
 			gl.glRotatef( phi, 1, 0, 0 );
-			gl.glScalef( w, h, 0 );
+			gl.glScalef( w, h, w );
 			
-			gl.glBegin( GL.GL_QUADS );
-			gl.glColor4f( 1, 1, 1, 1 );
-			gl.glNormal3f( 0, 0, 1 );
+			gl.glCallList( cylds );
 
-//			gl.glCallList( cylds );
-			
-			gl.glTexCoord2f( 0.0f, 0.0f );		gl.glVertex3f( -0.5f, 0.0f, 0.0f );
-			gl.glTexCoord2f( 0.0f, 1.0f );		gl.glVertex3f( -0.5f, 1.0f, 0.0f );
-			gl.glTexCoord2f( 1.0f, 1.0f );		gl.glVertex3f(  0.5f, 1.0f, 0.0f );
-			gl.glTexCoord2f( 1.0f, 0.0f );		gl.glVertex3f(  0.5f, 0.0f, 0.0f );
-			gl.glEnd();
+//			gl.glBegin( GL.GL_QUADS );
+//			gl.glColor4f( 1, 1, 1, 1 );
+//			gl.glNormal3f( 0, 0, 1 );
+//			gl.glTexCoord2f( 0.0f, 0.0f );		gl.glVertex3f( -0.5f, 0.0f, 0.0f );
+//			gl.glTexCoord2f( 0.0f, 1.0f );		gl.glVertex3f( -0.5f, 1.0f, 0.0f );
+//			gl.glTexCoord2f( 1.0f, 1.0f );		gl.glVertex3f(  0.5f, 1.0f, 0.0f );
+//			gl.glTexCoord2f( 1.0f, 0.0f );		gl.glVertex3f(  0.5f, 0.0f, 0.0f );
+//			gl.glEnd();
 			
 			gl.glPopMatrix();
 		}
@@ -557,8 +550,6 @@ public class Julaps_Star extends PApplet
 
 		    	if ( i < locs.length - 2 )
 		    	{
-		    		// TODO: rotate strip so the face is always facing the center.
-		    		
 		    		Vec3D v1 = locs[i].sub( locs[i+1] ).normalize(); 	// direction vector.
 		    		Vec3D v2 = Vec3D.Y_AXIS.cross( v1 );				// up vector.
 		    		Vec3D v3 = v1.cross( v2 ).normalize();				// right vector.
