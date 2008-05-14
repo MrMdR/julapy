@@ -31,12 +31,13 @@ public class Julaps_Star extends PApplet
 	int SINCOS_LENGTH= (int)(360.0/SINCOS_PRECISION);
 	
 	Camera cam;
-	Vec3D camVec;
 	Vec3D camTarget;
 	Vec3D camPosition;
 	Vec3D camNormal;
 	
 	boolean isRecording = false;
+	boolean isMouseDown = false;
+	ArrayList<Nebula> nebulas;
 	ArrayList<Shockwave> shockwaves;
 	ArrayList<Star> stars;
 	SphericalParticle cameraParticle;
@@ -51,7 +52,7 @@ public class Julaps_Star extends PApplet
 	{
 		size(1280, 720, OPENGL);
 
-		frameRate(50);
+		frameRate( 25 );
 
 		hint(ENABLE_OPENGL_4X_SMOOTH);
 		colorMode(RGB, 1.0f);
@@ -69,6 +70,8 @@ public class Julaps_Star extends PApplet
 		
 		// load texture.
 		PImage ray = loadImage("data/ray01.png");
+		PImage shock = loadImage("data/shockwave02.png");
+		PImage nebula = loadImage("data/nebula04.png");
 		
 		glGenTextures( gl );
 		
@@ -76,7 +79,17 @@ public class Julaps_Star extends PApplet
 		glTexImage2D( ray, true );
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-        
+
+		gl.glBindTexture(GL.GL_TEXTURE_2D, textures[1]);
+		glTexImage2D( shock, true );
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+
+		gl.glBindTexture(GL.GL_TEXTURE_2D, textures[2]);
+		glTexImage2D( nebula, true );
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+		
 //		gl.glFogi(GL.GL_FOG_MODE, GL.GL_LINEAR);				// Fog Mode
 //		gl.glFogfv(GL.GL_FOG_COLOR, fogColor, 0);				// Set Fog Color
 //		gl.glFogf(GL.GL_FOG_DENSITY, 0.1f);						// How Dense Will The Fog Be
@@ -90,7 +103,6 @@ public class Julaps_Star extends PApplet
 //		gl.glTexEnvf( GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE );
 		
 		// additive blending.
-		gl.glDepthMask( false );
 		gl.glEnable( GL.GL_BLEND );
 		gl.glDisable( GL.GL_DEPTH_TEST );
 		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
@@ -109,7 +121,6 @@ public class Julaps_Star extends PApplet
 		//__________________________________________________________ camera.		
 		
 		cam 		= new Camera( this );
-		camVec		= new Vec3D();
 		camTarget 	= new Vec3D();
 		camPosition = new Vec3D();
 		camNormal 	= new Vec3D();
@@ -123,6 +134,9 @@ public class Julaps_Star extends PApplet
 		initCylinderVertices( 6 );
 		initCylinderDisplayList();
 		
+		nebulas = new ArrayList<Nebula>();
+		nebulas.add( new Nebula() );
+		
 		shockwaves = new ArrayList<Shockwave>();
 		shockwaves.add( new Shockwave() );
 		
@@ -133,8 +147,8 @@ public class Julaps_Star extends PApplet
 	}
 	
     private void glGenTextures (GL gl) {
-    	textures = new int[2];
-        gl.glGenTextures(2, textures, 0);
+    	textures = new int[3];
+        gl.glGenTextures(3, textures, 0);
     }
 	
     private void glTexImage2D( PImage img, Boolean useAlphaChannel )
@@ -181,20 +195,27 @@ public class Julaps_Star extends PApplet
 		
 		updateCameraParticle();
 		
-		cam.jump( cameraParticle.loc.x, cameraParticle.loc.y, cameraParticle.loc.z );
-//		cam.jump( camX, camY, 300 );
+//		cam.jump( cameraParticle.loc.x, cameraParticle.loc.y, cameraParticle.loc.z );
+		cam.jump( camX, camY, 300 );
 		cam.aim( 0, 0, 0 );
 		cam.feed();
+
+		camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
+		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
+		camNormal = camPosition.sub(camTarget).normalize();
 		
-		if (mousePressed == true)
+		if ( mousePressed && !isMouseDown )
 		{
+			isMouseDown = true;
 			shockwaves.add( new Shockwave() );
 		}
+		if( !mousePressed && isMouseDown ) isMouseDown = false;
 		
 		pgl.beginGL();
 		
-		renderShockwaves();
+		renderNebulas();
 		renderStars();
+		renderShockwaves();
 		
 		pgl.endGL();
 		
@@ -240,10 +261,12 @@ public class Julaps_Star extends PApplet
 			gl.glColor4f( 1, 1, 1, 1 );
 			for(int j=0; j<cylvert[0].length; j++)
 			{
-				gl.glColor4f( 1, 0, 0, 0.5f );
+//				gl.glColor4f( 1, 0, 0, 0.5f );
+				gl.glColor4f( 0.04f, 0.0f, 0.1f, 0.5f );
 				gl.glTexCoord2f( j / ( cylvert[0].length - 1 ), 0 );
 				gl.glVertex3f( cylvert[0][j].x, cylvert[0][j].y, cylvert[0][j].z );
-				gl.glColor4f( 1, 1, 1, 0.1f );
+				gl.glColor4f( 0.0f, 0.0f, 0.1f, 0.1f );
+//				gl.glColor4f( 1, 1, 1, 0.1f );
 				gl.glTexCoord2f( j/ (float)( cylvert[1].length - 1 ), 1 );
 				gl.glVertex3f( cylvert[1][j].x, cylvert[1][j].y, cylvert[1][j].z );
 			}
@@ -252,10 +275,24 @@ public class Julaps_Star extends PApplet
 		gl.glEndList();
 	}
 
+	private void renderNebulas ( )
+	{
+		gl.glDepthMask( false );
+		gl.glEnable( GL.GL_TEXTURE_2D );
+		gl.glBindTexture( GL.GL_TEXTURE_2D, textures[2] );
+		gl.glColor4f( 1, 1, 1, 1 );
+		
+		for( int i=0; i<nebulas.size(); i++ )
+		{
+			nebulas.get( i ).render(); 
+		}
+	}
+	
 	private void renderShockwaves ( )
 	{
-		gl.glDisable( GL.GL_TEXTURE_2D );
-//		gl.glDepthMask( true );
+		gl.glDepthMask( true );
+		gl.glEnable( GL.GL_TEXTURE_2D );
+		gl.glBindTexture( GL.GL_TEXTURE_2D, textures[1] );
 		
 		for( int i=0; i<shockwaves.size(); i++ )
 		{
@@ -291,6 +328,54 @@ public class Julaps_Star extends PApplet
 		cameraParticle.update();
 	}
 	
+	public class Nebula 
+	{
+		Vec3D loc;
+		float x;	// x coord.
+		float y;	// y coord.
+		float s;	// scale.
+		
+		public Nebula ()
+		{
+			loc = new Vec3D( 0, 0, 100 );
+			s	= 400;
+		}
+		
+		public void update ()
+		{
+			//
+		}
+		
+		public void render ( )
+		{
+			loc = camPosition.normalize().invert();
+			loc.scaleSelf( 100 );
+
+			float deltaX   = camTarget.x - camPosition.x;
+			float deltaY   = camTarget.y - camPosition.y;
+			float deltaZ   = camTarget.z - camPosition.z;
+
+			float angleZ   = atan2( deltaY,deltaX ); 
+			float hyp      = sqrt( sq( deltaX ) + sq( deltaY ) ); 
+			float angleY   = atan2( hyp,deltaZ );
+			
+			gl.glPushMatrix();
+			gl.glTranslatef( loc.x, loc.y, loc.z );
+			gl.glRotatef( degrees( angleZ ), 0, 0,    1.0f );
+			gl.glRotatef( degrees( angleY ), 0, 1.0f, 0    );
+			gl.glScalef( s, s, 0 );
+			gl.glBegin( GL.GL_QUADS );
+			
+			gl.glTexCoord2f( 0, 0 );	gl.glVertex3f( -0.5f, -0.5f, 0 );
+			gl.glTexCoord2f( 0, 1 );	gl.glVertex3f( -0.5f,  0.5f, 0 );
+			gl.glTexCoord2f( 1, 1 );	gl.glVertex3f(  0.5f,  0.5f, 0 );
+			gl.glTexCoord2f( 1, 0 );	gl.glVertex3f(  0.5f, -0.5f, 0 );
+			
+			gl.glEnd();
+			gl.glPopMatrix();
+		}
+	}
+	
 	public class Shockwave 
 	{
 		float x;	// x coord.
@@ -308,7 +393,7 @@ public class Julaps_Star extends PApplet
 			y	= 0;
 			c	= 360;
 			r	= 20;
-			w	= 10;
+			w	= 30;
 			a	= 1;
 		}
 		
@@ -330,20 +415,23 @@ public class Julaps_Star extends PApplet
 			
 			for (int i = 0; i < ang; i++) 
 			{
+				float p = i / (float)ang;
+				
 				gl.glNormal3f( 0, 1, 0 );
-				gl.glColor4f( 1, 1, 1, 0 );
+				gl.glTexCoord2f( p, 1 );
+				gl.glColor4f( 1, 1, 1, 1 );
 				gl.glVertex3f( cosLUT[i]*(r)+x, sinLUT[i]*(r)+y, 0 );
-				gl.glNormal3f( 0, 1, 0 );
-				gl.glColor4f( 1, 1, 1, a );
+				gl.glTexCoord2f( p, 0 );
+				gl.glColor4f( 1, 1, 1, 1 );
 				gl.glVertex3f( cosLUT[i]*(r+w)+x, sinLUT[i]*(r+w)+y, 0 );
 				
 				if( i == ang - 1 )
 				{
-					gl.glNormal3f( 0, 1, 0 );
-					gl.glColor4f( 1, 1, 1, 0 );
+					gl.glTexCoord2f( p, 1 );
+					gl.glColor4f( 1, 1, 1, 1 );
 					gl.glVertex3f( cosLUT[0]*(r)+x, sinLUT[0]*(r)+y, 0 );
-					gl.glNormal3f( 0, 1, 0 );
-					gl.glColor4f( 1, 1, 1, a );
+					gl.glTexCoord2f( p, 0 );
+					gl.glColor4f( 1, 1, 1, 1 );
 					gl.glVertex3f( cosLUT[0]*(r+w)+x, sinLUT[0]*(r+w)+y, 0 );
 				}
 			}
@@ -353,11 +441,14 @@ public class Julaps_Star extends PApplet
 		}
 	}
 	
-	public class Star 
+	public class Star
 	{
 		Vec3D loc;
 		int detail;
 		ArrayList<RayLight> rays;
+		float rx = 0;	// rotation around the x-axis.
+		float ry = 0;	// rotation around the y-axis.
+		float rz = 0;	// rotation around the z-axis.
 		
 		public Star ( Vec3D loc, int detail )
 		{
@@ -397,6 +488,10 @@ public class Julaps_Star extends PApplet
 		
 		public void update ()
 		{
+			rx += 0.4f;
+			ry += 0.4f;
+			rz += 0.4f;
+			
 			for( int i=0; i<rays.size(); i++ )
 			{
 				rays.get( i ).update();
@@ -407,6 +502,9 @@ public class Julaps_Star extends PApplet
 		{
 			gl.glPushMatrix();
 			gl.glTranslatef( loc.x, loc.y, loc.z );
+			gl.glRotatef( rx, 1, 0, 0 );
+			gl.glRotatef( ry, 0, 1, 0 );
+			gl.glRotatef( rz, 0, 0, 1 );
 
 			for( int i=0; i<rays.size(); i++ )
 			{
