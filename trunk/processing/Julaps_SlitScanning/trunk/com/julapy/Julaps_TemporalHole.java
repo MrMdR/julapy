@@ -19,7 +19,7 @@ public class Julaps_TemporalHole extends PApplet
 	int movHeight;
 	int movFrameRate = 25;
 	int movIndex = 0;
-	boolean isRecording = true;
+	boolean isRecording = false;
 	
 	float holeDepth = 0;
 	float holeRadius = 0;
@@ -29,7 +29,7 @@ public class Julaps_TemporalHole extends PApplet
 	{
 		frameRate( 25 );
 		
-		mov = new Movie( this, "beached.mov", movFrameRate );
+		mov = new Movie( this, "flocking.mov", movFrameRate );
 		mov.loop();
 		mov.speed( 0 );
 		mov.read();
@@ -42,7 +42,6 @@ public class Julaps_TemporalHole extends PApplet
 		size( movWidth, movHeight, P2D );
 		
 		frameBuffer = new PImage[ (int)(25 * mov.duration()) ];
-//		frameBuffer = new PImage[ movHeight ];
 		
 		println( "frameBuffer length :: " + frameBuffer.length + ", movWidth :: " + movWidth + ", movHeight :: " + movHeight );
 		
@@ -52,6 +51,8 @@ public class Julaps_TemporalHole extends PApplet
 			mov.read();
 			
 			frameBuffer[ i ] = mov.get();
+			
+			if( i % 50 == 0 && i != 0 ) println( i + " frames in buffer" );
 		}
 		
 		mov.dispose();
@@ -90,7 +91,8 @@ public class Julaps_TemporalHole extends PApplet
 				float d = sqrt( dx*dx + dy*dy );
 				if( d < holeRadius )
 				{
-					float ds = holeDepth / holeRadius * ( holeRadius - d );		// distortion scale.
+//					float ds = linear( d );		// distortion scale.
+					float ds = singraph( d );
 					
 					int fi = (int)( (frameBuffer.length-1) * ds );	// frame index.
 					fi += movIndex;
@@ -106,6 +108,20 @@ public class Julaps_TemporalHole extends PApplet
 		updatePixels();
 
 		if( isRecording ) save("data/export/export"+frameCount+".png");
+	}
+	
+	public float linear ( float v )
+	{
+		return holeDepth / holeRadius * ( holeRadius - v );
+	}
+	
+	public float singraph ( float v )	// TODO :: still needs some work. 
+	{
+		v = v / holeRadius;	// scale from 0 to 1
+		v = ( v - 0.5f ) * 1.0f; 			// scale from -1 to 1
+		v = sin( v * PI ) / 2 + 0.5f;
+		v = v * holeDepth;
+		return v;
 	}
 
 	public void keyPressed()

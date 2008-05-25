@@ -25,12 +25,14 @@ public class Julaps_TemporalAudio extends PApplet
 	int movHeight;
 	int movFrameRate = 25;
 	int movIndex = 0;
+	int movDir = 1;
 	int slitDir;
 	int slitSize = 1;
 	boolean isRecording = false;
 	
 	AudioChannel channel;
 	FFT fft;
+	float fftLevel = 0;
 	int sampleCount = 1024;
 	float sampleCutoff = 0.73f;
 	float[] sampleData;
@@ -39,8 +41,14 @@ public class Julaps_TemporalAudio extends PApplet
 	{
 		frameRate( 25 );
 		
-		//__________________________________________________________Movie.
+		initVideo();
+		initEss();
 		
+		slitDir = DIR_X;
+	}
+	
+	public void initVideo ()
+	{
 		mov = new Movie( this, "jellyfish.mov", movFrameRate );
 		mov.loop();
 		mov.speed( 0 );
@@ -62,35 +70,33 @@ public class Julaps_TemporalAudio extends PApplet
 			
 			frameBuffer[ i ] = mov.get();
 			
-			println( "adding frame to buffer :: " + i );
+			if( i % 50 == 0 && i != 0 ) println( i + " frames added to buffer" ); 
 		}
 		
 		mov.dispose();
 		mov = null;
-
-		//__________________________________________________________ESS.
-
+	}
+	
+	public void initEss ()
+	{
 //		size( 512, 400, P2D );
 		
-		Ess.start(this);
+		Ess.start( this );
 
-		channel = new AudioChannel("audio/dat_politics_nude_noodle.mp3");
-		channel.play( Ess.FOREVER );
+		channel = new AudioChannel( "audio/autechre_zeiss_contarex_trim.aif" );
+		channel.play( );
 		
-		fft=new FFT( sampleCount );
+		fft = new FFT( sampleCount );
 		fft.equalizer( true );
 		fft.smooth = true;
 		fft.damp( 0.5f );
-		
-		//__________________________________________________________Init.
-		
-		slitDir = DIR_X;
 	}
 
 	public void draw() 
 	{
 		background( 0 );
 
+		getLevel( );
 		getSampleData( );
 		drawVideo( );
 //		drawSamples( );
@@ -100,13 +106,18 @@ public class Julaps_TemporalAudio extends PApplet
 	
 	public void drawVideo ()
 	{
-		loadPixels();
+		movIndex += movDir;
+		if( movIndex > frameBuffer.length - 1 ) movIndex = 0;
+		if( movIndex < 0 ) movIndex = frameBuffer.length - 1;
 		
 		if( slitDir == DIR_Y )
 		{
 			for( int i=0; i<movHeight; i++ )
 			{
 				int index = (int)( (frameBuffer.length-1) * (sampleData[i]) );
+				index += movIndex;
+				if( index >= frameBuffer.length ) index -= frameBuffer.length;
+				
 				image( frameBuffer[index].get( 0, i*slitSize, movWidth, slitSize), 0, i*slitSize );
 			}
 		}
@@ -116,12 +127,44 @@ public class Julaps_TemporalAudio extends PApplet
 			for( int i=0; i<movWidth; i++ )
 			{
 				int index = (int)( (frameBuffer.length-1) * (sampleData[i]) );
-				println(index);
+				index += movIndex;
+				if( index >= frameBuffer.length ) index -= frameBuffer.length;
+				
 				image( frameBuffer[index].get( i*slitSize, 0, slitSize, movHeight), i*slitSize, 0 );
 			}
 		}
+	}
+	
+	public void getLevel ()
+	{
+		float fftChannelLevel = fft.getLevel( channel );
 		
-		updatePixels();
+		if( fftChannelLevel > fftLevel )
+		{
+			fftLevel = fftChannelLevel;
+			
+			if( random( 1 ) < 0.2f ) 
+			{
+				movDir *= -1;
+				
+				println( "movDir :: " + movDir );
+			}
+			
+			if( random( 1 ) < 0.9f )
+			{
+				movIndex += (int)( random( ( frameBuffer.length - 1 ) * 0.2f, ( frameBuffer.length - 1 ) * 0.5f ) ) * movDir;
+				if( movIndex > frameBuffer.length - 1 ) movIndex = movIndex - ( frameBuffer.length - 1 );
+				if( movIndex < 0 ) movIndex = frameBuffer.length - 1 + movIndex;
+				
+				println( "skip to random." );
+			}
+		}
+		else
+		{
+			fftLevel *= 0.995;
+		}
+		
+		if( fftChannelLevel == 0 ) movDir = 1;
 	}
 	
 	public void getSampleData ()
@@ -129,20 +172,21 @@ public class Julaps_TemporalAudio extends PApplet
 		fft.getSpectrum(channel);
 		
 		int sampleDataSize = width;
-		if( slitDir == DIR_X ) sampleDataSize = movWidth;
-		if( slitDir == DIR_Y ) sampleDataSize = movHeight;
+		if( slitDir == DIR_X ) sampleDataSize = width;
+		if( slitDir == DIR_Y ) sampleDataSize = height;
 		sampleData = new float[sampleDataSize];
 		
 		float[] spectrum = new float[ (int)(sampleCount * sampleCutoff) ];
 		for( int i=0; i<spectrum.length; i++ )
 		{
-			if( i < spectrum.length/2 )
+			if( i < (int)(spectrum.length/2) )
 			{
-				spectrum[i] = fft.spectrum[i];
+				int j = (int)(spectrum.length/2) - 1 - i;
+				spectrum[i] = fft.spectrum[j];
 			}
 			else
 			{
-				int j = spectrum.length - 1 - i;
+				int j = i - (int)(spectrum.length/2);
 				spectrum[i] = fft.spectrum[j];
 			}
 		}
@@ -157,7 +201,7 @@ public class Julaps_TemporalAudio extends PApplet
 	public void drawSamples() 
 	{
 		noStroke();
-		fill( 255 );
+		fill( 255, 255, 255, 100 );
 
 		for (int i=0; i<sampleData.length; i++) 
 		{

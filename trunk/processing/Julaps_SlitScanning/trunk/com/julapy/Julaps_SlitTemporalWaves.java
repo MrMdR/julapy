@@ -60,6 +60,8 @@ public class Julaps_SlitTemporalWaves extends PApplet
 			mov.read();
 			
 			frameBuffer[ i ] = mov.get();
+			
+			if( i % 50 == 0 && i != 0 ) println( i + " frames in buffer" );
 		}
 		
 		mov.dispose();
