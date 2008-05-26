@@ -8,6 +8,9 @@ package com.julapy;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
 import krister.Ess.AudioChannel;
 import krister.Ess.Ess;
 import krister.Ess.FFT;
@@ -33,23 +36,43 @@ public class Julaps_TemporalAudio extends PApplet
 	AudioChannel channel;
 	FFT fft;
 	float fftLevel = 0;
+	float fftChannelLevel = 0;
 	int sampleCount = 1024;
 	float sampleCutoff = 0.73f;
 	float[] sampleData;
+	int sampleDataSize;
+	ArrayList<Slice> slices;
+	
+	boolean useEss = true;
+	boolean saveAudio = true;
+	float[][] audioData;
+	PrintWriter audioDataWriter;
 
 	public void setup() 
 	{
 		frameRate( 25 );
 		
 		initVideo();
-		initEss();
 		
 		slitDir = DIR_X;
+		sampleDataSize = width;
+		if( slitDir == DIR_X ) sampleDataSize = width;
+		if( slitDir == DIR_Y ) sampleDataSize = height;
+
+		if( useEss ) 
+			initEss();
+		else
+			loadAudioData();
+		
+		slices = new ArrayList<Slice>();
+		
+		if( saveAudio )
+			audioData = new float[100][sampleDataSize+1];
 	}
 	
 	public void initVideo ()
 	{
-		mov = new Movie( this, "jellyfish.mov", movFrameRate );
+		mov = new Movie( this, "jellyfishsky_trim.mov", movFrameRate );
 		mov.loop();
 		mov.speed( 0 );
 		mov.read();
@@ -92,14 +115,21 @@ public class Julaps_TemporalAudio extends PApplet
 		fft.damp( 0.5f );
 	}
 
+	
 	public void draw() 
 	{
 		background( 0 );
 
+		if( !useEss )
+			readAudioData();
 		getLevel( );
 		getSampleData( );
 		drawVideo( );
 //		drawSamples( );
+		drawSlices( );
+		
+		if( saveAudio )
+//			saveAudioData();
 		
 		if( isRecording ) save("data/export/export"+frameCount+".png");
 	}
@@ -137,10 +167,13 @@ public class Julaps_TemporalAudio extends PApplet
 	
 	public void getLevel ()
 	{
-		float fftChannelLevel = fft.getLevel( channel );
+		if( useEss )
+			fftChannelLevel = fft.getLevel( channel );
 		
 		if( fftChannelLevel > fftLevel )
 		{
+			float diffLevel = fftChannelLevel - fftLevel;
+
 			fftLevel = fftChannelLevel;
 			
 			if( random( 1 ) < 0.2f ) 
@@ -158,6 +191,15 @@ public class Julaps_TemporalAudio extends PApplet
 				
 				println( "skip to random." );
 			}
+			
+			if( random( 1 ) < 0.7f )
+			{
+				int slicesPerBurst = (int)(diffLevel*100);
+				
+				addSlices( slicesPerBurst );
+				
+				println("add slices :: " + slicesPerBurst);
+			}
 		}
 		else
 		{
@@ -169,11 +211,9 @@ public class Julaps_TemporalAudio extends PApplet
 	
 	public void getSampleData ()
 	{
-		fft.getSpectrum(channel);
+		if( useEss )
+			fft.getSpectrum(channel);
 		
-		int sampleDataSize = width;
-		if( slitDir == DIR_X ) sampleDataSize = width;
-		if( slitDir == DIR_Y ) sampleDataSize = height;
 		sampleData = new float[sampleDataSize];
 		
 		float[] spectrum = new float[ (int)(sampleCount * sampleCutoff) ];
@@ -210,6 +250,91 @@ public class Julaps_TemporalAudio extends PApplet
 		}
 	}
 	
+	public void addSlices( int slicesPerBurst )
+	{
+		for( int i=0; i<slicesPerBurst; i++ )
+		{
+			slices.add( new Slice( ) );
+		}
+	}
+	
+	public void drawSlices()
+	{
+		for( int i=0; i<slices.size(); i++ )
+		{
+			Slice slice = slices.get( i );
+			slice.update();
+			if( slice.alive ) 
+			{
+				slice.render();
+			}
+			else
+			{
+				slices.remove( i );
+				--i;
+			}
+		}
+	}
+	
+	//_______________________________________________________________________Audio.
+	
+	public void loadAudioData ()
+	{
+		String[] audioDataStr = loadStrings( "data/audiodata.txt"  );
+		
+		audioData = new float[audioDataStr.length][sampleDataSize+1];	// added the extra 1 for fftLevel data.
+		for( int i=0; i<audioData.length; i++ )
+		{
+			String audioDataLine	= audioDataStr[i];
+			String[] audioDataSplit = split( audioDataLine, '\t'); 
+			
+			for( int j=0; j<audioDataSplit.length; j++)
+			{
+				audioData[i][j] = Float.valueOf( audioDataSplit[j] );
+			}
+		}
+	}
+	
+	public void saveAudioData ()
+	{
+		for( int i=0; i<sampleData.length; i++ )
+		{
+			audioData[frameCount-1][i] = sampleData[i];
+		}
+		audioData[frameCount-1][audioData.length-1] = fftChannelLevel;
+	}
+	
+	public void exportAudioData ()
+	{
+		audioDataWriter = createWriter("data/audiodata.txt");
+		
+		for(int i=0; i<audioData.length; i++)
+		{
+			String values = "";
+			
+			for(int j=0; j<audioData[i].length; j++)
+			{
+				values += audioData[i][j];
+				if( j == audioData[i].length - 1 ) values += "\t";
+			}
+			
+			audioDataWriter.println( values );
+		}
+	}
+	
+	public void readAudioData ()
+	{
+		sampleData = new float[sampleDataSize];
+		for( int i=0; i<sampleData.length; i++ )
+		{
+			sampleData[i] = audioData[frameCount-1][i];
+		}
+		
+		fftChannelLevel = sampleData[sampleData.length-1];
+	}
+	
+	//_______________________________________________________________________ Keys.
+	
 	public void keyPressed()
 	{
 		if(key == 's')
@@ -221,11 +346,96 @@ public class Julaps_TemporalAudio extends PApplet
 		{
 			isRecording = !isRecording;
 		}
+		
+		if( key == 'w' )
+		{
+			exportAudioData();
+		}
 	}
 
 	public void stop() 
 	{
 		Ess.stop();
 		super.stop();
+	}
+	
+	public class Slice
+	{
+		PImage sliceImage;
+		float lifetime = 50;
+		float lifetimeDec = 1;
+		float x;
+		float y;
+		int w;
+		int h;
+		int sx;
+		int sy;
+		int sw;
+		int sh;
+		int sliceIndex = 0;
+		int sliceDir = 1;
+		float sliceSpeed = 2.5f;
+		boolean alive = true;
+		
+		public Slice ()
+		{
+			w = (int)random( width * 0.2f, width * 0.7f );
+			h = (int)random( 8, 40 );
+
+			sliceDir = ( random( 1 ) < 0.5f ) ? 1 : -1;
+			
+			x = ( sliceDir == 1 ) ? -w : width;
+			y = random( height - h );
+			
+			sliceIndex = (int)random( frameBuffer.length - 1 );
+			sliceSpeed = random( 40, 60 );
+		}
+		
+		public void update ()
+		{
+//			lifetime -= lifetimeDec;
+			x += sliceSpeed * sliceDir;
+
+			if( sliceDir == 1 && x > width ) 
+			{
+				alive = false;
+				return;
+			}
+			if( sliceDir == -1 && x < -w ) 
+			{
+				alive = false;
+				return;
+			}
+			if( lifetime < 0 ) 
+			{
+				alive = false;
+				return;
+			}
+			
+			sx = (int)x;
+			sy = (int)y;
+			sw = (int)w;
+			sh = (int)h;
+
+			if( sx < 0 )
+			{
+				sw += sx;
+				sx = 0;
+			}
+		
+			if( sx + sw > width )
+			{
+				sw -= sx + sw - width;
+			}
+			
+			sliceIndex += sliceDir;
+			if( sliceIndex > frameBuffer.length - 1 ) sliceIndex = 0;
+			if( sliceIndex < 0 ) sliceIndex = frameBuffer.length - 1;
+		}
+		
+		public void render ()
+		{
+			image( frameBuffer[movIndex].get( sx, sy, sw, sh ), sx, sy );
+		}
 	}
 }
