@@ -81,9 +81,4 @@ public class Julaps_SlitScanning extends PApplet
 			isRecording = !isRecording;
 		}
 	}
-	
-	public void captureEvent( Capture cap )
-	{
-		cap.read();
-	}
 }

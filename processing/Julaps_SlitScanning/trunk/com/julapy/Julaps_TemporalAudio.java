@@ -31,7 +31,7 @@ public class Julaps_TemporalAudio extends PApplet
 	int movDir = 1;
 	int slitDir;
 	int slitSize = 1;
-	boolean isRecording = false;
+	boolean isRecording = true;
 	
 	AudioChannel channel;
 	FFT fft;
@@ -43,14 +43,15 @@ public class Julaps_TemporalAudio extends PApplet
 	int sampleDataSize;
 	ArrayList<Slice> slices;
 	
-	boolean useEss = true;
-	boolean saveAudio = true;
 	float[][] audioData;
 	PrintWriter audioDataWriter;
+	
+	int frameNumber = 0;
+	int framesPerSec = 25;
 
 	public void setup() 
 	{
-		frameRate( 25 );
+		frameRate( framesPerSec );
 		
 		initVideo();
 		
@@ -59,20 +60,14 @@ public class Julaps_TemporalAudio extends PApplet
 		if( slitDir == DIR_X ) sampleDataSize = width;
 		if( slitDir == DIR_Y ) sampleDataSize = height;
 
-		if( useEss ) 
-			initEss();
-		else
-			loadAudioData();
+		initEss();
 		
 		slices = new ArrayList<Slice>();
-		
-		if( saveAudio )
-			audioData = new float[100][sampleDataSize+1];
 	}
 	
 	public void initVideo ()
 	{
-		mov = new Movie( this, "jellyfishsky_trim.mov", movFrameRate );
+		mov = new Movie( this, "jellyfishsky.mov", movFrameRate );
 		mov.loop();
 		mov.speed( 0 );
 		mov.read();
@@ -107,7 +102,9 @@ public class Julaps_TemporalAudio extends PApplet
 		Ess.start( this );
 
 		channel = new AudioChannel( "audio/autechre_zeiss_contarex_trim.aif" );
-		channel.play( );
+		
+		if( !isRecording )
+			channel.play( );
 		
 		fft = new FFT( sampleCount );
 		fft.equalizer( true );
@@ -120,18 +117,14 @@ public class Julaps_TemporalAudio extends PApplet
 	{
 		background( 0 );
 
-		if( !useEss )
-			readAudioData();
+		getAudioData( );
 		getLevel( );
 		getSampleData( );
 		drawVideo( );
 //		drawSamples( );
 		drawSlices( );
 		
-		if( saveAudio )
-//			saveAudioData();
-		
-		if( isRecording ) save("data/export/export"+frameCount+".png");
+		if( isRecording ) save("data/export/export"+frameNumber+".png");
 	}
 	
 	public void drawVideo ()
@@ -165,18 +158,49 @@ public class Julaps_TemporalAudio extends PApplet
 		}
 	}
 	
+	public void getAudioData ()
+	{
+		if( isRecording )
+		{
+			int offset = (int)(frameNumber * channel.sampleRate / framesPerSec);
+			fft.getSpectrum( channel.samples, offset );
+			
+			float totalSpec = 0;
+			for( int i=0; i<fft.spectrum.length; i++ )
+			{
+				totalSpec += fft.spectrum[i];
+			}
+			
+			fftChannelLevel = totalSpec / fft.spectrum.length * 100;
+
+			frameNumber++;
+		}
+		else
+		{
+			fft.getSpectrum( channel );
+			fftChannelLevel = fft.getLevel( channel );
+			
+			float totalSpec = 0;
+			for( int i=0; i<fft.spectrum.length; i++ )
+			{
+				totalSpec += fft.spectrum[i];
+			}
+			
+			fftChannelLevel = totalSpec / fft.spectrum.length * 100;
+		}
+		
+		
+	}
+	
 	public void getLevel ()
 	{
-		if( useEss )
-			fftChannelLevel = fft.getLevel( channel );
-		
 		if( fftChannelLevel > fftLevel )
 		{
 			float diffLevel = fftChannelLevel - fftLevel;
 
 			fftLevel = fftChannelLevel;
 			
-			if( random( 1 ) < 0.2f ) 
+			if( random( 1 ) < 0.3f ) 
 			{
 				movDir *= -1;
 				
@@ -192,7 +216,7 @@ public class Julaps_TemporalAudio extends PApplet
 				println( "skip to random." );
 			}
 			
-			if( random( 1 ) < 0.7f )
+			if( random( 1 ) < 0.8f )
 			{
 				int slicesPerBurst = (int)(diffLevel*100);
 				
@@ -203,17 +227,15 @@ public class Julaps_TemporalAudio extends PApplet
 		}
 		else
 		{
-			fftLevel *= 0.995;
+			fftLevel *= 0.99;
 		}
 		
 		if( fftChannelLevel == 0 ) movDir = 1;
 	}
 	
+	
 	public void getSampleData ()
 	{
-		if( useEss )
-			fft.getSpectrum(channel);
-		
 		sampleData = new float[sampleDataSize];
 		
 		float[] spectrum = new float[ (int)(sampleCount * sampleCutoff) ];
@@ -278,60 +300,60 @@ public class Julaps_TemporalAudio extends PApplet
 	
 	//_______________________________________________________________________Audio.
 	
-	public void loadAudioData ()
-	{
-		String[] audioDataStr = loadStrings( "data/audiodata.txt"  );
-		
-		audioData = new float[audioDataStr.length][sampleDataSize+1];	// added the extra 1 for fftLevel data.
-		for( int i=0; i<audioData.length; i++ )
-		{
-			String audioDataLine	= audioDataStr[i];
-			String[] audioDataSplit = split( audioDataLine, '\t'); 
-			
-			for( int j=0; j<audioDataSplit.length; j++)
-			{
-				audioData[i][j] = Float.valueOf( audioDataSplit[j] );
-			}
-		}
-	}
-	
-	public void saveAudioData ()
-	{
-		for( int i=0; i<sampleData.length; i++ )
-		{
-			audioData[frameCount-1][i] = sampleData[i];
-		}
-		audioData[frameCount-1][audioData.length-1] = fftChannelLevel;
-	}
-	
-	public void exportAudioData ()
-	{
-		audioDataWriter = createWriter("data/audiodata.txt");
-		
-		for(int i=0; i<audioData.length; i++)
-		{
-			String values = "";
-			
-			for(int j=0; j<audioData[i].length; j++)
-			{
-				values += audioData[i][j];
-				if( j == audioData[i].length - 1 ) values += "\t";
-			}
-			
-			audioDataWriter.println( values );
-		}
-	}
-	
-	public void readAudioData ()
-	{
-		sampleData = new float[sampleDataSize];
-		for( int i=0; i<sampleData.length; i++ )
-		{
-			sampleData[i] = audioData[frameCount-1][i];
-		}
-		
-		fftChannelLevel = sampleData[sampleData.length-1];
-	}
+//	public void loadAudioData ()
+//	{
+//		String[] audioDataStr = loadStrings( "data/audiodata.txt"  );
+//		
+//		audioData = new float[audioDataStr.length][sampleDataSize+1];	// added the extra 1 for fftLevel data.
+//		for( int i=0; i<audioData.length; i++ )
+//		{
+//			String audioDataLine	= audioDataStr[i];
+//			String[] audioDataSplit = split( audioDataLine, '\t'); 
+//			
+//			for( int j=0; j<audioDataSplit.length; j++)
+//			{
+//				audioData[i][j] = Float.valueOf( audioDataSplit[j] );
+//			}
+//		}
+//	}
+//	
+//	public void saveAudioData ()
+//	{
+//		for( int i=0; i<sampleData.length; i++ )
+//		{
+//			audioData[frameCount-1][i] = sampleData[i];
+//		}
+//		audioData[frameCount-1][audioData.length-1] = fftChannelLevel;
+//	}
+//	
+//	public void exportAudioData ()
+//	{
+//		audioDataWriter = createWriter("data/audiodata.txt");
+//		
+//		for(int i=0; i<audioData.length; i++)
+//		{
+//			String values = "";
+//			
+//			for(int j=0; j<audioData[i].length; j++)
+//			{
+//				values += audioData[i][j];
+//				if( j == audioData[i].length - 1 ) values += "\t";
+//			}
+//			
+//			audioDataWriter.println( values );
+//		}
+//	}
+//	
+//	public void readAudioData ()
+//	{
+//		sampleData = new float[sampleDataSize];
+//		for( int i=0; i<sampleData.length; i++ )
+//		{
+//			sampleData[i] = audioData[frameCount-1][i];
+//		}
+//		
+//		fftChannelLevel = sampleData[sampleData.length-1];
+//	}
 	
 	//_______________________________________________________________________ Keys.
 	
@@ -349,7 +371,7 @@ public class Julaps_TemporalAudio extends PApplet
 		
 		if( key == 'w' )
 		{
-			exportAudioData();
+//			exportAudioData();
 		}
 	}
 

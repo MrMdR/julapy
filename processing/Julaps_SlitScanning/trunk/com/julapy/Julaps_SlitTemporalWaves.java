@@ -28,7 +28,7 @@ public class Julaps_SlitTemporalWaves extends PApplet
 	int movHeight;
 	int movFrameRate = 25;
 	float timeWavesPerCycle = 0.5f;
-	float timeWaveSpeed = 2 * PI * 0.01f; 
+	float timeWaveSpeed = 2 * PI * 0.01f;
 	float anglePerFrame;
 	float angle = 0;
 	boolean isRecording = false;
