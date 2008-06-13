@@ -12,18 +12,22 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
+import com.julapy.opengl.TextureLoader;
+
 import krister.Ess.AudioChannel;
 import krister.Ess.Ess;
 import krister.Ess.FFT;
 import damkjer.ocd.Camera;
 import processing.opengl.PGraphicsOpenGL;
 import processing.core.PApplet;
+import processing.core.PImage;
 import toxi.geom.Vec3D;
 
 public class Julaps_ParticleSpings extends PApplet 
 {
 	PGraphicsOpenGL pgl;
 	GL gl;
+	TextureLoader texLoader;
 	
 	Camera cam;
 	Vec3D camTarget;
@@ -32,6 +36,8 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	AudioChannel channel;
 	FFT fft;
+	
+	int[] textures;
 	
 	ArrayList<Particle> particles;
 	ArrayList<Spring> springs;
@@ -54,8 +60,9 @@ public class Julaps_ParticleSpings extends PApplet
 		
 		hint(ENABLE_OPENGL_4X_SMOOTH);
 
-		pgl = (PGraphicsOpenGL) g;
-		gl = pgl.gl;
+		//__________________________________________________________ opengl.
+		
+		initGL();
 		
 		//__________________________________________________________ camera.		
 		
@@ -75,6 +82,29 @@ public class Julaps_ParticleSpings extends PApplet
 		//__________________________________________________________ psys.
 		
 		initParticles();
+	}
+	
+	public void initGL ()
+	{
+		pgl = (PGraphicsOpenGL) g;
+		gl = pgl.gl;
+
+		gl.glShadeModel(GL.GL_SMOOTH);              				// Enable Smooth Shading
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);    				// Black Background
+		gl.glClearDepth(1.0f);                      				// Depth Buffer Setup
+		gl.glEnable(GL.GL_DEPTH_TEST);								// Enables Depth Testing
+		gl.glDepthFunc(GL.GL_LEQUAL);								// The Type Of Depth Testing To Do
+		gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);	// Really Nice Perspective Calculations
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		
+		gl.glEnable( GL.GL_BLEND );
+		gl.glDisable( GL.GL_DEPTH_TEST );
+		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
+		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_COLOR );
+
+		texLoader = new TextureLoader( gl );
+		texLoader.init();
+		texLoader.loadTexture( loadImage( "data/texture/p_01.png" ), true );
 	}
 	
 	public void draw() 
@@ -125,9 +155,14 @@ public class Julaps_ParticleSpings extends PApplet
 		Point3D bezPoint;
 		Particle pp1, pp2;
 		
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		gl.glDepthMask( false );
+		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
 		for ( i=0; i<particles.size(); i++ )
-//			particles.get( i ).render();
+			particles.get( i ).render();
 
+		gl.glDisable(GL.GL_TEXTURE_2D);
+		gl.glDepthMask( true );
 		for ( i=0; i<springs.size(); i++ ) {
 			p1 	= springs.get( i ).from;
 			p2 	= springs.get( i ).to;
@@ -179,7 +214,7 @@ public class Julaps_ParticleSpings extends PApplet
 	public void initParticles ()
 	{
 		int i;
-		nparticles	= 10;
+		nparticles	= 30;
 
 		particles	= new ArrayList<Particle>();
 		springs		= new ArrayList<Spring>();
@@ -384,7 +419,7 @@ public class Julaps_ParticleSpings extends PApplet
 	class Particle
 	{
 		int id;
-		float renderSize = 10;
+		float renderSize = 20;
 		float mass;
 		Vec3D loc;
 		Vec3D vel;
@@ -415,8 +450,8 @@ public class Julaps_ParticleSpings extends PApplet
 			
 			gl.glPushMatrix();
 			gl.glTranslatef( loc.x, loc.y, loc.z );
-			gl.glRotatef( degrees( angleZ ), 0, 0,    1.0f );
-			gl.glRotatef( degrees( angleY ), 0, 1.0f, 0    );
+			gl.glRotatef( degrees( angleZ ), 0, 0, 1 );
+			gl.glRotatef( degrees( angleY ), 0, 1, 0 );
 			gl.glScalef( renderSize, renderSize, 0 );
 			gl.glBegin( GL.GL_QUADS );
 			
