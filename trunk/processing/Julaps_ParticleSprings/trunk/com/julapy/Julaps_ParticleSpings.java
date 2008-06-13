@@ -11,9 +11,13 @@ package com.julapy;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
+
+import krister.Ess.AudioChannel;
+import krister.Ess.Ess;
+import krister.Ess.FFT;
 import damkjer.ocd.Camera;
 import processing.opengl.PGraphicsOpenGL;
-import processing.core.*;
+import processing.core.PApplet;
 import toxi.geom.Vec3D;
 
 public class Julaps_ParticleSpings extends PApplet 
@@ -26,6 +30,9 @@ public class Julaps_ParticleSpings extends PApplet
 	Vec3D camPosition;
 	Vec3D camNormal;
 	
+	AudioChannel channel;
+	FFT fft;
+	
 	ArrayList<Particle> particles;
 	ArrayList<Spring> springs;
 	int nparticles = 0;
@@ -33,11 +40,15 @@ public class Julaps_ParticleSpings extends PApplet
 	double viscousdrag = 0.1;
 	int particleCloudSize = 500;
 	
+	int frameNumber = 0;
+	int framesPerSec = 25;
+	boolean isRecording = false;	
+	
 	public void setup() 
 	{
 		size( 1280, 720, OPENGL );
 
-		frameRate( 25 );
+		frameRate( framesPerSec );
 		
 		colorMode( RGB, 1.0f );
 		
@@ -56,6 +67,10 @@ public class Julaps_ParticleSpings extends PApplet
 		cam.jump( 0, 250, 300 );
 		cam.aim( 0, 0, 0 );
 		cam.feed();
+		
+		//__________________________________________________________ ess.
+		
+		initEss();
 		
 		//__________________________________________________________ psys.
 		
@@ -80,37 +95,85 @@ public class Julaps_ParticleSpings extends PApplet
 		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
 		camNormal = camPosition.sub(camTarget).normalize();
 		
+		//__________________________________________________________ ess.
+		
+		if( isRecording )
+		{
+			int offset = (int)(frameNumber * channel.sampleRate / framesPerSec);
+			fft.getSpectrum( channel.samples, offset );
+		}
+		else
+		{
+			fft.getSpectrum( channel );
+		}
+		
+		reactParticles();
+		
 		//__________________________________________________________ psys.
 		
+//		addMagnetVector( new Vec3D() );
 		updateParticles( 0.1, 1 );
 		
 		//__________________________________________________________ render.
 		   
 		pgl.beginGL();
 
-		int i, p1, p2;
+		int i, j, p1, p2;
+		int bezDetail = 20;
+		float bt;
+		Point3D[] bezPoints;
+		Point3D bezPoint;
 		Particle pp1, pp2;
+		
 		for ( i=0; i<particles.size(); i++ )
-			particles.get( i ).render();
+//			particles.get( i ).render();
 
 		for ( i=0; i<springs.size(); i++ ) {
 			p1 	= springs.get( i ).from;
 			p2 	= springs.get( i ).to;
 			pp1	= particles.get( p1 );
 			pp2 = particles.get( p2 );
-			gl.glBegin( GL.GL_LINES );
+			bezPoints = new Point3D[4];
+			bezPoints[0] = new Point3D( pp1.loc.x, pp1.loc.y, pp1.loc.z );
+			bezPoints[1] = new Point3D( 0, 0, 0 );
+			bezPoints[2] = new Point3D( 0, 0, 0 );
+			bezPoints[3] = new Point3D( pp2.loc.x, pp2.loc.y, pp2.loc.z );
+
+			gl.glBegin( GL.GL_LINE_STRIP );
 			gl.glColor4f( 1, 1, 1, 0.1f );
-			gl.glVertex3f( pp1.loc.x, pp1.loc.y, pp1.loc.z );
-			gl.glVertex3f( pp2.loc.x, pp2.loc.y, pp2.loc.z );
+            for ( j=0; j<=bezDetail; j++) {
+            	bt 			= ((float) j) / ((float) bezDetail);			// percent of bezier.
+            	bezPoint 	= Point3D.bernstein( bt, bezPoints );		// generate new point.
+            	gl.glVertex3d( bezPoint.x, bezPoint.y, bezPoint.z );	// draw vertex for point.
+            }
+//			gl.glVertex3f( pp1.loc.x, pp1.loc.y, pp1.loc.z );
+//			gl.glVertex3f( pp2.loc.x, pp2.loc.y, pp2.loc.z );
 			gl.glEnd();
 		}
 
 		pgl.endGL();
+		
+		if( isRecording ) save("data/export/export"+ frameNumber++ +".png");
 	}
 	
 	public void mousePressed ()
 	{
 		addParticle( );
+	}
+	
+	public void initEss ()
+	{
+		Ess.start( this );
+
+		channel = new AudioChannel( "audio/cell.aif" );
+		
+		if( !isRecording )
+			channel.play( );
+		
+		fft = new FFT( 512 );
+		fft.equalizer( true );
+		fft.smooth = true;
+//		fft.damp( 0.5f );
 	}
 	
 	public void initParticles ()
@@ -141,8 +204,10 @@ public class Julaps_ParticleSpings extends PApplet
 		for( i=0; i<particles.size(); i++ ) {
 			Particle pp = particles.get( i );
 			Spring s			= new Spring();
-			s.springconstant	= 0.1f;
-			s.dampingconstant	= 0.05f;
+//			s.springconstant	= 0.1f;
+//			s.dampingconstant	= 0.05f;
+			s.springconstant	= 0.5f;
+			s.dampingconstant	= 0.5f;
 			s.restlength 		= 300;
 			s.from				= p.id;
 			s.to				= pp.id;
@@ -150,6 +215,20 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 		
 		particles.add( p );
+	}
+	
+	public void reactParticles ()
+	{
+		int i, si;
+		float di;
+		Spring s;
+		for( i=0; i<particles.size(); i++ )
+		{
+			di 		= i / (float)particles.size();
+			si 		= (int)(fft.spectrum.length * di);
+			s  		= springs.get( i );
+			s.restlength = max( 1, fft.spectrum[si] * 20000 );
+		}
 	}
 	
 	public void updateParticles ( double dt, int method )
@@ -289,6 +368,19 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 	}
 	
+	public void addMagnetVector ( Vec3D v )
+	{
+		Particle p;
+		Vec3D magnet;
+		int i;
+		for ( i=0; i<particles.size(); i++ ) 
+		{
+			p		= particles.get( i );
+			magnet	= p.loc.sub( v ).normalize();
+			p.vel.addSelf( magnet );
+		}
+	}
+	
 	class Particle
 	{
 		int id;
@@ -381,4 +473,38 @@ public class Julaps_ParticleSpings extends PApplet
 			dvdt = new Vec3D();
 		}
 	}
+	
+    private static class Point3D {			// Structure for a 3-dimensional point (NEW)
+        public double x, y, z;
+
+        public Point3D() {
+        }
+
+        public Point3D(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public Point3D add(Point3D q) {
+            return new Point3D(x + q.x, y + q.y, z + q.z);
+        }
+
+        public Point3D scale(double c) {
+            return new Point3D(x * c, y * c, z * c);
+        }
+
+        /**
+         * Calculates 3rd degree polynomial based on array of 4 points
+         * and a single variable (u) which is generally between 0 and 1
+         */
+        public static Point3D bernstein( float u, Point3D[] p ) {
+            Point3D a = p[0].scale(Math.pow(u, 3));
+            Point3D b = p[1].scale(3 * Math.pow(u, 2) * (1 - u));
+            Point3D c = p[2].scale(3 * u * Math.pow((1 - u), 2));
+            Point3D d = p[3].scale(Math.pow((1 - u), 3));
+
+            return a.add(b).add(c).add(d);
+        }
+    }
 }
