@@ -188,8 +188,6 @@ public class Julaps_TemporalAudio extends PApplet
 			
 			fftChannelLevel = totalSpec / fft.spectrum.length * 100;
 		}
-		
-		
 	}
 	
 	public void getLevel ()
