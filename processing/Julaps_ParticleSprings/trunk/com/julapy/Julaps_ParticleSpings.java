@@ -99,6 +99,7 @@ public class Julaps_ParticleSpings extends PApplet
 		//__________________________________________________________ psys.
 		
 		initParticles();
+		addCurveHop( -1 );
 	}
 	
 	public void initGL ()
@@ -121,7 +122,7 @@ public class Julaps_ParticleSpings extends PApplet
 
 		texLoader = new TextureLoader( gl );
 		texLoader.init();
-		texLoader.loadTexture( loadImage( "data/texture/p_01.png" ), true );
+		texLoader.loadTexture( loadImage( "data/texture/p_03.png" ), true );
 		
 		prim = new Primitive( gl );
 	}
@@ -131,7 +132,6 @@ public class Julaps_ParticleSpings extends PApplet
 		particleCallList = gl.glGenLists( 1 );
 		gl.glNewList( particleCallList, GL.GL_COMPILE );
 			gl.glBegin( GL.GL_QUADS );
-			gl.glColor4f( 1, 1, 1, 1 );
 			gl.glTexCoord2f( 0, 0 );	gl.glVertex3f( -0.5f, -0.5f, 0 );
 			gl.glTexCoord2f( 0, 1 );	gl.glVertex3f( -0.5f,  0.5f, 0 );
 			gl.glTexCoord2f( 1, 1 );	gl.glVertex3f(  0.5f,  0.5f, 0 );
@@ -149,8 +149,12 @@ public class Julaps_ParticleSpings extends PApplet
 		float camX = (float)mouseX/width * width - width/2;
 		float camY = (float)mouseY/height * height - height/2;
 		
-		cam.jump( camX, camY, 500 );
+		Vec3D c = curvehops.get( 0 ).loc.copy().normalize().scaleSelf( 350 );
+		cam.jump( c.x, c.y, c.z );
 		cam.aim( 0, 0, 0 );
+		
+//		cam.jump( camX, camY, 500 );
+//		cam.aim( 0, 0, 0 );
 		cam.feed();
 		cam.up();
 
@@ -265,16 +269,18 @@ public class Julaps_ParticleSpings extends PApplet
 		for ( i=0; i<curvehops.size(); i++ ) {
 			CurveHop curvehop = curvehops.get( i );
 			if( curvehop.playedOut )
-				curvehops.remove( i-- );
-			else
 			{
-				if( !curvehop.playedIn )
-					curvehop.playInStep();
-				else
-					curvehop.playOutStep();
-				
-				curvehop.render();
+				p = particles.get( (int)(random(particles.size()-1)) );
+				c = p.loc.copy().scaleSelf( 2 );
+				curvehop.setNewDestination( p, c );
 			}
+
+			if( !curvehop.playedIn )
+				curvehop.playInStep();
+			else
+				curvehop.playOutStep();
+				
+			curvehop.render();
 		}
 		
 		pgl.endGL();
@@ -289,11 +295,10 @@ public class Julaps_ParticleSpings extends PApplet
 //		centerPush = 500;
 		
 		/* add curve */
-		Vec3D p1 = particles.get( (int)(random(particles.size()-1)) ).loc;
-		Vec3D p2 = particles.get( (int)(random(particles.size()-1)) ).loc;
-		Vec3D c1 = p1.copy().scaleSelf( 2 );
-		Vec3D c2 = p2.copy().scaleSelf( 2 );
-		curvehops.add( new CurveHop( p1, c1, c2, p2 ));
+		int i;
+		for( i=0; i<4; i++ ) {
+			addCurveHop( -1 );
+		}
 	}
 	
 	public void keyPressed ()
@@ -311,6 +316,11 @@ public class Julaps_ParticleSpings extends PApplet
 				tfu.writeFloatLine( pp );
 			}
 			tfu.closeWriter();
+		}
+		
+		if( key == 'r' )
+		{
+			isRecording = !isRecording;
 		}
 	}
 	
@@ -583,6 +593,22 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 	}
 	
+	public void addCurveHop ( int pid )
+	{
+		Particle p1, p2;
+		Vec3D c1, c2;
+		
+		if( pid == -1 )
+			p1 = particles.get( (int)(random(particles.size()-1)) );
+		else
+			p1 = particles.get( pid );
+		
+		p2 = particles.get( (int)(random(particles.size()-1)) );
+		c1 = p1.loc.copy().scaleSelf( 2 );
+		c2 = p2.loc.copy().scaleSelf( 2 );
+		curvehops.add( new CurveHop( p1, c1, c2, p2 ));
+	}
+	
 	class Particle
 	{
 		int id;
@@ -593,12 +619,15 @@ public class Julaps_ParticleSpings extends PApplet
 		Vec3D force;
 		Vec3D center;
 		Boolean fixed;
+		float r, g, b;
 		
 		public Particle()
 		{
 			loc		= new Vec3D();
 			vel		= new Vec3D();
 			force	= new Vec3D();
+			
+			r = g = b = 1;
 		}
 		
 		public void update ()
@@ -621,11 +650,20 @@ public class Julaps_ParticleSpings extends PApplet
 			float angleZ   = atan2( deltaY, deltaX ); 
 			float angleY   = atan2( sqrt( sq( deltaX ) + sq( deltaY ) ), deltaZ );
 
+//			float r = mouseX / (float)width;
+//			float g = mouseY / (float)height;
+//			float b = max( 0, sin( (frameCount / (float)720) * 2 * PI  ) );
+			
+			// r = 0-1;
+			// g = 0.3;
+			// b = 0.42;
+			
 			gl.glPushMatrix();
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			gl.glRotatef( degrees( angleZ ), 0, 0, 1 );
 			gl.glRotatef( degrees( angleY ), 0, 1, 0 );
 			
+			gl.glColor4f( r, g, b, 1 );
 			gl.glScalef( renderSize, renderSize, 0 );
 			gl.glCallList( particleCallList );
 			gl.glPopMatrix();
@@ -651,25 +689,54 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	class CurveHop
 	{
-		Vec3D p1, p2, c1, c2;
+		Particle p1, p2;
+		Vec3D c1, c2;
+		Vec3D loc;
 		float progressIn = 0;
 		float progressOut = 0;
 		float progressStep = 0.04f;
 		int bezierDetail = 50;
 		boolean playedIn = false;
 		boolean playedOut = false;
+		float r, g, b;
 		
-		public CurveHop( Vec3D p1, Vec3D c1, Vec3D c2, Vec3D p2 )
+		public CurveHop( Particle p1, Vec3D c1, Vec3D c2, Particle p2 )
 		{
 			this.p1 = p1;
 			this.p2 = p2;
 			this.c1 = c1;
 			this.c2 = c2;
+			
+			loc = p1.loc.copy();
+			
+			r = random( 0.2f, 0.4f );
+			g = random( 0.2f, 0.4f );
+			b = random( 0.2f, 0.4f );
+		}
+		
+		public void setNewDestination ( Particle p, Vec3D c )
+		{
+			p1 = p2;
+			p2 = p;
+			
+			c1 = c2;
+			c2 = c;
+			
+			progressOut = 0;
+			progressIn = 0;
+			
+			playedIn = false;
+			playedOut = false;
 		}
 		
 		public void playInStep ()
 		{
 			progressOut += progressStep;
+			
+			p1.r -= r * progressStep;
+			p1.g -= g * progressStep;
+			p1.b -= b * progressStep;
+			
 			if( progressOut >= 1 )
 				playedIn = true;
 		}
@@ -691,10 +758,10 @@ public class Julaps_ParticleSpings extends PApplet
 			Vec3D prev, next, up, right, look;
 			
 			bezPoints = new Point3D[4];
-			bezPoints[0] = new Point3D( p1.x, p1.y, p1.z );
-			bezPoints[1] = new Point3D( c1.x, c1.y, c1.z );
-			bezPoints[2] = new Point3D( c2.x, c2.y, c2.z );
-			bezPoints[3] = new Point3D( p2.x, p2.y, p2.z );
+			bezPoints[0] = new Point3D( p2.loc.x, p2.loc.y, p2.loc.z );
+			bezPoints[1] = new Point3D( c2.x, c2.y, c2.z );
+			bezPoints[2] = new Point3D( c1.x, c1.y, c1.z );
+			bezPoints[3] = new Point3D( p1.loc.x, p1.loc.y, p1.loc.z );
 
 			gl.glBegin( GL.GL_QUAD_STRIP );
 			
@@ -728,7 +795,8 @@ public class Julaps_ParticleSpings extends PApplet
         	        /* draw line */
 //            		gl.glVertex3d( nextPoint.x, nextPoint.y, nextPoint.z );	// draw vertex for point.
             		
-            		prevPoint = nextPoint;
+            		prevPoint 	= nextPoint;
+            		loc 		= next.copy();
             	}
             }
 			gl.glEnd();
