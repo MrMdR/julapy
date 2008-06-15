@@ -14,6 +14,7 @@ import javax.media.opengl.GL;
 
 import com.julapy.opengl.Primitive;
 import com.julapy.opengl.TextureLoader;
+import com.julapy.utils.TextFileUtil;
 
 import krister.Ess.AudioChannel;
 import krister.Ess.Ess;
@@ -54,7 +55,8 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	int frameNumber = 0;
 	int framesPerSec = 25;
-	boolean isRecording = false;	
+	boolean isRecording = false;
+	boolean readFromFile = true;
 	
 	public void setup()
 	{
@@ -294,6 +296,24 @@ public class Julaps_ParticleSpings extends PApplet
 		curvehops.add( new CurveHop( p1, c1, c2, p2 ));
 	}
 	
+	public void keyPressed ()
+	{
+		if( key == 's' )
+		{
+			TextFileUtil tfu = new TextFileUtil( this );
+			tfu.createWriter( "data/particle_positions.txt" );
+			for( int i=0; i<particles.size(); i++ ) {
+				Particle p = particles.get( i );
+				float[] pp = new float[3];
+				pp[0] = p.loc.x;
+				pp[1] = p.loc.y;
+				pp[2] = p.loc.z;
+				tfu.writeFloatLine( pp );
+			}
+			tfu.closeWriter();
+		}
+	}
+	
 	public void initEss ()
 	{
 		Ess.start( this );
@@ -324,6 +344,20 @@ public class Julaps_ParticleSpings extends PApplet
 		for ( i=0; i<nparticles; i++ ) {
 			addParticle();
 		}
+
+		if( readFromFile )
+		{
+			TextFileUtil tfu = new TextFileUtil( this );
+			tfu.readDataFromFile( "data/particle_positions.txt" );
+			for( i=0; i<particles.size(); i++ ) {
+				float[] pp = tfu.readFloatLine();
+				p = particles.get( i );
+				p.loc.x = pp[0];
+				p.loc.y = pp[1];
+				p.loc.z = pp[2];
+			}
+		}
+		
 	}
 
 	public void addParticle ( )
