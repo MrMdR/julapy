@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
+import com.julapy.opengl.Primitive;
 import com.julapy.opengl.TextureLoader;
 
 import krister.Ess.AudioChannel;
@@ -28,6 +29,8 @@ public class Julaps_ParticleSpings extends PApplet
 	PGraphicsOpenGL pgl;
 	GL gl;
 	TextureLoader texLoader;
+	Primitive prim;
+	int particleCallList;
 	
 	Camera cam;
 	Vec3D camTarget;
@@ -41,16 +44,19 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	ArrayList<Particle> particles;
 	ArrayList<Spring> springs;
+	ArrayList<CurveHop> curvehops;
 	int nparticles = 0;
 	double gravitational = 0;
 	double viscousdrag = 0.1;
-	int particleCloudSize = 500;
+	int particleCloudSize = 1;
+	float centerPush = 200;
+	float centerPull = 1;
 	
 	int frameNumber = 0;
 	int framesPerSec = 25;
 	boolean isRecording = false;	
 	
-	public void setup() 
+	public void setup()
 	{
 		size( 1280, 720, OPENGL );
 
@@ -60,9 +66,18 @@ public class Julaps_ParticleSpings extends PApplet
 		
 		hint(ENABLE_OPENGL_4X_SMOOTH);
 
+		//__________________________________________________________ init.
+		
+		nparticles	= 300;
+
+		particles	= new ArrayList<Particle>();
+		springs		= new ArrayList<Spring>();
+		curvehops	= new ArrayList<CurveHop>();
+		
 		//__________________________________________________________ opengl.
 		
 		initGL();
+		initTextureList();
 		
 		//__________________________________________________________ camera.		
 		
@@ -105,6 +120,22 @@ public class Julaps_ParticleSpings extends PApplet
 		texLoader = new TextureLoader( gl );
 		texLoader.init();
 		texLoader.loadTexture( loadImage( "data/texture/p_01.png" ), true );
+		
+		prim = new Primitive( gl );
+	}
+	
+	private void initTextureList ()
+	{
+		particleCallList = gl.glGenLists( 1 );
+		gl.glNewList( particleCallList, GL.GL_COMPILE );
+			gl.glBegin( GL.GL_QUADS );
+			gl.glColor4f( 1, 1, 1, 1 );
+			gl.glTexCoord2f( 0, 0 );	gl.glVertex3f( -0.5f, -0.5f, 0 );
+			gl.glTexCoord2f( 0, 1 );	gl.glVertex3f( -0.5f,  0.5f, 0 );
+			gl.glTexCoord2f( 1, 1 );	gl.glVertex3f(  0.5f,  0.5f, 0 );
+			gl.glTexCoord2f( 1, 0 );	gl.glVertex3f(  0.5f, -0.5f, 0 );
+			gl.glEnd();
+		gl.glEndList();
 	}
 	
 	public void draw() 
@@ -137,12 +168,18 @@ public class Julaps_ParticleSpings extends PApplet
 			fft.getSpectrum( channel );
 		}
 		
-		reactParticles();
+//		reactParticles();
 		
 		//__________________________________________________________ psys.
 		
-//		addMagnetVector( new Vec3D() );
-		updateParticles( 0.1, 1 );
+//		if( mousePressed )
+//			addMagnetVector( new Vec3D() );
+		
+		centerPush = max( 200, centerPush *= 0.9f );
+
+		changeSpringLength();
+		
+		updateParticles( 0.1, 0 );
 		
 		//__________________________________________________________ render.
 		   
@@ -150,42 +187,94 @@ public class Julaps_ParticleSpings extends PApplet
 
 		int i, j, p1, p2;
 		int bezDetail = 20;
+		int sphereSize = 130;
 		float bt;
 		Point3D[] bezPoints;
 		Point3D bezPoint;
-		Particle pp1, pp2;
+		Particle p, pp1, pp2;
 		
+		/* draw sphere */
+		gl.glPushMatrix();
+		gl.glScalef( sphereSize, sphereSize, sphereSize );
+		gl.glColor4f( 0, 0, 0, 1 );
+		prim.drawSphere( 30 );
+		gl.glPopMatrix();
+		
+		/* draw particles */
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		gl.glDepthMask( false );
 		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
-		for ( i=0; i<particles.size(); i++ )
-			particles.get( i ).render();
-
-		gl.glDisable(GL.GL_TEXTURE_2D);
-		gl.glDepthMask( true );
-		for ( i=0; i<springs.size(); i++ ) {
-			p1 	= springs.get( i ).from;
-			p2 	= springs.get( i ).to;
-			pp1	= particles.get( p1 );
-			pp2 = particles.get( p2 );
-			bezPoints = new Point3D[4];
-			bezPoints[0] = new Point3D( pp1.loc.x, pp1.loc.y, pp1.loc.z );
-			bezPoints[1] = new Point3D( 0, 0, 0 );
-			bezPoints[2] = new Point3D( 0, 0, 0 );
-			bezPoints[3] = new Point3D( pp2.loc.x, pp2.loc.y, pp2.loc.z );
-
-			gl.glBegin( GL.GL_LINE_STRIP );
-			gl.glColor4f( 1, 1, 1, 0.1f );
-            for ( j=0; j<=bezDetail; j++) {
-            	bt 			= ((float) j) / ((float) bezDetail);			// percent of bezier.
-            	bezPoint 	= Point3D.bernstein( bt, bezPoints );		// generate new point.
-            	gl.glVertex3d( bezPoint.x, bezPoint.y, bezPoint.z );	// draw vertex for point.
-            }
-//			gl.glVertex3f( pp1.loc.x, pp1.loc.y, pp1.loc.z );
-//			gl.glVertex3f( pp2.loc.x, pp2.loc.y, pp2.loc.z );
-			gl.glEnd();
+		for ( i=0; i<particles.size(); i++ ) {
+			p = particles.get( i );
+			p.render();
 		}
 
+		/* draw lines between particles and center */
+//		gl.glDisable(GL.GL_TEXTURE_2D);
+//		for ( i=0; i<particles.size(); i++ ) {
+//			p = particles.get( i );
+//			gl.glBegin( GL.GL_LINES );
+//			gl.glColor4f( 1, 1, 1, 0.1f );
+//			gl.glVertex3f( p.loc.x, p.loc.y, p.loc.z );
+//			gl.glVertex3f( 0, 0, 0 );
+//			gl.glEnd();
+//		}
+		
+		/* draw bezier spring connections */
+//		gl.glDisable(GL.GL_TEXTURE_2D);
+//		gl.glDepthMask( true );
+//		for ( i=0; i<springs.size(); i++ ) {
+//			p1 	= springs.get( i ).from;
+//			p2 	= springs.get( i ).to;
+//			pp1	= particles.get( p1 );
+//			pp2 = particles.get( p2 );
+//			bezPoints = new Point3D[4];
+//			bezPoints[0] = new Point3D( pp1.loc.x, pp1.loc.y, pp1.loc.z );
+//			bezPoints[1] = new Point3D( 0, 0, 0 );
+//			bezPoints[2] = new Point3D( 0, 0, 0 );
+//			bezPoints[3] = new Point3D( pp2.loc.x, pp2.loc.y, pp2.loc.z );
+//
+//			gl.glBegin( GL.GL_LINE_STRIP );
+//			gl.glColor4f( 1, 1, 1, 0.1f );
+//            for ( j=0; j<=bezDetail; j++) {								// draw bezier connections.
+//            	bt 			= ((float) j) / ((float) bezDetail);		// percent of bezier.
+//            	bezPoint 	= Point3D.bernstein( bt, bezPoints );		// generate new point.
+//            	gl.glVertex3d( bezPoint.x, bezPoint.y, bezPoint.z );	// draw vertex for point.
+//            }
+//			gl.glEnd();
+//		}
+
+		/* draw straight spring connections */
+//		gl.glDisable(GL.GL_TEXTURE_2D);
+//		gl.glDepthMask( true );
+//		for ( i=0; i<springs.size(); i++ ) {
+//			p1 	= springs.get( i ).from;
+//			p2 	= springs.get( i ).to;
+//			pp1	= particles.get( p1 );
+//			pp2 = particles.get( p2 );
+//			gl.glVertex3f( pp1.loc.x, pp1.loc.y, pp1.loc.z );
+//			gl.glVertex3f( pp2.loc.x, pp2.loc.y, pp2.loc.z );
+//			gl.glEnd();
+//		}
+		
+		/* draw curve hops */
+		gl.glDisable(GL.GL_TEXTURE_2D);
+		gl.glDepthMask( true );
+		for ( i=0; i<curvehops.size(); i++ ) {
+			CurveHop curvehop = curvehops.get( i );
+			if( curvehop.playedOut )
+				curvehops.remove( i-- );
+			else
+			{
+				if( !curvehop.playedIn )
+					curvehop.playInStep();
+				else
+					curvehop.playOutStep();
+				
+				curvehop.render();
+			}
+		}
+		
 		pgl.endGL();
 		
 		if( isRecording ) save("data/export/export"+ frameNumber++ +".png");
@@ -193,7 +282,16 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	public void mousePressed ()
 	{
-		addParticle( );
+//		addParticle( );
+		
+//		centerPush = 500;
+		
+		/* add curve */
+		Vec3D p1 = particles.get( (int)(random(particles.size()-1)) ).loc;
+		Vec3D p2 = particles.get( (int)(random(particles.size()-1)) ).loc;
+		Vec3D c1 = p1.copy().scaleSelf( 2 );
+		Vec3D c2 = p2.copy().scaleSelf( 2 );
+		curvehops.add( new CurveHop( p1, c1, c2, p2 ));
 	}
 	
 	public void initEss ()
@@ -203,7 +301,7 @@ public class Julaps_ParticleSpings extends PApplet
 		channel = new AudioChannel( "audio/cell.aif" );
 		
 		if( !isRecording )
-			channel.play( );
+			channel.loop();
 		
 		fft = new FFT( 512 );
 		fft.equalizer( true );
@@ -214,11 +312,14 @@ public class Julaps_ParticleSpings extends PApplet
 	public void initParticles ()
 	{
 		int i;
-		nparticles	= 30;
 
-		particles	= new ArrayList<Particle>();
-		springs		= new ArrayList<Spring>();
-
+		/* center particle */
+		Particle p	= new Particle();
+		p.id		= particles.size();
+		p.mass 		= 1;
+		p.fixed 	= true;
+		particles.add( p );
+		
 		/* Add particles */
 		for ( i=0; i<nparticles; i++ ) {
 			addParticle();
@@ -234,18 +335,25 @@ public class Julaps_ParticleSpings extends PApplet
 		p.loc.x		= random(particleCloudSize) - particleCloudSize/2;
 		p.loc.y		= random(particleCloudSize) - particleCloudSize/2;
 		p.loc.z		= random(particleCloudSize) - particleCloudSize/2;
-
+		
 		int i;
 		for( i=0; i<particles.size(); i++ ) {
 			Particle pp = particles.get( i );
 			Spring s			= new Spring();
-//			s.springconstant	= 0.1f;
-//			s.dampingconstant	= 0.05f;
-			s.springconstant	= 0.5f;
-			s.dampingconstant	= 0.5f;
-			s.restlength 		= 300;
 			s.from				= p.id;
 			s.to				= pp.id;
+			if( s.to == 0 )
+			{
+				s.springconstant	= 0.1f;
+				s.dampingconstant	= 0.05f;
+				s.restlength 		= 180;
+			}
+			else
+			{
+				s.springconstant	= 0.1f;
+				s.dampingconstant	= 0.05f;
+				s.restlength 		= 200;
+			}
 			springs.add( s );
 		}
 		
@@ -272,26 +380,26 @@ public class Julaps_ParticleSpings extends PApplet
 		Particle[] ptmp;
 		Particle p;
 		Derivatives[] deriv = new Derivatives[particles.size()];
+		Vec3D center;
 
 		switch ( method )
 		{
 			case 0:                                   /* Euler */
-				calculateForces(  );
-				calculateDerivatives( deriv );
+				calculateSpringForces(  );
 				for ( i=0; i<particles.size(); i++ ) 
 				{
 					p		= particles.get( i );
-					p.loc.x += deriv[i].dpdt.x * dt;
-					p.loc.y += deriv[i].dpdt.y * dt;
-					p.loc.z += deriv[i].dpdt.z * dt;
-					p.vel.x += deriv[i].dvdt.x * dt;
-					p.vel.y += deriv[i].dvdt.y * dt;
-					p.vel.z += deriv[i].dvdt.z * dt;
+					p.loc.x += p.vel.x * dt;
+					p.loc.y += p.vel.y * dt;
+					p.loc.z += p.vel.z * dt;
+					p.vel.x += p.force.x / p.mass * dt;
+					p.vel.y += p.force.y / p.mass * dt;
+					p.vel.z += p.force.z / p.mass * dt;
 				}
 			break;
 			
 			case 1:                                   /* Midpoint */
-				calculateForces( );
+				calculateSpringForces( );
 				calculateDerivatives( deriv );
 				ptmp = new Particle[particles.size()];
 				for ( i=0; i<particles.size(); i++ ) 
@@ -304,7 +412,7 @@ public class Julaps_ParticleSpings extends PApplet
 					ptmp[i].loc.y += deriv[i].dvdt.y * dt / 2;
 					ptmp[i].loc.z += deriv[i].dvdt.z * dt / 2;
 				}
-				calculateForces( );
+				calculateSpringForces( );
 				calculateDerivatives( deriv );
 				for ( i=0; i<particles.size(); i++ ) 
 				{
@@ -320,12 +428,14 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 	}
 
-	public void calculateForces ( )
+	public void calculateSpringForces ( )
 	{
 		int i = 0, p1 = 0, p2 = 0;
 		float len, dx, dy, dz;
 		Vec3D down	= new Vec3D( 0, 0, -1 );
+		Vec3D center = new Vec3D( );
 		Vec3D force = new Vec3D( );
+		Vec3D out = new Vec3D();
 		Particle p, pp1, pp2;
 		Spring s;
 
@@ -370,13 +480,14 @@ public class Julaps_ParticleSpings extends PApplet
 			force.z  = s.springconstant  * (len - s.restlength);
 			force.z += s.dampingconstant * (pp1.vel.z - pp2.vel.z) * dz / len;
 			force.z *= - dz / len;
-			if (!pp1.fixed) 
+			
+			if( !pp1.fixed )
 			{
 				pp1.force.x += force.x;
 				pp1.force.y += force.y;
 				pp1.force.z += force.z;
 			}
-			if (!pp2.fixed) 
+			if( !pp2.fixed ) 
 			{
 				pp2.force.x -= force.x;
 				pp2.force.y -= force.y;
@@ -403,6 +514,27 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 	}
 	
+	public void changeSpringLength ()
+	{
+		int i;
+		Spring s;
+		for( i=0; i<springs.size(); i++ ) {
+			s = springs.get( i );
+			if( s.to == 0 )
+			{
+				s.springconstant	= 0.1f;
+				s.dampingconstant	= 0.05f;
+				s.restlength 		= centerPush * 0.9f;
+			}
+			else
+			{
+				s.springconstant	= 0.1f;
+				s.dampingconstant	= 0.05f;
+				s.restlength 		= centerPush;
+			}
+		}
+	}
+	
 	public void addMagnetVector ( Vec3D v )
 	{
 		Particle p;
@@ -412,6 +544,7 @@ public class Julaps_ParticleSpings extends PApplet
 		{
 			p		= particles.get( i );
 			magnet	= p.loc.sub( v ).normalize();
+			magnet.scaleSelf( centerPush );
 			p.vel.addSelf( magnet );
 		}
 	}
@@ -424,6 +557,7 @@ public class Julaps_ParticleSpings extends PApplet
 		Vec3D loc;
 		Vec3D vel;
 		Vec3D force;
+		Vec3D center;
 		Boolean fixed;
 		
 		public Particle()
@@ -440,28 +574,26 @@ public class Julaps_ParticleSpings extends PApplet
 		
 		public void render ()
 		{
-			float deltaX   = camTarget.x - camPosition.x;
-			float deltaY   = camTarget.y - camPosition.y;
-			float deltaZ   = camTarget.z - camPosition.z;
+			/* face particle to camera */
+//			float deltaX   = camTarget.x - camPosition.x;
+//			float deltaY   = camTarget.y - camPosition.y;
+//			float deltaZ   = camTarget.z - camPosition.z;
 
-			float angleZ   = atan2( deltaY,deltaX ); 
-			float hyp      = sqrt( sq( deltaX ) + sq( deltaY ) ); 
-			float angleY   = atan2( hyp,deltaZ );
-			
+			/* face particle outwards from center */
+			float deltaX   = loc.x;
+			float deltaY   = loc.y;
+			float deltaZ   = loc.z;
+
+			float angleZ   = atan2( deltaY, deltaX ); 
+			float angleY   = atan2( sqrt( sq( deltaX ) + sq( deltaY ) ), deltaZ );
+
 			gl.glPushMatrix();
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			gl.glRotatef( degrees( angleZ ), 0, 0, 1 );
 			gl.glRotatef( degrees( angleY ), 0, 1, 0 );
+			
 			gl.glScalef( renderSize, renderSize, 0 );
-			gl.glBegin( GL.GL_QUADS );
-			
-			gl.glColor4f( 1, 1, 1, 1 );
-			gl.glTexCoord2f( 0, 0 );	gl.glVertex3f( -0.5f, -0.5f, 0 );
-			gl.glTexCoord2f( 0, 1 );	gl.glVertex3f( -0.5f,  0.5f, 0 );
-			gl.glTexCoord2f( 1, 1 );	gl.glVertex3f(  0.5f,  0.5f, 0 );
-			gl.glTexCoord2f( 1, 0 );	gl.glVertex3f(  0.5f, -0.5f, 0 );
-			
-			gl.glEnd();
+			gl.glCallList( particleCallList );
 			gl.glPopMatrix();
 		}
 		
@@ -480,6 +612,92 @@ public class Julaps_ParticleSpings extends PApplet
 		public String toString()
 		{
 			return "particle " + id + " - loc :: " + loc.toString() + " - vel :: " + vel.toString();
+		}
+	}
+	
+	class CurveHop
+	{
+		Vec3D p1, p2, c1, c2;
+		float progressIn = 0;
+		float progressOut = 0;
+		float progressStep = 0.04f;
+		int bezierDetail = 50;
+		boolean playedIn = false;
+		boolean playedOut = false;
+		
+		public CurveHop( Vec3D p1, Vec3D c1, Vec3D c2, Vec3D p2 )
+		{
+			this.p1 = p1;
+			this.p2 = p2;
+			this.c1 = c1;
+			this.c2 = c2;
+		}
+		
+		public void playInStep ()
+		{
+			progressOut += progressStep;
+			if( progressOut >= 1 )
+				playedIn = true;
+		}
+		
+		public void playOutStep ()
+		{
+			progressIn += progressStep;
+			if( progressIn >= 1 )
+				playedOut = true;
+		}
+		
+		public void render ()
+		{
+			int j, j1, j2;
+			float dt;
+			Point3D[] bezPoints;
+			Point3D prevPoint = new Point3D();
+			Point3D nextPoint = new Point3D();
+			Vec3D prev, next, up, right, look;
+			
+			bezPoints = new Point3D[4];
+			bezPoints[0] = new Point3D( p1.x, p1.y, p1.z );
+			bezPoints[1] = new Point3D( c1.x, c1.y, c1.z );
+			bezPoints[2] = new Point3D( c2.x, c2.y, c2.z );
+			bezPoints[3] = new Point3D( p2.x, p2.y, p2.z );
+
+			gl.glBegin( GL.GL_QUAD_STRIP );
+			
+			j1 = (int)( bezierDetail * progressIn );
+			j2 = (int)( bezierDetail * progressOut );
+            for ( j=j1; j<=j2; j++) {									// draw bezier connections.
+            	dt = ((float) j) / ((float) bezierDetail);				// percent of bezier.
+            	if( j == j1 ) 
+            		prevPoint = Point3D.bernstein( dt, bezPoints );			// generate new point.
+            	else
+            	{
+            		nextPoint = Point3D.bernstein( dt, bezPoints );			// generate new point.
+            		
+            		// cennect prev point with next point.
+            		prev	= new Vec3D( (float)prevPoint.x, (float)prevPoint.y, (float)prevPoint.z );
+            		next	= new Vec3D( (float)nextPoint.x, (float)nextPoint.y, (float)nextPoint.z );
+            		up		= prev.sub( next );
+            		right	= up.cross( prev ).normalize();
+            		look	= up.cross( right ).normalize();
+            		right	= up.cross( look ).normalize();
+  
+            		float ss	= sin( dt * PI );		// sine sale.
+            		float xOff	= right.x * 6 * ss;
+            		float yOff	= right.y * 6 * ss;
+            		float zOff	= right.z * 6 * ss;
+        	        
+        	        gl.glColor4f( 1, 0.75f * ss, 0.23f * ss, max( 0.2f, ss ) );
+        	        gl.glVertex3f( prev.x - xOff, prev.y - yOff, prev.z - zOff );
+        	        gl.glVertex3f( prev.x + xOff, prev.y + yOff, prev.z + zOff );
+            		
+        	        /* draw line */
+//            		gl.glVertex3d( nextPoint.x, nextPoint.y, nextPoint.z );	// draw vertex for point.
+            		
+            		prevPoint = nextPoint;
+            	}
+            }
+			gl.glEnd();
 		}
 	}
 	

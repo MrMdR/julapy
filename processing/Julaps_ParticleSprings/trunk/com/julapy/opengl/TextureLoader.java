@@ -1,11 +1,8 @@
 package com.julapy.opengl;
 
 import java.nio.ByteBuffer;
-
 import javax.media.opengl.GL;
-
 import com.sun.opengl.util.BufferUtil;
-
 import processing.core.PImage;
 
 public class TextureLoader 
