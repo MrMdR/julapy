@@ -212,6 +212,8 @@ public class Julaps_Star extends PApplet
 		if( !mousePressed && isMouseDown ) isMouseDown = false;
 		
 		pgl.beginGL();
+
+		// IDEA :: draw a sphere for the center of the star to give it more depth.
 		
 		renderNebulas();
 		renderStars();
@@ -350,19 +352,28 @@ public class Julaps_Star extends PApplet
 		{
 			loc = camPosition.normalize().invert();
 			loc.scaleSelf( 100 );
-
+			
+//			Vec3D look	= camPosition.subSelf( loc ).normalize();
+//			Vec3D camUp	= new Vec3D( cam.up()[0], cam.up()[1], cam.up()[2] );
+//			Vec3D right = camUp.cross( look );
+//			Vec3D up	= look.cross( right );
+//			
+//			float degX	= degrees( right.angleBetween( Vec3D.X_AXIS ) );
+//			float degY	= degrees( up.angleBetween( Vec3D.Y_AXIS ) );
+			
 			float deltaX   = camTarget.x - camPosition.x;
 			float deltaY   = camTarget.y - camPosition.y;
 			float deltaZ   = camTarget.z - camPosition.z;
 
-			float angleZ   = atan2( deltaY,deltaX ); 
-			float hyp      = sqrt( sq( deltaX ) + sq( deltaY ) ); 
-			float angleY   = atan2( hyp,deltaZ );
+			float angleZ   = atan2( deltaY, deltaX );
+			float angleY   = atan2( sqrt( sq( deltaX ) + sq( deltaY ) ), deltaZ );
 			
 			gl.glPushMatrix();
 			gl.glTranslatef( loc.x, loc.y, loc.z );
-			gl.glRotatef( degrees( angleZ ), 0, 0,    1.0f );
-			gl.glRotatef( degrees( angleY ), 0, 1.0f, 0    );
+			gl.glRotatef( degrees( angleZ ), 0, 0, 1 );
+			gl.glRotatef( degrees( angleY ), 0, 1, 0 );
+//			gl.glRotatef( degX, 1, 0, 0 );
+//			gl.glRotatef( degY, 0, 1, 0 );
 			gl.glScalef( s, s, 0 );
 			gl.glBegin( GL.GL_QUADS );
 			
