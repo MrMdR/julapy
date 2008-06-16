@@ -22,7 +22,6 @@ import krister.Ess.FFT;
 import damkjer.ocd.Camera;
 import processing.opengl.PGraphicsOpenGL;
 import processing.core.PApplet;
-import processing.core.PImage;
 import toxi.geom.Vec3D;
 
 public class Julaps_ParticleSpings extends PApplet 
@@ -46,6 +45,8 @@ public class Julaps_ParticleSpings extends PApplet
 	ArrayList<Particle> particles;
 	ArrayList<Spring> springs;
 	ArrayList<CurveHop> curvehops;
+	CurveHop camCurve;
+	
 	int nparticles = 0;
 	double gravitational = 0;
 	double viscousdrag = 0.1;
@@ -55,7 +56,7 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	int frameNumber = 0;
 	int framesPerSec = 25;
-	boolean isRecording = false;
+	boolean isRecording = true;
 	boolean readFromFile = true;
 	
 	public void setup()
@@ -99,7 +100,11 @@ public class Julaps_ParticleSpings extends PApplet
 		//__________________________________________________________ psys.
 		
 		initParticles();
-		addCurveHop( -1 );
+		
+		for( int i=0; i<1; i++ ) {
+			addCurveHop( );
+		}
+		camCurve = curvehops.get( 0 );
 	}
 	
 	public void initGL ()
@@ -149,7 +154,8 @@ public class Julaps_ParticleSpings extends PApplet
 		float camX = (float)mouseX/width * width - width/2;
 		float camY = (float)mouseY/height * height - height/2;
 		
-		Vec3D c = curvehops.get( 0 ).loc.copy().normalize().scaleSelf( 350 );
+		Vec3D c;
+		c = camCurve.loc.copy().normalize().scaleSelf( 350 );
 		cam.jump( c.x, c.y, c.z );
 		cam.aim( 0, 0, 0 );
 		
@@ -266,19 +272,24 @@ public class Julaps_ParticleSpings extends PApplet
 		/* draw curve hops */
 		gl.glDisable(GL.GL_TEXTURE_2D);
 		gl.glDepthMask( true );
-		for ( i=0; i<curvehops.size(); i++ ) {
-			CurveHop curvehop = curvehops.get( i );
-			if( curvehop.playedOut )
-			{
-				p = particles.get( (int)(random(particles.size()-1)) );
-				c = p.loc.copy().scaleSelf( 2 );
-				curvehop.setNewDestination( p, c );
-			}
+		CurveHop curvehop;
+		for ( i=0; i<curvehops.size(); i++ ) 
+		{
+			curvehop = curvehops.get( i );
+
+			if( curvehop.playedOut ) 
+				curvehops.remove( i-- );
 
 			if( !curvehop.playedIn )
+			{
 				curvehop.playInStep();
+			}
 			else
+			{
 				curvehop.playOutStep();
+				if( curvehop.spawn )
+					curvehop.spawn();
+			}
 				
 			curvehop.render();
 		}
@@ -297,7 +308,7 @@ public class Julaps_ParticleSpings extends PApplet
 		/* add curve */
 		int i;
 		for( i=0; i<4; i++ ) {
-			addCurveHop( -1 );
+			addCurveHop( );
 		}
 	}
 	
@@ -331,7 +342,7 @@ public class Julaps_ParticleSpings extends PApplet
 		channel = new AudioChannel( "audio/cell.aif" );
 		
 		if( !isRecording )
-			channel.loop();
+			channel.play( Ess.FOREVER );
 		
 		fft = new FFT( 512 );
 		fft.equalizer( true );
@@ -341,7 +352,7 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	public void initParticles ()
 	{
-		int i;
+		int i, j;
 
 		/* center particle */
 		Particle p	= new Particle();
@@ -350,11 +361,12 @@ public class Julaps_ParticleSpings extends PApplet
 		p.fixed 	= true;
 		particles.add( p );
 		
-		/* Add particles */
+		/* add particles */
 		for ( i=0; i<nparticles; i++ ) {
 			addParticle();
 		}
 
+		/* read particle postions from file */
 		if( readFromFile )
 		{
 			TextFileUtil tfu = new TextFileUtil( this );
@@ -368,6 +380,21 @@ public class Julaps_ParticleSpings extends PApplet
 			}
 		}
 		
+		/* work out particle neighbours */
+		Particle p1;
+		Particle p2;
+		for ( i=0; i<particles.size(); i++ ) {
+			p1 = particles.get( i );
+			for ( j=0; j<particles.size(); j++ ) {
+				p2 = particles.get( j );
+				if( p1 != p2 )
+				{
+					float d = p1.loc.distanceTo( p2.loc );
+					if( d < 70 )
+						p1.neighbours.add( p2 );
+				}
+			}
+		}
 	}
 
 	public void addParticle ( )
@@ -593,20 +620,16 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 	}
 	
-	public void addCurveHop ( int pid )
+	public void addCurveHop ( )
 	{
 		Particle p1, p2;
 		Vec3D c1, c2;
 		
-		if( pid == -1 )
-			p1 = particles.get( (int)(random(particles.size()-1)) );
-		else
-			p1 = particles.get( pid );
-		
-		p2 = particles.get( (int)(random(particles.size()-1)) );
+		p1 = particles.get( (int)(random(particles.size()-1)) );
+		p2 = p1.neighbours.get( (int)(random(p1.neighbours.size()-1)) );
 		c1 = p1.loc.copy().scaleSelf( 2 );
 		c2 = p2.loc.copy().scaleSelf( 2 );
-		curvehops.add( new CurveHop( p1, c1, c2, p2 ));
+		curvehops.add( new CurveHop( p1, c1, c2, p2, 3 ));
 	}
 	
 	class Particle
@@ -620,12 +643,15 @@ public class Julaps_ParticleSpings extends PApplet
 		Vec3D center;
 		Boolean fixed;
 		float r, g, b;
+		ArrayList<Particle> neighbours;
 		
 		public Particle()
 		{
 			loc		= new Vec3D();
 			vel		= new Vec3D();
 			force	= new Vec3D();
+			
+			neighbours = new ArrayList<Particle>();
 			
 			r = g = b = 1;
 		}
@@ -689,44 +715,70 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	class CurveHop
 	{
-		Particle p1, p2;
-		Vec3D c1, c2;
+		Particle p, p1, p2;
+		Vec3D c, c1, c2;
 		Vec3D loc;
 		float progressIn = 0;
 		float progressOut = 0;
-		float progressStep = 0.04f;
+		float progressStep = 0.05f;
 		int bezierDetail = 50;
 		boolean playedIn = false;
 		boolean playedOut = false;
+		boolean spawn = false;
 		float r, g, b;
+		int lifetime;
+		int lifetimeMax = 3;
 		
-		public CurveHop( Particle p1, Vec3D c1, Vec3D c2, Particle p2 )
+		public CurveHop( Particle p1, Vec3D c1, Vec3D c2, Particle p2, int lifetime )
 		{
 			this.p1 = p1;
 			this.p2 = p2;
 			this.c1 = c1;
 			this.c2 = c2;
 			
+			this.lifetime = lifetime;
+			
+			progressStep += random( 0, 0.02f );
+			
 			loc = p1.loc.copy();
 			
-			r = random( 0.2f, 0.4f );
-			g = random( 0.2f, 0.4f );
-			b = random( 0.2f, 0.4f );
+			r = g = b = random( 0.001f, 0.005f );
 		}
 		
-		public void setNewDestination ( Particle p, Vec3D c )
+		public void spawn ()
 		{
-			p1 = p2;
-			p2 = p;
+			if( lifetime > 0 )
+			{
+				int i;
+
+				ArrayList<Particle> neighbours = new ArrayList<Particle>();	// probably a better way of copying an ArrayList
+				for( i=0; i<p2.neighbours.size(); i++ ) {
+					neighbours.add( p2.neighbours.get(i) );
+				}
+				neighbours.remove( p1 );
+				
+				p = neighbours.get( (int)( random( neighbours.size() - 1 ) ) );
+				c = p.loc.copy().scaleSelf( lifetime / (float)lifetimeMax + 1 );
+				neighbours.remove( p );
+				
+				if( lifetime == lifetimeMax )
+					curvehops.add( camCurve = new CurveHop( p2, c2, c, p, lifetimeMax ) );
+				else
+					curvehops.add( new CurveHop( p2, c2, c, p, lifetime-1 ) );
+
+				lifetime--;
+				
+				for( i=0; i<neighbours.size(); i++ ) {
+					if( random(1) < 0.3 )
+					{
+						p = neighbours.get( 0 );
+						c = p.loc.copy().scaleSelf( lifetime / (float)lifetimeMax + 1 );
+						curvehops.add( new CurveHop( p2, c2, c, p, lifetime ) );
+					}
+				}
+			}
 			
-			c1 = c2;
-			c2 = c;
-			
-			progressOut = 0;
-			progressIn = 0;
-			
-			playedIn = false;
-			playedOut = false;
+			spawn = false;
 		}
 		
 		public void playInStep ()
@@ -738,7 +790,11 @@ public class Julaps_ParticleSpings extends PApplet
 			p1.b -= b * progressStep;
 			
 			if( progressOut >= 1 )
+			{
 				playedIn = true;
+				spawn = true;
+			}
+			
 		}
 		
 		public void playOutStep ()
