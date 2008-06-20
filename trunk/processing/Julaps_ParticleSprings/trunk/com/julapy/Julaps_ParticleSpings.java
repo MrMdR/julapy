@@ -31,6 +31,9 @@ public class Julaps_ParticleSpings extends PApplet
 	TextureLoader texLoader;
 	Primitive prim;
 	int particleCallList;
+    float[] lightAmbient =	{ 0.5f, 1.0f, 0.2f, 1.0f }; // DOESN'T WORK
+    float[] lightDiffuse =	{ 1.0f, 0.7f, 0.5f, 1.0f }; // DOESN'T WORK
+    float[] lightPosition =	{ 0.0f, 0.0f, 2.0f, 1.0f }; // DOESN'T WORK
 	
 	Camera cam;
 	Vec3D camTarget;
@@ -56,7 +59,7 @@ public class Julaps_ParticleSpings extends PApplet
 	
 	int frameNumber = 0;
 	int framesPerSec = 25;
-	boolean isRecording = true;
+	boolean isRecording = false;
 	boolean readFromFile = true;
 	
 	public void setup()
@@ -112,19 +115,29 @@ public class Julaps_ParticleSpings extends PApplet
 		pgl = (PGraphicsOpenGL) g;
 		gl = pgl.gl;
 
-		gl.glShadeModel(GL.GL_SMOOTH);              				// Enable Smooth Shading
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);    				// Black Background
-		gl.glClearDepth(1.0f);                      				// Depth Buffer Setup
-		gl.glEnable(GL.GL_DEPTH_TEST);								// Enables Depth Testing
-		gl.glDepthFunc(GL.GL_LEQUAL);								// The Type Of Depth Testing To Do
-		gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);	// Really Nice Perspective Calculations
-		gl.glEnable(GL.GL_TEXTURE_2D);
+		/* opengl init */
+		gl.glShadeModel( GL.GL_SMOOTH );              					// Enable Smooth Shading
+		gl.glClearColor( 0, 0, 0, 0.5f );		    					// Black Background
+		gl.glClearDepth( 1 );	                      					// Depth Buffer Setup
+		gl.glEnable( GL.GL_DEPTH_TEST );								// Enables Depth Testing
+		gl.glDepthFunc( GL.GL_LEQUAL );									// The Type Of Depth Testing To Do
+		gl.glHint( GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST );	// Really Nice Perspective Calculations
+		gl.glEnable( GL.GL_TEXTURE_2D );
 		
+		/* define blend mode */
 		gl.glEnable( GL.GL_BLEND );
 		gl.glDisable( GL.GL_DEPTH_TEST );
 		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
 		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_COLOR );
-
+		
+		/* turn on lighting */
+        gl.glLightfv( GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0 );
+        gl.glLightfv( GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0 );
+        gl.glLightfv( GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0 );
+        gl.glEnable( GL.GL_LIGHT0 );
+        gl.glEnable( GL.GL_LIGHTING );
+        
+        /* load texture */
 		texLoader = new TextureLoader( gl );
 		texLoader.init();
 		texLoader.loadTexture( loadImage( "data/texture/p_03.png" ), true );
@@ -137,6 +150,7 @@ public class Julaps_ParticleSpings extends PApplet
 		particleCallList = gl.glGenLists( 1 );
 		gl.glNewList( particleCallList, GL.GL_COMPILE );
 			gl.glBegin( GL.GL_QUADS );
+			gl.glNormal3f( 0, 0, 1 );
 			gl.glTexCoord2f( 0, 0 );	gl.glVertex3f( -0.5f, -0.5f, 0 );
 			gl.glTexCoord2f( 0, 1 );	gl.glVertex3f( -0.5f,  0.5f, 0 );
 			gl.glTexCoord2f( 1, 1 );	gl.glVertex3f(  0.5f,  0.5f, 0 );
