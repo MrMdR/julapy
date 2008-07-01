@@ -14,6 +14,7 @@ import javax.media.opengl.GL;
 
 import com.julapy.opengl.Primitive;
 import com.julapy.opengl.TextureLoader;
+import com.julapy.particle.CameraOrbit;
 import com.julapy.utils.TextFileUtil;
 
 import krister.Ess.AudioChannel;
@@ -35,10 +36,11 @@ public class Julaps_ParticleSpings extends PApplet
     float[] lightDiffuse =	{ 1.0f, 0.7f, 0.5f, 1.0f }; // DOESN'T WORK
     float[] lightPosition =	{ 0.0f, 0.0f, 2.0f, 1.0f }; // DOESN'T WORK
 	
-	Camera cam;
-	Vec3D camTarget;
-	Vec3D camPosition;
-	Vec3D camNormal;
+//	Camera cam;
+//	Vec3D camTarget;
+//	Vec3D camPosition;
+//	Vec3D camNormal;
+	CameraOrbit camOrbit;
 	
 	AudioChannel channel;
 	FFT fft;
@@ -57,9 +59,9 @@ public class Julaps_ParticleSpings extends PApplet
 	float centerPush = 200;
 	float centerPull = 1;
 	
-	int frameNumber = 0;
+	int frameNumber = 1;
 	int framesPerSec = 25;
-	boolean isRecording = false;
+	boolean isRecording = true;
 	boolean readFromFile = true;
 	
 	public void setup()
@@ -87,14 +89,16 @@ public class Julaps_ParticleSpings extends PApplet
 		
 		//__________________________________________________________ camera.		
 		
-		cam 		= new Camera( this );
-		camTarget 	= new Vec3D();
-		camPosition = new Vec3D();
-		camNormal 	= new Vec3D();
-
-		cam.jump( 0, 250, 300 );
-		cam.aim( 0, 0, 0 );
-		cam.feed();
+//		cam 		= new Camera( this );
+//		camTarget 	= new Vec3D();
+//		camPosition = new Vec3D();
+//		camNormal 	= new Vec3D();
+//
+//		cam.jump( 0, 250, 300 );
+//		cam.aim( 0, 0, 0 );
+//		cam.feed();
+		
+		camOrbit = new CameraOrbit( this, 320, 0, 0, random( PI * 0.001f, PI * 0.002f ), random( PI * 0.001f, PI * 0.002f ) );
 		
 		//__________________________________________________________ ess.
 		
@@ -105,7 +109,7 @@ public class Julaps_ParticleSpings extends PApplet
 		initParticles();
 		
 		for( int i=0; i<1; i++ ) {
-			addCurveHop( );
+			addCurveHop( (int)(random(particles.size()-1)) );
 		}
 		camCurve = curvehops.get( 0 );
 	}
@@ -124,23 +128,17 @@ public class Julaps_ParticleSpings extends PApplet
 		gl.glHint( GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST );	// Really Nice Perspective Calculations
 		gl.glEnable( GL.GL_TEXTURE_2D );
 		
-		/* define blend mode */
-		gl.glEnable( GL.GL_BLEND );
-		gl.glDisable( GL.GL_DEPTH_TEST );
-		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
-		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_COLOR );
-		
 		/* turn on lighting */
-        gl.glLightfv( GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0 );
-        gl.glLightfv( GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0 );
-        gl.glLightfv( GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0 );
-        gl.glEnable( GL.GL_LIGHT0 );
-        gl.glEnable( GL.GL_LIGHTING );
+//        gl.glLightfv( GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0 );
+//        gl.glLightfv( GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0 );
+//        gl.glLightfv( GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0 );
+//        gl.glEnable( GL.GL_LIGHT0 );
+//        gl.glEnable( GL.GL_LIGHTING );
         
         /* load texture */
 		texLoader = new TextureLoader( gl );
 		texLoader.init();
-		texLoader.loadTexture( loadImage( "data/texture/p_03.png" ), true );
+		texLoader.loadTexture( loadImage( "data/texture/p_02.png" ), true );
 		
 		prim = new Primitive( gl );
 	}
@@ -164,23 +162,24 @@ public class Julaps_ParticleSpings extends PApplet
 		background(0);
 		
 		//__________________________________________________________ camera.
+
+		camOrbit.update();
 		
-		float camX = (float)mouseX/width * width - width/2;
-		float camY = (float)mouseY/height * height - height/2;
-		
-		Vec3D c;
-		c = camCurve.loc.copy().normalize().scaleSelf( 350 );
-		cam.jump( c.x, c.y, c.z );
-		cam.aim( 0, 0, 0 );
-		
+//		float camX = (float)mouseX/width * width - width/2;
+//		float camY = (float)mouseY/height * height - height/2;
+//		
+//		Vec3D camPos;
+//		camPos = camCurve.loc.copy().normalize().scaleSelf( 350 );
+//		cam.jump( camPos.x, camPos.y, camPos.z );
+//		cam.aim( 0, 0, 0 );
+//
 //		cam.jump( camX, camY, 500 );
 //		cam.aim( 0, 0, 0 );
-		cam.feed();
-		cam.up();
-
-		camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
-		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
-		camNormal = camPosition.sub(camTarget).normalize();
+//		cam.feed();
+//
+//		camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
+//		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
+//		camNormal = camPosition.sub(camTarget).normalize();
 		
 		//__________________________________________________________ ess.
 		
@@ -194,7 +193,7 @@ public class Julaps_ParticleSpings extends PApplet
 			fft.getSpectrum( channel );
 		}
 		
-//		reactParticles();
+		reactParticles();
 		
 		//__________________________________________________________ psys.
 		
@@ -218,22 +217,6 @@ public class Julaps_ParticleSpings extends PApplet
 		Point3D[] bezPoints;
 		Point3D bezPoint;
 		Particle p, pp1, pp2;
-		
-		/* draw sphere */
-		gl.glPushMatrix();
-		gl.glScalef( sphereSize, sphereSize, sphereSize );
-		gl.glColor4f( 0, 0, 0, 1 );
-		prim.drawSphere( 30 );
-		gl.glPopMatrix();
-		
-		/* draw particles */
-		gl.glEnable(GL.GL_TEXTURE_2D);
-		gl.glDepthMask( false );
-		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
-		for ( i=0; i<particles.size(); i++ ) {
-			p = particles.get( i );
-			p.render();
-		}
 
 		/* draw lines between particles and center */
 //		gl.glDisable(GL.GL_TEXTURE_2D);
@@ -283,34 +266,66 @@ public class Julaps_ParticleSpings extends PApplet
 //			gl.glEnd();
 //		}
 		
+		/* draw sphere */
+//		gl.glPushMatrix();
+//		gl.glScalef( sphereSize, sphereSize, sphereSize );
+//		gl.glColor4f( 0, 0, 0, 1 );
+//		gl.glDepthMask( false );
+//		prim.drawSphere( 30 );
+//		gl.glPopMatrix();
+		
+		/* disable additive blending */
+		gl.glDisable( GL.GL_BLEND );
+		gl.glEnable( GL.GL_DEPTH_TEST );
+		
 		/* draw curve hops */
-		gl.glDisable(GL.GL_TEXTURE_2D);
-		gl.glDepthMask( true );
-		CurveHop curvehop;
-		for ( i=0; i<curvehops.size(); i++ ) 
-		{
-			curvehop = curvehops.get( i );
-
-			if( curvehop.playedOut ) 
-				curvehops.remove( i-- );
-
-			if( !curvehop.playedIn )
-			{
-				curvehop.playInStep();
-			}
-			else
-			{
-				curvehop.playOutStep();
-				if( curvehop.spawn )
-					curvehop.spawn();
-			}
-				
-			curvehop.render();
+//		gl.glDisable(GL.GL_TEXTURE_2D);
+////		gl.glDepthMask( true );
+//		CurveHop curvehop;
+//		for ( i=0; i<curvehops.size(); i++ ) 
+//		{
+//			curvehop = curvehops.get( i );
+//
+//			if( curvehop.playedOut ) 
+//				curvehops.remove( i-- );
+//
+//			if( !curvehop.playedIn )
+//			{
+//				curvehop.playInStep();
+//			}
+//			else
+//			{
+//				curvehop.playOutStep();
+//				if( curvehop.spawn )
+//					curvehop.spawn();
+//			}
+//				
+//			curvehop.render();
+//		}
+		
+		/* enable additive blending */
+		gl.glEnable( GL.GL_BLEND );
+		gl.glDisable( GL.GL_DEPTH_TEST );
+		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
+		gl.glBlendFunc( GL.GL_SRC_COLOR, GL.GL_ONE );
+		
+		/* draw particles */
+		gl.glEnable(GL.GL_TEXTURE_2D);
+//		gl.glDepthMask( true );
+		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
+		for ( i=0; i<particles.size(); i++ ) {
+			p = particles.get( i );
+			p.render();
 		}
 		
 		pgl.endGL();
 		
-		if( isRecording ) save("data/export/export"+ frameNumber++ +".png");
+		if( isRecording ) 
+		{
+			save("data/export/export_"+ frameNumber +".png");
+			++frameNumber;
+		}
+		
 	}
 	
 	public void mousePressed ()
@@ -322,7 +337,7 @@ public class Julaps_ParticleSpings extends PApplet
 		/* add curve */
 		int i;
 		for( i=0; i<4; i++ ) {
-			addCurveHop( );
+			addCurveHop( (int)(random(particles.size()-1)) );
 		}
 	}
 	
@@ -353,7 +368,7 @@ public class Julaps_ParticleSpings extends PApplet
 	{
 		Ess.start( this );
 
-		channel = new AudioChannel( "audio/cell.aif" );
+		channel = new AudioChannel( "audio/scoop.aif" );
 		
 		if( !isRecording )
 			channel.play( Ess.FOREVER );
@@ -448,14 +463,16 @@ public class Julaps_ParticleSpings extends PApplet
 	public void reactParticles ()
 	{
 		int i, si;
-		float di;
-		Spring s;
+		float di, v;
+		Particle p;
+
 		for( i=0; i<particles.size(); i++ )
 		{
-			di 		= i / (float)particles.size();
-			si 		= (int)(fft.spectrum.length * di);
-			s  		= springs.get( i );
-			s.restlength = max( 1, fft.spectrum[si] * 20000 );
+			p	= particles.get( i );
+			di 	= i / (float)particles.size();
+			si 	= (int)(fft.spectrum.length * di);
+			v 	= fft.spectrum[si] * 100;
+			p.update( v );
 		}
 	}
 	
@@ -634,22 +651,48 @@ public class Julaps_ParticleSpings extends PApplet
 		}
 	}
 	
-	public void addCurveHop ( )
+	public void addCurveHop ( int pid )
 	{
 		Particle p1, p2;
 		Vec3D c1, c2;
 		
-		p1 = particles.get( (int)(random(particles.size()-1)) );
+		p1 = particles.get( pid );
 		p2 = p1.neighbours.get( (int)(random(p1.neighbours.size()-1)) );
 		c1 = p1.loc.copy().scaleSelf( 2 );
 		c2 = p2.loc.copy().scaleSelf( 2 );
 		curvehops.add( new CurveHop( p1, c1, c2, p2, 3 ));
 	}
 	
+	public void addCurveHopBurst ( int pid, float scale )
+	{
+		ArrayList<Particle> neighbours;
+		Particle p1, p2;
+		Vec3D c1, c2;
+		int i;
+
+		p1 = particles.get( pid );
+		
+		neighbours = new ArrayList<Particle>();		// probably a better way of copying an ArrayList
+		for( i=0; i<p1.neighbours.size(); i++ ) {
+			neighbours.add( p1.neighbours.get(i) );
+		}
+		
+		for( i=0; i<neighbours.size(); i++ ) {
+			if( random(1) < 0.3 )
+			{
+				p2 = neighbours.get( i );
+				c1 = p1.loc.copy().scaleSelf( scale + 1 );
+				c2 = p2.loc.copy().scaleSelf( scale + 1 );
+				curvehops.add( new CurveHop( p1, c1, c2, p2, 0 ) );
+			}
+		}
+	}
+	
 	class Particle
 	{
 		int id;
 		float renderSize = 20;
+		float scale = 1;
 		float mass;
 		Vec3D loc;
 		Vec3D vel;
@@ -670,9 +713,19 @@ public class Julaps_ParticleSpings extends PApplet
 			r = g = b = 1;
 		}
 		
-		public void update ()
+		public void update ( float s )
 		{
+			if( s > scale )
+			{
+				scale += ( s - scale ) * 0.5;
+				
+				if( scale > 1.8f )
+					addCurveHopBurst( id , scale * 0.25f );
+			}
 			
+			scale *= 0.96;
+			
+			renderSize = 40 + scale * 20;
 		}
 		
 		public void render ()
@@ -702,8 +755,14 @@ public class Julaps_ParticleSpings extends PApplet
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			gl.glRotatef( degrees( angleZ ), 0, 0, 1 );
 			gl.glRotatef( degrees( angleY ), 0, 1, 0 );
+
+//			float r		= scale * 0.04f;
+			float r		= scale * 0.4f;
+			float g		= 0.0f;
+			float b		= 0.2f;
+			float a		= 1.0f;
 			
-			gl.glColor4f( r, g, b, 1 );
+			gl.glColor4f( r, g, b, a );
 			gl.glScalef( renderSize, renderSize, 0 );
 			gl.glCallList( particleCallList );
 			gl.glPopMatrix();
@@ -756,7 +815,7 @@ public class Julaps_ParticleSpings extends PApplet
 			
 			loc = p1.loc.copy();
 			
-			r = g = b = random( 0.001f, 0.005f );
+//			r = g = b = random( 0.001f, 0.005f );
 		}
 		
 		public void spawn ()
@@ -859,6 +918,7 @@ public class Julaps_ParticleSpings extends PApplet
             		float zOff	= right.z * 6 * ss;
         	        
         	        gl.glColor4f( 1, 0.75f * ss, 0.23f * ss, max( 0.2f, ss ) );
+        	        gl.glNormal3f( look.x, look.y, look.z ); 						// not sure if this is right.
         	        gl.glVertex3f( prev.x - xOff, prev.y - yOff, prev.z - zOff );
         	        gl.glVertex3f( prev.x + xOff, prev.y + yOff, prev.z + zOff );
             		
