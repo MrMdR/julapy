@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="/Toxi_geomutils_0008/bin/toxi_geomutils.jar"/>
 	<classpathentry kind="lib" path="/OCD_lib/library/ocd.jar" sourcepath="/OCD_lib/src/damkjer/ocd"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ess"/>
+	<classpathentry kind="lib" path="/Applications/Processing 0135/libraries/oscP5/library/oscP5.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
