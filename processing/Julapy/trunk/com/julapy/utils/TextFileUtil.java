@@ -69,9 +69,17 @@ public class TextFileUtil
 		dataIndex = 0;
 	}
 	
+	public boolean hasNextLine ()
+	{
+		if( dataIndex < data.length )
+			return true;
+		else
+			return false;
+	}
+	
 	public float[] readFloatLine ()
 	{
-		if ( dataIndex < data.length) 
+		if ( dataIndex < data.length ) 
 		{
 			int i;
 			String dataStr		= data[dataIndex];
