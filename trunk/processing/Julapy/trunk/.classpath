@@ -7,5 +7,8 @@
 	<classpathentry kind="lib" path="/OCD_lib/library/ocd.jar" sourcepath="/OCD_lib/src/damkjer/ocd"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ess"/>
 	<classpathentry kind="lib" path="/Applications/Processing 0135/libraries/oscP5/library/oscP5.jar"/>
+	<classpathentry kind="lib" path="/Applications/Processing 0148/libraries/candy/library/candy.jar" sourcepath="/processing"/>
+	<classpathentry kind="lib" path="/Applications/Processing 0148/libraries/xml/library/xml.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/proSVG"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
