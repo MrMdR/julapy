@@ -18,10 +18,13 @@
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
         </excludedEntries>
       </libraryPathEntry>
+      <libraryPathEntry kind="3" linkType="1" path="/papervision_great_white/bin/papervision_great_white.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/hollerlib/bin/hollerlib.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="ShadersExample.as"/>
     <application path="Pixelate.as"/>
   </applications>
   <modules/>
