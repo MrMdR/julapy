@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file must reside in the same directory as the swf file it accompanies -->
+<twoframe> 
+	<section>
+   		<image>
+       		<name></name>
+   			<image1></image1>
+   			<image1></image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1></image1>
+   			<image1></image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1></image1>
+   			<image1></image2>
+   		</image>
+	</section>
+</twoframe>

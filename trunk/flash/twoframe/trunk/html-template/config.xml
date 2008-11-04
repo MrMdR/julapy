@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file must reside in the same directory as the swf file it accompanies -->
+<holler> 
+	<parameters>
+		<amfphpService>TwoFrameRemoting</amfphpService>
+       	<amfphpURL>LOCATION NEEDS TO BE DEFINED IN config.xml</amfphpURL>
+       	<cacheDisabled>true</cacheDisabled>
+	</parameters>
+</holler>
