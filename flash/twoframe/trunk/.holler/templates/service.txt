@@ -1,0 +1,5 @@
+public function get @sequence.name.lowercase@():@service.name@
+		{
+			return new @service.name@(@service.parameters@);
+		}
+		

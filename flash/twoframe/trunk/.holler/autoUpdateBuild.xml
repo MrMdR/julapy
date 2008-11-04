@@ -1,0 +1,8 @@
+<project name="Update SWFs" default="main" >
+	<property file="project.properties" />
+	
+	<target name="main">	
+		<eclipse.refreshLocal resource="${root.dir}/html-template" depth="infinite"/>
+	</target>
+</project>
+

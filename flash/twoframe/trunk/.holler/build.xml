@@ -1,0 +1,271 @@
+<project name="Create Command" default="main" >
+	<property file="project.properties" />
+	
+	<loadresource property="copy">
+         <file file="${templates.dir}/file-header-copy.txt" />
+    </loadresource>
+	
+	<loadresource property="service">
+         <file file="${templates.dir}/service.txt" />
+    </loadresource>
+	
+	<taskdef name="foreach" 
+	         classpath="libs/ant-contrib-1.0b3.jar" 
+	         classname="net.sf.antcontrib.logic.ForEach" />
+
+	<taskdef name="if"
+	         classpath="libs/ant-contrib-1.0b3.jar" 
+	         classname="net.sf.antcontrib.logic.IfTask" />
+
+	<target name="main" depends="create-sequence, add-command-to-controller-cleanup" />
+
+	<target name="create-sequence">
+		<input message="Please enter your new sequence name. Each word should be separated by a space and start with a capital letter. (e.g. 'Change Screen')"  
+			   addproperty="sequence.name.input" />
+		<input message="Include a delegate in the new sequence?" 
+					   validargs="yes,no" 
+					   defaultvalue="yes" 
+					   addproperty="includeDelegate" />
+					   
+		<replaceSpaces property="sequence.name" value="${sequence.name.input}" />
+		<replaceUnderscores property="sequence.name.underscores" value="${sequence.name.input}" />
+		<convertToUpperCase property="sequence.name.uppercase" value="${sequence.name.underscores}" />
+		<convertToLowerCase property="sequence.name.lowercase" value="${sequence.name}" />
+		
+		<if><equals arg1="${includeDelegate}" arg2="yes" />
+			<then>
+				<input message="What type of service do you require in your delegate?" 
+					   validargs="RemotingService,XMLService,HTTPService" 
+					   defaultvalue="RemotingService" 
+					   addproperty="service.name" />
+				
+				<if><equals arg1="${service.name}" arg2="RemotingService" />
+				<then>
+					<property name="service.name.id" value='"amfphpService"'/>
+				</then>
+				<else>
+					<property name="service.name.id" value='"${sequence.name.lowercase}"'/>
+				</else>
+				</if>
+				
+				<if><equals arg1="${service.name}" arg2="RemotingService" />
+				<then>
+					<property name="service.enabled.name" value="amfphpEnabled"/>
+					<property name="service.name.short" value="Remote"/>
+					<property name="service.parameters" value="modelLocator.configModel.configVO.amfphpURL, modelLocator.configModel.configVO.amfphpService"/>
+					<property name="service.name.execution" value="${sequence.name.lowercase}"/>
+				</then>
+				</if>
+				<if><equals arg1="${service.name}" arg2="XMLService" />
+				<then>
+					<property name="service.enabled.name" value="xmlEnabled"/>
+					<property name="service.name.short" value="XML"/>
+					<property name="service.parameters" value='modelLocator.configModel.initialiseVO.xmlDirectory+"${sequence.name.lowercase}.xml"+ (modelLocator.configModel.configVO.cacheDisabled ? "?time="+new Date().time : "")'/>
+					<property name="service.name.execution" value="load"/>
+				</then>
+				</if>
+				<if><equals arg1="${service.name}" arg2="HTTPService" />
+				<then>
+					<property name="service.enabled.name" value="httpEnabled"/>
+					<property name="service.name.short" value="HTTP"/>
+					<property name="service.parameters" value='modelLocator.configModel.initialiseVO.httpDirectory+"${sequence.name.lowercase}.php"+ (modelLocator.configModel.configVO.cacheDisabled ? "?time="+new Date().time : "")'/>
+					<property name="service.name.execution" value="send"/>
+				</then>
+				</if>
+				
+				<if><equals arg1="${service.name}" arg2="RemotingService" />
+				<else>
+				<replace file="${project.uri}/${business.dir}/Services.as" 
+			     token="//HollerProjectGenerator marker: add import" 
+			     value="import ${service.package}.${service.name}//HollerProjectGenerator marker: add linebreak"
+			     />
+		<replace file="${project.uri}/${business.dir}/Services.as" >
+			<replacetoken>//HollerProjectGenerator marker: add linebreak</replacetoken>
+			<replacevalue><![CDATA[
+	//HollerProjectGenerator marker: add import]]></replacevalue>
+		</replace>
+				
+		<replace file="${project.uri}/${business.dir}/Services.as" 
+			     token="//HollerProjectGenerator marker: add service" 
+			     value="${service}//HollerProjectGenerator marker: add service"
+			     />
+		<replace file="${project.uri}/${business.dir}/Services.as" >
+			<replacetoken>//HollerProjectGenerator marker: add service</replacetoken>
+			<replacevalue><![CDATA[	
+		//HollerProjectGenerator marker: add service]]></replacevalue>
+		</replace>
+		<replace file="${project.uri}/${business.dir}/Services.as" 
+			     token="@sequence.name.lowercase@" 
+			     value="${sequence.name.lowercase}"
+			     />
+		<replace file="${project.uri}/${business.dir}/Services.as" 
+			     token="@service.name@" 
+			     value="${service.name}"
+			     />
+		<replace file="${project.uri}/${business.dir}/Services.as" 
+			     token="@service.parameters@" 
+			     value="${service.parameters}"
+			     />
+		</else>
+		</if>
+			</then>
+		</if>
+		
+		<!-- 
+		import com.adobe.cairngorm.business.HTTPService;
+		import com.adobe.cairngorm.business.XMLService;
+		public function get storiesService():XMLService
+		{
+			return new XMLService(modelLocator.configModel.initialiseVO.xmlDirectory+"@sequence.name.lowercase@.xml"+ (modelLocator.configModel.configVO.cacheDisabled ? "?time="+new Date().time : "")); 
+		}
+
+		public function get testService():HTTPService
+		{
+			return new HTTPService(modelLocator.configModel.initialiseVO.xmlDirectory+"@sequence.name.lowercase@.xml"+ (modelLocator.configModel.configVO.cacheDisabled ? "?time="+new Date().time : "")); 
+		} -->
+		
+
+		
+		<replace file="${project.uri}/${control.dir}/${project.name}Controller.as" 
+			     token="//HollerProjectGenerator marker: add command" 
+			     value="addCommand(${sequence.name}Event.${sequence.name.uppercase}, ${sequence.name}Command);//HollerProjectGenerator marker: add command"
+			     />
+		<replace file="${project.uri}/${control.dir}/${project.name}Controller.as" 
+			     token="//HollerProjectGenerator marker: add import" 
+			     value="import ${namespace}.${events.package}.${sequence.name}Event;//HollerProjectGenerator marker: add linebreakimport ${namespace}.${commands.dir}.${sequence.name}Command;//HollerProjectGenerator marker: add import"
+			     />
+		<replace file="${project.uri}/${control.dir}/${project.name}Controller.as" >
+			<replacetoken>//HollerProjectGenerator marker: add linebreak</replacetoken>
+			<replacevalue><![CDATA[
+	]]></replacevalue>
+		</replace>	     
+		<copy file="${root.dir}/${holler.dir}/${templates.dir}/EventTemplate.as"
+			  tofile="${project.uri}/${events.dir}/${sequence.name}Event.as"
+			  overwrite="${overwrite.files}" >
+	        <filterchain>
+	           <replacetokens>
+	                <token key="namespace" value="${namespace}" />
+	                <token key="events"     value="${events.package}"  />
+	                <token key="copy"        value="${copy}"         />
+	                <token key="sequence.name" value="${sequence.name}"/>
+	                <token key="sequence.name.uppercase" value="${sequence.name.uppercase}"/>
+	                <token key="sequence.name.lowercase" value="${sequence.name.lowercase}"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+	    
+	    <copy file="${root.dir}/${holler.dir}/${templates.dir}/CommandTemplate.as"
+			  tofile="${project.uri}/${commands.dir}/${sequence.name}Command.as"
+			  overwrite="${overwrite.files}" >
+	        <filterchain>
+	           <replacetokens>
+	                <token key="namespace" value="${namespace}" />
+	                <token key="events"     value="${events.package}"  />
+	                <token key="commands"     value="${commands.dir}"  />
+	                <token key="copy"        value="${copy}"         />
+	                <token key="sequence.name" value="${sequence.name}"/>
+	                <token key="sequence.name.uppercase" value="${sequence.name.uppercase}"/>
+	                <token key="sequence.name.lowercase" value="${sequence.name.lowercase}"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+	    
+		<if><equals arg1="${includeDelegate}" arg2="yes" />
+			<then>
+				<replace file="${project.uri}/${commands.dir}/${sequence.name}Command.as" 
+			     token="//HollerProjectGenerator marker: add import" 
+			     value="import ${namespace}.${business.dir}.${sequence.name}Delegate;//HollerProjectGenerator marker: add linebreakimport ${namespace}.${events.package}.${sequence.name}Event;"
+			     />
+			     <replace file="${project.uri}/${commands.dir}/${sequence.name}Command.as" >
+				    <replacetoken>//HollerProjectGenerator marker: add linebreak</replacetoken>
+				    <replacevalue><![CDATA[
+	]]></replacevalue>
+				</replace>
+				<replace file="${project.uri}/${commands.dir}/${sequence.name}Command.as" 
+			     token="//HollerProjectGenerator marker: add delegate" 
+			     value="var ${sequence.name.lowercase}Delegate:${sequence.name}Delegate = new ${sequence.name}Delegate(this);//HollerProjectGenerator marker: add linebreak${sequence.name.lowercase}Delegate.${sequence.name.lowercase}();"
+			     />
+				<replace file="${project.uri}/${commands.dir}/${sequence.name}Command.as" >
+				    <replacetoken>//HollerProjectGenerator marker: add linebreak</replacetoken>
+				    <replacevalue><![CDATA[
+			]]></replacevalue>
+				</replace>
+			     
+			     <copy file="${root.dir}/${holler.dir}/${templates.dir}/DelegateTemplate.as"
+					  tofile="${project.uri}/${business.dir}/${sequence.name}Delegate.as"
+					  overwrite="${overwrite.files}" >
+			        <filterchain>
+			           <replacetokens>
+			                <token key="namespace" value="${namespace}" />
+			                <token key="business.dir"     value="${business.dir}"  />
+			                <token key="copy"        value="${copy}"         />
+			                <token key="sequence.name" value="${sequence.name}"/>
+			                <token key="sequence.name.uppercase" value="${sequence.name.uppercase}"/>
+			                <token key="sequence.name.lowercase" value="${sequence.name.lowercase}"/>
+			                <token key="service.package" value="${service.package}"/>
+			                <token key="service.name" value="${service.name}"/>
+			                <token key="service.name.short" value="${service.name.short}"/>
+			                <token key="service.name.id" value="${service.name.id}"/>
+			                <token key="service.name.execution" value="${service.name.execution}"/>
+			                <token key="service.enabled.name" value="${service.enabled.name}"/>
+			            </replacetokens>
+			        </filterchain>
+			    </copy>
+		    </then>
+		    <else>
+		    	<replace file="${project.uri}/${commands.dir}/${sequence.name}Command.as" 
+			     token="//HollerProjectGenerator marker: add import" 
+			     value="import ${namespace}.${events.package}.${sequence.name}Event;"
+			     />
+				<replace file="${project.uri}/${commands.dir}/${sequence.name}Command.as" 
+			     token="//HollerProjectGenerator marker: add delegate" 
+			     value=""
+			     />
+		    </else>
+		</if>
+	</target>
+	
+	<target name="add-command-to-controller-cleanup" >
+		<replace file="${project.uri}/${control.dir}/${project.name}Controller.as" >
+		    <replacetoken>//HollerProjectGenerator marker: add command</replacetoken>
+		    <replacevalue><![CDATA[
+		    //HollerProjectGenerator marker: add command]]></replacevalue>
+		</replace>
+		<replace file="${project.uri}/${control.dir}/${project.name}Controller.as" >
+		    <replacetoken>//HollerProjectGenerator marker: add import</replacetoken>
+		    <replacevalue><![CDATA[
+		    //HollerProjectGenerator marker: add import]]></replacevalue>
+		</replace>
+    </target>
+	
+    <!-- private -->
+	<scriptdef name="shortenServiceName" language="javascript" >
+		<attribute name="property" />
+		<attribute name="value"    />
+		var str = attributes.get("value");
+		str = str.substring(0, str.indexOf("Service"));
+		project.setNewProperty( attributes.get("property"), str);
+	</scriptdef>
+	<scriptdef name="convertToLowerCase" language="javascript" >
+		<attribute name="property" />
+		<attribute name="value"    />
+		project.setNewProperty( attributes.get("property"), attributes.get("value").substring(0, 1).toLowerCase() +  attributes.get("value").substring(1));
+	</scriptdef>
+	<scriptdef name="convertToUpperCase" language="javascript" >
+		<attribute name="property" />
+		<attribute name="value"    />
+		project.setNewProperty( attributes.get("property"), attributes.get("value").toUpperCase() );
+	</scriptdef>
+	<scriptdef name="replaceUnderscores" language="javascript" >
+		<attribute name="property" />
+		<attribute name="value"    />
+		project.setNewProperty( attributes.get("property"), attributes.get("value").replace(" ", "_") );
+	</scriptdef>
+	<scriptdef name="replaceSpaces" language="javascript" >
+		<attribute name="property" />
+		<attribute name="value"    />
+		project.setNewProperty( attributes.get("property"), attributes.get("value").replace(" ", "") );
+	</scriptdef>
+	
+</project>
+
