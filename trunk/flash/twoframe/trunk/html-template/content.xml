@@ -3,19 +3,19 @@
 <twoframe> 
 	<section>
    		<image>
-       		<name></name>
-   			<image1></image1>
-   			<image1></image2>
+       		<name>bondi_01_s03</name>
+   			<image1>img/bondi_01/s03_01.jpg</image1>
+   			<image2>img/bondi_01/s03_02.jpg</image2>
    		</image>
    		<image>
        		<name></name>
    			<image1></image1>
-   			<image1></image2>
+   			<image2></image2>
    		</image>
    		<image>
        		<name></name>
    			<image1></image1>
-   			<image1></image2>
+   			<image2></image2>
    		</image>
 	</section>
 </twoframe>

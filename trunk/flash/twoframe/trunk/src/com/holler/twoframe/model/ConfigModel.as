@@ -8,6 +8,7 @@
 
 package com.holler.twoframe.model
 {
+	import com.holler.twoframe.events.ImagesChangeEvent;
 	import com.holler.twoframe.events.InitialiseVOChangeEvent;
 	import com.holler.twoframe.vo.ConfigVO;
 	import com.holler.twoframe.vo.InitialiseVO;
@@ -39,6 +40,11 @@ package com.holler.twoframe.model
 		 *  The initialiseVO returned from the amfphp GetInitialiseVOCommand
 		 */
 		private var _initialiseVO:InitialiseVO;
+
+		/**
+		 *  The images returned from the amfphp GetImagesCommand
+		 */
+		private var _images:Array;
 		
 		public function ConfigModel()
 		{
@@ -62,5 +68,20 @@ package com.holler.twoframe.model
 			return _initialiseVO;
 		}
 		
+		public function set images ( value:Array ):void
+		{
+			if( value != images )
+			{
+				_images = value;
+				
+				var imagesEvent:ImagesChangeEvent = new ImagesChangeEvent();
+				dispatchEvent( imagesEvent );
+			}
+		}
+		
+		public function get images ():Array
+		{
+			return _images;
+		}
 	}
 }

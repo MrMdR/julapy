@@ -9,9 +9,12 @@
 package {
 	import com.holler.twoframe.business.Services;
 	import com.holler.twoframe.control.TwoFrameController;
+	import com.holler.twoframe.events.GetImagesEvent;
+	import com.holler.twoframe.events.GetInitialiseVOEvent;
+	import com.holler.twoframe.events.ImagesChangeEvent;
+	import com.holler.twoframe.events.InitialiseVOChangeEvent;
 	import com.holler.twoframe.model.ModelLocator;
 	import com.holler.twoframe.view.ApplicationView;
-	import com.holler.twoframe.events.GetInitialiseVOEvent;
 	import com.holler.twoframe.vo.ConfigVO;
 	
 	import flash.display.MovieClip;
@@ -52,12 +55,28 @@ package {
 			 */
 			preloaderApplication.contentLoadCompleteHandler = contentLoadCompleteHandler;
 			preloaderApplication.loadContent();
+			
+			ModelLocator.getInstance().configModel.addEventListener( InitialiseVOChangeEvent.INITIALISE_V_O_CHANGE,	configModel_initialiseVOChangeHander );
+			ModelLocator.getInstance().configModel.addEventListener( ImagesChangeEvent.IMAGES_CHANGE,				configModel_imagesChangeHander );
 		}
 		
 		private function contentLoadCompleteHandler():void
 		{
 			var initialiseEvent:GetInitialiseVOEvent = new GetInitialiseVOEvent();
 			initialiseEvent.dispatch();
+		}
+		
+		private function configModel_initialiseVOChangeHander ( e:InitialiseVOChangeEvent ):void
+		{
+			ModelLocator.getInstance().configModel.removeEventListener( InitialiseVOChangeEvent.INITIALISE_V_O_CHANGE, configModel_initialiseVOChangeHander );
+			
+			var imagesEvent:GetImagesEvent = new GetImagesEvent();
+			imagesEvent.dispatch();
+		}
+		
+		private function configModel_imagesChangeHander ( e:ImagesChangeEvent ):void
+		{
+			//
 		}
 	}
 }
