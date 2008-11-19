@@ -8,9 +8,10 @@
 
 package com.holler.twoframe.view
 {
-	import com.holler.containers.ScreenView;
 	import com.holler.assets.AssetManager;
+	import com.holler.containers.ScreenView;
 	import com.holler.twoframe.constants.AssetConstants;
+	import com.holler.twoframe.events.ImagesChangeEvent;
 	import com.holler.twoframe.events.InitialiseVOChangeEvent;
 	import com.holler.twoframe.model.ModelLocator;
 	
@@ -28,16 +29,16 @@ package com.holler.twoframe.view
 			
 			loaderView = PreloaderApplication.getInstance().loaderView;
 
-			ModelLocator.getInstance().configModel.addEventListener(InitialiseVOChangeEvent.INITIALISE_V_O_CHANGE, configModel_initialiseVOChangeHander);
+			ModelLocator.getInstance().configModel.addEventListener( ImagesChangeEvent.IMAGES_CHANGE, configModel_imagesChangeHander );
 		}
 		
 		/**
 		 *  This function is called after the initialiseVO has been set in the ConfigModel
 		 *  This is the perfect place to start coding your application
 		 */
-		private function configModel_initialiseVOChangeHander(event:InitialiseVOChangeEvent):void
+		private function configModel_imagesChangeHander( event:ImagesChangeEvent ):void
 		{
-			ModelLocator.getInstance().configModel.removeEventListener(InitialiseVOChangeEvent.INITIALISE_V_O_CHANGE, configModel_initialiseVOChangeHander);
+			ModelLocator.getInstance().configModel.removeEventListener( ImagesChangeEvent.IMAGES_CHANGE, configModel_imagesChangeHander );
 			
 			var viewAsset:Sprite = AssetManager.getClassInstance(AssetConstants.APPLICATION_VIEW) as Sprite;
 			(viewAsset.getChildByName("labelTextField") as TextField).height = 500;
