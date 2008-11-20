@@ -30,7 +30,7 @@ package {
 	 *  SWF metadata. Defines swf properties.
 	 *  These properties will be overidden by swfobject embed properties if present
 	 */
-	[SWF(backgroundColor='0x000000', frameRate='60', width='970', height='570' ) ]
+	[SWF(backgroundColor='0xFFFFFF', frameRate='60', width='970', height='570' ) ]
 	public class Main extends MovieClip
 	{
 		private static var modelLocator:ModelLocator = ModelLocator.getInstance();
@@ -69,8 +69,7 @@ package {
 		{
 			ModelLocator.getInstance().configModel.removeEventListener( InitialiseVOChangeEvent.INITIALISE_V_O_CHANGE, configModel_initialiseVOChangeHander );
 			
-			var imagesEvent:GetImagesEvent = new GetImagesEvent();
-			imagesEvent.dispatch();
+			new GetImagesEvent().dispatch();
 		}
 	}
 }
