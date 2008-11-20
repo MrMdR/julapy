@@ -8,19 +8,20 @@
 
 package com.holler.twoframe.view
 {
-	import com.holler.assets.AssetManager;
 	import com.holler.containers.ScreenView;
-	import com.holler.twoframe.constants.AssetConstants;
 	import com.holler.twoframe.events.ImagesChangeEvent;
-	import com.holler.twoframe.events.InitialiseVOChangeEvent;
 	import com.holler.twoframe.model.ModelLocator;
+	import com.holler.twoframe.view.menu.MenuView;
+	import com.holler.twoframe.view.stereo.StereoView;
 	
 	import flash.display.Sprite;
-	import flash.text.TextField;
+	import flash.events.Event;
 
 	public class ApplicationView extends ScreenView
 	{
-		private var loaderView : PreloaderView;
+		private var loaderView:PreloaderView;
+		private var menuView:MenuView;
+		private var stereoView:StereoView;
 		
 		public function ApplicationView(sprite:Sprite=null)
 		{
@@ -40,10 +41,55 @@ package com.holler.twoframe.view
 		{
 			ModelLocator.getInstance().configModel.removeEventListener( ImagesChangeEvent.IMAGES_CHANGE, configModel_imagesChangeHander );
 			
-			var viewAsset:Sprite = AssetManager.getClassInstance(AssetConstants.APPLICATION_VIEW) as Sprite;
-			(viewAsset.getChildByName("labelTextField") as TextField).height = 500;
-			(viewAsset.getChildByName("labelTextField") as TextField).htmlText = "ApplicationView Instantiated\rContent.swf loaded\rInitialiseVO loaded\r\rThe ideal place to start coding is the configModel_initialiseVOChangeHander() function in ApplicationView.\r\rTo add additional Event\Command\Delegate sequences run the ant build.xml located in the .holler folder in the root of this project.";
-			_sprite.addChild(viewAsset);
+			loaderView.remove();
+			
+			initMenuView();
+		}
+		
+		//////////////////////////////////////////////////////
+		//	MENU VIEW
+		//////////////////////////////////////////////////////
+		
+		private function initMenuView ( e:*=null ):void
+		{
+			var menuViewAsset:Sprite;
+			
+			menuViewAsset	= new Sprite();
+			menuView		= new MenuView( menuViewAsset );
+			menuView.addEventListener( Event.SELECT, onMenuViewClick );
+			
+			_sprite.addChild( menuViewAsset );
+		}
+		
+		private function killMenuView ( e:*=null ):void
+		{
+			menuView.removeEventListener( Event.SELECT, onMenuViewClick );
+			menuView.remove();
+			menuView = null;
+		}
+		
+		private function onMenuViewClick ( e:Event ):void
+		{ 
+			initStereoView();
+		}
+		
+		//////////////////////////////////////////////////////
+		//	STEREO VIEW
+		//////////////////////////////////////////////////////
+		
+		private function initStereoView ( e:*=null ):void
+		{
+			var stereoViewAsset:Sprite;
+			
+			stereoViewAsset = new Sprite();
+			stereoView		= new StereoView( stereoViewAsset, menuView.selectedItemImageVO.copy() );
+			stereoView.addEventListener( Event.COMPLETE, killStereoView );
+			
+			_sprite.addChild( stereoViewAsset );
+		}
+		
+		private function killStereoView ( e:*=null ):void
+		{
 			
 		}
 	}
