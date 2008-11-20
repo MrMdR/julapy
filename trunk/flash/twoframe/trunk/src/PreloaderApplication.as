@@ -38,15 +38,6 @@ package
 	{
 		public static const CONFIG_URL:String = "config.xml";
 		
-		/**
-		 *  APPLICATION_PERCENTAGE, CONTENT_PERCENTAGE. The amount of the
-		 *  total preload percentage taken up by the application and the
-		 *  content respectively. Modify these values to change the
-		 *  percentage distribution
-		 */
-		public static const APPLICATION_PERCENTAGE:Number = .5;
-		public static const CONTENT_PERCENTAGE:Number = .5;
-		
 		public var contentLoadCompleteHandler:Function;
 		
 		public var mainStage:Stage;
@@ -149,8 +140,7 @@ package
 		
 		private function assetManager_progressHandler(e:AssetEvent) : void
 		{
-			loaderView.label = "Loading Visual Assets: " + int((APPLICATION_PERCENTAGE*100)+(e.bytesLoaded/e.bytesTotal)*(CONTENT_PERCENTAGE*100)).toString() + "%";
-			loaderView.percentage = APPLICATION_PERCENTAGE + (e.bytesLoaded/e.bytesTotal)*CONTENT_PERCENTAGE;
+			loaderView.percentage = e.groupBytesLoaded / e.groupBytesTotal;
 		}
 		
 		private function assetManager_completehandler(event:AssetEvent):void
@@ -161,7 +151,6 @@ package
 				assetManager.removeEventListener(AssetEvent.ASSET_PROGRESS, assetManager_progressHandler);
 				assetManager.removeEventListener(IOErrorEvent.IO_ERROR, assetManager_errorHandler);
 				
-				loaderView.label = "Initialising...";
 				loaderView.percentage = 1;
 				
 				contentLoadCompleteHandler();
@@ -183,8 +172,7 @@ package
 			}
 			else
 			{
-				loaderView.label = "Loading Application: "+int((APPLICATION_PERCENTAGE*100)*root.loaderInfo.bytesLoaded/root.loaderInfo.bytesTotal).toString()+"%";
-				loaderView.percentage = (root.loaderInfo.bytesLoaded/root.loaderInfo.bytesTotal)*APPLICATION_PERCENTAGE;
+				loaderView.percentage = root.loaderInfo.bytesLoaded / root.loaderInfo.bytesTotal;
 			}
 		
 		}
