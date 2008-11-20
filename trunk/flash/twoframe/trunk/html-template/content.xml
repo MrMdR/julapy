@@ -8,14 +8,31 @@
    			<image2>img/bondi_01/s03_02.jpg</image2>
    		</image>
    		<image>
-       		<name></name>
-   			<image1></image1>
-   			<image2></image2>
+       		<name>bondi_01_s07</name>
+   			<image1>img/bondi_01/s07_01.jpg</image1>
+   			<image2>img/bondi_01/s07_02.jpg</image2>
    		</image>
    		<image>
-       		<name></name>
-   			<image1></image1>
-   			<image2></image2>
+       		<name>bondi_01_s08</name>
+   			<image1>img/bondi_01/s08_01.jpg</image1>
+   			<image2>img/bondi_01/s08_02.jpg</image2>
+   		</image>
+	</section>
+	<section>
+   		<image>
+       		<name>clovely_01</name>
+   			<image1>img/clovely_01/DSC_0004_01.jpg</image1>
+   			<image2>img/clovely_01/DSC_0004_02.jpg</image2>
+   		</image>
+   		<image>
+       		<name>clovely_02</name>
+   			<image1>img/clovely_01/DSC_0017_01.jpg</image1>
+   			<image2>img/clovely_01/DSC_0017_02.jpg</image2>
+   		</image>
+   		<image>
+       		<name>clovely_03</name>
+   			<image1>img/clovely_01/DSC_0018_01.jpg</image1>
+   			<image2>img/clovely_01/DSC_0018_02.jpg</image2>
    		</image>
 	</section>
 </twoframe>
