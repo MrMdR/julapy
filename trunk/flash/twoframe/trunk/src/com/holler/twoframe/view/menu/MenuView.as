@@ -32,7 +32,7 @@ package com.holler.twoframe.view.menu
 			var x:int = 0;
 			var padX:int = 10;
 			
-			sectionVO	= ModelLocator.getInstance().configModel.content[ 0 ] as ImageSectionVO;
+			sectionVO	= ModelLocator.getInstance().configModel.content[ 1 ] as ImageSectionVO;
 			itemVOs		= sectionVO.images;
 			
 			for( i=0; i<itemVOs.length; i++ )

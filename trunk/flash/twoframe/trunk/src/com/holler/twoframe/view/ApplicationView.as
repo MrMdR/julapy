@@ -56,19 +56,19 @@ package com.holler.twoframe.view
 			
 			menuViewAsset	= new Sprite();
 			menuView		= new MenuView( menuViewAsset );
-			menuView.addEventListener( Event.SELECT, onMenuViewClick );
+			menuView.addEventListener( Event.SELECT, menuViewClickHandler );
 			
-			_sprite.addChild( menuViewAsset );
+			addChildView( menuView );
 		}
 		
 		private function killMenuView ( e:*=null ):void
 		{
-			menuView.removeEventListener( Event.SELECT, onMenuViewClick );
+			menuView.removeEventListener( Event.SELECT, menuViewClickHandler );
 			menuView.remove();
 			menuView = null;
 		}
 		
-		private function onMenuViewClick ( e:Event ):void
+		private function menuViewClickHandler ( e:Event ):void
 		{ 
 			initStereoView();
 		}
@@ -79,18 +79,34 @@ package com.holler.twoframe.view
 		
 		private function initStereoView ( e:*=null ):void
 		{
-			var stereoViewAsset:Sprite;
-			
-			stereoViewAsset = new Sprite();
-			stereoView		= new StereoView( stereoViewAsset, menuView.selectedItemImageVO.copy() );
-			stereoView.addEventListener( Event.COMPLETE, killStereoView );
-			
-			_sprite.addChild( stereoViewAsset );
+			if( stereoView is StereoView )
+			{
+				stereoView.playOut();
+			}
+			else
+			{
+				var stereoViewAsset:Sprite;
+				
+				stereoViewAsset = new Sprite();
+				stereoView		= new StereoView( stereoViewAsset, menuView.selectedItemImageVO.copy() );
+				stereoView.addEventListener( Event.COMPLETE, stereoPlayedOutHandler );
+				
+				addChildView( stereoView );
+			}
+		}
+		
+		private function stereoPlayedOutHandler ( e:*=null ):void
+		{
+			killStereoView();
+			initStereoView();
 		}
 		
 		private function killStereoView ( e:*=null ):void
 		{
-			
+			stereoView.removeEventListener( Event.COMPLETE, killStereoView );
+			stereoView.destroy();
+			stereoView.remove();
+			stereoView = null;
 		}
 	}
 }
