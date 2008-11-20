@@ -75,17 +75,16 @@ package com.holler.twoframe.view.stereo
 			stereoTimer.addEventListener( TimerEvent.TIMER, stereoTick );
 			stereoTimer.start();
 			stereoTick();
-			
-//			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
 		
 		public function stopStereo ():void
 		{
-			stereoTimer.removeEventListener( TimerEvent.TIMER, stereoTick );
-			stereoTimer.stop();
-			stereoTimer = null;
-			
-//			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
+			if( stereoTimer is Timer )
+			{
+				stereoTimer.removeEventListener( TimerEvent.TIMER, stereoTick );
+				stereoTimer.stop();
+				stereoTimer = null;
+			}
 		}
 		
 		private function stereoTick ( e:*=null ):void
