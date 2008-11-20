@@ -42,9 +42,9 @@ package com.holler.twoframe.model
 		private var _initialiseVO:InitialiseVO;
 
 		/**
-		 *  The images returned from the amfphp GetImagesCommand
+		 *  The content from content.xml
 		 */
-		private var _images:Array;
+		private var _content:Array;
 		
 		public function ConfigModel()
 		{
@@ -68,20 +68,20 @@ package com.holler.twoframe.model
 			return _initialiseVO;
 		}
 		
-		public function set images ( value:Array ):void
+		public function set content ( value:Array ):void
 		{
-			if( value != images )
+			if( value != content )
 			{
-				_images = value;
+				_content = value;
 				
 				var imagesEvent:ImagesChangeEvent = new ImagesChangeEvent();
 				dispatchEvent( imagesEvent );
 			}
 		}
 		
-		public function get images ():Array
+		public function get content ():Array
 		{
-			return _images;
+			return _content;
 		}
 	}
 }

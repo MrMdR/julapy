@@ -57,7 +57,6 @@ package {
 			preloaderApplication.loadContent();
 			
 			ModelLocator.getInstance().configModel.addEventListener( InitialiseVOChangeEvent.INITIALISE_V_O_CHANGE,	configModel_initialiseVOChangeHander );
-			ModelLocator.getInstance().configModel.addEventListener( ImagesChangeEvent.IMAGES_CHANGE,				configModel_imagesChangeHander );
 		}
 		
 		private function contentLoadCompleteHandler():void
@@ -72,11 +71,6 @@ package {
 			
 			var imagesEvent:GetImagesEvent = new GetImagesEvent();
 			imagesEvent.dispatch();
-		}
-		
-		private function configModel_imagesChangeHander ( e:ImagesChangeEvent ):void
-		{
-			//
 		}
 	}
 }

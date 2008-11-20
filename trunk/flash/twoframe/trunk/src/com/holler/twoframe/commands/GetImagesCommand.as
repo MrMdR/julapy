@@ -26,7 +26,7 @@ package com.holler.twoframe.commands
 
 		override public function onResult( result : * = null ) : void
 		{
-			
+			modelLocator.configModel.content = result as Array;
 		}
 
 		override public function onFault( event : * = null ) : void

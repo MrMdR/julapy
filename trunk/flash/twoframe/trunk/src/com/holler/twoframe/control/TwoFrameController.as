@@ -13,7 +13,7 @@ package com.holler.twoframe.control
 	import com.holler.twoframe.commands.GetInitialiseVOCommand;
 	import com.holler.twoframe.events.GetImagesEvent;
 	import com.holler.twoframe.events.GetInitialiseVOEvent;
-	//HollerProjectGenerator marker: add import
+		    //HollerProjectGenerator marker: add import
 	
 	public class TwoFrameController extends FrontController
 	{
@@ -26,9 +26,9 @@ package com.holler.twoframe.control
 		
 		private function initialiseCommands( ) : void
 		{
-			//HollerProjectGenerator marker: add command
 			addCommand( GetInitialiseVOEvent.GET_INITIALISE_VO,	GetInitialiseVOCommand );
 			addCommand( GetImagesEvent.GET_IMAGES,				GetImagesCommand );
+		    //HollerProjectGenerator marker: add command
 		}
 	}
 }

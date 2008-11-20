@@ -97,6 +97,8 @@ package com.holler.twoframe.business
 					images.push( imageVO );
 				}
 			}
+			
+			onResult( sections );
 		}
 		
 		private function errorHandler ( e:ErrorEvent ):void
