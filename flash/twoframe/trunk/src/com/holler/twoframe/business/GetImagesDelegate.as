@@ -90,6 +90,7 @@ package com.holler.twoframe.business
 					xmlNode2		= ( imagesXMLNode.childNodes[ 2 ] as XMLNode ).firstChild;
 					
 					imageVO				= new ImageVO();
+					imageVO.id			= i * 100 + j;		// only max of 10 sections otherwise it all goes pare shaped.
 					imageVO.name		= ( xmlNode0 is XMLNode ) ? xmlNode0.toString() : "";
 					imageVO.image01Path	= ( xmlNode1 is XMLNode ) ? xmlNode1.toString() : "";
 					imageVO.image02Path	= ( xmlNode2 is XMLNode ) ? xmlNode2.toString() : "";
