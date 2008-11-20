@@ -8,6 +8,8 @@ package com.holler.twoframe.view.stereo
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 
 	public class StereoView extends ScreenView
 	{
@@ -16,6 +18,13 @@ package com.holler.twoframe.view.stereo
 		private var image02Container:Sprite;
 		private var image01:Image;
 		private var image02:Image;
+		
+		private var stereoTimer:Timer;
+		private var stereoFPS:int = 10;
+		private var stereoIndex:int = 0;
+		
+		private var isPlayingOut:Boolean = false;
+		
 		
 		public function StereoView( sprite:Sprite=null, imageVO:ImageVO=null )
 		{
@@ -62,27 +71,56 @@ package com.holler.twoframe.view.stereo
 		
 		public function playStereo ():void
 		{
-			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
+			stereoTimer = new Timer( 1000 / stereoFPS );
+			stereoTimer.addEventListener( TimerEvent.TIMER, stereoTick );
+			stereoTimer.start();
+			stereoTick();
+			
+//			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
 		
 		public function stopStereo ():void
 		{
-			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
+			stereoTimer.removeEventListener( TimerEvent.TIMER, stereoTick );
+			stereoTimer.stop();
+			stereoTimer = null;
+			
+//			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
 		
-		private function enterFrameHandler ( e:Event ):void
+		private function stereoTick ( e:*=null ):void
 		{
-			trace("enterFrameHandler");
+			if( ++stereoIndex > 1 )
+				stereoIndex = 0;
+				
+			if( stereoIndex == 0 )
+			{
+				image01.visible = true;
+				image02.visible = false;
+			}
+			
+			if( stereoIndex == 1 )
+			{
+				image01.visible = false;
+				image02.visible = true;
+			}
+			
+			doValidate();
 		}
 		
 		public function playIn ():void
 		{
-			
+			onPlayedIn();
 		}
 		
 		public function playOut ():void
 		{
-			
+			if( !isPlayingOut )
+			{
+				isPlayingOut = true;
+				
+				onPlayedOut();
+			}
 		}
 		
 		protected override function resize( stageWidth:Number, stageHeight:Number ):void
@@ -103,6 +141,16 @@ package com.holler.twoframe.view.stereo
 		private function onImageLoadError ():void
 		{
 			
+		}
+		
+		private function onPlayedIn ():void
+		{
+			
+		}
+		
+		private function onPlayedOut ():void
+		{
+			dispatchEvent( new Event( Event.COMPLETE ) );
 		}
 		
 	}
