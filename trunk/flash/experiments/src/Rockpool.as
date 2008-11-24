@@ -16,17 +16,21 @@ package
 		public function Rockpool()
 		{
 			addChild( videoContainer = new Sprite() );
-			video			= new VideoView( videoContainer, new Rectangle( 0, 0,  500, 333 ), 1 );
+			video			= new VideoView( null, new Rectangle( 0, 0,  500, 333 ), 1 );
 			video.addEventListener( VideoViewEvent.READY, onVideoReady );
 			video.addEventListener( VideoViewEvent.START, onVideoStart );
-			video.videoURI	= "assets/rockpool.flv";
 			video.loop		= true;
-			video.paused	= false;
+
+			video.container = this;
+			
+			video.videoURI	= "assets/rockpool.flv";
 		}
 		
 		private function onVideoReady ( e:VideoViewEvent ):void
 		{
 			trace( "onVideoReady" );
+			
+			video.paused	= false;
 		}
 		
 		private function onVideoStart ( e:VideoViewEvent ):void
