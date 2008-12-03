@@ -3,6 +3,7 @@ package
 	import com.holler.controls.VideoView;
 	import com.holler.events.VideoViewEvent;
 	import com.holler.utils.MathUtil;
+	import com.quasimondo.geom.ColorMatrix;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -26,14 +27,19 @@ package
 		private var stageWidth			:uint = 0;
 		private var stageHeight			:uint = 0;
 		
-		private var videoWidth			:int = 500;
-		private var videoHeight			:int = 333;
+//		private var videoWidth			:int = 500;
+//		private var videoHeight			:int = 333;
+		private var videoWidth			:int = 1000;
+		private var videoHeight			:int = 666;
 
 		private var video				:VideoView;
 		private var videoContainer		:Sprite = new Sprite();
+		private var videoPixelate		:Sprite = new Sprite();
 		private var videoOverlay		:Sprite = new Sprite();
 		private var videoOverlayBitmap	:Bitmap;
+		private var videoPixelateBitmap	:Bitmap;
 		private var videoFrames			:Array = new Array();
+		private var videoToStageRatio	:Number;
 		
 		private var stereoLayer			:Sprite = new Sprite();
 		private var stereoBm01			:Bitmap;
@@ -50,7 +56,7 @@ package
 			video				= new VideoView( videoContainer, new Rectangle( 0, 0, videoWidth, videoHeight ), 1 );
 			video.addEventListener( VideoViewEvent.READY,	onVideoReady );
 			video.loop			= true;
-			video.videoURI		= "assets/rockpool.flv";
+			video.videoURI		= "assets/rockpool_1000x666.flv";
 			
 			videoOverlay.buttonMode = true;
 			videoOverlay.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
@@ -62,14 +68,26 @@ package
 
 			videoOverlayBitmap	= new Tile();
 			
-			addChild( videoContainer );
-			addChild( stereoLayer );
+			var colorFilter:ColorMatrix = new ColorMatrix( null );
+			colorFilter.adjustSaturation( 0 );
+			
+			videoPixelateBitmap	= new Bitmap();
+			videoPixelateBitmap.filters = [ colorFilter.filter ];
+			videoPixelate.addChild( videoPixelateBitmap );
+			
+//			addChild( videoContainer );
+			addChild( videoPixelate );
 			addChild( videoOverlay );
+			addChild( stereoLayer );
 			
 			stage.addEventListener( KeyboardEvent.KEY_DOWN,	keyPressHandler );
 			stage.addEventListener( Event.RESIZE,			stageResizeHandler );
 			stageResizeHandler();
 		}
+		
+		/////////////////////////////////////////////
+		//	OVERLAY.
+		/////////////////////////////////////////////
 		
 		private function drawOverlay ():void
 		{
@@ -79,36 +97,95 @@ package
 			videoOverlay.graphics.endFill();
 		}
 
-		private function startRecordingFrames ():void
+		/////////////////////////////////////////////
+		//	RECORD FRAMES.
+		/////////////////////////////////////////////
+
+		private function addEnterFrame ():void
 		{
-			stage.addEventListener( Event.ENTER_FRAME, recordFrame );
+			stage.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
 		
-		private function stopRecordingFrames ():void
+		private function removeEnterFrame ():void
 		{
-			stage.removeEventListener( Event.ENTER_FRAME, recordFrame );
+			stage.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
 		
-		private function recordFrame ( e:Event=null ):void
+		private function enterFrameHandler ( e:Event=null ):void
 		{
-//			var bmd:BitmapData;
-//			
-//			bmd = new BitmapData( stageWidth, stageHeight, false, 0xFFFFFF );
-//			bmd.draw( videoContainer );
-//			
-//			videoFrames.push( bmd );
+			var srcBmd:BitmapData;
+			var r:Number;
+			var w:int, h:int;
+			
+			r	= videoToStageRatio;
+			w	= videoWidth * r;
+			h	= videoHeight * r;
+			
+			srcBmd = new BitmapData( videoWidth, videoHeight, false, 0xFFFFFF );
+			srcBmd.draw( videoContainer );
+			
+			videoPixelateBitmap.bitmapData = pixelate( srcBmd, w, h, 8 );
 		}
 		
-		private function getRandomRange( min:Number, max:Number ):Number
+		/////////////////////////////////////////////
+		//	PIXELATE.
+		/////////////////////////////////////////////
+		
+		public function pixelate ( bmd:BitmapData, outBmdWidth:int, outBmdHeight:int, pixelSize:uint=1 ):BitmapData
 		{
-			return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+			var srcBmd:BitmapData	= bmd.clone();
+			var outBmd:BitmapData	= new BitmapData( outBmdWidth, outBmdHeight );
+			var rx:Number			= bmd.width / outBmdWidth;
+			var ry:Number			= bmd.height / outBmdHeight;
+			
+			for( var y:uint=0; y < outBmdHeight; y+=pixelSize )
+			{  
+				for( var x:uint=0; x < outBmdWidth; x+=pixelSize )
+				{
+ 					if( x + pixelSize <= outBmdWidth && y + pixelSize <= outBmdHeight )
+						outBmd.fillRect	(	
+											new Rectangle	( x, y, pixelSize, pixelSize ),
+											
+											bmd.getPixel32	(
+																(int)( rx * ( x + (int)(pixelSize/2) ) ), 
+																(int)( ry * ( y + (int)(pixelSize/2) ) ) 
+															) 
+										);
+
+					if( x + pixelSize > outBmdWidth )
+						outBmd.fillRect	(
+											new Rectangle	( x, y, outBmdWidth - x, pixelSize ),
+											 
+											bmd.getPixel32	(
+																(int)( rx * ( x + (int)((outBmdWidth-x)/2) ) ),
+																(int)( ry * (y + (int)(pixelSize/2) ) )
+															) 
+										);
+					
+					if( y + pixelSize > outBmdHeight )
+						outBmd.fillRect	(	
+											new Rectangle	( x, y, pixelSize, outBmdHeight - y ),
+											
+											bmd.getPixel32	(
+																(int)( rx * ( x + (int)(pixelSize/2) ) ),
+																(int)( ry * ( y + (int)((outBmdHeight-y)/2) ) )
+															) 
+										);
+				}
+			}
+			
+			return outBmd;
 		}
+		
+		/////////////////////////////////////////////
+		//	EVENTS.
+		/////////////////////////////////////////////
 		
 		private function onVideoReady ( e:VideoViewEvent ):void
 		{
 			video.paused	= false;
 			
-			startRecordingFrames();
+			addEnterFrame();
 		}
 		
 		private function onVideoMouseDown ( e:MouseEvent=null ):void
@@ -126,7 +203,7 @@ package
 			srcBmd = new BitmapData( videoWidth, videoHeight, false, 0xFFFFFF );
 			srcBmd.draw( videoContainer );
 			
-			r = MathUtil.cropToFitRatio( stageWidth, stageHeight, videoWidth, videoHeight ); 
+			r = videoToStageRatio; 
 			 
 			x = stereoRect.x - videoContainer.x;
 			y = stereoRect.y - videoContainer.y;
@@ -150,7 +227,7 @@ package
 			srcBmd = new BitmapData( videoWidth, videoHeight, false, 0xFFFFFF );
 			srcBmd.draw( videoContainer );
 			
-			r = MathUtil.cropToFitRatio( stageWidth, stageHeight, videoWidth, videoHeight ); 
+			r = videoToStageRatio; 
 			 
 			x = stereoRect.x - videoContainer.x;
 			y = stereoRect.y - videoContainer.y;
@@ -181,8 +258,9 @@ package
 			var r:Number;
 			var rect:Rectangle;
 			
-			r		= MathUtil.cropToFitRatio( stageWidth, stageHeight, videoWidth, videoHeight );
-			rect	= new Rectangle( 0, 0, (int)( videoWidth * r ), (int)( videoHeight * r ) );
+			videoToStageRatio	= MathUtil.cropToFitRatio( stageWidth, stageHeight, videoWidth, videoHeight );
+			r					= videoToStageRatio;
+			rect				= new Rectangle( 0, 0, (int)( videoWidth * r ), (int)( videoHeight * r ) );
 
 			video.width		= rect.width;
 			video.height	= rect.height;
@@ -190,12 +268,24 @@ package
 			videoContainer.x	= (int)( ( stageWidth - rect.width ) * 0.5 );
 			videoContainer.y	= (int)( ( stageHeight - rect.height ) * 0.5 );
 			
+			videoPixelate.x		= (int)( ( stageWidth - rect.width ) * 0.5 );
+			videoPixelate.y		= (int)( ( stageHeight - rect.height ) * 0.5 );
+			
 			drawOverlay();
 		}
 		
 		private function keyPressHandler ( e:KeyboardEvent ):void
 		{
 			//
+		}
+		
+		/////////////////////////////////////////////
+		//	UTILS.
+		/////////////////////////////////////////////
+		
+		private function getRandomRange( min:Number, max:Number ):Number
+		{
+			return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 		}
 		
 	}
