@@ -62,9 +62,9 @@ package
 			videoOverlay.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
 			videoOverlay.addEventListener( MouseEvent.MOUSE_UP,		onVideoMouseUp );
 
-//			stereoLayer.buttonMode = true;
-//			stereoLayer.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
-//			stereoLayer.addEventListener( MouseEvent.MOUSE_UP,		onVideoMouseUp );
+			stereoLayer.buttonMode = true;
+			stereoLayer.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
+			stereoLayer.addEventListener( MouseEvent.MOUSE_UP,		onVideoMouseUp );
 
 			videoOverlayBitmap	= new Tile();
 			
@@ -77,8 +77,8 @@ package
 			
 //			addChild( videoContainer );
 			addChild( videoPixelate );
-			addChild( stereoLayer );
 			addChild( videoOverlay );
+			addChild( stereoLayer );
 			
 			stage.addEventListener( KeyboardEvent.KEY_DOWN,	keyPressHandler );
 			stage.addEventListener( Event.RESIZE,			stageResizeHandler );
