@@ -21,7 +21,7 @@ package
 	
 	public class Rockpool extends Sprite
 	{
-		[Embed(source="assets/tile_03.png")]
+		[Embed(source="assets/tile_06.png")]
 		private var Tile:Class;
 		
 		private var stageWidth			:uint = 0;
@@ -62,9 +62,9 @@ package
 			videoOverlay.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
 			videoOverlay.addEventListener( MouseEvent.MOUSE_UP,		onVideoMouseUp );
 
-			stereoLayer.buttonMode = true;
-			stereoLayer.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
-			stereoLayer.addEventListener( MouseEvent.MOUSE_UP,		onVideoMouseUp );
+//			stereoLayer.buttonMode = true;
+//			stereoLayer.addEventListener( MouseEvent.MOUSE_DOWN,	onVideoMouseDown );
+//			stereoLayer.addEventListener( MouseEvent.MOUSE_UP,		onVideoMouseUp );
 
 			videoOverlayBitmap	= new Tile();
 			
@@ -77,8 +77,8 @@ package
 			
 //			addChild( videoContainer );
 			addChild( videoPixelate );
-			addChild( videoOverlay );
 			addChild( stereoLayer );
+			addChild( videoOverlay );
 			
 			stage.addEventListener( KeyboardEvent.KEY_DOWN,	keyPressHandler );
 			stage.addEventListener( Event.RESIZE,			stageResizeHandler );
@@ -124,7 +124,7 @@ package
 			srcBmd = new BitmapData( videoWidth, videoHeight, false, 0xFFFFFF );
 			srcBmd.draw( videoContainer );
 			
-			videoPixelateBitmap.bitmapData = pixelate( srcBmd, w, h, 8 );
+			videoPixelateBitmap.bitmapData = pixelate( srcBmd, w, h, 50 );
 		}
 		
 		/////////////////////////////////////////////
