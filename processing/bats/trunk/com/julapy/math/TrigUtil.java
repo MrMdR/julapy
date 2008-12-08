@@ -26,6 +26,37 @@ public class TrigUtil
 		return p;
 	}
 	
+	public static float[] sphericalToCartesian ( float theta, float phi, float radius )
+	{
+		float p[];
+		
+		p = new float[ 3 ];
+		
+		p[ 0 ] = (float)Math.cos( theta ) * (float)Math.sin( phi ) * radius;
+		p[ 1 ] = (float)Math.sin( theta ) * (float)Math.sin( phi ) * radius;
+		p[ 2 ] = (float)Math.cos( phi ) * radius;
+		
+		return  p;
+	}
+	
+	public static float[] cartesianToSpherical ( float x, float y, float z )
+	{
+		float theta, phi, radius;
+		float p[];
+		
+		p = new float[ 3 ];
+		
+		radius	= (float)Math.sqrt( x * x + y * y + z * z );
+		theta	= (float)Math.atan2( y, x );
+		phi		= (float)Math.atan2( Math.sqrt( x * x + y * y ), z );
+		
+		p[ 0 ]	= radius;
+		p[ 1 ]	= theta;
+		p[ 2 ]	= phi;
+		
+		return p;
+	}
+	
 	public static float[] eulerToMatrix ( float degreesX, float degreesY, float degreesZ )
 	{
 		float angleX;

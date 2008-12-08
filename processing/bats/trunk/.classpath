@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/processing_1.0"/>
-	<classpathentry kind="lib" path="/Toxi_geomutils_0008/bin/toxi_geomutils.jar"/>
+	<classpathentry kind="lib" path="/Toxi_geomutils_0011/bin/toxi_geomutils_0011.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

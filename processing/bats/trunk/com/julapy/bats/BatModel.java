@@ -17,7 +17,7 @@ import toxi.geom.Quaternion;
 import toxi.geom.Vec3D;
 import toxi.math.MathUtils;
 
-public class Main extends PApplet
+public class BatModel extends PApplet
 {
 	PGraphicsOpenGL pgl;
 	GL gl;
