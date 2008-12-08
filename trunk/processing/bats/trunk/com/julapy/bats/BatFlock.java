@@ -8,16 +8,15 @@ import javax.media.opengl.GL;
 
 import com.julapy.camera.Camera;
 import com.julapy.math.TrigUtil;
-import com.julapy.opengl.Primitive;
 import com.julapy.opengl.TextureLoader;
+import com.julapy.steering.Flock;
+import com.julapy.steering.FlockItem;
 
 import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
-import toxi.geom.Quaternion;
 import toxi.geom.Vec3D;
-import toxi.math.MathUtils;
 
-public class Main extends PApplet
+public class BatFlock extends PApplet
 {
 	PGraphicsOpenGL pgl;
 	GL gl;
@@ -29,7 +28,8 @@ public class Main extends PApplet
 	
 	Vec3D center = new Vec3D( 2000, 2000, 2000 );
 	
-	Bat bat;
+	Bat[] 	bats;
+	Flock[] batFlocks;
 	
 	public void setup()
 	{
@@ -40,10 +40,8 @@ public class Main extends PApplet
 		
 		initGL();
 		initTextureList();
-		
-		cam = new Camera( this, center.x, center.y, center.z );
-		
-		bat = new Bat();
+		initCamera();
+		initBats();
 	}
 	
 	//////////////////////////////////////////////
@@ -95,6 +93,24 @@ public class Main extends PApplet
 		gl.glEndList();
 	}
 	
+	private void initCamera ()
+	{
+		cam = new Camera( this, center.x, center.y, center.z );
+	}
+	
+	private void initBats ()
+	{
+		int i;
+		bats = new Bat[ 40 ];
+		for( i=0; i<bats.length; i++ )
+		{
+			bats[ i ] = new Bat( Vec3D.randomVector() );
+		}
+		
+		batFlocks		= new Flock[ 1 ]; 
+		batFlocks[ 0 ]	= new Flock( bats, new Vec3D() );
+	}
+	
 	//////////////////////////////////////////////
 	// DRAW.
 	//////////////////////////////////////////////
@@ -105,6 +121,7 @@ public class Main extends PApplet
 		background( 0.6f );
 		
 //		updateCamera();
+		updateBats();
 		
 		// render.
 		pgl.beginGL();
@@ -113,10 +130,39 @@ public class Main extends PApplet
 		gl.glEnable( GL.GL_TEXTURE_2D );
 		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
 		
-		bat.render( );
-		bat.update( );
+		renderBats();
 		
 		pgl.endGL();
+	}
+	
+	private void updateBats ()
+	{
+		int i;
+		float dx, dy;
+		
+		dx	= ( mouseX / (float)width - 0.5f ) * 2;
+		dy	= ( mouseY / (float)height - 0.5f ) * 2;
+		
+		for( i=0; i<batFlocks.length; i++ )
+		{
+			batFlocks[ i ].update();
+			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
+		}
+		
+		for( i=0; i<bats.length; i++ )
+		{
+			bats[ i ].update();
+		}
+	}
+	
+	private void renderBats ()
+	{
+		int i;
+		
+		for( i=0; i<bats.length; i++ )
+		{
+			bats[ i ].render();
+		}
 	}
 	
 	private void updateCamera ()
@@ -140,18 +186,16 @@ public class Main extends PApplet
 	// BAT CLASS.
 	//////////////////////////////////////////////
 	
-	public class Bat
+	public class Bat extends FlockItem
 	{
-		float count		= 0;
+		float count		= random( 1 );
 		float countInc	= 0.05f;
 		float countDir	= 1;
 
 		Vec3D[] locs;
-		Vec3D loc;
-		Vec3D vel;
 		
-		float wingW = 400;
-		float wingH	= 200;
+		float wingW = 40;
+		float wingH	= 20;
 		
 		float wingMaxAngle		= 40;
 		float wingOffsetAngle	= 30;
@@ -172,63 +216,33 @@ public class Main extends PApplet
 				locs[i] = new Vec3D( loc );
 		}
 
+		public Bat( Vec3D loc )
+		{
+			this.loc = loc;
+			vel = new Vec3D( );
+			
+			locs = new Vec3D[ 50 ];
+			for( int i=0; i<locs.length; i++ )
+				locs[i] = new Vec3D( loc );
+		}
+		
 		public void render ()
 		{
-			Vec3D out, up, right;
-			
-			up		= new Vec3D( 0, 1, 0 );
-			out		= locs[ 0 ].sub( locs[ 1 ] ).normalize();
-			up		= up.cross( out ).normalize();
-			right	= out.cross( up ).normalize();
-			
-			float[] sp;
-			float theta, phi, radius;
-			
-			sp		= TrigUtil.cartesianToSpherical( out.x, out.y, out.z );
-			radius	= sp[ 0 ];
-			theta	= sp[ 1 ] * TrigUtil.RADTODEG;
-			phi		= sp[ 2 ] * TrigUtil.RADTODEG;
-			
-//			float rotX, rotY, rotZ;
-//			
-//			rotX	= out.headingYZ() * TrigUtil.RADTODEG;
-//			rotY	= out.headingXZ() * TrigUtil.RADTODEG - 90;
-//			rotZ	= out.headingXY() * TrigUtil.RADTODEG;
-			
-			
-			float[] m;
-//			m = new float[]
-//			            {
-//							right.x, up.x, out.x, 0,
-//							right.y, up.y, out.y, 0,
-//							right.z, up.z, out.z, 0,
-//							0,	     0,	   0,	  1
-//						};
-
-			m = TrigUtil.eulerToMatrix( 0, phi, theta );
-//			m = TrigUtil.quaternionToMatrix( out.x, out.y, out.z, 30 * TrigUtil.DEGTORAD );
-			
-			FloatBuffer rotMatrix;
-			rotMatrix = ByteBuffer.allocateDirect(4 * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-			rotMatrix.put( m );
-			rotMatrix.flip();
-
 			gl.glPushMatrix();
 			
 			gl.glColor4f( 0, 0, 0, 1 );
 			gl.glTranslatef( center.x, center.y, center.z );
 			gl.glTranslatef( loc.x, loc.y, loc.z );
-			gl.glMultMatrixf( rotMatrix );
 			
 			gl.glPushMatrix();
-			gl.glRotatef( 90, 1, 0, 0 );
+//			gl.glRotatef( 90, 1, 0, 0 );
 			gl.glRotatef( wingLAngle, 0, 1, 0 );
 			gl.glScalef( wingW, wingH, 0 );
 			gl.glCallList( wingLCallList );
 			gl.glPopMatrix();
 
 			gl.glPushMatrix();
-			gl.glRotatef( 90, 1, 0, 0 );
+//			gl.glRotatef( 90, 1, 0, 0 );
 			gl.glRotatef( wingRAngle, 0, 1, 0 );
 			gl.glScalef( wingW, wingH, 0 );
 			gl.glCallList( wingRCallList );
@@ -244,9 +258,10 @@ public class Main extends PApplet
 			
 //			wander();
 //			pullToPoint( new Vec3D( 0, 0, 0 ) );
-			orbitHorz();
+//			orbitHorz();
 //			orbitVert();
 			
+			updatePosition();
 			savePosition();
 		}
 		
@@ -331,6 +346,11 @@ public class Main extends PApplet
 			loc.y = p[ 1 ];
 			
 			orbitAngle += orbitAngleInc;
+		}
+		
+		private void updatePosition ()
+		{
+			loc.addSelf( vel );
 		}
 		
 		private void savePosition ()
