@@ -1,7 +1,5 @@
 package com.julapy.steering;
 
-import javax.sound.sampled.TargetDataLine;
-
 import toxi.geom.Vec3D;
 
 public class Flock
@@ -25,15 +23,15 @@ public class Flock
 //	public float velocityLimit	= 10;
 //	public float flockRange		= 100;
 	
-	private FlockItem[] items;
+	private Particle[] items;
 	public	Vec3D flockTarget;
 
-	public Flock ( FlockItem[] items )
+	public Flock ( Particle[] items )
 	{
 		this.items = items;
 	}
 	
-	public Flock ( FlockItem[] items, Vec3D flockTarget )
+	public Flock ( Particle[] items, Vec3D flockTarget )
 	{
 		this.items			= items;
 		this.flockTarget	= flockTarget;
@@ -41,7 +39,7 @@ public class Flock
 	
 	public void update ( )
 	{
-		FlockItem item;
+		Particle item;
 		int i;
 		
 		for( i=0; i<items.length; i++ )
@@ -72,9 +70,9 @@ public class Flock
 	// pull to the center
 	////////////////////////////////////////////////////
 	
-	public Vec3D rule1 ( FlockItem item1 )
+	public Vec3D rule1 ( Particle item1 )
 	{
-		FlockItem item2;
+		Particle item2;
 		Vec3D v;
 		float d;
 		int count, i;
@@ -118,9 +116,9 @@ public class Flock
 	// avoid collision with other particles.
 	////////////////////////////////////////////////////
 	
-	public Vec3D rule2( FlockItem item1 )
+	public Vec3D rule2( Particle item1 )
 	{
-		FlockItem item2;
+		Particle item2;
 		Vec3D v;
 		int i;
 		
@@ -148,9 +146,9 @@ public class Flock
 	// head to flock average
 	////////////////////////////////////////////////////	
 	
-	public Vec3D rule3( FlockItem item1 )
+	public Vec3D rule3( Particle item1 )
 	{
-		FlockItem item2;
+		Particle item2;
 		Vec3D v;
 		float d;
 		int count, i;
@@ -192,7 +190,7 @@ public class Flock
 	// pull to target
 	////////////////////////////////////////////////////	
 
-	public Vec3D rule4( FlockItem item1 )
+	public Vec3D rule4( Particle item1 )
 	{
 		Vec3D v;
 		

@@ -27,8 +27,6 @@ public class BatModel extends PApplet
 	int wingRCallList;
 	Camera cam;
 	
-	Vec3D center = new Vec3D( 2000, 2000, 2000 );
-	
 	Bat bat;
 	
 	public void setup()
@@ -41,7 +39,7 @@ public class BatModel extends PApplet
 		initGL();
 		initTextureList();
 		
-		cam = new Camera( this, center.x, center.y, center.z );
+		cam = new Camera( this );
 		
 		bat = new Bat();
 	}
@@ -216,7 +214,6 @@ public class BatModel extends PApplet
 			gl.glPushMatrix();
 			
 			gl.glColor4f( 0, 0, 0, 1 );
-			gl.glTranslatef( center.x, center.y, center.z );
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			gl.glMultMatrixf( rotMatrix );
 			

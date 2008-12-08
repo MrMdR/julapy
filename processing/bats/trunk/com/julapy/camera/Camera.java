@@ -8,12 +8,12 @@ public class Camera
 	public PApplet papp;
 	public Vec3D eye, center, up;
 	
-	public Camera ( PApplet papp, float centerX, float centerY, float centerZ )
+	public Camera ( PApplet papp )
 	{
 		this.papp = papp;
 		
-		eye		= new Vec3D( centerX, centerY + 100, centerZ + 1000 );
-		center	= new Vec3D( centerX, centerY, centerZ );
+		eye		= new Vec3D( 0, 100, 1000 );
+		center	= new Vec3D( 0, 0, 0 );
 		up		= new Vec3D( 0, 1, 0 );
 		
 		papp.camera( eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z );
