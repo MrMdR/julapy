@@ -1,5 +1,7 @@
 package com.julapy.bats;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -34,9 +36,24 @@ public class BatFlock extends PApplet
 	boolean isRecording = false;
 	int imageCount;
 	
+	static public void main( String args[] )
+	{
+		PApplet.main( 	new String[]
+	                    {
+							"--display=1",
+							"--present",
+							"--bgcolor=#000000",
+							"--present-stop-color=#000000", 
+							"com.julapy.bats.Main" 
+						} 
+		);
+	}
+	
 	public void setup()
 	{
-		size( 1280, 720, OPENGL );
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		size( screen.width, screen.height, OPENGL );
+//		size( 1280, 720, OPENGL );
 		frameRate( 30 );
 		colorMode( RGB, 1.0f );
 		background( 0.7f );
@@ -390,14 +407,5 @@ public class BatFlock extends PApplet
 			if(isRecording) println("started recording.");
 			if(!isRecording) println("stopped recording.");
 		}
-	}
-	
-	//////////////////////////////////////////////
-	// MAIN.
-	//////////////////////////////////////////////
-	
-	static public void main( String args[] )
-	{
-		PApplet.main( new String[] { "com.julapy.bats.Main" } );
 	}
 }
