@@ -10,7 +10,8 @@ import com.julapy.camera.Camera;
 import com.julapy.math.TrigUtil;
 import com.julapy.opengl.TextureLoader;
 import com.julapy.steering.Flock;
-import com.julapy.steering.FlockItem;
+import com.julapy.steering.NoiseField;
+import com.julapy.steering.Particle;
 
 import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
@@ -26,10 +27,12 @@ public class BatFlock extends PApplet
 	int wingRCallList;
 	Camera cam;
 	
-	Vec3D center = new Vec3D( 2000, 2000, 2000 );
-	
 	Bat[] 	bats;
 	Flock[] batFlocks;
+	NoiseField noiseField;
+	
+	boolean isRecording = false;
+	int imageCount;
 	
 	public void setup()
 	{
@@ -95,20 +98,22 @@ public class BatFlock extends PApplet
 	
 	private void initCamera ()
 	{
-		cam = new Camera( this, center.x, center.y, center.z );
+		cam = new Camera( this );
 	}
 	
 	private void initBats ()
 	{
 		int i;
-		bats = new Bat[ 40 ];
+		bats = new Bat[ 500 ];
 		for( i=0; i<bats.length; i++ )
 		{
-			bats[ i ] = new Bat( Vec3D.randomVector() );
+			bats[ i ]	= new Bat( new Vec3D( width * ( random( 1 ) - 0.5f ), width * ( random( 1 ) - 0.5f ), 0 ) );
 		}
 		
 		batFlocks		= new Flock[ 1 ]; 
 		batFlocks[ 0 ]	= new Flock( bats, new Vec3D() );
+		
+		noiseField		= new NoiseField( bats, width * 0.67f );
 	}
 	
 	//////////////////////////////////////////////
@@ -133,6 +138,8 @@ public class BatFlock extends PApplet
 		renderBats();
 		
 		pgl.endGL();
+		
+		saveImage();		
 	}
 	
 	private void updateBats ()
@@ -143,11 +150,13 @@ public class BatFlock extends PApplet
 		dx	= ( mouseX / (float)width - 0.5f ) * 2;
 		dy	= ( mouseY / (float)height - 0.5f ) * 2;
 		
-		for( i=0; i<batFlocks.length; i++ )
-		{
-			batFlocks[ i ].update();
-			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
-		}
+//		for( i=0; i<batFlocks.length; i++ )
+//		{
+//			batFlocks[ i ].update();
+//			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
+//		}
+		
+		noiseField.update();
 		
 		for( i=0; i<bats.length; i++ )
 		{
@@ -182,11 +191,19 @@ public class BatFlock extends PApplet
 		cam.update( );
 	}
 	
+	private void saveImage ()
+	{
+		if( isRecording )
+		{
+			save("export/image" + imageCount++ + ".png");		
+		}
+	}
+	
 	//////////////////////////////////////////////
 	// BAT CLASS.
 	//////////////////////////////////////////////
 	
-	public class Bat extends FlockItem
+	public class Bat extends Particle
 	{
 		float count		= random( 1 );
 		float countInc	= 0.05f;
@@ -231,7 +248,6 @@ public class BatFlock extends PApplet
 			gl.glPushMatrix();
 			
 			gl.glColor4f( 0, 0, 0, 1 );
-			gl.glTranslatef( center.x, center.y, center.z );
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			
 			gl.glPushMatrix();
@@ -360,6 +376,25 @@ public class BatFlock extends PApplet
 		    locs[ 0 ].set( loc );
 		}
 	}
+	
+	//////////////////////////////////////////////
+	// EVENTS.
+	//////////////////////////////////////////////
+	
+	public void keyPressed()
+	{
+		if(key == 'r')
+		{
+			isRecording = !isRecording;
+			
+			if(isRecording) println("started recording.");
+			if(!isRecording) println("stopped recording.");
+		}
+	}
+	
+	//////////////////////////////////////////////
+	// MAIN.
+	//////////////////////////////////////////////
 	
 	static public void main( String args[] )
 	{

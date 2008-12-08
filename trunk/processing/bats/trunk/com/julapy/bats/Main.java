@@ -8,7 +8,6 @@ import javax.media.opengl.GL;
 
 import com.julapy.camera.Camera;
 import com.julapy.math.TrigUtil;
-import com.julapy.opengl.Primitive;
 import com.julapy.opengl.TextureLoader;
 
 import processing.core.PApplet;
@@ -27,8 +26,6 @@ public class Main extends PApplet
 	int wingRCallList;
 	Camera cam;
 	
-	Vec3D center = new Vec3D( 2000, 2000, 2000 );
-	
 	Bat bat;
 	
 	public void setup()
@@ -41,7 +38,7 @@ public class Main extends PApplet
 		initGL();
 		initTextureList();
 		
-		cam = new Camera( this, center.x, center.y, center.z );
+		cam = new Camera( this );
 		
 		bat = new Bat();
 	}
@@ -216,7 +213,6 @@ public class Main extends PApplet
 			gl.glPushMatrix();
 			
 			gl.glColor4f( 0, 0, 0, 1 );
-			gl.glTranslatef( center.x, center.y, center.z );
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			gl.glMultMatrixf( rotMatrix );
 			
