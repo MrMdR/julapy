@@ -5,13 +5,13 @@ import toxi.geom.Vec3D;
 public class Flock
 {
 	public float centerPullScale			= 0.0001f;
-	public float collisionAvoidanceScale	= 0.01f;
-	public float flockAverageScale	 		= 0.0008f;
-	public float targetPullScale			= 0.0005f;
+	public float collisionAvoidanceScale	= 0.0001f;
+	public float flockAverageScale	 		= 0.0001f;
+	public float targetPullScale			= 0.0001f;
 	
-	public float minDistance	= 50;
+	public float minDistance	= 20;
 	public float velocityLimit	= 30;
-	public float flockRange		= 200;
+	public float flockRange		= 400;
 	public float targetRange	= 100;
 
 //	public float centerPullScale			= 0.01f;
@@ -54,14 +54,14 @@ public class Flock
 			v1.scaleSelf( centerPullScale );
 			v2.scaleSelf( collisionAvoidanceScale );
 			v3.scaleSelf( flockAverageScale );
-			v4.scaleSelf( getLinearScale( item.loc.distanceTo( flockTarget ), targetRange, targetPullScale ) );
+			v4.scaleSelf( getNegLinearScale( item.loc.distanceTo( flockTarget ), targetRange ) * targetPullScale );
 			
 			item.vel.addSelf( v1 );
-			item.vel.addSelf( v2 );
-			item.vel.addSelf( v3 );
-			item.vel.addSelf( v4 );
+//			item.vel.addSelf( v2 );
+//			item.vel.addSelf( v3 );
+//			item.vel.addSelf( v4 );
 			
-			item.vel.scaleSelf( getLimit( item.vel.magnitude(), velocityLimit ) );
+//			item.vel.scaleSelf( getLimit( item.vel.magnitude(), velocityLimit ) );
 //			item.vel.scaleSelf( getLinearScale( item.loc.distanceTo( flockTarget ), targetRange, 0.001f ) + 1 );
 		}
 	}
@@ -73,8 +73,8 @@ public class Flock
 	public Vec3D rule1 ( Particle item1 )
 	{
 		Particle item2;
-		Vec3D v;
-		float d;
+		Vec3D v, temp;
+		float d, s;
 		int count, i;
 		
 		v 		= new Vec3D();
@@ -88,13 +88,14 @@ public class Flock
 			if( item1 != item2 )
 			{
 				d = item1.loc.distanceTo( item2.loc );
+				s = getNegLinearScale( d, flockRange );
 				
-				if( d < flockRange )
-				{
-					v.addSelf( item2.loc );
+				temp = item2.loc.copy();
+				temp.scaleSelf( s );
+				
+				v.addSelf( temp );
 					
-					++count;
-				}
+				++count;
 			}
 		}
 		
@@ -104,9 +105,9 @@ public class Flock
 			v.y /= count;
 			v.z /= count;
 			
-			v.x = ( v.x - item1.loc.x);
-			v.y = ( v.y - item1.loc.y);
-			v.z = ( v.z - item1.loc.z);
+			v.x = ( v.x - item1.loc.x );
+			v.y = ( v.y - item1.loc.y );
+			v.z = ( v.z - item1.loc.z );
 		}
 		
 		return v;
@@ -232,11 +233,27 @@ public class Flock
 		}
 	}
 	
-	private float getLinearScale ( float distance, float range, float rise )
+	private float getPosLinearScale ( float distance, float range )
 	{
 		if( distance > range )
-			return ( distance - range ) * rise;
+		{
+			return ( distance - range ) / range;
+		}
 		else
+		{
 			return 0;
+		}
+	}
+	
+	private float getNegLinearScale ( float distance, float range )
+	{
+		if( distance < range )
+		{
+			return 1 - ( distance / range );
+		}
+		else
+		{
+			return 0;
+		}
 	}
 }
