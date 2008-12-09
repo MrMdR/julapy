@@ -158,17 +158,22 @@ public class BatFlock extends PApplet
 	
 	private void initBats ()
 	{
+		Vec3D loc, vel;
 		int i;
-		bats = new Bat[ 100 ];
+		
+		bats = new Bat[ 200 ];
 		for( i=0; i<bats.length; i++ )
 		{
-			bats[ i ]	= new Bat( new Vec3D( width * ( random( 1 ) - 0.5f ), width * ( random( 1 ) - 0.5f ), 0 ) );
+			loc			= new Vec3D( width * ( random( 2 ) - 1 ), width * ( random( 2 ) - 1 ), 0 );
+			vel			= Vec3D.randomVector().scaleSelf( random( 30 ) + 1 );
+			
+			bats[ i ]	= new Bat( loc, vel );
 		}
 		
 		batFlocks		= new Flock[ 1 ];
 		batFlocks[ 0 ]	= new Flock( bats, new Vec3D() );
 		
-		noiseField		= new NoiseField( bats, width * 0.8f );
+		noiseField		= new NoiseField( bats, 1200 );
 	}
 	
 	//////////////////////////////////////////////
@@ -183,8 +188,8 @@ public class BatFlock extends PApplet
 		updateBlobDetect();
 		updateAudioAnalysis();
 		
-		updateFlock();
 		updateNoiseField();
+		updateFlock();
 		updateBats();
 		
 		updateCamera();
@@ -260,7 +265,8 @@ public class BatFlock extends PApplet
 		
 		for( i=0; i<batFlocks.length; i++ )
 		{
-			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
+//			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
+			batFlocks[ i ].flockTarget.set( 0, 100, 900 );
 			batFlocks[ i ].update();
 		}
 	}
@@ -296,10 +302,11 @@ public class BatFlock extends PApplet
 		
 		textFont( font );
 		
-		text( "centerPullScale    :: " + batFlocks[ 0 ].centerPullScale,	width - 200, 10 );
-		text( "minDistance        :: " + batFlocks[ 0 ].minDistance,		width - 200, 25 );
-		text( "flockAverageScale  :: " + batFlocks[ 0 ].flockAverageScale,	width - 200, 40 );
-		text( "velocityLimit      :: " + batFlocks[ 0 ].velocityLimit,		width - 200, 55 );
+		text( "centerPullScale          :: " + batFlocks[ 0 ].centerPullScale,			width - 200, 10 );
+		text( "minDistance              :: " + batFlocks[ 0 ].minDistance,				width - 200, 25 );
+		text( "targetPullScale          :: " + batFlocks[ 0 ].targetPullScale,			width - 200, 40 );
+		text( "velocityLimit            :: " + batFlocks[ 0 ].velocityLimit,			width - 200, 55 );
+		text( "flockAverageScale        :: " + batFlocks[ 0 ].flockAverageScale,		width - 200, 70 );
 	}
 	
 	private void saveImage ()
@@ -339,9 +346,7 @@ public class BatFlock extends PApplet
 			loc = new Vec3D( );
 			vel = new Vec3D( );
 			
-			locs = new Vec3D[ 50 ];
-			for( int i=0; i<locs.length; i++ )
-				locs[i] = new Vec3D( loc );
+			init();
 		}
 
 		public Bat( Vec3D loc )
@@ -349,6 +354,19 @@ public class BatFlock extends PApplet
 			this.loc = loc;
 			vel = new Vec3D( );
 			
+			init();
+		}
+
+		public Bat( Vec3D loc, Vec3D vel )
+		{
+			this.loc = loc;
+			this.vel = vel;
+			
+			init();
+		}
+		
+		private void init ()
+		{
 			locs = new Vec3D[ 50 ];
 			for( int i=0; i<locs.length; i++ )
 				locs[i] = new Vec3D( loc );
@@ -551,21 +569,31 @@ public class BatFlock extends PApplet
 		/*__________BREAK___________*/
 		if( key == 'd' )
 		{
-			batFlocks[ 0 ].flockAverageScale += debugInc;
+			batFlocks[ 0 ].targetPullScale += debugInc;
 		}
 		if( key == 'c' )
 		{
-			batFlocks[ 0 ].flockAverageScale -= debugInc;
+			batFlocks[ 0 ].targetPullScale -= debugInc;
 		}
 
 		/*__________BREAK___________*/
-		if( key == 'd' )
+		if( key == 'f' )
 		{
 			batFlocks[ 0 ].velocityLimit += debugInc;
 		}
-		if( key == 'c' )
+		if( key == 'v' )
 		{
 			batFlocks[ 0 ].velocityLimit -= debugInc;
+		}
+		
+		/*__________BREAK___________*/
+		if( key == 'g' )
+		{
+			batFlocks[ 0 ].flockAverageScale += debugInc;
+		}
+		if( key == 'b' )
+		{
+			batFlocks[ 0 ].flockAverageScale -= debugInc;
 		}
 	}
 }

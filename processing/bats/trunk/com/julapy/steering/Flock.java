@@ -4,25 +4,21 @@ import toxi.geom.Vec3D;
 
 public class Flock
 {
-	public float centerPullScale			= 0.0001f;
+	public float centerPullScale			= 0.001f;
 	public float collisionAvoidanceScale	= 0.0001f;
-	public float flockAverageScale	 		= 0.0001f;
+	public float flockAverageScale	 		= 0.001f;
 	public float targetPullScale			= 0.0001f;
+
+//	public float centerPullScale			= 0.003f;
+//	public float collisionAvoidanceScale	= 0.0001f;
+//	public float flockAverageScale	 		= 0.0001f;
+//	public float targetPullScale			= 0.0001f;
 	
-	public float minDistance	= 20;
-	public float velocityLimit	= 30;
+	public float velocityLimit	= 10;
+	public float minDistance	= 30;
 	public float flockRange		= 400;
 	public float targetRange	= 100;
 
-//	public float centerPullScale			= 0.01f;
-//	public float collisionAvoidanceScale	= 0.01f;
-//	public float flockAverageScale	 		= 0.0008f;
-//	public float targetPullScale			= 0.05f;
-//	
-//	public float minDistance	= 50;
-//	public float velocityLimit	= 10;
-//	public float flockRange		= 100;
-	
 	private Particle[] items;
 	public	Vec3D flockTarget;
 
@@ -54,14 +50,14 @@ public class Flock
 			v1.scaleSelf( centerPullScale );
 			v2.scaleSelf( collisionAvoidanceScale );
 			v3.scaleSelf( flockAverageScale );
-			v4.scaleSelf( getNegLinearScale( item.loc.distanceTo( flockTarget ), targetRange ) * targetPullScale );
+			v4.scaleSelf( targetPullScale );
 			
 			item.vel.addSelf( v1 );
 //			item.vel.addSelf( v2 );
-//			item.vel.addSelf( v3 );
-//			item.vel.addSelf( v4 );
+			item.vel.addSelf( v3 );
+			item.vel.addSelf( v4 );
 			
-//			item.vel.scaleSelf( getLimit( item.vel.magnitude(), velocityLimit ) );
+			item.vel.scaleSelf( getLimit( item.vel.magnitude(), velocityLimit ) );
 //			item.vel.scaleSelf( getLinearScale( item.loc.distanceTo( flockTarget ), targetRange, 0.001f ) + 1 );
 		}
 	}
@@ -150,8 +146,8 @@ public class Flock
 	public Vec3D rule3( Particle item1 )
 	{
 		Particle item2;
-		Vec3D v;
-		float d;
+		Vec3D v, temp;
+		float d, s;
 		int count, i;
 		
 		v		= new Vec3D();
@@ -164,15 +160,14 @@ public class Flock
 			if ( item1 != item2 )
 			{
 				d = item1.loc.distanceTo( item2.loc );
+				s = getNegLinearScale( d, flockRange );
 				
-				if( d < flockRange )
-				{
-					v.x += item2.vel.x;
-					v.y += item2.vel.y;
-					v.z += item2.vel.z;
-					
-					++count;
-				}
+				temp = item2.vel.copy();
+				temp.scaleSelf( s );
+				
+				v.addSelf( temp );
+				
+				++count;
 			}
 		}
 		
