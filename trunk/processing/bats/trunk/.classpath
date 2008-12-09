@@ -5,5 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/processing_1.0"/>
 	<classpathentry kind="lib" path="/Toxi_geomutils_0011/bin/toxi_geomutils_0011.jar"/>
 	<classpathentry kind="lib" path="/BlobDetection/library/blob_detection.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ess"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

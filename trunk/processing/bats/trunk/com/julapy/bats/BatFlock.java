@@ -8,6 +8,8 @@ import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
 
+import com.julapy.audio.AudioInputAnalysis;
+import com.julapy.blob.BlobDetect;
 import com.julapy.camera.Camera;
 import com.julapy.math.TrigUtil;
 import com.julapy.opengl.TextureLoader;
@@ -17,6 +19,7 @@ import com.julapy.steering.Particle;
 
 import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
+import processing.video.Capture;
 import toxi.geom.Vec3D;
 
 public class BatFlock extends PApplet
@@ -28,6 +31,13 @@ public class BatFlock extends PApplet
 	int wingLCallList;
 	int wingRCallList;
 	Camera cam;
+	
+	int capWidth	= 320;
+	int capHeight	= 240;
+	Capture cap;
+	BlobDetect bd;
+	
+	AudioInputAnalysis audioAnalysis;
 	
 	Bat[] 	bats;
 	Flock[] batFlocks;
@@ -61,6 +71,8 @@ public class BatFlock extends PApplet
 		initGL();
 		initTextureList();
 		initCamera();
+		initBlobDetect();
+		initAudioAnalysis();
 		initBats();
 	}
 	
@@ -118,6 +130,22 @@ public class BatFlock extends PApplet
 		cam = new Camera( this );
 	}
 	
+	private void initBlobDetect ()
+	{
+		// The name of the capture device is dependent those
+		// plugged into the computer. To get a list of the 
+		// choices, uncomment the following line 
+		println( Capture.list() );
+		
+		cap	= new Capture( this, capWidth, capHeight, "USB Video Class Video", 25 );
+		bd	= new BlobDetect( this, cap );
+	}
+	
+	private void initAudioAnalysis ()
+	{
+		audioAnalysis = new AudioInputAnalysis( this );
+	}
+	
 	private void initBats ()
 	{
 		int i;
@@ -142,8 +170,10 @@ public class BatFlock extends PApplet
 		// clear.
 		background( 0.6f );
 		
-//		updateCamera();
+		updateBlobDetect();
+		updateAudioAnalysis();
 		updateBats();
+		updateCamera();
 		
 		// render.
 		pgl.beginGL();
@@ -155,7 +185,11 @@ public class BatFlock extends PApplet
 		renderBats();
 		
 		pgl.endGL();
-		
+
+		resetCamera();
+		drawBlobDetect();
+		drawAudioAnalysis();
+
 		saveImage();		
 	}
 	
@@ -193,19 +227,44 @@ public class BatFlock extends PApplet
 	
 	private void updateCamera ()
 	{
-		float dx, dy, theta, phi, radius;
-		
-		dx		= ( mouseX / (float)width - 0.5f ) * 2;
-		dy		= ( mouseY / (float)height - 0.5f ) * 2;
-		
-		theta	= dx * PI * 0.5f;
-		phi		= dy * PI * 0.5f;
-		if( dy < 0 )
-			phi = PI * 2 - phi;
-		radius	= -1000;
-		
-		cam.orbitTo( theta, phi, radius );
+//		float dx, dy, theta, phi, radius;
+//		
+//		dx		= ( mouseX / (float)width - 0.5f ) * 2;
+//		dy		= ( mouseY / (float)height - 0.5f ) * 2;
+//		
+//		theta	= dx * PI * 0.5f;
+//		phi		= dy * PI * 0.5f;
+//		if( dy < 0 )
+//			phi = PI * 2 - phi;
+//		radius	= -1000;
+//		
+//		cam.orbitTo( theta, phi, radius );
 		cam.update( );
+	}
+	
+	private void resetCamera ()
+	{
+		camera();
+	}
+	
+	private void updateBlobDetect ()
+	{
+		bd.update();
+	}
+	
+	private void drawBlobDetect ()
+	{
+		bd.draw();
+	}
+	
+	private void updateAudioAnalysis ()
+	{
+		audioAnalysis.update();
+	}
+	
+	private void drawAudioAnalysis ()
+	{
+		audioAnalysis.draw();
 	}
 	
 	private void saveImage ()
