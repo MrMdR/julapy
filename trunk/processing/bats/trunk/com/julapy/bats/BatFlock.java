@@ -51,9 +51,9 @@ public class BatFlock extends PApplet
 	
 	public void setup()
 	{
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		size( screen.width, screen.height, OPENGL );
-//		size( 1280, 720, OPENGL );
+//		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//		size( screen.width, screen.height, OPENGL );
+		size( 1280, 720, OPENGL );
 		frameRate( 30 );
 		colorMode( RGB, 1.0f );
 		background( 0.7f );
