@@ -18,6 +18,7 @@ import com.julapy.steering.NoiseField;
 import com.julapy.steering.Particle;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.opengl.PGraphicsOpenGL;
 import processing.video.Capture;
 import toxi.geom.Vec3D;
@@ -32,12 +33,15 @@ public class BatFlock extends PApplet
 	int wingRCallList;
 	Camera cam;
 	
-	int capWidth	= 320;
-	int capHeight	= 240;
+	int capWidth	= 200;
+	int capHeight	= 150;
 	Capture cap;
 	BlobDetect bd;
 	
 	AudioInputAnalysis audioAnalysis;
+	
+	PFont font;
+	float debugInc = 0.1f;
 	
 	Bat[] 	bats;
 	Flock[] batFlocks;
@@ -54,7 +58,7 @@ public class BatFlock extends PApplet
 							"--present",
 							"--bgcolor=#000000",
 							"--present-stop-color=#000000", 
-							"com.julapy.bats.Main" 
+							"com.julapy.bats.BatFlock" 
 						} 
 		);
 	}
@@ -63,7 +67,7 @@ public class BatFlock extends PApplet
 	{
 //		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 //		size( screen.width, screen.height, OPENGL );
-		size( 1280, 720, OPENGL );
+		size( 800, 600, OPENGL );
 		frameRate( 30 );
 		colorMode( RGB, 1.0f );
 		background( 0.7f );
@@ -73,6 +77,7 @@ public class BatFlock extends PApplet
 		initCamera();
 		initBlobDetect();
 		initAudioAnalysis();
+		initDebugText();
 		initBats();
 	}
 	
@@ -146,19 +151,24 @@ public class BatFlock extends PApplet
 		audioAnalysis = new AudioInputAnalysis( this );
 	}
 	
+	private void initDebugText ()
+	{
+		font = createFont( "Courier", 10 );
+	}
+	
 	private void initBats ()
 	{
 		int i;
-		bats = new Bat[ 500 ];
+		bats = new Bat[ 100 ];
 		for( i=0; i<bats.length; i++ )
 		{
 			bats[ i ]	= new Bat( new Vec3D( width * ( random( 1 ) - 0.5f ), width * ( random( 1 ) - 0.5f ), 0 ) );
 		}
 		
-		batFlocks		= new Flock[ 1 ]; 
+		batFlocks		= new Flock[ 1 ];
 		batFlocks[ 0 ]	= new Flock( bats, new Vec3D() );
 		
-		noiseField		= new NoiseField( bats, width * 0.67f );
+		noiseField		= new NoiseField( bats, width * 0.8f );
 	}
 	
 	//////////////////////////////////////////////
@@ -172,7 +182,11 @@ public class BatFlock extends PApplet
 		
 		updateBlobDetect();
 		updateAudioAnalysis();
+		
+		updateFlock();
+		updateNoiseField();
 		updateBats();
+		
 		updateCamera();
 		
 		// render.
@@ -189,6 +203,7 @@ public class BatFlock extends PApplet
 		resetCamera();
 		drawBlobDetect();
 		drawAudioAnalysis();
+		drawDebugText();
 
 		saveImage();		
 	}
@@ -196,18 +211,6 @@ public class BatFlock extends PApplet
 	private void updateBats ()
 	{
 		int i;
-		float dx, dy;
-		
-		dx	= ( mouseX / (float)width - 0.5f ) * 2;
-		dy	= ( mouseY / (float)height - 0.5f ) * 2;
-		
-//		for( i=0; i<batFlocks.length; i++ )
-//		{
-//			batFlocks[ i ].update();
-//			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
-//		}
-		
-		noiseField.update();
 		
 		for( i=0; i<bats.length; i++ )
 		{
@@ -247,6 +250,26 @@ public class BatFlock extends PApplet
 		camera();
 	}
 	
+	private void updateFlock ()
+	{
+		int i;
+		float dx, dy;
+		
+		dx	= ( mouseX / (float)width - 0.5f ) * 2;
+		dy	= ( mouseY / (float)height - 0.5f ) * 2;
+		
+		for( i=0; i<batFlocks.length; i++ )
+		{
+			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
+			batFlocks[ i ].update();
+		}
+	}
+	
+	private void updateNoiseField ()
+	{
+		noiseField.update();
+	}
+	
 	private void updateBlobDetect ()
 	{
 		bd.update();
@@ -265,6 +288,18 @@ public class BatFlock extends PApplet
 	private void drawAudioAnalysis ()
 	{
 		audioAnalysis.draw();
+	}
+	
+	private void drawDebugText ()
+	{
+		fill( 1, 0, 0 );
+		
+		textFont( font );
+		
+		text( "centerPullScale    :: " + batFlocks[ 0 ].centerPullScale,	width - 200, 10 );
+		text( "minDistance        :: " + batFlocks[ 0 ].minDistance,		width - 200, 25 );
+		text( "flockAverageScale  :: " + batFlocks[ 0 ].flockAverageScale,	width - 200, 40 );
+		text( "velocityLimit      :: " + batFlocks[ 0 ].velocityLimit,		width - 200, 55 );
 	}
 	
 	private void saveImage ()
@@ -465,6 +500,72 @@ public class BatFlock extends PApplet
 			
 			if(isRecording) println("started recording.");
 			if(!isRecording) println("stopped recording.");
+		}
+
+		/*__________BREAK___________*/
+		if( key == '0' )
+		{
+			debugInc = 1;
+		}
+		if( key == '1' )
+		{
+			debugInc = 0.1f;
+		}
+		if( key == '2' )
+		{
+			debugInc = 0.01f;
+		}
+		if( key == '3' )
+		{
+			debugInc = 0.001f;
+		}
+		if( key == '4' )
+		{
+			debugInc = 0.0001f;
+		}
+		if( key == '5' )
+		{
+			debugInc = 0.00001f;
+		}
+		
+		/*__________BREAK___________*/
+		if( key == 'a' )
+		{
+			batFlocks[ 0 ].centerPullScale += debugInc;
+		}
+		if( key == 'z' )
+		{
+			batFlocks[ 0 ].centerPullScale -= debugInc;
+		}
+
+		/*__________BREAK___________*/
+		if( key == 's' )
+		{
+			batFlocks[ 0 ].minDistance += debugInc;
+		}
+		if( key == 'x' )
+		{
+			batFlocks[ 0 ].minDistance -= debugInc;
+		}
+
+		/*__________BREAK___________*/
+		if( key == 'd' )
+		{
+			batFlocks[ 0 ].flockAverageScale += debugInc;
+		}
+		if( key == 'c' )
+		{
+			batFlocks[ 0 ].flockAverageScale -= debugInc;
+		}
+
+		/*__________BREAK___________*/
+		if( key == 'd' )
+		{
+			batFlocks[ 0 ].velocityLimit += debugInc;
+		}
+		if( key == 'c' )
+		{
+			batFlocks[ 0 ].velocityLimit -= debugInc;
 		}
 	}
 }

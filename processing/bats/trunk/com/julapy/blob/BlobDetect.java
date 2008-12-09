@@ -60,7 +60,7 @@ public class BlobDetect
 		{
 			papp.noFill();
 			papp.strokeWeight( 1 );
-			papp.stroke( 255, 0, 0 );
+			papp.stroke( 1, 0, 0 );
 			
 			drawBlobAreas( capWidth, capHeight );
 		}
@@ -69,7 +69,7 @@ public class BlobDetect
 		{
 			papp.noFill();
 			papp.strokeWeight( 3 ); 
-			papp.stroke( 0,255,0 );
+			papp.stroke( 0, 1, 0 );
 			
 			drawBlobEdges( capWidth, capHeight );
 		}
@@ -78,7 +78,7 @@ public class BlobDetect
 		{
 			papp.noFill();
 			papp.strokeWeight( 3 ); 
-			papp.stroke( 255, 255, 255 ); 
+			papp.stroke( 1, 1, 1 ); 
 			
 			drawBlobAreas( papp.width, papp.height );
 		}
