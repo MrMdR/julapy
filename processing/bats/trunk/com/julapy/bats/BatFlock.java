@@ -121,10 +121,10 @@ public class BatFlock extends PApplet
 		gl.glNewList( wingLCallList, GL.GL_COMPILE );
 			gl.glBegin( GL.GL_QUADS );
 			gl.glNormal3f( 0, 0, 1 );
-			gl.glTexCoord2f( 0.0f, 0.0f );	gl.glVertex3f( -1, -0.5f, 0 );
-			gl.glTexCoord2f( 0.0f, 1.0f );	gl.glVertex3f( -1,  0.5f, 0 );
-			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f(  0,  0.5f, 0 );
-			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f(  0, -0.5f, 0 );
+			gl.glTexCoord2f( 0.0f, 0.0f );	gl.glVertex3f( -1, 0, -0.5f );
+			gl.glTexCoord2f( 0.0f, 1.0f );	gl.glVertex3f( -1,  0, 0.5f );
+			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f(  0,  0, 0.5f );
+			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f(  0, 0, -0.5f );
 			gl.glEnd();
 		gl.glEndList();
 
@@ -132,10 +132,10 @@ public class BatFlock extends PApplet
 		gl.glNewList( wingRCallList, GL.GL_COMPILE );
 			gl.glBegin( GL.GL_QUADS );
 			gl.glNormal3f( 0, 0, 1 );
-			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f( 0, -0.5f, 0 );
-			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f( 0,  0.5f, 0 );
-			gl.glTexCoord2f( 1.0f, 1.0f );	gl.glVertex3f( 1,  0.5f, 0 );
-			gl.glTexCoord2f( 1.0f, 0.0f );	gl.glVertex3f( 1, -0.5f, 0 );
+			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f( 0, 0, -0.5f );
+			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f( 0,  0, 0.5f );
+			gl.glTexCoord2f( 1.0f, 1.0f );	gl.glVertex3f( 1,  0, 0.5f );
+			gl.glTexCoord2f( 1.0f, 0.0f );	gl.glVertex3f( 1, 0, -0.5f );
 			gl.glEnd();
 		gl.glEndList();
 	}
@@ -377,6 +377,7 @@ public class BatFlock extends PApplet
 		float countDir	= 1;
 
 		Vec3D[] locs;
+		Vec3D prevDir;
 		
 		float wingW = 80;
 		float wingH	= 40;
@@ -424,6 +425,85 @@ public class BatFlock extends PApplet
 		}
 		
 		public void render ()
+		{
+			// START MAGIC
+			float rollAngle = 0;
+			
+			// direction bat is travelling in
+			Vec3D dir = locs[ 0 ].sub( locs[ 1 ] ).normalize();
+			Vec3D flatDir = dir.copy();
+			
+			
+			
+			// flatten the direction as we need to caclulate bank and pitch seperately
+			flatDir.y = 0;
+			
+			if( prevDir != null )
+			{
+				rollAngle = Math.max( -60, Math.min(60,((flatDir.headingXZ() - prevDir.headingXZ())*TrigUtil.RADTODEG*15)) );
+				rollAngle = (flatDir.headingXZ() - prevDir.headingXZ())*TrigUtil.RADTODEG*15;
+			}
+			
+			prevDir = flatDir.copy();
+			
+			flatDir.normalize();
+			
+			Vec3D perp = flatDir.copy().rotateY(TrigUtil.DEGTORAD*90).normalize();
+			Vec3D norm = flatDir.cross(perp).normalize();
+			
+			float[] m;
+
+			m = new float[]
+			            {
+							perp.x, norm.x, flatDir.x, 0,
+							perp.y, norm.y, flatDir.y, 0,
+							perp.z, norm.z, flatDir.z, 0,
+							0,	     0,	   0,	  1
+						};
+			
+			FloatBuffer rotMatrix;
+			rotMatrix = ByteBuffer.allocateDirect(4 * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+			rotMatrix.put( m );
+			rotMatrix.flip();
+			
+			gl.glPushMatrix();
+			
+			gl.glColor4f( 0, 0, 0, 1 );
+
+			gl.glTranslatef( loc.x, loc.y, loc.z );
+			
+			gl.glMultMatrixf( rotMatrix );
+			
+			// now we have to use the correct direction vector to work out what the pitch should be
+			float pitchAngle;
+			
+			Vec3D normalToGroud = new Vec3D(0,1,0);
+			
+			pitchAngle = normalToGroud.angleBetween(dir);
+			
+			// END MAGIC
+			
+			//
+			// flap the wings
+			//
+			gl.glPushMatrix();
+			gl.glRotatef( 90-TrigUtil.RADTODEG*pitchAngle, 1, 0, 0 );
+			gl.glRotatef( wingLAngle-rollAngle, 0, 0, 1 );
+			gl.glScalef( size * wingW, 0, size * wingH );
+			gl.glCallList( wingLCallList );
+			gl.glPopMatrix();
+
+			gl.glPushMatrix();
+			gl.glRotatef( 90-TrigUtil.RADTODEG*pitchAngle, 1, 0, 0 );
+			gl.glRotatef( wingRAngle-rollAngle, 0, 0, 1 );
+			gl.glScalef( size * wingW, 0, size * wingH );
+			gl.glCallList( wingRCallList );
+			gl.glPopMatrix();
+			
+			gl.glPopMatrix();
+		}
+		
+		public void render2 ()
 		{
 			gl.glPushMatrix();
 			

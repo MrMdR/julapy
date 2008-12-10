@@ -12,7 +12,10 @@ public class BlobDetect
 	private PApplet papp;
 	private Capture cap;
 	private PImage capImage;
+	private PImage snapshot;
 	private BlobDetection bd;
+	
+	private boolean hasSnapshot = false;
 	
 	private int capWidth;
 	private int capHeight;
@@ -29,7 +32,8 @@ public class BlobDetect
 		capWidth	= cap.width;
 		capHeight	= cap.height;
 
-		capImage	= new PImage( cap.width, cap.width );
+		capImage	= new PImage( cap.width, cap.height );
+		snapshot	= new PImage( cap.width, cap.height );
 		
 		bd = new BlobDetection( capWidth, capHeight );
 		bd.setPosDiscrimination( true );
@@ -44,6 +48,11 @@ public class BlobDetect
 			
 			capImage = cap.get();
 
+			if( !hasSnapshot )
+			{
+				takeSnapshot();
+			}
+			
 			fastblur( capImage, 2 ); 
 			bd.computeBlobs( capImage.pixels ); 
 		}
@@ -82,6 +91,13 @@ public class BlobDetect
 			
 			drawBlobAreas( papp.width, papp.height );
 		}
+	}
+	
+	public void takeSnapshot ()
+	{
+		hasSnapshot = true;
+		
+		capImage = cap.get();
 	}
 	
 //	 ================================================== 

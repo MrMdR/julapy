@@ -31,7 +31,7 @@ public class BatModel extends PApplet
 	
 	public void setup()
 	{
-		size( 1280, 720, OPENGL );
+		size( 900, 720, OPENGL );
 		frameRate( 30 );
 		colorMode( RGB, 1.0f );
 		background( 0.7f );
@@ -65,7 +65,7 @@ public class BatModel extends PApplet
 		
         /* load texture */
 		texLoader = new TextureLoader( gl, 1 );
-		texLoader.loadTexture( loadImage( "data/bat.png" ), true );
+		texLoader.loadTexture( loadImage( "data/bat_02.png" ), true );
 	}
 	
 	private void initTextureList ()
@@ -74,10 +74,10 @@ public class BatModel extends PApplet
 		gl.glNewList( wingLCallList, GL.GL_COMPILE );
 			gl.glBegin( GL.GL_QUADS );
 			gl.glNormal3f( 0, 0, 1 );
-			gl.glTexCoord2f( 0.0f, 0.0f );	gl.glVertex3f( -1, -0.5f, 0 );
-			gl.glTexCoord2f( 0.0f, 1.0f );	gl.glVertex3f( -1,  0.5f, 0 );
-			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f(  0,  0.5f, 0 );
-			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f(  0, -0.5f, 0 );
+			gl.glTexCoord2f( 0.0f, 0.0f );	gl.glVertex3f( -1, 0, -0.5f );
+			gl.glTexCoord2f( 0.0f, 1.0f );	gl.glVertex3f( -1,  0, 0.5f );
+			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f(  0,  0, 0.5f );
+			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f(  0, 0, -0.5f );
 			gl.glEnd();
 		gl.glEndList();
 
@@ -85,10 +85,10 @@ public class BatModel extends PApplet
 		gl.glNewList( wingRCallList, GL.GL_COMPILE );
 			gl.glBegin( GL.GL_QUADS );
 			gl.glNormal3f( 0, 0, 1 );
-			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f( 0, -0.5f, 0 );
-			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f( 0,  0.5f, 0 );
-			gl.glTexCoord2f( 1.0f, 1.0f );	gl.glVertex3f( 1,  0.5f, 0 );
-			gl.glTexCoord2f( 1.0f, 0.0f );	gl.glVertex3f( 1, -0.5f, 0 );
+			gl.glTexCoord2f( 0.5f, 0.0f );	gl.glVertex3f( 0, 0, -0.5f );
+			gl.glTexCoord2f( 0.5f, 1.0f );	gl.glVertex3f( 0,  0, 0.5f );
+			gl.glTexCoord2f( 1.0f, 1.0f );	gl.glVertex3f( 1,  0, 0.5f );
+			gl.glTexCoord2f( 1.0f, 0.0f );	gl.glVertex3f( 1, 0, -0.5f );
 			gl.glEnd();
 		gl.glEndList();
 	}
@@ -109,9 +109,12 @@ public class BatModel extends PApplet
 		
 		gl.glDisable( GL.GL_DEPTH_TEST );
 		gl.glEnable( GL.GL_TEXTURE_2D );
+
 		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
-		
 		bat.render( );
+		gl.glDisable( GL.GL_TEXTURE_2D );
+		
+//		bat.debugRender( );
 		bat.update( );
 		
 		pgl.endGL();
@@ -133,11 +136,12 @@ public class BatModel extends PApplet
 		cam.orbitTo( theta, phi, radius );
 		cam.update( );
 	}
+
+	
 	
 	//////////////////////////////////////////////
 	// BAT CLASS.
 	//////////////////////////////////////////////
-	
 	public class Bat
 	{
 		float count		= 0;
@@ -147,9 +151,8 @@ public class BatModel extends PApplet
 		Vec3D[] locs;
 		Vec3D loc;
 		Vec3D vel;
-		
-		float wingW = 400;
-		float wingH	= 200;
+		// previous direction
+		Vec3D prevDir;
 		
 		float wingMaxAngle		= 40;
 		float wingOffsetAngle	= 30;
@@ -157,7 +160,7 @@ public class BatModel extends PApplet
 		float wingRAngle		= 0;
 		
 		float orbitAngle		= 0;
-		float orbitAngleInc		= 1;
+		float orbitAngleInc		= 3;
 		float orbitRadius		= 500;
 		
 		public Bat()
@@ -172,66 +175,161 @@ public class BatModel extends PApplet
 
 		public void render ()
 		{
-			Vec3D out, up, right;
+			// START MAGIC
+			float rollAngle = 0;
 			
-			up		= new Vec3D( 0, 1, 0 );
-			out		= locs[ 0 ].sub( locs[ 1 ] ).normalize();
-			up		= up.cross( out ).normalize();
-			right	= out.cross( up ).normalize();
+			// direction bat is travelling in
+			Vec3D dir = locs[ 0 ].sub( locs[ 1 ] ).normalize();
+			Vec3D flatDir = dir.copy();
 			
-			float[] sp;
-			float theta, phi, radius;
 			
-			sp		= TrigUtil.cartesianToSpherical( out.x, out.y, out.z );
-			radius	= sp[ 0 ];
-			theta	= sp[ 1 ] * TrigUtil.RADTODEG;
-			phi		= sp[ 2 ] * TrigUtil.RADTODEG;
 			
-//			float rotX, rotY, rotZ;
-//			
-//			rotX	= out.headingYZ() * TrigUtil.RADTODEG;
-//			rotY	= out.headingXZ() * TrigUtil.RADTODEG - 90;
-//			rotZ	= out.headingXY() * TrigUtil.RADTODEG;
+			// flatten the direction as we need to caclulate bank and pitch seperately
+			flatDir.y = 0;
 			
+			if( prevDir != null )
+			{
+				rollAngle = Math.max( -60, Math.min(60,((flatDir.headingXZ() - prevDir.headingXZ())*TrigUtil.RADTODEG*15)) );
+				rollAngle = (flatDir.headingXZ() - prevDir.headingXZ())*TrigUtil.RADTODEG*15;
+			}
+			
+			prevDir = flatDir.copy();
+			
+			flatDir.normalize();
+			
+			Vec3D perp = flatDir.copy().rotateY(TrigUtil.DEGTORAD*90).normalize();
+			Vec3D norm = flatDir.cross(perp).normalize();
 			
 			float[] m;
-//			m = new float[]
-//			            {
-//							right.x, up.x, out.x, 0,
-//							right.y, up.y, out.y, 0,
-//							right.z, up.z, out.z, 0,
-//							0,	     0,	   0,	  1
-//						};
 
-			m = TrigUtil.eulerToMatrix( 0, phi, theta );
-//			m = TrigUtil.quaternionToMatrix( out.x, out.y, out.z, 30 * TrigUtil.DEGTORAD );
+			m = new float[]
+			            {
+							perp.x, norm.x, flatDir.x, 0,
+							perp.y, norm.y, flatDir.y, 0,
+							perp.z, norm.z, flatDir.z, 0,
+							0,	     0,	   0,	  1
+						};
 			
 			FloatBuffer rotMatrix;
 			rotMatrix = ByteBuffer.allocateDirect(4 * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 			rotMatrix.put( m );
 			rotMatrix.flip();
-
+			
 			gl.glPushMatrix();
 			
 			gl.glColor4f( 0, 0, 0, 1 );
+
 			gl.glTranslatef( loc.x, loc.y, loc.z );
+			
 			gl.glMultMatrixf( rotMatrix );
 			
+			// now we have to use the correct direction vector to work out what the pitch should be
+			float pitchAngle;
+			
+			Vec3D normalToGroud = new Vec3D(0,1,0);
+			
+			pitchAngle = normalToGroud.angleBetween(dir);
+			
+			// END MAGIC
+			
+			//
+			// flap the wings
+			//
 			gl.glPushMatrix();
-			gl.glRotatef( 90, 1, 0, 0 );
-			gl.glRotatef( wingLAngle, 0, 1, 0 );
-			gl.glScalef( wingW, wingH, 0 );
+			gl.glRotatef( 90-TrigUtil.RADTODEG*pitchAngle, 1, 0, 0 );
+			gl.glRotatef( wingLAngle-rollAngle, 0, 0, 1 );
+			gl.glScalef( 400, 0, 200 );
 			gl.glCallList( wingLCallList );
 			gl.glPopMatrix();
 
 			gl.glPushMatrix();
-			gl.glRotatef( 90, 1, 0, 0 );
-			gl.glRotatef( wingRAngle, 0, 1, 0 );
-			gl.glScalef( wingW, wingH, 0 );
+			gl.glRotatef( 90-TrigUtil.RADTODEG*pitchAngle, 1, 0, 0 );
+			gl.glRotatef( wingRAngle-rollAngle, 0, 0, 1 );
+			gl.glScalef( 400, 0, 200 );
 			gl.glCallList( wingRCallList );
 			gl.glPopMatrix();
 			
 			gl.glPopMatrix();
+		}
+		
+		public void debugRender( ) 
+		{
+			try
+			{
+				float rollAngle = 0;
+				
+				Vec3D dir = locs[ 0 ].sub( locs[ 1 ] ).normalize();
+				Vec3D flatDir = dir.copy();
+				
+				// flatten the direction as we need to caclulate bank and pitch seperately
+				flatDir.y = 0;
+				
+				if( prevDir != null )
+				{
+					rollAngle = (flatDir.headingXZ() - prevDir.headingXZ())*TrigUtil.RADTODEG*15;
+				}
+				
+				Vec3D perp = flatDir.copy().rotateY(TrigUtil.DEGTORAD*90).normalize();
+				Vec3D norm = flatDir.cross(perp).normalize();
+	
+				gl.glPushMatrix();
+				gl.glTranslatef( loc.x, loc.y, loc.z );
+				
+				gl.glBegin(GL.GL_LINES);						// Start Drawing Our Player Using Lines
+				gl.glColor4f( 1, 1, 1, 1 );
+				gl.glVertex3f(0,0,0);
+				
+				float vecX = 300* (float)dir.x;
+				float vecY = 300* (float)dir.y;
+				float vecZ = 300* (float)dir.z;
+				
+				gl.glVertex3f(vecX , vecY, vecZ);
+				
+				gl.glVertex3f(0,0,0);
+				
+				vecX = 300* (float)flatDir.x;
+				vecY = 300* (float)flatDir.y;
+				vecZ = 300* (float)flatDir.z;
+				
+				gl.glVertex3f(vecX , vecY, vecZ);
+				
+				// the bank/change
+				Vec3D rotateDir = flatDir.copy();
+				
+				rotateDir.rotateY(rollAngle);
+				
+				gl.glVertex3f(0,0,0);
+				
+				vecX = 300* (float)rotateDir.x;
+				vecY = 300* (float)rotateDir.y;
+				vecZ = 300* (float)rotateDir.z;
+				
+				gl.glVertex3f(vecX , vecY, vecZ);
+				
+				gl.glVertex3f(0,0,0);
+				
+				vecX = 300* (float)perp.x;
+				vecY = 300* (float)perp.y;
+				vecZ = 300* (float)perp.z;
+				
+				gl.glVertex3f(vecX , vecY, vecZ);
+				
+				gl.glVertex3f(0,0,0);
+				
+				vecX = 300* (float)norm.x;
+				vecY = 300* (float)norm.y;
+				vecZ = 300* (float)norm.z;
+				
+				gl.glVertex3f(vecX , vecY, vecZ);
+				
+				gl.glEnd();
+				
+				gl.glPopMatrix();
+			}
+			catch( Exception e )
+			{
+				
+			}
 		}
 		
 		public void update ()
@@ -310,10 +408,11 @@ public class BatModel extends PApplet
 		{
 			float p[];
 			
-			p = TrigUtil.getPointOnCircle( orbitAngle, 500 );
+			p = TrigUtil.getPointOnCircle( orbitAngle, 250 );
 			
 			loc.x = p[ 0 ];
 			loc.z = p[ 1 ];
+			loc.y = (float) Math.sin(orbitAngle/30) * 100;
 			
 			orbitAngle += orbitAngleInc;
 		}
@@ -340,6 +439,6 @@ public class BatModel extends PApplet
 	
 	static public void main( String args[] )
 	{
-		PApplet.main( new String[] { "com.julapy.bats.Main" } );
+		PApplet.main( new String[] { "com.julapy.bats.BatModel" } ); 
 	}
 }
