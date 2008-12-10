@@ -12,7 +12,7 @@ public class Camera
 	{
 		this.papp = papp;
 		
-		eye		= new Vec3D( 0, 100, 1000 );
+		eye		= new Vec3D( 0, 0, 1000 );
 		center	= new Vec3D( 0, 0, 0 );
 		up		= new Vec3D( 0, 1, 0 );
 		

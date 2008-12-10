@@ -5,19 +5,20 @@ import toxi.geom.Vec3D;
 public class Flock
 {
 	public float centerPullScale			= 0.001f;
-	public float collisionAvoidanceScale	= 0.0001f;
+	public float collisionAvoidanceScale	= 0.34f;
 	public float flockAverageScale	 		= 0.001f;
-	public float targetPullScale			= 0.0001f;
+	public float targetPullScale			= 0.001f;
 
 //	public float centerPullScale			= 0.003f;
 //	public float collisionAvoidanceScale	= 0.0001f;
 //	public float flockAverageScale	 		= 0.0001f;
 //	public float targetPullScale			= 0.0001f;
 	
-	public float velocityLimit	= 10;
-	public float minDistance	= 30;
-	public float flockRange		= 400;
-	public float targetRange	= 100;
+	public float velocityIncrease	= 0;
+	public float velocityLimit		= 10;
+	public float minDistance		= 30;
+	public float flockRange			= 1000;
+	public float targetRange		= 100;
 
 	private Particle[] items;
 	public	Vec3D flockTarget;
@@ -53,12 +54,11 @@ public class Flock
 			v4.scaleSelf( targetPullScale );
 			
 			item.vel.addSelf( v1 );
-//			item.vel.addSelf( v2 );
+			item.vel.addSelf( v2 );	// not sure this does much.
 			item.vel.addSelf( v3 );
 			item.vel.addSelf( v4 );
 			
-			item.vel.scaleSelf( getLimit( item.vel.magnitude(), velocityLimit ) );
-//			item.vel.scaleSelf( getLinearScale( item.loc.distanceTo( flockTarget ), targetRange, 0.001f ) + 1 );
+			item.vel.scaleSelf( getLimit( item.vel.magnitude(), velocityLimit + velocityIncrease ) );
 		}
 	}
 	
