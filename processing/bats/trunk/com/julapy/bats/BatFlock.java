@@ -19,6 +19,7 @@ import com.julapy.steering.Particle;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 import processing.opengl.PGraphicsOpenGL;
 import processing.video.Capture;
 import toxi.geom.Vec3D;
@@ -45,10 +46,18 @@ public class BatFlock extends PApplet
 	
 	Bat[] 	bats;
 	Flock[] batFlocks;
-	NoiseField noiseField;
+	NoiseField noiseField_01;
+	NoiseField noiseField_02;
+	Bat flockTarget;
+	Vec3D flockTargetLoc;
+	
+	PImage moon;
+	float moonTintAlpha = 0;
 	
 	boolean isRecording = false;
 	int imageCount;
+	
+	boolean debug = false;
 	
 	static public void main( String args[] )
 	{
@@ -78,6 +87,7 @@ public class BatFlock extends PApplet
 		initBlobDetect();
 		initAudioAnalysis();
 		initDebugText();
+		initScene();
 		initBats();
 	}
 	
@@ -102,7 +112,7 @@ public class BatFlock extends PApplet
 		
         /* load texture */
 		texLoader = new TextureLoader( gl, 1 );
-		texLoader.loadTexture( loadImage( "data/bat.png" ), true );
+		texLoader.loadTexture( loadImage( "data/bat_02.png" ), true );
 	}
 	
 	private void initTextureList ()
@@ -156,6 +166,11 @@ public class BatFlock extends PApplet
 		font = createFont( "Courier", 10 );
 	}
 	
+	private void initScene ()
+	{
+		moon = loadImage( "moonbg.jpg" );
+	}
+	
 	private void initBats ()
 	{
 		Vec3D loc, vel;
@@ -170,10 +185,16 @@ public class BatFlock extends PApplet
 			bats[ i ]	= new Bat( loc, vel );
 		}
 		
-		batFlocks		= new Flock[ 1 ];
-		batFlocks[ 0 ]	= new Flock( bats, new Vec3D() );
+		flockTarget		= new Bat();
+		flockTargetLoc	= new Vec3D();
+		Bat[] batSingle;
+		batSingle		= new Bat[ 1 ];
+		batSingle[ 0 ]	= flockTarget;
 		
-		noiseField		= new NoiseField( bats, 1200 );
+		batFlocks		= new Flock[ 1 ];
+		batFlocks[ 0 ]	= new Flock( bats, flockTargetLoc );
+		noiseField_01	= new NoiseField( bats, 1200 );
+		noiseField_02	= new NoiseField( batSingle, width * 0.6f );
 	}
 	
 	//////////////////////////////////////////////
@@ -182,8 +203,10 @@ public class BatFlock extends PApplet
 	
 	public void draw ()
 	{
-		// clear.
-		background( 0.6f );
+		background( 0 );
+		tint( 1, 1-moonTintAlpha, 1-moonTintAlpha );
+		image( moon, 0, 0 );
+		noTint();
 		
 		updateBlobDetect();
 		updateAudioAnalysis();
@@ -196,21 +219,32 @@ public class BatFlock extends PApplet
 		
 		// render.
 		pgl.beginGL();
+
+		/* enable additive blending */
+//		gl.glEnable( GL.GL_BLEND );
+//		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
+//		gl.glBlendFunc( GL.GL_SRC_COLOR, GL.GL_ONE );
 		
 		gl.glDisable( GL.GL_DEPTH_TEST );
 		gl.glEnable( GL.GL_TEXTURE_2D );
 		gl.glBindTexture( GL.GL_TEXTURE_2D, texLoader.getTexture( 0 ) );
 		
 		renderBats();
+
+		/* disable additive blending */
+//		gl.glDisable( GL.GL_BLEND );
 		
 		pgl.endGL();
 
 		resetCamera();
-		drawBlobDetect();
-		drawAudioAnalysis();
-		drawDebugText();
+		if( debug )
+		{
+			drawBlobDetect();
+			drawAudioAnalysis();
+			drawDebugText();
+		}
 
-		saveImage();		
+		saveImage();
 	}
 	
 	private void updateBats ()
@@ -259,21 +293,33 @@ public class BatFlock extends PApplet
 	{
 		int i;
 		float dx, dy;
+		float audioLevel;
 		
 		dx	= ( mouseX / (float)width - 0.5f ) * 2;
 		dy	= ( mouseY / (float)height - 0.5f ) * 2;
 		
+		audioLevel = audioAnalysis.getLevel(); 
+		
+		noiseField_02.update();
+		
+		flockTarget.update();
+		flockTargetLoc.set( flockTarget.loc );
+		flockTargetLoc.x *= 1 - audioLevel;
+		flockTargetLoc.y *= 1 - audioLevel;
+		flockTargetLoc.z += audioLevel * 1000;
+		
+		moonTintAlpha += ( audioLevel - moonTintAlpha ) * 0.3f;
+		
 		for( i=0; i<batFlocks.length; i++ )
 		{
-//			batFlocks[ i ].flockTarget.set( dx * width, dy * height, 0 );
-			batFlocks[ i ].flockTarget.set( 0, 100, 900 );
+			batFlocks[ i ].velocityIncrease = audioLevel * 20;
 			batFlocks[ i ].update();
 		}
 	}
 	
 	private void updateNoiseField ()
 	{
-		noiseField.update();
+		noiseField_01.update();
 	}
 	
 	private void updateBlobDetect ()
@@ -289,6 +335,7 @@ public class BatFlock extends PApplet
 	private void updateAudioAnalysis ()
 	{
 		audioAnalysis.update();
+		audioAnalysis.getLevel();
 	}
 	
 	private void drawAudioAnalysis ()
@@ -302,11 +349,13 @@ public class BatFlock extends PApplet
 		
 		textFont( font );
 		
-		text( "centerPullScale          :: " + batFlocks[ 0 ].centerPullScale,			width - 200, 10 );
-		text( "minDistance              :: " + batFlocks[ 0 ].minDistance,				width - 200, 25 );
-		text( "targetPullScale          :: " + batFlocks[ 0 ].targetPullScale,			width - 200, 40 );
-		text( "velocityLimit            :: " + batFlocks[ 0 ].velocityLimit,			width - 200, 55 );
-		text( "flockAverageScale        :: " + batFlocks[ 0 ].flockAverageScale,		width - 200, 70 );
+		text( "centerPullScale (a/z)          :: " + batFlocks[ 0 ].centerPullScale,			width - 250, 10 );
+		text( "collisionAvoidanceScale (s/x)  :: " + batFlocks[ 0 ].collisionAvoidanceScale,	width - 250, 25 );
+		text( "minDistance (d/c)              :: " + batFlocks[ 0 ].minDistance,				width - 250, 40 );
+		text( "targetPullScale (f/v)          :: " + batFlocks[ 0 ].targetPullScale,			width - 250, 55 );
+		text( "velocityLimit (g/b)            :: " + batFlocks[ 0 ].velocityLimit,				width - 250, 70 );
+		text( "flockAverageScale (h/n)        :: " + batFlocks[ 0 ].flockAverageScale,			width - 250, 85 );
+		text( "noiseVecScale (j/m)            :: " + noiseField_01.noiseVecScale,					width - 250, 100 );
 	}
 	
 	private void saveImage ()
@@ -324,13 +373,13 @@ public class BatFlock extends PApplet
 	public class Bat extends Particle
 	{
 		float count		= random( 1 );
-		float countInc	= 0.05f;
+		float countInc	= 0.2f;
 		float countDir	= 1;
 
 		Vec3D[] locs;
 		
-		float wingW = 40;
-		float wingH	= 20;
+		float wingW = 80;
+		float wingH	= 40;
 		
 		float wingMaxAngle		= 40;
 		float wingOffsetAngle	= 30;
@@ -370,26 +419,28 @@ public class BatFlock extends PApplet
 			locs = new Vec3D[ 50 ];
 			for( int i=0; i<locs.length; i++ )
 				locs[i] = new Vec3D( loc );
+			
+			size = random( 0.3f ) + 0.7f;
 		}
 		
 		public void render ()
 		{
 			gl.glPushMatrix();
 			
-			gl.glColor4f( 0, 0, 0, 1 );
+			gl.glColor4f( 1, 0, 0, 1 );
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 			
 			gl.glPushMatrix();
-//			gl.glRotatef( 90, 1, 0, 0 );
+			gl.glRotatef( 180, 0, 0, 1 );
 			gl.glRotatef( wingLAngle, 0, 1, 0 );
-			gl.glScalef( wingW, wingH, 0 );
+			gl.glScalef( size * wingW, size * wingH, 0 );
 			gl.glCallList( wingLCallList );
 			gl.glPopMatrix();
 
 			gl.glPushMatrix();
-//			gl.glRotatef( 90, 1, 0, 0 );
+			gl.glRotatef( 180, 0, 0, 1 );
 			gl.glRotatef( wingRAngle, 0, 1, 0 );
-			gl.glScalef( wingW, wingH, 0 );
+			gl.glScalef( size * wingW, size * wingH, 0 );
 			gl.glCallList( wingRCallList );
 			gl.glPopMatrix();
 			
@@ -559,41 +610,61 @@ public class BatFlock extends PApplet
 		/*__________BREAK___________*/
 		if( key == 's' )
 		{
-			batFlocks[ 0 ].minDistance += debugInc;
+			batFlocks[ 0 ].collisionAvoidanceScale += debugInc;
 		}
 		if( key == 'x' )
 		{
-			batFlocks[ 0 ].minDistance -= debugInc;
+			batFlocks[ 0 ].collisionAvoidanceScale -= debugInc;
 		}
-
+		
 		/*__________BREAK___________*/
 		if( key == 'd' )
 		{
-			batFlocks[ 0 ].targetPullScale += debugInc;
+			batFlocks[ 0 ].flockAverageScale += debugInc;
 		}
 		if( key == 'c' )
 		{
-			batFlocks[ 0 ].targetPullScale -= debugInc;
+			batFlocks[ 0 ].flockAverageScale -= debugInc;
 		}
 
 		/*__________BREAK___________*/
 		if( key == 'f' )
 		{
-			batFlocks[ 0 ].velocityLimit += debugInc;
+			batFlocks[ 0 ].targetPullScale += debugInc;
 		}
 		if( key == 'v' )
+		{
+			batFlocks[ 0 ].targetPullScale -= debugInc;
+		}
+
+		/*__________BREAK___________*/
+		if( key == 'g' )
+		{
+			batFlocks[ 0 ].velocityLimit += debugInc;
+		}
+		if( key == 'b' )
 		{
 			batFlocks[ 0 ].velocityLimit -= debugInc;
 		}
 		
 		/*__________BREAK___________*/
-		if( key == 'g' )
+		if( key == 'h' )
 		{
-			batFlocks[ 0 ].flockAverageScale += debugInc;
+			batFlocks[ 0 ].minDistance += debugInc;
 		}
-		if( key == 'b' )
+		if( key == 'n' )
 		{
-			batFlocks[ 0 ].flockAverageScale -= debugInc;
+			batFlocks[ 0 ].minDistance -= debugInc;
+		}
+
+		/*__________BREAK___________*/
+		if( key == 'j' )
+		{
+			noiseField_01.noiseVecScale += debugInc;
+		}
+		if( key == 'm' )
+		{
+			noiseField_01.noiseVecScale -= debugInc;
 		}
 	}
 }

@@ -14,9 +14,11 @@ public class AudioInputAnalysis
 	AudioStream audioStream;
 	FFT fft;
 	
-	float fftLevel;
-	float fftScale	= 5;
-	int sampleCount	= 1024;
+	float fftLevel			= 0;
+	float fftLevelMax		= 0;
+	float fftLevelThreshold	= 0.25f;
+	float fftScale			= 2;
+	int sampleCount			= 512;
 	
 	public AudioInputAnalysis( PApplet papp )
 	{
@@ -33,21 +35,40 @@ public class AudioInputAnalysis
 		fft = new FFT( sampleCount );
 		fft.equalizer( true );
 		fft.smooth = true;
-		fft.damp( 0.5f );
+//		fft.damp( 0.75f );
 	}
 	
 	public void update ()
 	{
+		float currLevel;
+		
 		fft.getSpectrum( audioInput );
 		
-		fftLevel = fft.getLevel( audioInput );
-		fftLevel *= fftScale;
+		currLevel = fft.getLevel( audioInput ) * fftScale;
+		currLevel = Math.max( 0, currLevel - fftLevelThreshold );
+		currLevel = Math.min( 1, currLevel );
+		
+		if( currLevel > fftLevelMax  )
+		{
+			fftLevelMax = currLevel;
+		}
+		else
+		{
+			fftLevelMax	*= 0.95f;
+		}
+		
+		fftLevel += ( fftLevelMax - fftLevel ) * 0.5f;
+	}
+	
+	public float getLevel ()
+	{
+		return fftLevel;
 	}
 	
 	public void draw () 
 	{
 		float val;
-		float w = 0;
+		float w = 0, h = 0;
 		int i;
 		
 		papp.noStroke();
@@ -57,7 +78,7 @@ public class AudioInputAnalysis
 		
 		for ( i=0; i<fft.spectrum.length; i++ ) 
 		{
-			val = Math.max( 0, fft.spectrum[ i ] * papp.height * fftScale );
+			val = fft.spectrum[ i ] * papp.height * fftScale;
 			
 			papp.rect
 				(
@@ -67,5 +88,12 @@ public class AudioInputAnalysis
 					val 
 				);
 		}
+		
+		h = papp.height - fftLevel * papp.height;
+		
+		papp.noFill();
+		papp.strokeWeight( 3 ); 
+		papp.stroke( 1, 0.82f, 0 );
+		papp.line( 0, h, papp.width, h );
 	}
 }
