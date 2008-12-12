@@ -14,9 +14,9 @@ public class AudioInputAnalysis
 	AudioStream audioStream;
 	FFT fft;
 	
+	public float fftLevelThreshold	= 0.70f;
 	float fftLevel			= 0;
 	float fftLevelMax		= 0;
-	float fftLevelThreshold	= 0.25f;
 	float fftScale			= 2;
 	int sampleCount			= 512;
 	

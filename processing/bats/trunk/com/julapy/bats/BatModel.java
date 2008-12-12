@@ -114,7 +114,7 @@ public class BatModel extends PApplet
 		bat.render( );
 		gl.glDisable( GL.GL_TEXTURE_2D );
 		
-//		bat.debugRender( );
+		bat.debugRender( );
 		bat.update( );
 		
 		pgl.endGL();
