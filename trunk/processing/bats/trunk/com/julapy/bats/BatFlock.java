@@ -1,6 +1,8 @@
 package com.julapy.bats;
 
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,6 +18,7 @@ import com.julapy.opengl.TextureLoader;
 import com.julapy.steering.Flock;
 import com.julapy.steering.NoiseField;
 import com.julapy.steering.Particle;
+import com.julapy.steering.Repulsion;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -48,6 +51,7 @@ public class BatFlock extends PApplet
 	Flock[] batFlocks;
 	NoiseField noiseField_01;
 	NoiseField noiseField_02;
+	Repulsion repulse;
 	Bat flockTarget;
 	Vec3D flockTargetLoc;
 	
@@ -63,20 +67,27 @@ public class BatFlock extends PApplet
 	{
 		PApplet.main( 	new String[]
 	                    {
-							"--display=1",
+//							"--location=1440,0",
 							"--present",
+							"--display=1",
+							"--stop-color=#000000",
 							"--bgcolor=#000000",
-							"--present-stop-color=#000000", 
-							"com.julapy.bats.BatFlock" 
+							"com.julapy.bats.BatFlock"
 						} 
 		);
 	}
+	
+	public void init() 
+	{  
+		super.init();
+	}  
 	
 	public void setup()
 	{
 //		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 //		size( screen.width, screen.height, OPENGL );
 		size( 800, 600, OPENGL );
+		
 		frameRate( 30 );
 		colorMode( RGB, 1.0f );
 		background( 0.7f );
@@ -168,7 +179,7 @@ public class BatFlock extends PApplet
 	
 	private void initScene ()
 	{
-		moon = loadImage( "moonbg.jpg" );
+		moon = loadImage( "moonbg_01.jpg" );
 	}
 	
 	private void initBats ()
@@ -193,8 +204,9 @@ public class BatFlock extends PApplet
 		
 		batFlocks		= new Flock[ 1 ];
 		batFlocks[ 0 ]	= new Flock( bats, flockTargetLoc );
-		noiseField_01	= new NoiseField( bats, 1200 );
+		noiseField_01	= new NoiseField( bats, 800 );
 		noiseField_02	= new NoiseField( batSingle, width * 0.6f );
+		repulse			= new Repulsion( batSingle, width, height );
 	}
 	
 	//////////////////////////////////////////////
@@ -301,6 +313,9 @@ public class BatFlock extends PApplet
 		audioLevel = audioAnalysis.getLevel(); 
 		
 		noiseField_02.update();
+
+		repulse.repulsionScale = 1 - audioAnalysis.getLevel();
+		repulse.update( bd.getKingBlob() );
 		
 		flockTarget.update();
 		flockTargetLoc.set( flockTarget.loc );
@@ -745,6 +760,22 @@ public class BatFlock extends PApplet
 		if( key == 'm' )
 		{
 			noiseField_01.noiseVecScale -= debugInc;
+		}
+
+		/*__________BREAK___________*/
+		if( key == 'k' )
+		{
+			audioAnalysis.fftLevelThreshold += debugInc;
+		}
+		if( key == ',' )
+		{
+			audioAnalysis.fftLevelThreshold -= debugInc;
+		}
+		
+		/*__________BREAK___________*/
+		if( key == ' ' )
+		{
+			bd.takeSnapshot();
 		}
 	}
 }

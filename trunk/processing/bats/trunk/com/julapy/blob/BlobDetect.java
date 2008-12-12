@@ -1,5 +1,7 @@
 package com.julapy.blob;
 
+import java.awt.Rectangle;
+
 import blobDetection.Blob;
 import blobDetection.BlobDetection;
 import blobDetection.EdgeVertex;
@@ -13,8 +15,14 @@ public class BlobDetect
 	private Capture cap;
 	private PImage capImage;
 	private PImage snapshot;
+	private PImage difference;
 	private BlobDetection bd;
-	
+
+	private Blob kingBlob;
+	private Blob[] blobs;
+	private Rectangle[] rects;
+	private float minBlobArea = 0.01f;
+
 	private boolean hasSnapshot = false;
 	
 	private int capWidth;
@@ -31,9 +39,13 @@ public class BlobDetect
 		
 		capWidth	= cap.width;
 		capHeight	= cap.height;
+		
+		blobs		= new Blob[ 0 ];
+		kingBlob	= null;
 
 		capImage	= new PImage( cap.width, cap.height );
 		snapshot	= new PImage( cap.width, cap.height );
+		difference	= new PImage( cap.width, cap.height );
 		
 		bd = new BlobDetection( capWidth, capHeight );
 		bd.setPosDiscrimination( true );
@@ -53,8 +65,14 @@ public class BlobDetect
 				takeSnapshot();
 			}
 			
-			fastblur( capImage, 2 ); 
-			bd.computeBlobs( capImage.pixels ); 
+			calcDifference();
+			
+//			fastblur( difference, 2 );
+			bd.computeBlobs( difference.pixels );
+			
+//			blobs = bd.blob;
+			
+			validateBlobs();
 		}
 	}
 	
@@ -62,7 +80,7 @@ public class BlobDetect
 	{
 		if( showVideo )
 		{
-			papp.image( cap, 0, 0, capWidth, capHeight );
+			papp.image( difference, 0, 0, capWidth, capHeight );
 		}
 		
 		if( showAreas )
@@ -93,11 +111,121 @@ public class BlobDetect
 		}
 	}
 	
+	public void drawKingBlob ()
+	{
+		if( showVideo )
+		{
+			papp.image( difference, 0, 0, capWidth, capHeight );
+		}
+		
+	}
+	
 	public void takeSnapshot ()
 	{
 		hasSnapshot = true;
 		
-		capImage = cap.get();
+		snapshot = cap.get();
+	}
+	
+	public Rectangle[] getRects ()
+	{
+		return rects;
+	}
+	
+	public Rectangle getKingBlob ()
+	{
+		if( kingBlob != null )
+		{
+			return new Rectangle
+			(
+				(int)( kingBlob.x * papp.width ),
+				(int)( kingBlob.y * papp.height ),
+				(int)( kingBlob.w * papp.width ),
+				(int)( kingBlob.h * papp.height ) 
+			);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	private void calcDifference ()
+	{
+		int i;
+		float cb, sb, db;
+		
+		for( i=0; i<capImage.pixels.length; i++ )
+		{
+			sb = papp.brightness( snapshot.pixels[ i ] );
+			cb = papp.brightness( capImage.pixels[ i ] );
+			
+			db = sb - cb;
+			if( db < 0 ) db *= -1;
+
+			difference.loadPixels();
+			if( db > 0.2f )
+			{
+				difference.pixels[ i ] = 0xFFFFFF;
+			}
+			else
+			{
+				difference.pixels[ i ] = 0x000000;
+			}
+			difference.updatePixels();
+		}
+	}
+	
+	private void validateBlobs ()
+	{
+		int n = 0;
+		int i;
+		float a= 0;
+		float aMax = 0;
+		Blob b;
+		
+		kingBlob = null;
+		
+		for( i=0; i<bd.getBlobNb(); i++ )
+		{
+			b = bd.getBlob( i );
+			a = b.w * b.h;
+			
+			if( a > minBlobArea )
+			{
+				if( kingBlob == null || a > aMax )
+				{
+					aMax		= a;
+					kingBlob	= b;
+				}
+				
+				++n;
+			}
+		}
+
+		blobs = new Blob[ n ];
+		rects = new Rectangle[ n ];
+		
+		n = 0;
+		for( i=0; i<bd.getBlobNb(); i++ )
+		{
+			b = bd.getBlob( i );
+			a = b.w * b.h;
+			
+			if( a > minBlobArea )
+			{
+				blobs[ n ] = b;
+				rects[ n ] =new Rectangle
+								(
+									(int)( b.x * papp.width ), 
+									(int)( b.y * papp.height ),
+									(int)( b.w * papp.width ),
+									(int)( b.h * papp.height ) 
+								);
+				
+				++n;
+			}
+		}
 	}
 	
 //	 ================================================== 
@@ -109,15 +237,15 @@ public class BlobDetect
 		Blob b; 
 		int n;
 		
-		for ( n=0; n<bd.getBlobNb(); n++ ) 
+		for ( n=0; n<blobs.length; n++ ) 
 		{ 
-			b = bd.getBlob( n ); 
+			b = blobs[ n ]; 
 			
 			if( b!=null ) 
 			{ 
 				papp.rect
 					( 
-						b.xMin * w, b.yMin * h, 
+						b.xMin * w, b.yMin * h,
 						b.w * w, b.h * h 
 					); 
 			} 
@@ -130,9 +258,9 @@ public class BlobDetect
 		EdgeVertex eA,eB;
 		int n, m;
 		
-		for ( n=0; n<bd.getBlobNb(); n++ ) 
+		for ( n=0; n<blobs.length; n++ ) 
 		{ 
-			b = bd.getBlob( n ); 
+			b = blobs[ n ]; 
 			
 			if( b!=null ) 
 			{ 
