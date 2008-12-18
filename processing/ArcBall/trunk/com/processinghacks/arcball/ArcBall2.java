@@ -7,17 +7,18 @@ import toxi.geom.Vec3D;
 
 import java.awt.event.MouseEvent;
 
+import com.julapy.math.TrigUtil;
+
 public class ArcBall2 
 {
 	PApplet parent;
   
 	float cx, cy, cz, radius;
-	float angleDegreesX, angleDegreesY; 
 	
 	Vec3D downVec, dragVec;
 	Quaternion nowQuat, downQuat, dragQuat;
 
-	public ArcBall2( float cx, float cy, float cz, float radius, PApplet parent ) 
+	public ArcBall2( float cx, float cy, float cz, float radius, PApplet parent )
 	{
 		this.parent = parent;
 
@@ -53,6 +54,8 @@ public class ArcBall2
 	{
 		downVec = mouseToSphere( parent.mouseX, parent.mouseY );
 		
+		PApplet.println( "downVec :: " + downVec );
+		
 		downQuat.set( nowQuat );
 		dragQuat.reset();
 	}
@@ -61,24 +64,19 @@ public class ArcBall2
 	{
 		dragVec = mouseToSphere( parent.mouseX, parent.mouseY );
 		
+		PApplet.println( "dragVec :: " + dragVec );
+		
 		dragQuat.set( downVec.dot( dragVec ), downVec.cross( dragVec ) );
 	}
 	
-	public void rotateX ( float angleDegreesX )
-	{
-		this.angleDegreesX = angleDegreesX;
-	}
-	
-	public void rotateY ( float angleDegreesY )
-	{
-		this.angleDegreesY = angleDegreesY;
-	}
-
 	public void update() 
 	{
 		Matrix4x4 m;
 
 		parent.translate( cx, cy, cz );
+		
+		dragVec = mouseToSphere( 0, 0 );
+		dragQuat.set( downVec.dot( dragVec ), downVec.cross( dragVec ) );
 		
 		nowQuat = dragQuat.multiply( downQuat );
 		m		= nowQuat.getMatrix();
@@ -93,13 +91,53 @@ public class ArcBall2
 		
 		parent.translate( -cx, -cy, -cz );
 	}
+	
+	public void update( float angleX, float angleY )
+	{
+		PApplet.println( angleX );
+		
+//		Matrix4x4 m;
+//
+//		parent.translate( cx, cy, cz );
+//
+//		Vec3D xaxis, yaxis;
+//		Vec3D xrot;
+//		Vec3D yrot;
+//		Quaternion xrotQuat, yrotQuat;
+//		
+//		xaxis	= Vec3D.X_AXIS;
+//		yaxis	= Vec3D.Y_AXIS;
+//		
+//		PApplet.println( angleDegreesX );
+//
+//		xrot = xaxis.copy().rotateX( angleDegreesX * TrigUtil.DEGTORAD );
+//		yrot = yaxis.copy().rotateY( angleDegreesY * TrigUtil.DEGTORAD );
+//		
+//		PApplet.println( xrot );
+//		
+//		xrotQuat = new Quaternion( xaxis.copy().dot( xrot ), xaxis.copy().cross( xrot ) );
+//		yrotQuat = new Quaternion( xaxis.copy().dot( yrot ), xaxis.copy().cross( yrot ) );
+//		
+//		nowQuat = xrotQuat.multiply( yrotQuat );
+//		m		= nowQuat.getMatrix();
+//		
+//		parent.applyMatrix
+//		(
+//			(float)m.matrix[0][0], (float)m.matrix[0][1], (float)m.matrix[0][2], (float)m.matrix[0][3],
+//			(float)m.matrix[1][0], (float)m.matrix[1][1], (float)m.matrix[1][2], (float)m.matrix[1][3],
+//			(float)m.matrix[2][0], (float)m.matrix[2][1], (float)m.matrix[2][2], (float)m.matrix[2][3],
+//			(float)m.matrix[3][0], (float)m.matrix[3][1], (float)m.matrix[3][2], (float)m.matrix[3][3]
+//		);
+//		
+//		parent.translate( -cx, -cy, -cz );
+	}
 
 	Vec3D mouseToSphere( float x, float y )
 	{
 		Vec3D v = new Vec3D
 		(
-			( x - cx ) / radius,
-			( y - cy ) / radius,
+			x - cx / 360,
+			y - cy / 360,
 			0
 		);
 
