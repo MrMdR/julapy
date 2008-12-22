@@ -15,7 +15,6 @@ public class Primitive
 	
 	public void drawCube()
 	{
-        gl.glBegin(GL.GL_QUADS);
         // Front Face
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -70,7 +69,6 @@ public class Primitive
         gl.glVertex3f(-1.0f, 1.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 1.0f);
         gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-        gl.glEnd();
 	}
 	
 	public void drawSphere ( int n )
