@@ -1,7 +1,11 @@
 package
 {
+	import caurina.transitions.Tweener;
+	
 	import flash.display.Bitmap;
+	import flash.display.BlendMode;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
@@ -10,6 +14,7 @@ package
 	public class RockpoolStereoItem extends EventDispatcher
 	{
 		private var container	:Sprite;
+		private var stereoCont	:Sprite = new Sprite();
 		private var stereoBm01	:Bitmap;
 		private var stereoBm02	:Bitmap;
 		private var stereoRect	:Rectangle;
@@ -25,15 +30,19 @@ package
 			this.stereoBm02		= stereoBm02;
 			this.stereoRect		= stereoRect;
 			
-			stereoBm01.x		= (int)( stereoRect.x - stereoBm01.width * 0.5 );
-			stereoBm01.y		= (int)( stereoRect.y - stereoBm01.height * 0.5 );
+			container.addChild( stereoCont );
+			
+			stereoBm01.x		= stereoRect.x;
+			stereoBm01.y		= stereoRect.y;
 
-			stereoBm02.x		= (int)( stereoRect.x - stereoBm02.width * 0.5 );
-			stereoBm02.y		= (int)( stereoRect.y - stereoBm02.height * 0.5 );
+			stereoBm02.x		= stereoRect.x;
+			stereoBm02.y		= stereoRect.y;
 			
-			container.addChild( stereoBm01 );
-			container.addChild( stereoBm02 );
+			stereoCont.addChild( stereoBm01 );
+			stereoCont.addChild( stereoBm02 );
+//			stereoCont.blendMode = BlendMode.ALPHA;
 			
+			playIn();
 			playStereo();
 		}
 		
@@ -41,18 +50,41 @@ package
 		{
 			stopStereo();
 			
-			container.removeChild( stereoBm01 );
-			container.removeChild( stereoBm02 );
+			stereoCont.removeChild( stereoBm01 );
+			stereoCont.removeChild( stereoBm02 );
+			
+			container.removeChild( stereoCont );
 		}
 		
 		public function playIn ():void
 		{
+			stereoCont.alpha = 0;
 			
+			Tweener.addTween
+			(
+				stereoCont,
+				{
+					alpha		: 1,
+					time		: 0.3,
+					transition	: "easeOutQuad",
+					onComplete	: playOut
+				}
+			);
 		}
 		
 		public function playOut ():void
 		{
-			
+			Tweener.addTween
+			(
+				stereoCont,
+				{
+					alpha		: 0,
+					time		: 5,
+					delay		: 10,
+					transition	: "easeOutQuad",
+					onComplete	: onComplete
+				}
+			);
 		}
 		
 		public function playStereo ():void
@@ -91,5 +123,9 @@ package
 			}
 		}
 		
+		private function onComplete ():void
+		{
+			dispatchEvent( new Event( Event.COMPLETE ) );
+		}
 	}
 }
