@@ -3,7 +3,6 @@ package com.processinghacks.arcball;
 import com.julapy.math.TrigUtil;
 
 import processing.core.PApplet;
-import toxi.geom.Vec3D;
 
 public class ArcBallTest extends PApplet 
 {
@@ -31,7 +30,8 @@ public class ArcBallTest extends PApplet
 		background( 255 );
 		
 //		arcball.update();
-//		arcball.update( 0, 0 );
+		
+		arcball.update( angleDegreesX * TrigUtil.DEGTORAD, angleDegreesY * TrigUtil.DEGTORAD );
 		
 		translate( width/2, height/2, -height/2 );
 		fill( 255, 0, 0, 40 );
@@ -66,7 +66,5 @@ public class ArcBallTest extends PApplet
 		{
 			angleDegreesX -= 1.0f;
 		}
-		
-		arcball.update( angleDegreesX * TrigUtil.DEGTORAD, angleDegreesY * TrigUtil.DEGTORAD );
 	}
 }
