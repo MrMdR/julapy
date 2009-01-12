@@ -58,18 +58,20 @@ package
 		
 		public function playIn ():void
 		{
-			stereoCont.alpha = 0;
-			
-			Tweener.addTween
-			(
-				stereoCont,
-				{
-					alpha		: 1,
-					time		: 0.3,
-					transition	: "easeOutQuad",
-					onComplete	: playOut
-				}
-			);
+//			stereoCont.alpha = 0;
+//			
+//			Tweener.addTween
+//			(
+//				stereoCont,
+//				{
+//					alpha		: 1,
+//					time		: 0.3,
+//					transition	: "easeOutQuad",
+//					onComplete	: playOut
+//				}
+//			);
+
+			playOut();
 		}
 		
 		public function playOut ():void
@@ -80,7 +82,7 @@ package
 				{
 					alpha		: 0,
 					time		: 5,
-					delay		: 10,
+					delay		: 15,
 					transition	: "easeOutQuad",
 					onComplete	: onComplete
 				}
