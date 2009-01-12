@@ -1,5 +1,7 @@
 package
 {
+	import caurina.transitions.Tweener;
+	
 	import com.holler.controls.VideoView;
 	import com.holler.events.VideoViewEvent;
 	import com.holler.utils.MathUtil;
@@ -17,6 +19,8 @@ package
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import org.goasap.managers.OverlapMonitor;
 	
 	[SWF(backgroundColor="0x000000", frameRate="31", width="950", height="580")] 
 	
@@ -205,6 +209,37 @@ package
 		}
 		
 		/////////////////////////////////////////////
+		//	BLINK.
+		/////////////////////////////////////////////
+		
+		private function blinkIn ():void
+		{
+			Tweener.addTween
+			(
+				[ videoPixelate, stereoLayer ],
+				{
+					alpha		: 0.6,
+					time		: 0.15,
+					transition	: "easeOutQuad",
+					onComplete	: blinkOut
+				}
+			);
+		}
+		
+		private function blinkOut ():void
+		{
+			Tweener.addTween
+			(
+				[ videoPixelate, stereoLayer ],
+				{
+					alpha		: 1,
+					time		: 0.4,
+					transition	: "easeOutQuad"
+				}
+			);
+		}
+		
+		/////////////////////////////////////////////
 		//	EVENTS.
 		/////////////////////////////////////////////
 		
@@ -239,6 +274,8 @@ package
 			stereoBm01			= new Bitmap( bmd );
 			stereoBm01.width	= stereoRect.width;
 			stereoBm01.height	= stereoRect.height;
+			
+//			blinkIn();
 		}
 		
 		private function stageMouseUpHandler ( e:MouseEvent ):void
