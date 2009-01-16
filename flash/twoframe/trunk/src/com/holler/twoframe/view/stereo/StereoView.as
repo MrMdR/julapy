@@ -1,156 +1,95 @@
 package com.holler.twoframe.view.stereo
 {
-	import com.holler.containers.ScreenView;
-	import com.holler.controls.Image;
-	import com.holler.events.ImageLoadedEvent;
+	import com.holler.core.View;
 	import com.holler.twoframe.vo.ImageVO;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.IOErrorEvent;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;
 
-	public class StereoView extends ScreenView
+	public class StereoView extends View
 	{
-		private var imageVO:ImageVO;
-		private var image01Container:Sprite;
-		private var image02Container:Sprite;
-		private var image01:Image;
-		private var image02:Image;
+		public static const ITEM_PAD	: int = 1;
 		
-		private var stereoTimer:Timer;
-		private var stereoFPS:int = 10;
-		private var stereoIndex:int = 0;
+		private var itemVOs				: Array = new Array();
+		private var stereoItemViews		: Array = new Array();
+		private var stereoItemLoadIndex	: int = 0;
+		private var stereoItemX			: int = ITEM_PAD;
+		private var stereoItemY			: int = ITEM_PAD;
+//		private var stereoItemScale		: Number = 0.8325;
+		private var stereoItemScale		: Number = 0.25;		
 		
-		private var isPlayingOut:Boolean = false;
-		
-		
-		public function StereoView( sprite:Sprite=null, imageVO:ImageVO=null )
+		public function StereoView( sprite:Sprite, itemVOs:Array )
 		{
 			super(sprite);
 			
-			this.imageVO = imageVO;
+			this.itemVOs = itemVOs;
 			
-			image01Container	= new Sprite();
-			image02Container	= new Sprite();
-			
-			image01 = new Image( image01Container );
-			image01.addEventListener( ImageLoadedEvent.IMAGE_LOADED_EVENT,	onImageLoadComplete );
-			image01.addEventListener( IOErrorEvent.IO_ERROR,				onImageLoadError );
-			image01.load( imageVO.image01Path );
-			
-			image02 = new Image( image02Container );
-			image02.addEventListener( ImageLoadedEvent.IMAGE_LOADED_EVENT,	onImageLoadComplete );
-			image02.addEventListener( IOErrorEvent.IO_ERROR,				onImageLoadError );
-			image02.visible = false;
-			
-			addChildView( image01 );
-			addChildView( image02 );
-			
-			resize( stageWidth, stageHeight );
-			doValidate();
+			addStereoItem();
 		}
 		
 		public function destroy ():void
 		{
-			stopStereo();
 			
-			image01.close();
-			image01.removeEventListener( ImageLoadedEvent.IMAGE_LOADED_EVENT,	onImageLoadComplete );
-			image01.removeEventListener( IOErrorEvent.IO_ERROR,					onImageLoadError );
-			image01.remove();
-			image01 = null;
+		}
+		
+		//////////////////////////////////////////////////////
+		//	STEREO VIEW
+		//////////////////////////////////////////////////////
 
-			image02.close();
-			image02.removeEventListener( ImageLoadedEvent.IMAGE_LOADED_EVENT,	onImageLoadComplete );
-			image02.removeEventListener( IOErrorEvent.IO_ERROR,					onImageLoadError );
-			image02.remove();
-			image02 = null;
-		}
-		
-		public function playStereo ():void
-		{
-			stereoTimer = new Timer( 1000 / stereoFPS );
-			stereoTimer.addEventListener( TimerEvent.TIMER, stereoTick );
-			stereoTimer.start();
-			stereoTick();
-		}
-		
-		public function stopStereo ():void
-		{
-			if( stereoTimer is Timer )
-			{
-				stereoTimer.removeEventListener( TimerEvent.TIMER, stereoTick );
-				stereoTimer.stop();
-				stereoTimer = null;
-			}
-		}
-		
-		private function stereoTick ( e:*=null ):void
-		{
-			if( ++stereoIndex > 1 )
-				stereoIndex = 0;
-				
-			if( stereoIndex == 0 )
-			{
-				image01.visible = true;
-				image02.visible = false;
-			}
-			
-			if( stereoIndex == 1 )
-			{
-				image01.visible = false;
-				image02.visible = true;
-			}
-			
-			doValidate();
-		}
-		
 		public function playIn ():void
 		{
-			onPlayedIn();
+			
 		}
 		
 		public function playOut ():void
 		{
-			if( !isPlayingOut )
+			
+		}
+
+		//////////////////////////////////////////////////////
+		//	STEREO ITEMS.
+		//////////////////////////////////////////////////////
+		
+		private function addStereoItem ( e:*=null ):void
+		{
+			var itemVO			: ImageVO;
+			var stereoItemView	: StereoItemView;
+			
+			if( e is Event )
 			{
-				isPlayingOut = true;
-				
-				onPlayedOut();
+				if( e.type == Event.INIT )
+				{
+					stereoItemView = e.target as StereoItemView;
+					stereoItemView.removeEventListener( Event.INIT, addStereoItem );
+					stereoItemView.x		= stereoItemX;
+					stereoItemView.y		= stereoItemY;
+					stereoItemView.scaleX	= stereoItemScale;
+					stereoItemView.scaleY	= stereoItemScale;
+					stereoItemView.visible	= true;
+					
+					stereoItemX			+= (int)( StereoItemView.ITEM_WIDTH * stereoItemScale ) + ITEM_PAD;
+					if( stereoItemX > _sprite.stage.stageWidth - (int)( StereoItemView.ITEM_WIDTH * stereoItemScale ) )
+					{
+						stereoItemY		+= (int)( StereoItemView.ITEM_HEIGHT * stereoItemScale ) + ITEM_PAD;
+						stereoItemX		= ITEM_PAD;
+					}
+					
+					stereoItemView = null;
+				}
 			}
-		}
-		
-		protected override function resize( stageWidth:Number, stageHeight:Number ):void
-		{
-			_sprite.x = 20;
-			_sprite.y = 50;
-		}
-		
-		private function onImageLoadComplete ( e:ImageLoadedEvent ):void
-		{
-			if( e.target == image01 )
-				image02.load( imageVO.image02Path );
+			
+			if( stereoItemLoadIndex < itemVOs.length )
+			{
+				itemVO			= itemVOs[ stereoItemLoadIndex ];
+				stereoItemView	= new StereoItemView( new Sprite(), itemVO );
+				stereoItemView.addEventListener( Event.INIT, addStereoItem );
+				stereoItemView.visible = false;
 				
-			if( e.target == image02 )
-				playStereo();
-		}
-		
-		private function onImageLoadError ():void
-		{
+				addChildView( stereoItemView );
+			}
 			
+			++stereoItemLoadIndex;
 		}
-		
-		private function onPlayedIn ():void
-		{
-			
-		}
-		
-		private function onPlayedOut ():void
-		{
-			dispatchEvent( new Event( Event.COMPLETE ) );
-		}
-		
+
 	}
 }
