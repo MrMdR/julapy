@@ -3,23 +3,6 @@
 <twoframe> 
 	<section>
    		<image>
-       		<name>bondi_01_s03</name>
-   			<image1>img/bondi_01/s03_01.jpg</image1>
-   			<image2>img/bondi_01/s03_02.jpg</image2>
-   		</image>
-   		<image>
-       		<name>bondi_01_s07</name>
-   			<image1>img/bondi_01/s07_01.jpg</image1>
-   			<image2>img/bondi_01/s07_02.jpg</image2>
-   		</image>
-   		<image>
-       		<name>bondi_01_s08</name>
-   			<image1>img/bondi_01/s08_01.jpg</image1>
-   			<image2>img/bondi_01/s08_02.jpg</image2>
-   		</image>
-	</section>
-	<section>
-   		<image>
        		<name>clovely_01</name>
    			<image1>img/clovely_01/DSC_0004_01.jpg</image1>
    			<image2>img/clovely_01/DSC_0004_02.jpg</image2>
@@ -33,6 +16,71 @@
        		<name>clovely_03</name>
    			<image1>img/clovely_01/DSC_0018_01.jpg</image1>
    			<image2>img/clovely_01/DSC_0018_02.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_budgie_01b_01.jpg</image1>
+   			<image2>img/wa/wa_budgie_01b_02.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_budgie_02_01.jpg</image1>
+   			<image2>img/wa/wa_budgie_02_02.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_budgie_03a.jpg</image1>
+   			<image2>img/wa/wa_budgie_03b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_budgie_04a.jpg</image1>
+   			<image2>img/wa/wa_budgie_04b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_kalbarri_02a.jpg</image1>
+   			<image2>img/wa/wa_kalbarri_02b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_kalbarri_03a.jpg</image1>
+   			<image2>img/wa/wa_kalbarri_03b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_paradisebeach_01.jpg</image1>
+   			<image2>img/wa/wa_paradisebeach_02.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/wa/wa_thakka_a.jpg</image1>
+   			<image2>img/wa/wa_thakka_b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/bball/bball_a.jpg</image1>
+   			<image2>img/bball/bball_b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/bondi/bondi_04a.jpg</image1>
+   			<image2>img/bondi/bondi_04b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/bondi/bondi_06a.jpg</image1>
+   			<image2>img/bondi/bondi_06b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/bondi/bondi_09b_a.jpg</image1>
+   			<image2>img/bondi/bondi_09b_b.jpg</image2>
+   		</image>
+   		<image>
+       		<name></name>
+   			<image1>img/bondi/bondi_11a.jpg</image1>
+   			<image2>img/bondi/bondi_11b.jpg</image2>
    		</image>
 	</section>
 </twoframe>
