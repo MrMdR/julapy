@@ -348,7 +348,7 @@ public class Ribbons extends PApplet
 		{
 			gl.glEnable( GL.GL_TEXTURE_2D );
 			
-			pgl.bindTexture( particleTexture );
+			pgl.texture( particleTexture );
 
 			textureMode( NORMALIZED );
 			
@@ -540,7 +540,7 @@ public class Ribbons extends PApplet
 		
 		public void render ()
 		{
-			pgl.bindTexture( magnetTexture );
+			pgl.texture( magnetTexture );
 
 			textureMode( NORMALIZED );
 			
@@ -654,7 +654,7 @@ public class Ribbons extends PApplet
 		
 		public void render ()
 		{
-			pgl.bindTexture( magnetTexture );
+			pgl.texture( magnetTexture );
 
 			textureMode( NORMALIZED );
 			
