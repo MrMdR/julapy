@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/processing"/>
 	<classpathentry kind="lib" path="/Toxi_geomutils_0008/bin/toxi_geomutils.jar"/>
 	<classpathentry kind="lib" path="/OCD_lib/library/ocd.jar" sourcepath="/OCD_lib/src/damkjer/ocd"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ess"/>
@@ -10,5 +9,7 @@
 	<classpathentry kind="lib" path="/Applications/Processing 0148/libraries/candy/library/candy.jar" sourcepath="/processing"/>
 	<classpathentry kind="lib" path="/Applications/Processing 0148/libraries/xml/library/xml.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/proSVG"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/processing_1.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/minim"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

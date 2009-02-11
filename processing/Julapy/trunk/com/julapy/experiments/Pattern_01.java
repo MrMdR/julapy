@@ -8,11 +8,15 @@ package com.julapy.experiments;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+import com.julapy.utils.TileSaver;
+
 import processing.core.*;
 
 public class Pattern_01 extends PApplet 
 {
 	Pattern p;
+	
+	TileSaver tiler;
 	
 	public void setup() 
 	{
@@ -21,10 +25,14 @@ public class Pattern_01 extends PApplet
 		smooth();
 		
 		p = new Pattern( );
+		
+		tiler = new TileSaver( this );
 	}
 	
 	public void draw() 
 	{
+		tiler.pre();
+		
 		background( 0 );
 		
 		translate( 100, 100 );
@@ -34,6 +42,13 @@ public class Pattern_01 extends PApplet
 			rotate( PI * 0.05f );
 			p.draw();
 		}
+		
+		tiler.post();
+	}
+	
+	public void keyPressed() 
+	{
+		if(key=='t') tiler.init("Simple"+nf(frameCount,10),10);
 	}
 	
 	class Pattern
