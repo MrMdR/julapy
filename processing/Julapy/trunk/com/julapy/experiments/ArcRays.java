@@ -68,18 +68,18 @@ public class ArcRays extends PApplet
 	
 	int squareList;
 	
-	Camera cam;
-	Vec3D camTarget;
-	Vec3D camPosition;
-	Vec3D camNormal;
-	int camDirection = 1;
+//	Camera cam;
+//	Vec3D camTarget;
+//	Vec3D camPosition;
+//	Vec3D camNormal;
+//	int camDirection = 1;
 	
 	TileSaver tiler;
 	Boolean isTiling = false;
 	 
 	public void setup() 
 	{
-		size(800, 800, OPENGL);
+		size(600, 600, OPENGL);
 		
 		frameRate( framesPerSecond );
 		
@@ -129,10 +129,10 @@ public class ArcRays extends PApplet
 		
 //		audiodata = loadStrings( "data/audiodata.txt"  );
 		
-		cam 		= new Camera( this, width/2, height/2, 1000, width/2, width/2, width/2);
-		camPosition = new Vec3D();
-		camTarget 	= new Vec3D();
-		camNormal 	= new Vec3D();
+//		cam 		= new Camera( this, width/2, height/2, 1000, width/2, width/2, width/2);
+//		camPosition = new Vec3D();
+//		camTarget 	= new Vec3D();
+//		camNormal 	= new Vec3D();
 		
 		tiler = new TileSaver( this );
 		
@@ -201,15 +201,15 @@ public class ArcRays extends PApplet
 		
 		background(0);
 		
-		if( !isTiling )
-		{
-			cam.circle( radians( ( 3 * camDirection ) ) );
-		}
-		cam.feed();
-
-		camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
-		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
-		camNormal = camPosition.sub(camTarget).normalize();
+//		if( !isTiling )
+//		{
+//			cam.circle( radians( ( 3 * camDirection ) ) );
+//		}
+//		cam.feed();
+//
+//		camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
+//		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
+//		camNormal = camPosition.sub(camTarget).normalize();
 		
 //		fft.getSpectrum( channel );
 //		fft.getSpectrum(channel.samples, (int)(frameNumber * channel.sampleRate / framesPerSecond));
@@ -221,7 +221,9 @@ public class ArcRays extends PApplet
 		
 		pushMatrix();
 		
-		translate(width/2, width/2, width/2);
+		float cameraZ = ( height / 2.0f ) / PApplet.tan( PApplet.PI * 60 /360.0f );
+		
+		translate( width/2, width/2, -cameraZ );
 
 		if( !isTiling )
 		{
@@ -277,6 +279,10 @@ public class ArcRays extends PApplet
 //		drawCenterGlow();
 		
 		tiler.post();
+		if( !tiler.checkStatus() && isTiling )
+		{
+			isTiling = false;
+		}
 		
 		if(isRecording) save("export/image" + imageCount++ + ".png");
 	}
@@ -458,5 +464,4 @@ public class ArcRays extends PApplet
 			pgl.endGL();
 		}
 	}	
-	
 }
