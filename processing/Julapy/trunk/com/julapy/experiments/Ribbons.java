@@ -42,6 +42,7 @@ public class Ribbons extends PApplet
 	Vec3D camPosition;
 	Vec3D camNormal;
 	int camDirection = 1;
+	Boolean useCamera = true;
 	
 	boolean isRecording = false;
 	int imageCount;
@@ -166,6 +167,12 @@ public class Ribbons extends PApplet
 	public void draw() 
 	{
 		background( 0, 0, 0 );
+	
+		if( !useCamera )
+		{
+			float cameraZ = ( height / 2.0f ) / PApplet.tan( PApplet.PI * 60 /360.0f );
+			gl.glTranslatef( 0, 0, -cameraZ );
+		}
 		
 		gl.glDisable( GL.GL_TEXTURE_2D );
 		
@@ -181,9 +188,12 @@ public class Ribbons extends PApplet
 		v0.scaleSelf( -2500 );
 		Vec3D v1 = fp1.loc.add( v0 );
 		
-		camVec.x += (v1.x - camVec.x) * 0.01f;
-		camVec.y += (v1.y - camVec.y) * 0.01f;
-		camVec.z += (v1.z - camVec.z) * 0.01f;
+		if( useCamera )
+		{
+			camVec.x += (v1.x - camVec.x) * 0.01f;
+			camVec.y += (v1.y - camVec.y) * 0.01f;
+			camVec.z += (v1.z - camVec.z) * 0.01f;
+		}
 		
 //		FlockParticle fp2 = null;
 //		for( int i=0; i<flockParticles.size(); i++)
@@ -206,18 +216,21 @@ public class Ribbons extends PApplet
 //			}
 //		}
 		
-		cam.jump( camVec.x, camVec.y, camVec.z );
-		cam.aim( fp1.loc.x, fp1.loc.y, fp1.loc.z );
-		
-//		cam.jump( fp1.loc.x, fp1.loc.y, fp1.loc.z );
-//		cam.aim( width/2, height/2, width/2 );
-		
-//		cam.circle( radians( ( 1 * camDirection ) ) );
-		cam.feed();
-
-		camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
-		camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
-		camNormal = camPosition.sub(camTarget).normalize();
+		if( useCamera )
+		{
+			cam.jump( camVec.x, camVec.y, camVec.z );
+			cam.aim( fp1.loc.x, fp1.loc.y, fp1.loc.z );
+			
+//			cam.jump( fp1.loc.x, fp1.loc.y, fp1.loc.z );
+//			cam.aim( width/2, height/2, width/2 );
+			
+//			cam.circle( radians( ( 1 * camDirection ) ) );
+			cam.feed();
+	
+			camPosition.set( cam.position()[0], cam.position()[1], cam.position()[2] );
+			camTarget.set( cam.target()[0], cam.target()[1], cam.target()[2] );
+			camNormal = camPosition.sub(camTarget).normalize();
+		}
 		
 		gl.glDepthMask(false);
 		gl.glEnable( GL.GL_DEPTH_TEST );
@@ -356,9 +369,15 @@ public class Ribbons extends PApplet
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 	        
 			// face texture to camera.
-			float deltaX   = camTarget.x - camPosition.x; 
-			float deltaY   = camTarget.y - camPosition.y; 
-			float deltaZ   = camTarget.z - camPosition.z;
+			float deltaX   = 0; 
+			float deltaY   = 0; 
+			float deltaZ   = 0;
+			if( useCamera )
+			{
+				deltaX   = camTarget.x - camPosition.x; 
+				deltaY   = camTarget.y - camPosition.y; 
+				deltaZ   = camTarget.z - camPosition.z;
+			}
 
 			float angleZ   = atan2( deltaY, deltaX );
 			float hyp      = sqrt( sq( deltaX ) + sq( deltaY ) ); 
@@ -548,9 +567,15 @@ public class Ribbons extends PApplet
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 	        
 			// face texture to camera.
-			float deltaX   = camTarget.x - camPosition.x;
-			float deltaY   = camTarget.y - camPosition.y; 
-			float deltaZ   = camTarget.z - camPosition.z;
+			float deltaX   = 0;
+			float deltaY   = 0; 
+			float deltaZ   = 0;
+			if( useCamera )
+			{
+				deltaX   = camTarget.x - camPosition.x;
+				deltaY   = camTarget.y - camPosition.y; 
+				deltaZ   = camTarget.z - camPosition.z;
+			}
 
 			float angleZ   = atan2( deltaY, deltaX ); 
 			float hyp      = sqrt( sq( deltaX ) + sq( deltaY ) ); 
@@ -662,9 +687,15 @@ public class Ribbons extends PApplet
 			gl.glTranslatef( loc.x, loc.y, loc.z );
 	        
 			// face texture to camera.
-			float deltaX   = camTarget.x - camPosition.x; 
-			float deltaY   = camTarget.y - camPosition.y; 
-			float deltaZ   = camTarget.z - camPosition.z;
+			float deltaX   = 0; 
+			float deltaY   = 0; 
+			float deltaZ   = 0;
+			if( useCamera )
+			{
+				deltaX   = camTarget.x - camPosition.x; 
+				deltaY   = camTarget.y - camPosition.y; 
+				deltaZ   = camTarget.z - camPosition.z;
+			}
 
 			float angleZ   = atan2( deltaY, deltaX ); 
 			float hyp      = sqrt( sq( deltaX ) + sq( deltaY ) ); 
