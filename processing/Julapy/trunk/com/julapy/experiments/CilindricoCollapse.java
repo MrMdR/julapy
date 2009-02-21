@@ -209,7 +209,7 @@ public class CilindricoCollapse extends PApplet
 		
 		float normLength = 20;
 		
-		Boolean drawNormals = false;
+		Boolean drawNormals = true;
 		Boolean drawQuads	= true;
 		
 		public ArcBar ()
@@ -233,7 +233,7 @@ public class CilindricoCollapse extends PApplet
 		public void init ()
 		{
 			deg 	= 200;
-			radius	= 200;
+			radius	= 300;
 			rInc	= 1;
 			width	= 50;
 			height	= 50;
@@ -254,13 +254,13 @@ public class CilindricoCollapse extends PApplet
 			float p, r, g, b, a;
 			Vec3D vtemp, ntemp, n1, n2;
 			Vec3D[] vtemps;
-			float nLength;
 			int ang;
-			int i;
+			int i, j;
 			
 			x1 = y1 = x2 = y2 = 0;
 			px1 = py1 = px2 = py2 = 0;
 			p = r = g = b = a = 0;
+			n1 = n2 = new Vec3D();
 			ang = (int)min( deg / SINCOS_PRECISION, SINCOS_LENGTH - 1 );
 			
 			gl.glPushMatrix();
@@ -284,68 +284,26 @@ public class CilindricoCollapse extends PApplet
 				y2 = sinLUT[i] * ( radius + width );
 				
 				// normal pointing inwards.
-				int dir = 1;
-				if( ( ang > 270 && ang < 360 ) || ( ang < 90 ) )
-					dir = -1;
+				n1 = new Vec3D( 1, 0, 0 );
+				n1 = n1.rotateAroundAxis( Vec3D.Z_AXIS, i * DEG_TO_RAD );
 				
-				n1 = new Vec3D
-				(
-					(float)( Math.cos( i * DEG_TO_RAD ) * dir ),
-					(float)( Math.sin( i * DEG_TO_RAD ) * dir ),
-					0
-				);
-				
-				if( drawNormals )
-				{
-					gl.glBegin( GL.GL_LINES );
-					
-					if( i == 0  || i == ( ang - 1 ) )
-					{
-						// draw end faces.
-					}
-					
-					if( ( i != 0 ) && ( i % 10 == 0 ) )
-					{
-						// draw inner face normals.
-	
-						// draw outer face normals.
-	
-						// draw bottom face normals.
-						ntemp		= new Vec3D( 0, 0, 1 );
-						vtemps		= new Vec3D[ 4 ];
-						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
-						vtemps[ 1 ]	= new Vec3D( px1, py1, 0 );
-						vtemps[ 2 ]	= new Vec3D( px2, py2, 0 );
-						vtemps[ 3 ]	= new Vec3D( x2, y2, 0 );
-						
-						for( i=0; i<vtemps.length; i++ )
-						{
-							vtemp = vtemps[ i ];
-							
-							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
-							gl.glVertex3f
-							(
-								vtemp.x + ntemp.x * normLength,
-								vtemp.y + ntemp.y * normLength, 
-								vtemp.z + ntemp.z * normLength 
-							);
-						}
-						
-						// draw top face normals.
-					}
-					
-					gl.glEnd();
-				}
-
 				if( drawQuads )
 				{
-					gl.glBegin( GL.GL_QUADS );				
+					gl.glBegin( GL.GL_QUADS );		
 					
 					// gl.glColor4f( r, g, b, a );
 					
-					if( i == 0  || i == ( ang - 1 ) )
+					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
 					{
 						// draw end faces.
+						ntemp = new Vec3D( 0, -1, 0 );
+						ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
+						if( i == ( ang - 1 ) )
+						{
+							ntemp.invert();
+						}
+
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( x1, y1, 0 );
 						gl.glVertex3f( x2, y2, 0 );
 						gl.glVertex3f( x2, y2, height );
@@ -355,26 +313,42 @@ public class CilindricoCollapse extends PApplet
 					if( i != 0 )
 					{
 						// draw inner faces.
+						ntemp = n1.copy().invert();
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( x1, y1, 0 );
+						
+						ntemp = n2.copy().invert();
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( px1, py1, 0 );
 						gl.glVertex3f( px1, py1, height );
+
+						ntemp = n1.copy().invert();
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( x1, y1, height );
 	
 						// draw outer faces.
+						ntemp = n1.copy();
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( x2, y2, 0 );
+
+						ntemp = n2.copy();
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( px2, py2, 0 );
 						gl.glVertex3f( px2, py2, height );
+						
+						ntemp = n1.copy();
+						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
 						gl.glVertex3f( x2, y2, height );
 	
 						// draw bottom faces.
-						gl.glNormal3f( 0, 0, 1 );
+						gl.glNormal3f( 0, 0, -1 );
 						gl.glVertex3f( x1, y1, 0 );
 						gl.glVertex3f( px1, py1, 0 );
 						gl.glVertex3f( px2, py2, 0 );
 						gl.glVertex3f( x2, y2, 0 );
 	
 						// draw top faces.
-						gl.glNormal3f( 0, 0, -1 );
+						gl.glNormal3f( 0, 0, 1 );
 						gl.glVertex3f( x1, y1, height );
 						gl.glVertex3f( px1, py1, height );
 						gl.glVertex3f( px2, py2, height );
@@ -382,12 +356,135 @@ public class CilindricoCollapse extends PApplet
 					}
 					
 					gl.glEnd();
-	
-					px1 = x1;
-					py1 = y1;
-					px2 = x2;
-					py2 = y2;
 				}
+				
+				if( drawNormals )
+				{
+					gl.glBegin( GL.GL_LINES );
+					
+					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
+					{
+						ntemp = new Vec3D( 0, -1, 0 );
+						ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
+						if( i == ( ang - 1 ) )
+						{
+							ntemp.invert();
+						}
+						vtemps		= new Vec3D[ 4 ];
+						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
+						vtemps[ 1 ]	= new Vec3D( x2, y2, 0 );
+						vtemps[ 2 ]	= new Vec3D( x2, y2, height );
+						vtemps[ 3 ]	= new Vec3D( x1, y1, height );
+
+						for( j=0; j<vtemps.length; j++ )
+						{
+							vtemp = vtemps[ j ];
+							
+							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
+							gl.glVertex3f
+							(
+								vtemp.x + ntemp.x * normLength,
+								vtemp.y + ntemp.y * normLength, 
+								vtemp.z + ntemp.z * normLength
+							);
+						}
+					}
+					
+					if( ( i != 0 ) && ( i % 20 == 0 ) )
+					{
+						// draw inner face normals.
+						ntemp		= n1.copy().invert();
+						vtemps		= new Vec3D[ 4 ];
+						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
+						vtemps[ 1 ]	= new Vec3D( px1, py1, 0 );
+						vtemps[ 2 ]	= new Vec3D( px1, py1, height );
+						vtemps[ 3 ]	= new Vec3D( x1, y1, height );
+						
+						for( j=0; j<vtemps.length; j++ )
+						{
+							vtemp = vtemps[ j ];
+							
+							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
+							gl.glVertex3f
+							(
+								vtemp.x + ntemp.x * normLength,
+								vtemp.y + ntemp.y * normLength, 
+								vtemp.z + ntemp.z * normLength
+							);
+						}
+						
+						// draw outer face normals.
+						ntemp		= n1.copy();
+						vtemps		= new Vec3D[ 4 ];
+						vtemps[ 0 ]	= new Vec3D( x2, y2, 0 );
+						vtemps[ 1 ]	= new Vec3D( px2, py2, 0 );
+						vtemps[ 2 ]	= new Vec3D( px2, py2, height );
+						vtemps[ 3 ]	= new Vec3D( x2, y2, height );
+						
+						for( j=0; j<vtemps.length; j++ )
+						{
+							vtemp = vtemps[ j ];
+							
+							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
+							gl.glVertex3f
+							(
+								vtemp.x + ntemp.x * normLength,
+								vtemp.y + ntemp.y * normLength, 
+								vtemp.z + ntemp.z * normLength
+							);
+						}
+						
+						// draw bottom face normals.
+						ntemp		= new Vec3D( 0, 0, -1 );
+						vtemps		= new Vec3D[ 4 ];
+						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
+						vtemps[ 1 ]	= new Vec3D( px1, py1, 0 );
+						vtemps[ 2 ]	= new Vec3D( px2, py2, 0 );
+						vtemps[ 3 ]	= new Vec3D( x2, y2, 0 );
+						
+						for( j=0; j<vtemps.length; j++ )
+						{
+							vtemp = vtemps[ j ];
+							
+							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
+							gl.glVertex3f
+							(
+								vtemp.x + ntemp.x * normLength,
+								vtemp.y + ntemp.y * normLength, 
+								vtemp.z + ntemp.z * normLength
+							);
+						}
+						
+						// draw top face normals.
+						ntemp		= new Vec3D( 0, 0, 1 );
+						vtemps		= new Vec3D[ 4 ];
+						vtemps[ 0 ]	= new Vec3D( x1, y1, height );
+						vtemps[ 1 ]	= new Vec3D( px1, py1, height );
+						vtemps[ 2 ]	= new Vec3D( px2, py2, height );
+						vtemps[ 3 ]	= new Vec3D( x2, y2, height );
+						
+						for( j=0; j<vtemps.length; j++ )
+						{
+							vtemp = vtemps[ j ];
+							
+							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
+							gl.glVertex3f
+							(
+								vtemp.x + ntemp.x * normLength,
+								vtemp.y + ntemp.y * normLength, 
+								vtemp.z + ntemp.z * normLength
+							);
+						}
+					}
+					
+					gl.glEnd();
+				}
+				
+				px1 = x1;
+				py1 = y1;
+				px2 = x2;
+				py2 = y2;
+				n2  = n1;
 			}
 			
 			gl.glPopMatrix();
