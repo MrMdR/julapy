@@ -22,8 +22,8 @@ public class CilindricoCollapse extends PApplet
 	GL gl;
 
 	Boolean lightingEnabled	= true;
-	float[] lightAmbient	= { 0.2f, 0.2f, 0.2f, 1.0f };
-	float[] lightDiffuse	= { 1.0f, 0.0f, 0.0f, 1.0f };
+	float[] lightAmbient	= { 0.1f, 0.1f, 0.1f, 1.0f };
+	float[] lightDiffuse	= { 0.7f, 0.7f, 0.7f, 1.0f };
 	float[] lightSpecular	= { 0.5f, 0.5f, 0.5f, 1.0f };
 	float[] lightPosition	= { -1.5f, 1.0f, -4.0f, 1.0f };
 	
@@ -37,7 +37,7 @@ public class CilindricoCollapse extends PApplet
 	Boolean isRecording	= false;
 	Boolean isTiling	= false;
 	
-	ArcBar arcBar;
+	ArcBar[] arcBars;
 	
 	public void setup() 
 	{
@@ -112,7 +112,7 @@ public class CilindricoCollapse extends PApplet
         // Set up lighting
         gl.glLightfv( GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient, 0 );
         gl.glLightfv( GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0 );
-        gl.glLightfv( GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular, 0 );
+//      gl.glLightfv( GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular, 0 );
         gl.glLightfv( GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0 );
         gl.glEnable( GL.GL_LIGHTING );
         gl.glEnable( GL.GL_LIGHT1 );
@@ -125,7 +125,10 @@ public class CilindricoCollapse extends PApplet
 	
 	private void initArcBars ()
 	{
-		arcBar = new ArcBar( 30, 0, 0 );
+		arcBars = new ArcBar[ 2 ];
+		arcBars[ 0 ] = new ArcBar( 30, 0, 0, 0.96f, 0.0f, 0.64f ); 
+		arcBars[ 1 ] = new ArcBar( 30, 0, 0, 0.0f, 0.05f, 1.0f );
+		arcBars[ 1 ].radius = 200;
 	}
 	
 	////////////////////////////////////////////
@@ -134,7 +137,10 @@ public class CilindricoCollapse extends PApplet
 
 	private void updateArcBars ()
 	{
-		arcBar.update();
+		for( int i=0; i<arcBars.length; i++ )
+		{
+			arcBars[ i ].update();
+		}
 	}
 
 	////////////////////////////////////////////
@@ -165,7 +171,6 @@ public class CilindricoCollapse extends PApplet
         }
 		
 		// START DRAW.
-
 		pgl.beginGL();
 
 		gl.glPushMatrix();
@@ -194,7 +199,10 @@ public class CilindricoCollapse extends PApplet
 	
 	private void drawArcBars ()
 	{
-		arcBar.render();
+		for( int i=0; i<arcBars.length; i++ )
+		{
+			arcBars[ i ].render();
+		}
 	}
 	
 
@@ -204,29 +212,31 @@ public class CilindricoCollapse extends PApplet
 	
 	public class ArcBar
 	{
-		float rx;
-		float ry;
-		float rz;
-		float rInc;
+		float rx	= 0;
+		float ry	= 0;
+		float rz	= 0;
+		float rInc	= 1;
 		
-		float deg;
-		float radius;
-		float width;
-		float height;
-		float scale;
+		float cr = 1;
+		float cg = 1;
+		float cb = 1;
+		
+		float deg		= 200;
+		float radius	= 300;
+		float width		= 50;
+		float height	= 50;
+		float scale		= 1;
 		
 		float normLength = 20;
 		
-		Boolean drawNormals = true;
 		Boolean drawQuads	= true;
+		Boolean drawNormals = false;
 		
 		public ArcBar ()
 		{
 			rx = random( 2 * PI );
 			ry = random( 2 * PI );
 			rz = random( 2 * PI );
-			
-			init();
 		}
 		
 		public ArcBar (float rx, float ry, float rz)
@@ -234,18 +244,16 @@ public class CilindricoCollapse extends PApplet
 			this.rx = rx;
 			this.ry = ry;
 			this.rz = rz;
-			
-			init();
 		}
-		
-		public void init ()
+
+		public ArcBar (float rx, float ry, float rz, float cr, float cg, float cb )
 		{
-			deg 	= 200;
-			radius	= 300;
-			rInc	= 1;
-			width	= 50;
-			height	= 50;
-			scale	= 1;
+			this.rx = rx;
+			this.ry = ry;
+			this.rz = rz;
+			this.cr = cr;
+			this.cg = cg;
+			this.cb = cb;
 		}
 		
 		public void update ()
@@ -260,6 +268,7 @@ public class CilindricoCollapse extends PApplet
 			float x1, y1, x2, y2;
 			float px1, py1, px2, py2;
 			float p, r, g, b, a;
+			float[] mcolor = { cr, cg, cb, 1 };
 			Vec3D vtemp, ntemp, n1, n2;
 			Vec3D[] vtemps;
 			int ang;
@@ -299,7 +308,8 @@ public class CilindricoCollapse extends PApplet
 				{
 					gl.glBegin( GL.GL_QUADS );
 					
-					gl.glColor4f( 0.3f, 0.8f, 0.5f, 1 );
+//					gl.glColor4f( cr, cg, cb, 1 );
+					gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, mcolor, 0 );
 					
 					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
 					{
