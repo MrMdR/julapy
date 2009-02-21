@@ -11,5 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/proSVG"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/processing_1.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/minim"/>
+	<classpathentry kind="lib" path="/Toxi_geomutils_0011/bin/toxi_geomutils_0011.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
