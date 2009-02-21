@@ -22,9 +22,10 @@ public class CilindricoCollapse extends PApplet
 	GL gl;
 
 	Boolean lightingEnabled	= true;
-	float[] lightAmbient	= { 0.5f, 1.0f, 0.2f, 1.0f };
-	float[] lightDiffuse	= { 1.0f, 1.0f, 1.0f, 1.0f };
-	float[] lightPosition	= { 0.0f, 0.0f, 2.0f, 1.0f };
+	float[] lightAmbient	= { 0.2f, 0.2f, 0.2f, 1.0f };
+	float[] lightDiffuse	= { 1.0f, 0.0f, 0.0f, 1.0f };
+	float[] lightSpecular	= { 0.5f, 0.5f, 0.5f, 1.0f };
+	float[] lightPosition	= { -1.5f, 1.0f, -4.0f, 1.0f };
 	
 	float sinLUT[];
 	float cosLUT[];	
@@ -65,8 +66,10 @@ public class CilindricoCollapse extends PApplet
 		{
 			isRecording = !isRecording;
 			
-			if(isRecording) println("started recording.");
-			if(!isRecording) println("stopped recording.");
+			if(isRecording)
+				println("started recording.");
+			else
+				println("stopped recording.");
 		}
 		
 		if( key == 't' )
@@ -98,20 +101,21 @@ public class CilindricoCollapse extends PApplet
 		gl	= pgl.gl;
 		gl.setSwapInterval( 1 );
 		
-        gl.glShadeModel(GL.GL_SMOOTH);              				// Enable Smooth Shading
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);					// Black Background
-        gl.glClearDepth(1.0f);										// Depth Buffer Setup
-        gl.glEnable(GL.GL_DEPTH_TEST);								// Enables Depth Testing
-        gl.glDepthFunc(GL.GL_LEQUAL);								// The Type Of Depth Testing To Do
-        gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);	// Really Nice Perspective Calculations
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glShadeModel( GL.GL_SMOOTH );              					// Enable Smooth Shading
+        gl.glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );						// Black Background
+        gl.glClearDepth( 1.0f );										// Depth Buffer Setup
+        gl.glEnable( GL.GL_DEPTH_TEST );								// Enables Depth Testing
+        gl.glDepthFunc( GL.GL_LEQUAL );									// The Type Of Depth Testing To Do
+        gl.glHint( GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST );	// Really Nice Perspective Calculations
+        gl.glDisable( GL.GL_TEXTURE_2D );
         
         // Set up lighting
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, this.lightAmbient, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, this.lightDiffuse, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, this.lightPosition, 0);
-        gl.glEnable(GL.GL_LIGHT1);
-        gl.glEnable(GL.GL_LIGHTING);
+        gl.glLightfv( GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient, 0 );
+        gl.glLightfv( GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0 );
+        gl.glLightfv( GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular, 0 );
+        gl.glLightfv( GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0 );
+        gl.glEnable( GL.GL_LIGHTING );
+        gl.glEnable( GL.GL_LIGHT1 );
 	}
 	
 	private void initTileSaver ()
@@ -148,7 +152,20 @@ public class CilindricoCollapse extends PApplet
 		
 		background(0);
 		
+		// lights.
+		if ( lightingEnabled )
+		{
+        	gl.glEnable( GL.GL_LIGHTING );
+        	gl.glEnable( GL.GL_LIGHT1 );
+		}
+        else
+        {
+        	gl.glDisable( GL.GL_LIGHTING );
+        	gl.glEnable( GL.GL_LIGHT1 );
+        }
+		
 		// START DRAW.
+
 		pgl.beginGL();
 
 		gl.glPushMatrix();
@@ -158,15 +175,6 @@ public class CilindricoCollapse extends PApplet
 			width/2,
 			-( height / 2.0f ) / PApplet.tan( PApplet.PI * 60 /360.0f )
 		);
-		
-		if ( lightingEnabled )
-        {
-        	gl.glEnable( GL.GL_LIGHTING );
-        }
-        else
-        {
-        	gl.glDisable( GL.GL_LIGHTING );
-        }
 		
 		drawArcBars();
 		
@@ -289,9 +297,9 @@ public class CilindricoCollapse extends PApplet
 				
 				if( drawQuads )
 				{
-					gl.glBegin( GL.GL_QUADS );		
+					gl.glBegin( GL.GL_QUADS );
 					
-					// gl.glColor4f( r, g, b, a );
+					gl.glColor4f( 0.3f, 0.8f, 0.5f, 1 );
 					
 					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
 					{
