@@ -95,7 +95,7 @@ public class CilindricoCollapse extends PApplet
 	
 	private void initArcBars ()
 	{
-		arcBar = new ArcBar( 45, 0, 0 );
+		arcBar = new ArcBar( 100, 0, 0 );
 	}
 	
 	////////////////////////////////////////////
@@ -115,7 +115,7 @@ public class CilindricoCollapse extends PApplet
 	{
 		if( !isTiling )
 		{
-//			updateArcBars();
+			updateArcBars();
 		}
 		
 		tiler.pre();
@@ -169,7 +169,7 @@ public class CilindricoCollapse extends PApplet
 		float deg;
 		float radius;
 		float width;
-		float thick;
+		float height;
 		float scale;
 		
 		public ArcBar ()
@@ -196,7 +196,7 @@ public class CilindricoCollapse extends PApplet
 			radius	= 200;
 			rInc	= 1;
 			width	= 50;
-			thick	= 50;
+			height	= 50;
 			scale	= 1;
 		}
 		
@@ -209,38 +209,80 @@ public class CilindricoCollapse extends PApplet
 		
 		public void render ()
 		{
+			float x1, y1, x2, y2;
+			float px1, py1, px2, py2;
+			float p, r, g, b, a;
+			int ang;
+			
+			x1 = y1 = x2 = y2 = 0;
+			px1 = py1 = px2 = py2 = 0;
+			p = r = g = b = a = 0;
+			ang = (int)min( deg / SINCOS_PRECISION, SINCOS_LENGTH - 1 );
+			
 			gl.glPushMatrix();
 			
 			gl.glRotatef( rx, 1, 0, 0 );
 			gl.glRotatef( ry, 0, 1, 0 );
 			gl.glRotatef( rz, 0, 0, 1 );
 			
-			gl.glBegin( GL.GL_QUAD_STRIP );
+			gl.glBegin( GL.GL_QUADS );
 			
-			int ang = (int)min( deg / SINCOS_PRECISION, SINCOS_LENGTH - 1 );
-			
-			for (int i = 0; i < ang; i++) 
+			for( int i = 0; i<ang; i++ ) 
 			{
-				float p		= 1.0f - (float)i/(float)(ang-1);
-				float r		= 1;	// red
-				float g		= 1;	// green
-				float b		= 1;	// blue
-				float a		= 1;	// alpha
+				p = 1.0f - (float)i / (float)( ang - 1 );
+				r = 1;	// red
+				g = 1;	// green
+				b = 1;	// blue
+				a = 1;	// alpha
+				
+				x1 = cosLUT[i] * ( radius );
+				y1 = sinLUT[i] * ( radius );
+				
+				x2 = cosLUT[i] * ( radius + width );
+				y2 = sinLUT[i] * ( radius + width );
 				
 				gl.glColor4f( r, g, b, a );
 				
-				gl.glVertex3f
-				(
-					cosLUT[i] * ( radius ),
-					sinLUT[i] * ( radius ),
-					0 
-				);
-				gl.glVertex3f
-				(
-					cosLUT[i] * ( radius + ( width * scale ) ),
-					sinLUT[i] * ( radius + ( width * scale ) ),
-					0
-				);
+				if( i == 0  || i == ( ang - 1 ) )
+				{
+					// draw end faces.
+					gl.glVertex3f( x1, y1, 0 );
+					gl.glVertex3f( x2, y2, 0 );
+					gl.glVertex3f( x2, y2, height );
+					gl.glVertex3f( x1, y1, height );
+				}
+				
+				if( i != 0 )
+				{
+					// draw inner faces.
+					gl.glVertex3f( x1, y1, 0 );
+					gl.glVertex3f( px1, py1, 0 );
+					gl.glVertex3f( px1, py1, height );
+					gl.glVertex3f( x1, y1, height );
+
+					// draw outer faces.
+					gl.glVertex3f( x2, y2, 0 );
+					gl.glVertex3f( px2, py2, 0 );
+					gl.glVertex3f( px2, py2, height );
+					gl.glVertex3f( x2, y2, height );
+
+					// draw bottom faces.
+					gl.glVertex3f( x1, y1, 0 );
+					gl.glVertex3f( px1, py1, 0 );
+					gl.glVertex3f( px2, py2, 0 );
+					gl.glVertex3f( x2, y2, 0 );
+
+					// draw top faces.
+					gl.glVertex3f( x1, y1, height );
+					gl.glVertex3f( px1, py1, height );
+					gl.glVertex3f( px2, py2, height );
+					gl.glVertex3f( x2, y2, height );
+				}
+
+				px1 = x1;
+				py1 = y1;
+				px2 = x2;
+				py2 = y2;
 			}
 			
 			gl.glEnd();
