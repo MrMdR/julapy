@@ -76,7 +76,7 @@ public class CilindricoCollapse extends PApplet
 		{
 			isTiling = !isTiling;
 			
-			tiler.init("Simple"+nf(frameCount,10),10);
+			tiler.init("Simple"+nf(frameCount,16),16);
 		}
 	}
 	
@@ -125,10 +125,46 @@ public class CilindricoCollapse extends PApplet
 	
 	private void initArcBars ()
 	{
-		arcBars = new ArcBar[ 2 ];
-		arcBars[ 0 ] = new ArcBar( 30, 0, 0, 0.96f, 0.0f, 0.64f ); 
-		arcBars[ 1 ] = new ArcBar( 30, 0, 0, 0.0f, 0.05f, 1.0f );
-		arcBars[ 1 ].radius = 200;
+		int arcsTotal		= 100;
+		float arcLocZ 		= -600;
+		float arcLocZInc	= 12;
+		float arcHeight		= 10;
+		float arcAngleMin	= 10;
+		float arcAngleMax	= 270;
+		float arcRadiusMin	= 50;
+		float arcRadiusMax	= 400;
+		float arcWidthMin	= 50;
+		float arcWidthMax	= 100;
+		ArcBar arcBar;
+		int i;
+
+		arcBars = new ArcBar[ arcsTotal ];
+		
+		for( i=0; i<arcsTotal; i++ )
+		{
+			arcBars[ i ] 	= arcBar = new ArcBar( );
+			arcBar.loc.z 	= arcLocZ;
+			arcBar.height	= arcHeight;
+			arcBar.radius	= random( arcRadiusMin, arcRadiusMax );
+			arcBar.width	= random( arcWidthMin, arcWidthMax );
+			arcBar.angle	= random( arcAngleMin, arcAngleMax );
+			arcBar.rz		= random( 360 );
+			
+			if( random( 1 ) < 0.5f )
+			{
+				arcBar.colour[ 0 ] = 0.96f;
+				arcBar.colour[ 1 ] = 0.0f;
+				arcBar.colour[ 2 ] = 0.64f;
+			}
+			else
+			{
+				arcBar.colour[ 0 ] = 0.0f;
+				arcBar.colour[ 1 ] = 0.05f;
+				arcBar.colour[ 2 ] = 1.0f;
+			}
+			
+			arcLocZ += arcLocZInc;
+		}
 	}
 	
 	////////////////////////////////////////////
@@ -156,7 +192,8 @@ public class CilindricoCollapse extends PApplet
 		
 		tiler.pre();
 		
-		background(0);
+//		background( 0.59f, 0.18f, 0.47f ); // pinkish
+		background( 0.4f ); // greyish.
 		
 		// lights.
 		if ( lightingEnabled )
@@ -212,16 +249,16 @@ public class CilindricoCollapse extends PApplet
 	
 	public class ArcBar
 	{
+		Vec3D loc	= new Vec3D();
+		Vec3D vel	= new Vec3D();
 		float rx	= 0;
 		float ry	= 0;
 		float rz	= 0;
-		float rInc	= 1;
+		float rInc	= 2;
 		
-		float cr = 1;
-		float cg = 1;
-		float cb = 1;
+		float[] colour = { 1, 1, 1, 1 };
 		
-		float deg		= 200;
+		float angle		= 200;
 		float radius	= 300;
 		float width		= 50;
 		float height	= 50;
@@ -251,9 +288,10 @@ public class CilindricoCollapse extends PApplet
 			this.rx = rx;
 			this.ry = ry;
 			this.rz = rz;
-			this.cr = cr;
-			this.cg = cg;
-			this.cb = cb;
+			
+			colour[ 0 ] = cr;
+			colour[ 1 ] = cg;
+			colour[ 2 ] = cb;
 		}
 		
 		public void update ()
@@ -267,8 +305,6 @@ public class CilindricoCollapse extends PApplet
 		{
 			float x1, y1, x2, y2;
 			float px1, py1, px2, py2;
-			float p, r, g, b, a;
-			float[] mcolor = { cr, cg, cb, 1 };
 			Vec3D vtemp, ntemp, n1, n2;
 			Vec3D[] vtemps;
 			int ang;
@@ -276,24 +312,19 @@ public class CilindricoCollapse extends PApplet
 			
 			x1 = y1 = x2 = y2 = 0;
 			px1 = py1 = px2 = py2 = 0;
-			p = r = g = b = a = 0;
 			n1 = n2 = new Vec3D();
-			ang = (int)min( deg / SINCOS_PRECISION, SINCOS_LENGTH - 1 );
+			ang = (int)min( angle / SINCOS_PRECISION, SINCOS_LENGTH - 1 );
 			
 			gl.glPushMatrix();
-			
-			gl.glRotatef( rx, 1, 0, 0 );
-			gl.glRotatef( ry, 0, 1, 0 );
+
+			gl.glRotatef( 90, 1, 0, 0 );
+			gl.glTranslatef( loc.x, loc.y, loc.z );
 			gl.glRotatef( rz, 0, 0, 1 );
+//			gl.glRotatef( 90, 0, 1, 0 );
+//			gl.glRotatef( 90, 1, 0, 0 );
 			
 			for( i = 0; i<ang; i++ ) 
 			{
-				p = 1.0f - (float)i / (float)( ang - 1 );
-				r = 1;	// red
-				g = 1;	// green
-				b = 1;	// blue
-				a = 1;	// alpha
-				
 				x1 = cosLUT[i] * ( radius );
 				y1 = sinLUT[i] * ( radius );
 				
@@ -308,8 +339,7 @@ public class CilindricoCollapse extends PApplet
 				{
 					gl.glBegin( GL.GL_QUADS );
 					
-//					gl.glColor4f( cr, cg, cb, 1 );
-					gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, mcolor, 0 );
+					gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, colour, 0 );
 					
 					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
 					{
