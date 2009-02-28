@@ -51,6 +51,17 @@ public class CilindricoCollapse extends PApplet
 	
 	ArcBar[] arcBars;
 	
+	float[][] colorPalette = 
+	{ 
+//		{ 0.96f, 0.00f, 0.64f, 1.00f },		// velvet blue.
+//		{ 0.00f, 0.05f, 1.00f, 1.00f },		// fuchsia.
+		{ 1.00f, 0.76f, 0.06f, 1.00f },		// yellow.
+		{ 0.90f, 0.18f, 0.04f, 1.00f },		// red.
+		{ 0.88f, 0.44f, 0.13f, 1.00f },		// orange.
+		{ 0.74f, 0.33f, 0.05f, 1.00f },		// orange dark.
+		{ 0.42f, 0.45f, 0.03f, 1.00f }		// olive dark.
+	};
+	
 	public void setup() 
 	{
 		size( 600, 600, OPENGL );
@@ -166,15 +177,17 @@ public class CilindricoCollapse extends PApplet
 	private void initArcBars ()
 	{
 		int arcsTotal		= 100;
-		float arcLocZ 		= -600;
-		float arcLocZInc	= 12;
 		float arcHeight		= 10;
+		float arcLocZInc	= 12;
+		float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.25f );
 		float arcAngleMin	= 10;
 		float arcAngleMax	= 270;
 		float arcRadiusMin	= 50;
 		float arcRadiusMax	= 400;
-		float arcWidthMin	= 50;
-		float arcWidthMax	= 100;
+		float arcWidthMin	= 20;
+		float arcWidthMax	= 40;
+		int arcColorIndex	= 0;
+		float[] arcColors	= {};
 		ArcBar arcBar;
 		int i;
 
@@ -190,18 +203,9 @@ public class CilindricoCollapse extends PApplet
 			arcBar.angle	= random( arcAngleMin, arcAngleMax );
 			arcBar.rz		= random( 360 );
 			
-			if( random( 1 ) < 0.5f )
-			{
-				arcBar.colour[ 0 ] = 0.96f;
-				arcBar.colour[ 1 ] = 0.0f;
-				arcBar.colour[ 2 ] = 0.64f;
-			}
-			else
-			{
-				arcBar.colour[ 0 ] = 0.0f;
-				arcBar.colour[ 1 ] = 0.05f;
-				arcBar.colour[ 2 ] = 1.0f;
-			}
+			arcColorIndex	= (int)( random( colorPalette.length ) );
+			arcColors		= colorPalette[ arcColorIndex ];
+			arcBar.colour	= arcColors;
 			
 			arcLocZ += arcLocZInc;
 		}
@@ -240,7 +244,8 @@ public class CilindricoCollapse extends PApplet
 		tiler.pre();
 		
 //		background( 0.59f, 0.18f, 0.47f ); // pinkish
-		background( 0.4f ); // greyish.
+		background( 0.61f, 0.66f, 0.47f ); // olive.
+//		background( 0.4f ); // greyish.
 		
 		// lights.
 		if ( lightingEnabled )
