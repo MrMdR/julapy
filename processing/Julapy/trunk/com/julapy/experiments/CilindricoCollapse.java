@@ -8,12 +8,18 @@ package com.julapy.experiments;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import javax.media.opengl.GL;
 
 import com.julapy.utils.TileSaver;
 
 import processing.opengl.PGraphicsOpenGL;
 import processing.core.*;
+import toxi.geom.Matrix4x4;
+import toxi.geom.Quaternion;
 import toxi.geom.Vec3D;
 
 public class CilindricoCollapse extends PApplet 
@@ -32,6 +38,12 @@ public class CilindricoCollapse extends PApplet
 	float SINCOS_PRECISION=1.0f;
 	int SINCOS_LENGTH= (int)(360.0/SINCOS_PRECISION);
 	
+	float sceneCenterX	= 0;
+	float sceneCenterY	= 0;
+	float sceneCenterZ	= 0;
+	float sceneRotX 	= 0;
+	float sceneRotZ 	= 0;
+	
 	TileSaver tiler;
 	
 	Boolean isRecording	= false;
@@ -46,6 +58,7 @@ public class CilindricoCollapse extends PApplet
 		frameRate( 25 );
 
 		initLookUpTables();
+		initScene();
 		initOpenGL();
 		initTileSaver();
 		initArcBars();
@@ -71,12 +84,32 @@ public class CilindricoCollapse extends PApplet
 			else
 				println("stopped recording.");
 		}
-		
+
 		if( key == 't' )
 		{
 			isTiling = !isTiling;
 			
 			tiler.init("Simple"+nf(frameCount,16),16);
+		}
+		
+		if( keyCode == 37 )	// left.
+		{
+			sceneRotZ -= 1 * DEG_TO_RAD;
+		}
+
+		if( keyCode == 39 )	// right
+		{
+			sceneRotZ += 1 * DEG_TO_RAD;
+		}
+		
+		if( keyCode == 38 )	// up
+		{
+			sceneRotX += 1 * DEG_TO_RAD;
+		}
+		
+		if( keyCode == 40 )	// down
+		{
+			sceneRotX -= 1 * DEG_TO_RAD;
 		}
 	}
 	
@@ -93,6 +126,13 @@ public class CilindricoCollapse extends PApplet
 			sinLUT[i]= (float)Math.sin( i * DEG_TO_RAD * SINCOS_PRECISION );
 			cosLUT[i]= (float)Math.cos( i * DEG_TO_RAD * SINCOS_PRECISION );
 		}
+	}
+	
+	private void initScene ()
+	{
+		sceneCenterX = width * 0.5f;
+		sceneCenterY = width * 0.5f;
+		sceneCenterZ = -( height * 0.5f ) / tan( PI * 60 / 360.0f );
 	}
 	
 	private void initOpenGL ()
@@ -171,6 +211,12 @@ public class CilindricoCollapse extends PApplet
 	// UPDATE.
 	////////////////////////////////////////////
 
+	private void updateSceneRotation ()
+	{
+		sceneRotX += 1 * DEG_TO_RAD;
+		sceneRotZ += 1 * DEG_TO_RAD;
+	}
+	
 	private void updateArcBars ()
 	{
 		for( int i=0; i<arcBars.length; i++ )
@@ -187,6 +233,7 @@ public class CilindricoCollapse extends PApplet
 	{
 		if( !isTiling )
 		{
+//			updateSceneRotation();
 			updateArcBars();
 		}
 		
@@ -211,12 +258,9 @@ public class CilindricoCollapse extends PApplet
 		pgl.beginGL();
 
 		gl.glPushMatrix();
-		gl.glTranslatef
-		( 
-			width/2,
-			width/2,
-			-( height / 2.0f ) / PApplet.tan( PApplet.PI * 60 /360.0f )
-		);
+		gl.glTranslatef( sceneCenterX, sceneCenterY, sceneCenterZ );
+		
+		applySceneRotation();
 		
 		drawArcBars();
 		
@@ -232,6 +276,42 @@ public class CilindricoCollapse extends PApplet
 		}
 		
 		if(isRecording) save("export/image" + frameCount + ".png");
+	}
+	
+	private void applySceneRotation ()
+	{
+		Vec3D xrot, zrot;
+		Quaternion nowQuat, xrotQuat, zrotQuat;
+		Matrix4x4 mtemp;
+		float[] m;
+
+		xrot = Vec3D.Y_AXIS.copy().rotateAroundAxis( Vec3D.X_AXIS.copy(), sceneRotX );
+		zrot = Vec3D.X_AXIS.copy().rotateAroundAxis( Vec3D.Z_AXIS.copy(), sceneRotZ );
+		
+		xrotQuat = new Quaternion( 1, new Vec3D( 0, 0, 0 ) );
+		xrotQuat.set( xrot.dot( Vec3D.Y_AXIS.copy() ), xrot.cross( Vec3D.Y_AXIS.copy() ) );
+
+		zrotQuat = new Quaternion( 1, new Vec3D( 0, 0, 0 ) );
+		zrotQuat.set( zrot.dot( Vec3D.X_AXIS.copy() ), zrot.cross( Vec3D.X_AXIS.copy() ) );
+		
+		nowQuat = xrotQuat.multiply( zrotQuat );
+		nowQuat.normalize();
+		mtemp	= nowQuat.getMatrix();
+		
+		m = new float[]
+        {
+			(float)mtemp.matrix[0][0], (float)mtemp.matrix[0][1], (float)mtemp.matrix[0][2], (float)mtemp.matrix[0][3],
+			(float)mtemp.matrix[1][0], (float)mtemp.matrix[1][1], (float)mtemp.matrix[1][2], (float)mtemp.matrix[1][3],
+			(float)mtemp.matrix[2][0], (float)mtemp.matrix[2][1], (float)mtemp.matrix[2][2], (float)mtemp.matrix[2][3],
+			(float)mtemp.matrix[3][0], (float)mtemp.matrix[3][1], (float)mtemp.matrix[3][2], (float)mtemp.matrix[3][3]
+		};
+		
+		FloatBuffer rotMatrix;
+		rotMatrix = ByteBuffer.allocateDirect(4 * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		rotMatrix.put( m );
+		rotMatrix.flip();
+
+		gl.glMultMatrixf( rotMatrix );
 	}
 	
 	private void drawArcBars ()
