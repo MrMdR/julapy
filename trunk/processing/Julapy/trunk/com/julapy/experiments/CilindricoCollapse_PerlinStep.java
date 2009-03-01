@@ -16,9 +16,10 @@ public class CilindricoCollapse_PerlinStep extends PApplet
 {
 	float[] perlinSteps = {};
 	float perlinVal 	= 0;
-	float perlinCount	= 0;
-	float perlinInc		= 0.5f;
-	float perlinCue		= 10;
+	float perlinSeed	= 0;
+	float perlinInc		= 1.5f;
+	int perlinCount		= 0;
+	int perlinCue		= 10;
 
 	public void setup() 
 	{
@@ -44,9 +45,17 @@ public class CilindricoCollapse_PerlinStep extends PApplet
 		perlinSteps = new float[ 360 ];
 		for( i=perlinSteps.length-1; i>=0; i-- )
 		{
-			perlinVal			= noise( perlinCount += perlinInc );
-			perlinVal			= (int)( perlinVal * 10 ) / (float)10;
-		    perlinSteps[ i ]	= perlinVal;
+			if( perlinCount++ == perlinCue )
+			{
+			    perlinVal			= noise( perlinSeed += perlinInc ) * 3 - 1.0f;
+			    perlinVal			= (int)( perlinVal * 10 ) / (float)10;
+			    perlinVal			= max( perlinVal, 0.0f );
+			    perlinVal			= min( perlinVal, 1.0f );
+
+			    perlinCue			+= (int)random( 5, 30 );
+			}
+			
+			perlinSteps[ i ] = perlinVal;
 		}
 	}
 	
@@ -59,9 +68,9 @@ public class CilindricoCollapse_PerlinStep extends PApplet
 	    	perlinSteps[ i ] = perlinSteps[i-1];
 	    }
 
-		if( frameCount == perlinCue )
+		if( perlinCount++ == perlinCue )
 		{
-		    perlinVal			= noise( perlinCount += perlinInc );
+		    perlinVal			= noise( perlinSeed += perlinInc ) * 3 - 1.0f;
 		    perlinVal			= (int)( perlinVal * 10 ) / (float)10;
 		    perlinVal			= max( perlinVal, 0.0f );
 		    perlinVal			= min( perlinVal, 1.0f );
@@ -70,7 +79,7 @@ public class CilindricoCollapse_PerlinStep extends PApplet
 		    perlinCue			+= (int)random( 5, 30 );
 		}
 	    
-//	    println( perlinVal );
+	    println( perlinVal );
 	}
 	
 	private void drawPerlinSteps ()
