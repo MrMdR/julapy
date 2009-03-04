@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
 
+import com.julapy.noise.PerlinStep;
 import com.julapy.utils.TileSaver;
 
 import processing.opengl.PGraphicsOpenGL;
@@ -50,16 +51,30 @@ public class CilindricoCollapse extends PApplet
 	Boolean isTiling	= false;
 	
 	ArcBar[] arcBars;
-	
-	float[][] colorPalette = 
-	{ 
+
+//	float[][] colorPalette = 
+//	{ 
 //		{ 0.96f, 0.00f, 0.64f, 1.00f },		// velvet blue.
 //		{ 0.00f, 0.05f, 1.00f, 1.00f },		// fuchsia.
-		{ 1.00f, 0.76f, 0.06f, 1.00f },		// yellow.
-		{ 0.90f, 0.18f, 0.04f, 1.00f },		// red.
-		{ 0.88f, 0.44f, 0.13f, 1.00f },		// orange.
-		{ 0.74f, 0.33f, 0.05f, 1.00f },		// orange dark.
-		{ 0.42f, 0.45f, 0.03f, 1.00f }		// olive dark.
+//	};
+	
+//	float[][] colorPalette = 
+//	{ 
+//		{ 1.00f, 0.76f, 0.06f, 1.00f },		// yellow.
+//		{ 0.90f, 0.18f, 0.04f, 1.00f },		// red.
+//		{ 0.88f, 0.44f, 0.13f, 1.00f },		// orange.
+//		{ 0.74f, 0.33f, 0.05f, 1.00f },		// orange dark.
+//		{ 0.42f, 0.45f, 0.03f, 1.00f }		// olive dark.
+//	};
+
+	float[][] colorPalette = 
+	{ 
+		{ 0.13f, 0.21f, 0.23f, 1.00f },		// dark green 01.
+		{ 0.20f, 0.25f, 0.26f, 1.00f },		// dark green 02.
+		{ 0.18f, 0.30f, 0.33f, 1.00f },		// green.
+		{ 0.32f, 0.42f, 0.45f, 1.00f },		// green / grey.
+		{ 0.28f, 0.28f, 0.26f, 1.00f },		// brown.
+		{ 0.75f, 0.67f, 0.56f, 1.00f },		// light brown.
 	};
 	
 	public void setup() 
@@ -176,16 +191,17 @@ public class CilindricoCollapse extends PApplet
 	
 	private void initArcBars ()
 	{
-		int arcsTotal		= 100;
-		float arcHeight		= 10;
-		float arcLocZInc	= 12;
+		int arcsTotal		= 200;
+		float arcHeight		= 8;
+		float arcLocZInc	= 4;
 		float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.25f );
 		float arcAngleMin	= 10;
 		float arcAngleMax	= 270;
+		
 		float arcRadiusMin	= 50;
-		float arcRadiusMax	= 400;
-		float arcWidthMin	= 20;
-		float arcWidthMax	= 40;
+		float arcRadiusMax	= 500;
+		float arcWidthMin	= 50;
+		float arcWidthMax	= 80;
 		int arcColorIndex	= 0;
 		float[] arcColors	= {};
 		ArcBar arcBar;
@@ -206,6 +222,8 @@ public class CilindricoCollapse extends PApplet
 			arcColorIndex	= (int)( random( colorPalette.length ) );
 			arcColors		= colorPalette[ arcColorIndex ];
 			arcBar.colour	= arcColors;
+			
+			arcBar.init();
 			
 			arcLocZ += arcLocZInc;
 		}
@@ -244,7 +262,12 @@ public class CilindricoCollapse extends PApplet
 		tiler.pre();
 		
 //		background( 0.59f, 0.18f, 0.47f ); // pinkish
-		background( 0.61f, 0.66f, 0.47f ); // olive.
+//		background( 0.61f, 0.66f, 0.47f ); // olive.
+//		background( 0.80f, 0.75f, 0.69f ); // brown / grey.
+//		background( 0.79f, 0.72f, 0.62f ); // brown / grey.
+//		background( 0.87f, 0.73f, 0.52f ); // orange / grey.
+//		background( 0.58f, 0.69f, 0.74f ); // blue / grey.
+		background( 0.82f, 0.83f, 0.78f ); // grey.
 //		background( 0.4f ); // greyish.
 		
 		// lights.
@@ -344,15 +367,19 @@ public class CilindricoCollapse extends PApplet
 		float[] colour = { 1, 1, 1, 1 };
 		
 		float angle		= 200;
+		int	  angleStep	= 200;
 		float radius	= 300;
 		float width		= 50;
 		float height	= 50;
 		float scale		= 1;
 		
+		PerlinStep ps;
+		
 		float normLength = 20;
 		
 		Boolean drawQuads	= true;
 		Boolean drawNormals = false;
+		Boolean drawAngles	= false;
 		
 		public ArcBar ()
 		{
@@ -379,6 +406,12 @@ public class CilindricoCollapse extends PApplet
 			colour[ 2 ] = cb;
 		}
 		
+		public void init ()
+		{
+			angleStep	= (int)( angle / SINCOS_PRECISION );
+			ps			= new PerlinStep( angleStep, 1.5f, 5, 30 );
+		}
+		
 		public void update ()
 		{
 			rx += rInc;
@@ -388,17 +421,18 @@ public class CilindricoCollapse extends PApplet
 		
 		public void render ()
 		{
-			float x1, y1, x2, y2;
-			float px1, py1, px2, py2;
+			float x1, y1, x2, y2, x3, y3, x4, y4;
+			float fx1, fy1, fx2, fy2;
+			float ps1, ps2;
 			Vec3D vtemp, ntemp, n1, n2;
 			Vec3D[] vtemps;
-			int ang;
-			int i, j;
+			int i, j, k;
 			
-			x1 = y1 = x2 = y2 = 0;
-			px1 = py1 = px2 = py2 = 0;
+			x1 = y1 = x2 = y2 = x3 = y3 = x4 = y4 = 0;
+			fx1 = fy1 = fx2 = fy2 = 0;
 			n1 = n2 = new Vec3D();
-			ang = (int)min( angle / SINCOS_PRECISION, SINCOS_LENGTH - 1 );
+			ps1 = 0;
+			ps2 = 0;
 			
 			gl.glPushMatrix();
 
@@ -408,17 +442,29 @@ public class CilindricoCollapse extends PApplet
 //			gl.glRotatef( 90, 0, 1, 0 );
 //			gl.glRotatef( 90, 1, 0, 0 );
 			
-			for( i = 0; i<ang; i++ ) 
+			for( i = 0; i<angleStep; i++ ) 
 			{
-				x1 = cosLUT[i] * ( radius );
-				y1 = sinLUT[i] * ( radius );
+				j = ( i < angleStep - 1 ) ? ( i + 1 ) : 0;
 				
-				x2 = cosLUT[i] * ( radius + width );
-				y2 = sinLUT[i] * ( radius + width );
+				ps1 = ps.perlinSteps[ i ];
+				ps2 = ps.perlinSteps[ j ];
+				
+				x1	= cosLUT[ j ] * ( radius );
+				y1	= sinLUT[ j ] * ( radius );
+				x2	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+				y2	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+				
+				x3	= cosLUT[ i ] * ( radius );
+				y3	= sinLUT[ i ] * ( radius );
+				x4	= cosLUT[ i ] * ( radius + ( width * ps1 ) );
+				y4	= sinLUT[ i ] * ( radius + ( width * ps1 ) );
 				
 				// normal pointing inwards.
-				n1 = new Vec3D( 1, 0, 0 );
-				n1 = n1.rotateAroundAxis( Vec3D.Z_AXIS, i * DEG_TO_RAD );
+				n1	= new Vec3D( 1, 0, 0 );
+				n1	= n1.rotateAroundAxis( Vec3D.Z_AXIS, j * DEG_TO_RAD );
+				
+				n2  = new Vec3D( 1, 0, 0 );
+				n2	= n2.rotateAroundAxis( Vec3D.Z_AXIS, i * DEG_TO_RAD );
 				
 				if( drawQuads )
 				{
@@ -426,24 +472,39 @@ public class CilindricoCollapse extends PApplet
 					
 					gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, colour, 0 );
 					
-					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
+					if( ps1 != ps2 )
 					{
-						// draw end faces.
+						// draw edge faces.
 						ntemp = new Vec3D( 0, -1, 0 );
-						ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
-						if( i == ( ang - 1 ) )
+						
+						if( ps1 < ps2  )	// facing left.
 						{
+							fx1	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+							fy1	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+							fx2	= cosLUT[ j ] * ( radius + ( width * ps2 ) );
+							fy2	= sinLUT[ j ] * ( radius + ( width * ps2 ) );
+							
+							ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), j * DEG_TO_RAD );
+						}
+						else				// facing right.
+						{
+							fx1	= cosLUT[ j ] * ( radius + ( width * ps2 ) );
+							fy1	= sinLUT[ j ] * ( radius + ( width * ps2 ) );
+							fx2	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+							fy2	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+							
+							ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
 							ntemp.invert();
 						}
-
+						
 						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
-						gl.glVertex3f( x1, y1, 0 );
-						gl.glVertex3f( x2, y2, 0 );
-						gl.glVertex3f( x2, y2, height );
-						gl.glVertex3f( x1, y1, height );
+						gl.glVertex3f( fx1, fy1, 0 );
+						gl.glVertex3f( fx1, fy1, height );
+						gl.glVertex3f( fx2, fy2, height );
+						gl.glVertex3f( fx2, fy2, 0 );
 					}
 					
-					if( i != 0 )
+					if( ( ps1 > 0 ) || ( ps2 > 0 ) && ( ps1 != 0 ) )
 					{
 						// draw inner faces.
 						ntemp = n1.copy().invert();
@@ -452,8 +513,8 @@ public class CilindricoCollapse extends PApplet
 						
 						ntemp = n2.copy().invert();
 						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
-						gl.glVertex3f( px1, py1, 0 );
-						gl.glVertex3f( px1, py1, height );
+						gl.glVertex3f( x3, y3, 0 );
+						gl.glVertex3f( x3, y3, height );
 
 						ntemp = n1.copy().invert();
 						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
@@ -466,8 +527,8 @@ public class CilindricoCollapse extends PApplet
 
 						ntemp = n2.copy();
 						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
-						gl.glVertex3f( px2, py2, 0 );
-						gl.glVertex3f( px2, py2, height );
+						gl.glVertex3f( x4, y4, 0 );
+						gl.glVertex3f( x4, y4, height );
 						
 						ntemp = n1.copy();
 						gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
@@ -476,15 +537,15 @@ public class CilindricoCollapse extends PApplet
 						// draw bottom faces.
 						gl.glNormal3f( 0, 0, -1 );
 						gl.glVertex3f( x1, y1, 0 );
-						gl.glVertex3f( px1, py1, 0 );
-						gl.glVertex3f( px2, py2, 0 );
+						gl.glVertex3f( x3, y3, 0 );
+						gl.glVertex3f( x4, y4, 0 );
 						gl.glVertex3f( x2, y2, 0 );
 	
 						// draw top faces.
 						gl.glNormal3f( 0, 0, 1 );
 						gl.glVertex3f( x1, y1, height );
-						gl.glVertex3f( px1, py1, height );
-						gl.glVertex3f( px2, py2, height );
+						gl.glVertex3f( x3, y3, height );
+						gl.glVertex3f( x4, y4, height );
 						gl.glVertex3f( x2, y2, height );
 					}
 					
@@ -495,23 +556,40 @@ public class CilindricoCollapse extends PApplet
 				{
 					gl.glBegin( GL.GL_LINES );
 					
-					if( ( i == 0 ) || ( i == ( ang - 1 ) ) )
+					// draw end faces.
+					ntemp = new Vec3D( 0, -1, 0 );
+					
+					if( ps2 != ps1 )
 					{
-						ntemp = new Vec3D( 0, -1, 0 );
-						ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
-						if( i == ( ang - 1 ) )
+						if( ps2 > ps1 )
 						{
+							fx1	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+							fy1	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+							fx2	= cosLUT[ j ] * ( radius + ( width * ps2 ) );
+							fy2	= sinLUT[ j ] * ( radius + ( width * ps2 ) );
+	
+							ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), j * DEG_TO_RAD );
+						}
+						else
+						{
+							fx1	= cosLUT[ i ] * ( radius + ( width * ps2 ) );
+							fy1	= sinLUT[ i ] * ( radius + ( width * ps2 ) );
+							fx2	= cosLUT[ i ] * ( radius + ( width * ps1 ) );
+							fy2	= sinLUT[ i ] * ( radius + ( width * ps1 ) );
+							
+							ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
 							ntemp.invert();
 						}
+						
 						vtemps		= new Vec3D[ 4 ];
-						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
-						vtemps[ 1 ]	= new Vec3D( x2, y2, 0 );
-						vtemps[ 2 ]	= new Vec3D( x2, y2, height );
-						vtemps[ 3 ]	= new Vec3D( x1, y1, height );
-
-						for( j=0; j<vtemps.length; j++ )
+						vtemps[ 0 ]	= new Vec3D( fx1, fy1, 0 );
+						vtemps[ 1 ]	= new Vec3D( fx2, fy2, 0 );
+						vtemps[ 2 ]	= new Vec3D( fx2, fy2, height );
+						vtemps[ 3 ]	= new Vec3D( fx1, fy1, height );
+						
+						for( k=0; k<vtemps.length; k++ )
 						{
-							vtemp = vtemps[ j ];
+							vtemp = vtemps[ k ];
 							
 							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
 							gl.glVertex3f
@@ -522,20 +600,20 @@ public class CilindricoCollapse extends PApplet
 							);
 						}
 					}
-					
+
 					if( ( i != 0 ) && ( i % 20 == 0 ) )
 					{
 						// draw inner face normals.
 						ntemp		= n1.copy().invert();
 						vtemps		= new Vec3D[ 4 ];
 						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
-						vtemps[ 1 ]	= new Vec3D( px1, py1, 0 );
-						vtemps[ 2 ]	= new Vec3D( px1, py1, height );
+						vtemps[ 1 ]	= new Vec3D( x3, y3, 0 );
+						vtemps[ 2 ]	= new Vec3D( x3, y3, height );
 						vtemps[ 3 ]	= new Vec3D( x1, y1, height );
 						
-						for( j=0; j<vtemps.length; j++ )
+						for( k=0; k<vtemps.length; k++ )
 						{
-							vtemp = vtemps[ j ];
+							vtemp = vtemps[ k ];
 							
 							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
 							gl.glVertex3f
@@ -550,13 +628,13 @@ public class CilindricoCollapse extends PApplet
 						ntemp		= n1.copy();
 						vtemps		= new Vec3D[ 4 ];
 						vtemps[ 0 ]	= new Vec3D( x2, y2, 0 );
-						vtemps[ 1 ]	= new Vec3D( px2, py2, 0 );
-						vtemps[ 2 ]	= new Vec3D( px2, py2, height );
+						vtemps[ 1 ]	= new Vec3D( x4, y4, 0 );
+						vtemps[ 2 ]	= new Vec3D( x4, y4, height );
 						vtemps[ 3 ]	= new Vec3D( x2, y2, height );
 						
-						for( j=0; j<vtemps.length; j++ )
+						for( k=0; k<vtemps.length; k++ )
 						{
-							vtemp = vtemps[ j ];
+							vtemp = vtemps[ k ];
 							
 							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
 							gl.glVertex3f
@@ -571,13 +649,13 @@ public class CilindricoCollapse extends PApplet
 						ntemp		= new Vec3D( 0, 0, -1 );
 						vtemps		= new Vec3D[ 4 ];
 						vtemps[ 0 ]	= new Vec3D( x1, y1, 0 );
-						vtemps[ 1 ]	= new Vec3D( px1, py1, 0 );
-						vtemps[ 2 ]	= new Vec3D( px2, py2, 0 );
+						vtemps[ 1 ]	= new Vec3D( x3, y3, 0 );
+						vtemps[ 2 ]	= new Vec3D( x4, y4, 0 );
 						vtemps[ 3 ]	= new Vec3D( x2, y2, 0 );
 						
-						for( j=0; j<vtemps.length; j++ )
+						for( k=0; k<vtemps.length; k++ )
 						{
-							vtemp = vtemps[ j ];
+							vtemp = vtemps[ k ];
 							
 							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
 							gl.glVertex3f
@@ -592,13 +670,13 @@ public class CilindricoCollapse extends PApplet
 						ntemp		= new Vec3D( 0, 0, 1 );
 						vtemps		= new Vec3D[ 4 ];
 						vtemps[ 0 ]	= new Vec3D( x1, y1, height );
-						vtemps[ 1 ]	= new Vec3D( px1, py1, height );
-						vtemps[ 2 ]	= new Vec3D( px2, py2, height );
+						vtemps[ 1 ]	= new Vec3D( x3, y3, height );
+						vtemps[ 2 ]	= new Vec3D( x4, y4, height );
 						vtemps[ 3 ]	= new Vec3D( x2, y2, height );
 						
-						for( j=0; j<vtemps.length; j++ )
+						for( k=0; k<vtemps.length; k++ )
 						{
-							vtemp = vtemps[ j ];
+							vtemp = vtemps[ k ];
 							
 							gl.glVertex3f( vtemp.x, vtemp.y, vtemp.z );
 							gl.glVertex3f
@@ -613,11 +691,25 @@ public class CilindricoCollapse extends PApplet
 					gl.glEnd();
 				}
 				
-				px1 = x1;
-				py1 = y1;
-				px2 = x2;
-				py2 = y2;
-				n2  = n1;
+				if( drawAngles )
+				{
+					gl.glBegin( GL.GL_LINES );
+					
+					
+					vtemp = new Vec3D( x1, y1, 0 );
+					vtemp.normalize();
+					vtemp.scaleSelf( 700 );
+					
+					gl.glVertex3f( 0, 0, 0 );
+					gl.glVertex3f
+					(
+						vtemp.x,
+						vtemp.y, 
+						vtemp.z
+					);
+					
+					gl.glEnd();
+				}
 			}
 			
 			gl.glPopMatrix();
