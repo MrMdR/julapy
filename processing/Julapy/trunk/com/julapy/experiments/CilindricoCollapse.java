@@ -111,31 +111,34 @@ public class CilindricoCollapse extends PApplet
 				println("stopped recording.");
 		}
 
+		
 		if( key == 't' )
 		{
 			isTiling = !isTiling;
 			
 			tiler.init("Simple"+nf(frameCount,16),16);
 		}
+
+		float rotInc = 1;
 		
 		if( keyCode == 37 )	// left.
 		{
-			sceneRotZ -= 1 * DEG_TO_RAD;
+			sceneRotZ -= rotInc * DEG_TO_RAD;
 		}
 
 		if( keyCode == 39 )	// right
 		{
-			sceneRotZ += 1 * DEG_TO_RAD;
+			sceneRotZ += rotInc * DEG_TO_RAD;
 		}
 		
 		if( keyCode == 38 )	// up
 		{
-			sceneRotX += 1 * DEG_TO_RAD;
+			sceneRotX += rotInc * DEG_TO_RAD;
 		}
 		
 		if( keyCode == 40 )	// down
 		{
-			sceneRotX -= 1 * DEG_TO_RAD;
+			sceneRotX -= rotInc * DEG_TO_RAD;
 		}
 	}
 	
@@ -192,16 +195,17 @@ public class CilindricoCollapse extends PApplet
 	private void initArcBars ()
 	{
 		int arcsTotal		= 200;
-		float arcHeight		= 8;
-		float arcLocZInc	= 4;
-		float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.25f );
-		float arcAngleMin	= 10;
+		float arcHeight		= 5;
+		float arcLocZInc	= 0;
+		float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.5f );
+		float arcAngleMin	= 100;
 		float arcAngleMax	= 270;
 		
-		float arcRadiusMin	= 50;
-		float arcRadiusMax	= 500;
-		float arcWidthMin	= 50;
-		float arcWidthMax	= 80;
+		float arcRadiusMin	= 300;
+		float arcRadiusMax	= 400;
+		float arcWidthMin	= 300;
+		float arcWidthMax	= 500;
+		float arcCosMult	= 0;
 		int arcColorIndex	= 0;
 		float[] arcColors	= {};
 		ArcBar arcBar;
@@ -214,23 +218,29 @@ public class CilindricoCollapse extends PApplet
 		
 		for( i=0; i<arcsTotal; i++ )
 		{
+			arcCosMult		= -(float)Math.cos( ( i / (float)( arcsTotal - 1 ) ) * Math.PI + Math.PI * 0.5f );
+			
 			arcBars[ i ] 	= arcBar = new ArcBar( );
 			arcBar.id		= i + 1;
 			arcBar.loc.z 	= arcLocZ;
 			arcBar.height	= arcHeight;
-			arcBar.radius	= random( arcRadiusMin, arcRadiusMax );
-			arcBar.width	= random( arcWidthMin, arcWidthMax );
-			arcBar.angle	= random( arcAngleMin, arcAngleMax );
+			arcBar.radius	= random( arcRadiusMin, arcRadiusMax ) * arcCosMult;
+			arcBar.width	= random( arcWidthMin, arcWidthMax ) * arcCosMult;
+			arcBar.angle	= random( arcAngleMin, arcAngleMax ) * ( 1 - arcCosMult );
 			arcBar.rz		= random( 360 );
 			
 			arcColorIndex	= (int)( random( colorPalette.length ) );
 			arcColors		= colorPalette[ arcColorIndex ];
-			arcBar.colour	= arcColors;
+//			arcBar.colour	= arcColors;
+			arcBar.colour[ 0 ]	= arcColors[ 0 ];
+			arcBar.colour[ 1 ]	= arcColors[ 1 ];
+			arcBar.colour[ 2 ]	= arcColors[ 2 ];
+			arcBar.colour[ 3 ]	= 1f;
 			
 			arcBar.init();
 			arcBar.createCallList();
 			
-			arcLocZ += arcLocZInc;
+			arcLocZ += ( arcHeight + arcLocZInc );
 		}
 		
 		pgl.endGL();
@@ -288,6 +298,11 @@ public class CilindricoCollapse extends PApplet
         	gl.glDisable( GL.GL_LIGHTING );
         	gl.glEnable( GL.GL_LIGHT1 );
         }
+
+		// blend mode.
+//		gl.glDepthMask( false );
+//		gl.glEnable( GL.GL_BLEND );
+//		gl.glBlendFunc( GL.GL_SRC_ALPHA, GL.GL_ONE );
 		
 		// START DRAW.
 		pgl.beginGL();
