@@ -209,9 +209,13 @@ public class CilindricoCollapse extends PApplet
 
 		arcBars = new ArcBar[ arcsTotal ];
 		
+		pgl.beginGL();
+		gl.glGenLists( arcsTotal );
+		
 		for( i=0; i<arcsTotal; i++ )
 		{
 			arcBars[ i ] 	= arcBar = new ArcBar( );
+			arcBar.id		= i + 1;
 			arcBar.loc.z 	= arcLocZ;
 			arcBar.height	= arcHeight;
 			arcBar.radius	= random( arcRadiusMin, arcRadiusMax );
@@ -224,9 +228,12 @@ public class CilindricoCollapse extends PApplet
 			arcBar.colour	= arcColors;
 			
 			arcBar.init();
+			arcBar.createCallList();
 			
 			arcLocZ += arcLocZInc;
 		}
+		
+		pgl.endGL();
 	}
 	
 	////////////////////////////////////////////
@@ -346,7 +353,8 @@ public class CilindricoCollapse extends PApplet
 	{
 		for( int i=0; i<arcBars.length; i++ )
 		{
-			arcBars[ i ].render();
+//			arcBars[ i ].render();
+			arcBars[ i ].renderCallList();
 		}
 	}
 	
@@ -366,6 +374,7 @@ public class CilindricoCollapse extends PApplet
 		
 		float[] colour = { 1, 1, 1, 1 };
 		
+		int   id		= 0;
 		float angle		= 200;
 		int	  angleStep	= 200;
 		float radius	= 300;
@@ -412,11 +421,151 @@ public class CilindricoCollapse extends PApplet
 			ps			= new PerlinStep( angleStep, 1.5f, 5, 30 );
 		}
 		
+		public void createCallList ()
+		{
+			float x1, y1, x2, y2, x3, y3, x4, y4;
+			float fx1, fy1, fx2, fy2;
+			float ps1, ps2;
+			Vec3D ntemp, n1, n2;
+			int i, j;
+			
+			x1 = y1 = x2 = y2 = x3 = y3 = x4 = y4 = 0;
+			fx1 = fy1 = fx2 = fy2 = 0;
+			n1 = n2 = new Vec3D();
+			ps1 = 0;
+			ps2 = 0;
+			
+			gl.glNewList( id, GL.GL_COMPILE );
+			
+			for( i = 0; i<angleStep; i++ ) 
+			{
+				j = ( i < angleStep - 1 ) ? ( i + 1 ) : 0;
+				
+				ps1 = ps.perlinSteps[ i ];
+				ps2 = ps.perlinSteps[ j ];
+				
+				x1	= cosLUT[ j ] * ( radius );
+				y1	= sinLUT[ j ] * ( radius );
+				x2	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+				y2	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+				
+				x3	= cosLUT[ i ] * ( radius );
+				y3	= sinLUT[ i ] * ( radius );
+				x4	= cosLUT[ i ] * ( radius + ( width * ps1 ) );
+				y4	= sinLUT[ i ] * ( radius + ( width * ps1 ) );
+				
+				// normal pointing inwards.
+				n1	= new Vec3D( 1, 0, 0 );
+				n1	= n1.rotateAroundAxis( Vec3D.Z_AXIS, j * DEG_TO_RAD );
+				
+				n2  = new Vec3D( 1, 0, 0 );
+				n2	= n2.rotateAroundAxis( Vec3D.Z_AXIS, i * DEG_TO_RAD );
+				
+				gl.glBegin( GL.GL_QUADS );
+				
+				if( ps1 != ps2 )
+				{
+					// draw edge faces.
+					ntemp = new Vec3D( 0, -1, 0 );
+					
+					if( ps1 < ps2  )	// facing left.
+					{
+						fx1	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+						fy1	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+						fx2	= cosLUT[ j ] * ( radius + ( width * ps2 ) );
+						fy2	= sinLUT[ j ] * ( radius + ( width * ps2 ) );
+						
+						ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), j * DEG_TO_RAD );
+					}
+					else				// facing right.
+					{
+						fx1	= cosLUT[ j ] * ( radius + ( width * ps2 ) );
+						fy1	= sinLUT[ j ] * ( radius + ( width * ps2 ) );
+						fx2	= cosLUT[ j ] * ( radius + ( width * ps1 ) );
+						fy2	= sinLUT[ j ] * ( radius + ( width * ps1 ) );
+						
+						ntemp = ntemp.rotateAroundAxis( Vec3D.Z_AXIS.copy(), i * DEG_TO_RAD );
+						ntemp.invert();
+					}
+					
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( fx1, fy1, 0 );
+					gl.glVertex3f( fx1, fy1, height );
+					gl.glVertex3f( fx2, fy2, height );
+					gl.glVertex3f( fx2, fy2, 0 );
+				}
+				
+				if( ( ps1 > 0 ) || ( ps2 > 0 ) && ( ps1 != 0 ) )
+				{
+					// draw inner faces.
+					ntemp = n1.copy().invert();
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( x1, y1, 0 );
+					
+					ntemp = n2.copy().invert();
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( x3, y3, 0 );
+					gl.glVertex3f( x3, y3, height );
+
+					ntemp = n1.copy().invert();
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( x1, y1, height );
+
+					// draw outer faces.
+					ntemp = n1.copy();
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( x2, y2, 0 );
+
+					ntemp = n2.copy();
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( x4, y4, 0 );
+					gl.glVertex3f( x4, y4, height );
+					
+					ntemp = n1.copy();
+					gl.glNormal3f( ntemp.x, ntemp.y, ntemp.z );
+					gl.glVertex3f( x2, y2, height );
+
+					// draw bottom faces.
+					gl.glNormal3f( 0, 0, -1 );
+					gl.glVertex3f( x1, y1, 0 );
+					gl.glVertex3f( x3, y3, 0 );
+					gl.glVertex3f( x4, y4, 0 );
+					gl.glVertex3f( x2, y2, 0 );
+
+					// draw top faces.
+					gl.glNormal3f( 0, 0, 1 );
+					gl.glVertex3f( x1, y1, height );
+					gl.glVertex3f( x3, y3, height );
+					gl.glVertex3f( x4, y4, height );
+					gl.glVertex3f( x2, y2, height );
+				}
+
+				gl.glEnd();
+			}
+			
+			gl.glEndList();
+		}
+		
 		public void update ()
 		{
 			rx += rInc;
 			ry += rInc;
 			rz += rInc;
+		}
+		
+		public void renderCallList ()
+		{
+			gl.glPushMatrix();
+
+			gl.glRotatef( 90, 1, 0, 0 );
+			gl.glTranslatef( loc.x, loc.y, loc.z );
+			gl.glRotatef( rz, 0, 0, 1 );
+			
+			gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, colour, 0 );
+			
+			gl.glCallList( id );
+			
+			gl.glPopMatrix();
 		}
 		
 		public void render ()
