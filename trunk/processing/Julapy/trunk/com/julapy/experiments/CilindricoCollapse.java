@@ -77,6 +77,9 @@ public class CilindricoCollapse extends PApplet
 		{ 0.75f, 0.67f, 0.56f, 1.00f },		// light brown.
 	};
 	
+	float [] bgColorLight	= { 0.95f, 0.95f, 0.95f };
+	float [] bgColorDark	= { 0.50f, 0.50f, 0.50f };
+	
 	public void setup() 
 	{
 		size( 600, 600, OPENGL );
@@ -296,7 +299,7 @@ public class CilindricoCollapse extends PApplet
         else
         {
         	gl.glDisable( GL.GL_LIGHTING );
-        	gl.glEnable( GL.GL_LIGHT1 );
+        	gl.glDisable( GL.GL_LIGHT1 );
         }
 
 		// blend mode.
@@ -306,17 +309,12 @@ public class CilindricoCollapse extends PApplet
 		
 		// START DRAW.
 		pgl.beginGL();
-
-		gl.glPushMatrix();
-		gl.glTranslatef( sceneCenterX, sceneCenterY, sceneCenterZ );
-		
-		applySceneRotation();
-		
-		drawArcBars();
-		
-		gl.glPopMatrix();
-		
-		// END DRAW.
+			drawBackground();
+			gl.glPushMatrix();
+			gl.glTranslatef( sceneCenterX, sceneCenterY, sceneCenterZ );
+				applySceneRotation();
+				drawArcBars();
+			gl.glPopMatrix();
 		pgl.endGL();
 		
 		tiler.post();
@@ -326,6 +324,35 @@ public class CilindricoCollapse extends PApplet
 		}
 		
 		if(isRecording) save("export/image" + frameCount + ".png");
+	}
+	
+	private void drawBackground ()
+	{
+    	gl.glDisable( GL.GL_LIGHTING );
+    	gl.glDisable( GL.GL_LIGHT1 );
+		gl.glDisable( GL.GL_DEPTH_TEST );
+		gl.glPushMatrix();
+		gl.glTranslatef( sceneCenterX, sceneCenterY, -2000 );
+		gl.glScalef( 1500, 1500, 0 );
+			gl.glBegin( GL.GL_QUADS );
+				gl.glNormal3f( 0, 0, 0 );
+				gl.glColor3fv( bgColorDark, 0 );	// top.
+				gl.glVertex2f(  1.0f, -1.0f );
+				gl.glVertex2f( -1.0f, -1.0f );
+				gl.glColor3fv( bgColorLight, 0 );	// middle.
+				gl.glVertex2f( -1.0f,  0.0f );
+				gl.glVertex2f(  1.0f,  0.0f );
+				gl.glColor3fv( bgColorLight, 0 );	// middle.
+				gl.glVertex2f(  1.0f,  0.0f );
+				gl.glVertex2f( -1.0f,  0.0f );
+				gl.glColor3fv( bgColorDark, 0 );	// bottom.
+				gl.glVertex2f( -1.0f,  1.0f );
+				gl.glVertex2f(  1.0f,  1.0f );
+			gl.glEnd();
+		gl.glPopMatrix();
+		gl.glEnable( GL.GL_LIGHTING );
+    	gl.glEnable( GL.GL_LIGHT1 );
+		gl.glEnable( GL.GL_DEPTH_TEST );
 	}
 	
 	private void applySceneRotation ()
