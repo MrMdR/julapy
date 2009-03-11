@@ -198,13 +198,13 @@ public class CilindricoCollapse extends PApplet
 	private void initArcBars ()
 	{
 		int arcsTotal		= 200;
-		float arcHeight		= 5;
+		float arcHeight		= 4;
 		float arcLocZInc	= 0;
 		float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.5f );
 		float arcAngleMin	= 100;
 		float arcAngleMax	= 270;
 		
-		float arcRadiusMin	= 300;
+		float arcRadiusMin	= 50;
 		float arcRadiusMax	= 400;
 		float arcWidthMin	= 300;
 		float arcWidthMax	= 500;
@@ -217,20 +217,21 @@ public class CilindricoCollapse extends PApplet
 		arcBars = new ArcBar[ arcsTotal ];
 		
 		pgl.beginGL();
-		gl.glGenLists( arcsTotal );
+		gl.glGenLists( arcsTotal * 2 );
 		
 		for( i=0; i<arcsTotal; i++ )
 		{
 			arcCosMult		= -(float)Math.cos( ( i / (float)( arcsTotal - 1 ) ) * Math.PI + Math.PI * 0.5f );
 			
 			arcBars[ i ] 	= arcBar = new ArcBar( );
-			arcBar.id		= i + 1;
+			arcBar.id		= i * 2 + 1;
 			arcBar.loc.z 	= arcLocZ;
 			arcBar.height	= arcHeight;
-			arcBar.radius	= random( arcRadiusMin, arcRadiusMax ) * arcCosMult;
-			arcBar.width	= random( arcWidthMin, arcWidthMax ) * arcCosMult;
-			arcBar.angle	= random( arcAngleMin, arcAngleMax ) * ( 1 - arcCosMult );
+			arcBar.radius	= random( arcRadiusMin, arcRadiusMax ); // * arcCosMult;
+			arcBar.width	= random( arcWidthMin, arcWidthMax ); 	//* arcCosMult;
+			arcBar.angle	= random( arcAngleMin, arcAngleMax );	// * ( 1 - arcCosMult );
 			arcBar.rz		= random( 360 );
+			arcBar.rInc		= 0.3f;
 			
 			arcColorIndex	= (int)( random( colorPalette.length ) );
 			arcColors		= colorPalette[ arcColorIndex ];
@@ -241,7 +242,8 @@ public class CilindricoCollapse extends PApplet
 			arcBar.colour[ 3 ]	= 1f;
 			
 			arcBar.init();
-			arcBar.createCallList();
+			arcBar.createSolidModel();
+			arcBar.createWireframe();
 			
 			arcLocZ += ( arcHeight + arcLocZInc );
 		}
@@ -396,7 +398,8 @@ public class CilindricoCollapse extends PApplet
 		for( int i=0; i<arcBars.length; i++ )
 		{
 //			arcBars[ i ].render();
-			arcBars[ i ].renderCallList();
+//			arcBars[ i ].renderSolidModel();
+			arcBars[ i ].renderWireframe();
 		}
 	}
 	
@@ -416,13 +419,14 @@ public class CilindricoCollapse extends PApplet
 		
 		float[] colour = { 1, 1, 1, 1 };
 		
-		int   id		= 0;
-		float angle		= 200;
-		int	  angleStep	= 200;
-		float radius	= 300;
-		float width		= 50;
-		float height	= 50;
-		float scale		= 1;
+		int   id				= 0;
+		float angle				= 200;
+		int	  angleStep			= 200;
+		float radius			= 300;
+		float width				= 50;
+		float height			= 50;
+		float scale				= 1;
+		float wireframePad		= 10f;
 		
 		PerlinStep ps;
 		
@@ -463,7 +467,7 @@ public class CilindricoCollapse extends PApplet
 			ps			= new PerlinStep( angleStep, 1.5f, 5, 30 );
 		}
 		
-		public void createCallList ()
+		public void createSolidModel ()
 		{
 			float x1, y1, x2, y2, x3, y3, x4, y4;
 			float fx1, fy1, fx2, fy2;
@@ -588,6 +592,104 @@ public class CilindricoCollapse extends PApplet
 			gl.glEndList();
 		}
 		
+		public void createWireframe ()
+		{
+			float x1, y1, x2, y2, x3, y3, x4, y4;
+			float fx1, fy1, fx2, fy2;
+			float ps1, ps2;
+			int i, j;
+			
+			x1 = y1 = x2 = y2 = x3 = y3 = x4 = y4 = 0;
+			fx1 = fy1 = fx2 = fy2 = 0;
+			ps1 = 0;
+			ps2 = 0;
+			
+			gl.glNewList( id + 1, GL.GL_COMPILE );
+			gl.glLineWidth( 1 );
+			gl.glNormal3f( 0, 0, 0 );
+			
+			for( i = 0; i<angleStep; i++ ) 
+			{
+				j = ( i < angleStep - 1 ) ? ( i + 1 ) : 0;
+				
+				ps1 = ps.perlinSteps[ i ];
+				ps2 = ps.perlinSteps[ j ];
+				
+				x1	= cosLUT[ j ] * ( radius - wireframePad );
+				y1	= sinLUT[ j ] * ( radius - wireframePad );
+				x2	= cosLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
+				y2	= sinLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
+				
+				x3	= cosLUT[ i ] * ( radius - wireframePad );
+				y3	= sinLUT[ i ] * ( radius - wireframePad );
+				x4	= cosLUT[ i ] * ( radius + wireframePad + ( width * ps1 ) );
+				y4	= sinLUT[ i ] * ( radius + wireframePad + ( width * ps1 ) );
+				
+//				if( ps1 != ps2 )
+//				{
+//					if( ps1 == 0 )
+//					{
+//						fx1	= cosLUT[ j ] * ( radius - wireframePad );
+//						fy1	= sinLUT[ j ] * ( radius - wireframePad );
+//						fx2	= cosLUT[ j ] * ( radius + wireframePad + ( width * ps2 ) );
+//						fy2	= sinLUT[ j ] * ( radius + wireframePad + ( width * ps2 ) );
+//					}
+//					else if( ps2 == 0 )
+//					{
+//						fx1	= cosLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
+//						fy1	= sinLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
+//						fx2	= cosLUT[ j ] * ( radius - wireframePad );
+//						fy2	= sinLUT[ j ] * ( radius - wireframePad );
+//					}
+//					
+//					gl.glBegin( GL.GL_LINE_STRIP );		// draw side faces.
+//						gl.glVertex3f( fx1, fy1, 0 - wireframePad );
+//						gl.glVertex3f( fx1, fy1, height + wireframePad );
+//						gl.glVertex3f( fx2, fy2, height + wireframePad );
+//						gl.glVertex3f( fx2, fy2, 0 - wireframePad );
+//						gl.glVertex3f( fx1, fy1, 0 - wireframePad );
+//					gl.glEnd();
+//				}
+				
+				if( ( ps1 > 0 ) || ( ( ps2 > 0 ) && ( ps1 > 0 ) ) )
+				{
+					gl.glBegin( GL.GL_LINE_STRIP );		// draw inner faces.
+						gl.glVertex3f( x1, y1, 0 - wireframePad );
+						gl.glVertex3f( x3, y3, 0 - wireframePad );
+						gl.glVertex3f( x3, y3, height + wireframePad );
+						gl.glVertex3f( x1, y1, height + wireframePad );
+						gl.glVertex3f( x1, y1, 0 - wireframePad );
+					gl.glEnd();
+	
+					gl.glBegin( GL.GL_LINE_STRIP );		// draw outer faces.
+						gl.glVertex3f( x2, y2, 0 - wireframePad );
+						gl.glVertex3f( x4, y4, 0 - wireframePad );
+						gl.glVertex3f( x4, y4, height + wireframePad );
+						gl.glVertex3f( x2, y2, height + wireframePad );
+						gl.glVertex3f( x2, y2, 0 - wireframePad );
+					gl.glEnd();
+	
+					gl.glBegin( GL.GL_LINE_STRIP );		// draw bottom faces.
+						gl.glVertex3f( x1, y1, 0 - wireframePad );
+						gl.glVertex3f( x3, y3, 0 - wireframePad );
+						gl.glVertex3f( x4, y4, 0 - wireframePad );
+						gl.glVertex3f( x2, y2, 0 - wireframePad );
+						gl.glVertex3f( x1, y1, 0 - wireframePad );
+					gl.glEnd();	
+	
+					gl.glBegin( GL.GL_LINE_STRIP );		// draw top faces.
+						gl.glVertex3f( x1, y1, height + wireframePad );
+						gl.glVertex3f( x3, y3, height + wireframePad );
+						gl.glVertex3f( x4, y4, height + wireframePad );
+						gl.glVertex3f( x2, y2, height + wireframePad );
+						gl.glVertex3f( x1, y1, height + wireframePad );
+					gl.glEnd();
+				}
+			}
+			
+			gl.glEndList();
+		}
+		
 		public void update ()
 		{
 			rx += rInc;
@@ -595,18 +697,25 @@ public class CilindricoCollapse extends PApplet
 			rz += rInc;
 		}
 		
-		public void renderCallList ()
+		public void renderSolidModel ()
 		{
 			gl.glPushMatrix();
-
-			gl.glRotatef( 90, 1, 0, 0 );
-			gl.glTranslatef( loc.x, loc.y, loc.z );
-			gl.glRotatef( rz, 0, 0, 1 );
-			
-			gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, colour, 0 );
-			
-			gl.glCallList( id );
-			
+				gl.glRotatef( 90, 1, 0, 0 );
+				gl.glTranslatef( loc.x, loc.y, loc.z );
+				gl.glRotatef( rz, 0, 0, 1 );
+				gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, colour, 0 );
+				gl.glCallList( id );
+			gl.glPopMatrix();
+		}
+		
+		public void renderWireframe ()
+		{
+			gl.glPushMatrix();
+				gl.glRotatef( 90, 1, 0, 0 );
+				gl.glTranslatef( loc.x, loc.y, loc.z );
+				gl.glRotatef( rz, 0, 0, 1 );
+				gl.glColor3f( 0, 0, 0 );
+				gl.glCallList( id + 1 );
 			gl.glPopMatrix();
 		}
 		
