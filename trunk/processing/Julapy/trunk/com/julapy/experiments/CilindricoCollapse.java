@@ -22,6 +22,7 @@ import processing.core.*;
 import toxi.geom.Matrix4x4;
 import toxi.geom.Quaternion;
 import toxi.geom.Vec3D;
+import toxi.math.MathUtils;
 
 public class CilindricoCollapse extends PApplet 
 {
@@ -30,7 +31,7 @@ public class CilindricoCollapse extends PApplet
 
 	Boolean lightingEnabled	= true;
 	float[] lightAmbient	= { 0.1f, 0.1f, 0.1f, 1.0f };
-	float[] lightDiffuse	= { 0.7f, 0.7f, 0.7f, 1.0f };
+	float[] lightDiffuse	= { 0.3f, 0.3f, 0.3f, 1.0f };
 	float[] lightSpecular	= { 0.5f, 0.5f, 0.5f, 1.0f };
 	float[] lightPosition	= { -1.5f, 1.0f, -4.0f, 1.0f };
 	
@@ -60,25 +61,49 @@ public class CilindricoCollapse extends PApplet
 	
 //	float[][] colorPalette = 
 //	{ 
-//		{ 1.00f, 0.76f, 0.06f, 1.00f },		// yellow.
+//		wfColour,		// yellow.
 //		{ 0.90f, 0.18f, 0.04f, 1.00f },		// red.
 //		{ 0.88f, 0.44f, 0.13f, 1.00f },		// orange.
 //		{ 0.74f, 0.33f, 0.05f, 1.00f },		// orange dark.
 //		{ 0.42f, 0.45f, 0.03f, 1.00f }		// olive dark.
 //	};
 
+//	float[][] colorPalette = 
+//	{ 
+//		{ 0.13f, 0.21f, 0.23f, 1.00f },		// dark green 01.
+//		{ 0.20f, 0.25f, 0.26f, 1.00f },		// dark green 02.
+//		{ 0.18f, 0.30f, 0.33f, 1.00f },		// green.
+//		{ 0.32f, 0.42f, 0.45f, 1.00f },		// green / grey.
+//		{ 0.28f, 0.28f, 0.26f, 1.00f },		// brown.
+//		{ 0.75f, 0.67f, 0.56f, 1.00f },		// light brown.
+//	};
+	
+//	float[][] colorPalette = 
+//	{
+//		{ 0.38f, 0.40f, 0.38f, 1.00f },		// sepia green.
+//		{ 0.31f, 0.27f, 0.29f, 1.00f },		// sepia brown.
+//		{ 0.68f, 0.62f, 0.47f, 1.00f },		// sepia yellow.
+//		{ 0.62f, 0.47f, 0.40f, 1.00f },		// sepia red.
+//		{ 0.58f, 0.65f, 0.71f, 1.00f },		// sepia light blue.
+//		{ 0.39f, 0.49f, 0.70f, 1.00f },		// sepia dark blue.
+//		{ 0.76f, 0.64f, 0.53f, 1.00f }		// sepia light brown.
+//	};
+
 	float[][] colorPalette = 
 	{ 
-		{ 0.13f, 0.21f, 0.23f, 1.00f },		// dark green 01.
-		{ 0.20f, 0.25f, 0.26f, 1.00f },		// dark green 02.
-		{ 0.18f, 0.30f, 0.33f, 1.00f },		// green.
-		{ 0.32f, 0.42f, 0.45f, 1.00f },		// green / grey.
-		{ 0.28f, 0.28f, 0.26f, 1.00f },		// brown.
-		{ 0.75f, 0.67f, 0.56f, 1.00f },		// light brown.
+		{ 0.95f, 0.95f, 0.95f, 1.00f },
+		{ 0.92f, 0.92f, 0.92f, 1.00f },
+		{ 0.89f, 0.89f, 0.89f, 1.00f },
+		{ 0.86f, 0.86f, 0.86f, 1.00f },
+		{ 0.83f, 0.83f, 0.83f, 1.00f },
+		{ 0.96f, 0.00f, 0.64f, 1.00f }
 	};
 	
-	float [] bgColorLight	= { 0.95f, 0.95f, 0.95f };
-	float [] bgColorDark	= { 0.50f, 0.50f, 0.50f };
+	float [] bgColorLight	= { 0.95f, 0.95f, 0.95f };	// almost white
+	float [] bgColorDark	= { 0.50f, 0.50f, 0.50f };	// greyish.
+	
+//	float [] bgColorLight	= { 0.77f, 0.72f, 0.70f };	// olive.
+//	float [] bgColorDark	= { 0.60f, 0.56f, 0.52f };	// dark olive.
 	
 	public void setup() 
 	{
@@ -197,17 +222,18 @@ public class CilindricoCollapse extends PApplet
 	
 	private void initArcBars ()
 	{
-		int arcsTotal		= 200;
-		float arcHeight		= 4;
+		int arcsTotal		= 100;
+		float arcHeight		= 6;
 		float arcLocZInc	= 0;
 		float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.5f );
 		float arcAngleMin	= 100;
 		float arcAngleMax	= 270;
 		
 		float arcRadiusMin	= 50;
-		float arcRadiusMax	= 400;
-		float arcWidthMin	= 300;
-		float arcWidthMax	= 500;
+		float arcRadiusMax	= 200;
+		float arcWidthMin	= 200;
+		float arcWidthMax	= 400;
+		float arcDispRange	= 100;
 		float arcCosMult	= 0;
 		int arcColorIndex	= 0;
 		float[] arcColors	= {};
@@ -223,15 +249,19 @@ public class CilindricoCollapse extends PApplet
 		{
 			arcCosMult		= -(float)Math.cos( ( i / (float)( arcsTotal - 1 ) ) * Math.PI + Math.PI * 0.5f );
 			
-			arcBars[ i ] 	= arcBar = new ArcBar( );
-			arcBar.id		= i * 2 + 1;
-			arcBar.loc.z 	= arcLocZ;
-			arcBar.height	= arcHeight;
-			arcBar.radius	= random( arcRadiusMin, arcRadiusMax ); // * arcCosMult;
-			arcBar.width	= random( arcWidthMin, arcWidthMax ); 	//* arcCosMult;
-			arcBar.angle	= random( arcAngleMin, arcAngleMax );	// * ( 1 - arcCosMult );
-			arcBar.rz		= random( 360 );
-			arcBar.rInc		= 0.3f;
+			arcBars[ i ] 		= arcBar = new ArcBar( );
+			arcBar.id			= i * 2 + 1;
+			arcBar.loc.z 		= arcLocZ;
+			arcBar.height		= arcHeight;
+			arcBar.radius		= random( arcRadiusMin, arcRadiusMax ) * arcCosMult;
+			arcBar.width		= random( arcWidthMin, arcWidthMax ) * arcCosMult;
+			arcBar.angle		= random( arcAngleMin, arcAngleMax ) * ( 1 - arcCosMult );
+			arcBar.rz			= random( 360 );
+			arcBar.rInc			= random( 1.0f ) - 0.5f;
+			arcBar.dx			= random( arcDispRange ) - arcDispRange * 0.5f;
+			arcBar.dy			= random( arcDispRange ) - arcDispRange * 0.5f;
+			arcBar.dz			= random( arcDispRange ) - arcDispRange * 0.5f;
+			arcBar.wireframePad	= MathUtils.random( 20.0f ) + 10.0f;
 			
 			arcColorIndex	= (int)( random( colorPalette.length ) );
 			arcColors		= colorPalette[ arcColorIndex ];
@@ -398,7 +428,7 @@ public class CilindricoCollapse extends PApplet
 		for( int i=0; i<arcBars.length; i++ )
 		{
 //			arcBars[ i ].render();
-//			arcBars[ i ].renderSolidModel();
+			arcBars[ i ].renderSolidModel();
 			arcBars[ i ].renderWireframe();
 		}
 	}
@@ -416,8 +446,12 @@ public class CilindricoCollapse extends PApplet
 		float ry	= 0;
 		float rz	= 0;
 		float rInc	= 2;
+		float dx	= 0;
+		float dy	= 0;
+		float dz	= 0;
 		
-		float[] colour = { 1, 1, 1, 1 };
+		float[] colour		= { 1, 1, 1, 1 };
+		float[] wfColour	= { 0.4f, 0.4f, 0.4f, 0.8f };
 		
 		int   id				= 0;
 		float angle				= 200;
@@ -605,7 +639,6 @@ public class CilindricoCollapse extends PApplet
 			ps2 = 0;
 			
 			gl.glNewList( id + 1, GL.GL_COMPILE );
-			gl.glLineWidth( 1 );
 			gl.glNormal3f( 0, 0, 0 );
 			
 			for( i = 0; i<angleStep; i++ ) 
@@ -702,6 +735,7 @@ public class CilindricoCollapse extends PApplet
 			gl.glPushMatrix();
 				gl.glRotatef( 90, 1, 0, 0 );
 				gl.glTranslatef( loc.x, loc.y, loc.z );
+				gl.glTranslatef( dx, dy, dz );
 				gl.glRotatef( rz, 0, 0, 1 );
 				gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, colour, 0 );
 				gl.glCallList( id );
@@ -714,7 +748,15 @@ public class CilindricoCollapse extends PApplet
 				gl.glRotatef( 90, 1, 0, 0 );
 				gl.glTranslatef( loc.x, loc.y, loc.z );
 				gl.glRotatef( rz, 0, 0, 1 );
-				gl.glColor3f( 0, 0, 0 );
+				gl.glMaterialfv( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, wfColour, 0 );
+				if( isTiling )
+				{
+					gl.glLineWidth( 4 );
+				}
+				else
+				{
+					gl.glLineWidth( 0.5f );
+				}
 				gl.glCallList( id + 1 );
 			gl.glPopMatrix();
 		}
