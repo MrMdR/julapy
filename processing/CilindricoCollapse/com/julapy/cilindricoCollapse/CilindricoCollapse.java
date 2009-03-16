@@ -92,7 +92,7 @@ public class CilindricoCollapse extends PApplet
 		{ 0.89f, 0.89f, 0.89f, 1.00f },
 		{ 0.86f, 0.86f, 0.86f, 1.00f },
 		{ 0.83f, 0.83f, 0.83f, 1.00f },
-		{ 0.96f, 0.00f, 0.64f, 1.00f }
+		{ 0.50f, 0.00f, 1.00f, 1.00f }
 	};
 	
 	float [] bgColorLight	= { 0.95f, 0.95f, 0.95f };	// almost white
