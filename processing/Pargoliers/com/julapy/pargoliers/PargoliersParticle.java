@@ -14,7 +14,7 @@ public class PargoliersParticle
 		this.vel 		= vel;
 	}
 	
-	public void update( Vec3D srcVec, Vec3D dstVec, float c )
+	public void update( Vec3D srcVec, Vec3D dstVec )
 	{
 //		if( dstVec.x != 0 && dstVec.y != 0 )
 //		{

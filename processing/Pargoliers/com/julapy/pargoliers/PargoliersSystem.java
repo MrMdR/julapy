@@ -51,7 +51,7 @@ public class PargoliersSystem
 		{
 			p = particles[ i ];
 			
-			srcVec = getBrightnessVector
+			srcVec = PargoliersUtil.getBrightnessVector
 			(
 				(int)p.loc.x,
 				(int)p.loc.y, 
@@ -61,7 +61,7 @@ public class PargoliersSystem
 				scanArea
 			);
 			
-			dstVec = getBrightnessVector
+			dstVec = PargoliersUtil.getBrightnessVector
 			( 
 				(int)p.loc.x,
 				(int)p.loc.y, 
@@ -71,56 +71,17 @@ public class PargoliersSystem
 				scanArea
 			);
 			
-			c = getColorValue
+			c = PargoliersUtil.getColorValue
 			(
 				(int)p.loc.x,
-				(int)p.loc.y
+				(int)p.loc.y,
+				papp.width,
+				papp.height,
+				srcPixels
 			);
 			
-			p.update( srcVec, dstVec, c );
+			p.update( srcVec, dstVec );
 		}
 	}
-	
-	private float getColorValue ( float x, float y )
-	{
-		int i;
-		float val;
-		
-		i = srcPixels[ (int)x + (int)y * papp.width ];
-		
-		val = ( papp.red(i) + papp.blue(i) + papp.green(i) ) / 765.0f;
-		
-		return val;
-	}
 
-	private Vec3D getBrightnessVector( int x, int y, int w, int h, int pixels[], int area )
-	{
-		Vec3D centrVec;
-		Vec3D pixelVec;
-		Vec3D dirVec;
-		Vec3D colorVec;
-		float c;
-		
-		centrVec = new Vec3D( x, y, 0 );
-		colorVec = new Vec3D();
-		
-		int rightBound	= PApplet.constrain( x + area, 0, w - 1 );
-		int leftBound	= PApplet.constrain( x - area, 0, w - 1 );
-		int bottomBound	= PApplet.constrain( y + area, 0, h - 1 );
-		int topBound	= PApplet.constrain( y - area, 0, h - 1 );
-		
-		for(int i = leftBound; i <= rightBound; i++)
-		{
-			for(int j = topBound; j <= bottomBound; j++)
-			{
-				c 			= getColorValue( i, j );
-				pixelVec	= new Vec3D( i, j, 0 );
-				dirVec		= centrVec.sub( pixelVec );
-				dirVec.scaleSelf( c );
-				colorVec.addSelf( dirVec );
-			}
-		}
-
-		return colorVec.normalize();
-	}
 }
