@@ -7,11 +7,14 @@ import toxi.geom.Vec3D;
 
 public class BrightnessVectorTest extends PApplet
 {
-	float increment = 0.02f;
-	int reach 		= 10;
+	int reach 		= 4;
+	float nx 		= 0;
+	int gridSize	= 15;
 	int gridWidth	= 0;
 	int gridHeight	= 0;
-	float[] gridColors; 
+	float[] gridColors;
+	
+	Boolean isRecording	= false;
 	
 	public void setup() 
 	{
@@ -26,13 +29,13 @@ public class BrightnessVectorTest extends PApplet
 	{
 		int i;
 		
-		gridWidth	= (int)( width / ( reach * 2 + 1 ) );
-		gridHeight	= (int)( height / ( reach * 2 + 1 ) );
+		gridWidth	= (int)( width / gridSize );
+		gridHeight	= (int)( height / gridSize );
 		
 		PargoliersUtil.resX = gridWidth;
 		PargoliersUtil.resY = gridHeight;
 		
-		gridColors = new float[ ( reach * 2 + 1 ) * ( reach * 2 + 1 ) ];
+		gridColors = new float[ gridSize * gridSize ];
 		for( i=0; i<gridColors.length; i++ )
 		{
 			gridColors[ i ] = random( 1 );
@@ -41,6 +44,16 @@ public class BrightnessVectorTest extends PApplet
 	
 	public void keyPressed()
 	{
+		if( key == 'r' )
+		{
+			isRecording = !isRecording;
+			
+			if(isRecording)
+				println("started recording.");
+			else
+				println("stopped recording.");
+		}
+		
 		if( keyCode == 37 )	// left
 		{
 			moveGridLeft();
@@ -66,36 +79,46 @@ public class BrightnessVectorTest extends PApplet
 	{
 		background( 0 );
 		
-//		drawNoiseGrid();
-		drawGrid_01();
+		drawNoiseGrid();
+//		drawGrid_01();
 //		drawGrid_02();
+		drawReachSquare();
 		drawBrightnessVector();
+		
+		if(isRecording) save("export/image" + frameCount + ".png");
 	}
 	
 	private void drawNoiseGrid ()
 	{
-		// Optional: adjust noise detail here
-		noiseDetail(8, 0.55f);
+		int x;
+		int y;
+		int w;
+		int h;
+		float n;
+		float nScale;
+		
+//		nScale	= 1;
+		nScale	= 0.001f;
+		
+		noiseDetail( 2, 0.6f );
 		  
-		loadPixels();
-
-		float xoff = 0.0f;
-		  
-		for (int x = 0; x < width; x++)
+		noStroke();
+		
+		w = gridSize;
+		h = gridSize;
+		
+		nx += 0.04f;
+		
+		for( x=0; x<w; x++ )
 		{
-			xoff += increment;   // Increment xoff
-			float yoff = 0.0f;   // For every xoff, start yoff at 0
-			for (int y = 0; y < height; y++) 
+			for( y=0; y<h; y++ )
 			{
-				yoff += increment; // Increment yoff
-		      
-				float bright = noise( xoff, yoff );
-
-				pixels[x+y*width] = color( bright );
+				n = noise( x * gridWidth * nScale + nx, y * gridHeight * nScale );
+				
+				fill( n );
+				rect( x * gridWidth, y * gridHeight, gridWidth, gridHeight );
 			}
 		}
-		  
-		updatePixels();
 	}
 	
 	private void drawGrid_01 ()
@@ -107,8 +130,8 @@ public class BrightnessVectorTest extends PApplet
 		
 		noStroke();
 		
-		w = reach * 2 + 1;
-		h = reach * 2 + 1;
+		w = gridSize;
+		h = gridSize;
 		
 		for( x=0; x<w; x++ )
 		{
@@ -164,8 +187,8 @@ public class BrightnessVectorTest extends PApplet
 		
 		noStroke();
 		
-		w = reach * 2 + 1;
-		h = reach * 2 + 1;
+		w = gridSize;
+		h = gridSize;
 		
 		for( x=0; x<w; x++ )
 		{
@@ -192,8 +215,8 @@ public class BrightnessVectorTest extends PApplet
 		
 		noStroke();
 		
-		w = reach * 2 + 1;
-		h = reach * 2 + 1;
+		w = gridSize;
+		h = gridSize;
 		
 		for( x=w-1; x>=0; x-- )
 		{
@@ -221,6 +244,20 @@ public class BrightnessVectorTest extends PApplet
 		//
 	}
 	
+	private void drawReachSquare ()
+	{
+		stroke( 1, 0, 0 );
+		strokeWeight( 5 );
+		noFill();
+		rect
+		( 
+			(int)( ( width * 0.5f ) - ( reach + 0.5 ) * gridWidth ),
+			(int)( ( height * 0.5f ) - ( reach + 0.5 ) * gridHeight ),
+			( reach * 2 + 1 ) * gridWidth,
+			( reach * 2 + 1 ) * gridHeight
+		);
+	}
+	
 	private void drawBrightnessVector ()
 	{
 		Vec3D bv;
@@ -230,7 +267,7 @@ public class BrightnessVectorTest extends PApplet
 		PargoliersUtil.getColorValue( (int)(width*0.5f), (int)(height*0.5f), width, height, pixels );
 		
 		bv = PargoliersUtil.getBrightnessVector( (int)(width*0.5f), (int)(height*0.5f), width, height, pixels, reach );
-		bv.scaleSelf( 200 );
+		bv.scaleSelf( 150 );
 		
 		float bx;
 		float by;
@@ -240,6 +277,7 @@ public class BrightnessVectorTest extends PApplet
 		
 		noFill();
 		stroke( 1, 0, 0 );
+		strokeWeight( 2 );
 		line( bx, by, bx + bv.x, by + bv.y );
 		noStroke();
 		fill( 255, 0, 0 );
