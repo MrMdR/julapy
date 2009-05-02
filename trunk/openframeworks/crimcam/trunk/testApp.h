@@ -6,18 +6,15 @@
 
 #define WIDTH				640
 #define HEIGHT				480
-//#define WIDTH				320
-//#define HEIGHT				240
 #define SAMPLE_WIDTH		320
 #define SAMPLE_HEIGHT		240
 
 
 #include "ofMain.h"
 
-#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
+#define _USE_LIVE_VIDEO
+//#define	_DEBUG_MODE
 
-//this is not part of the addon yet
-//so include it seperately
 #include "faceTracker.h"
 
 class testApp : public ofSimpleApp{
