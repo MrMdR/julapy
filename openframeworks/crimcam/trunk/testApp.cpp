@@ -47,7 +47,7 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
-	ofBackground( 100, 100, 100 );
+	ofBackground( 10, 10, 10 );
     
     bool bNewFrame = false;
 	
@@ -94,13 +94,37 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
-	int numFace;
-
+	int i;
+	float x, y, w, h, cx, cy;
+	float wRatio, hRatio, scale;
+	int faceID;
+	float crimMode;
+	
+	#ifdef _DEBUG_MODE
+	#else
+	
+		wRatio = ofGetWidth() / (float)WIDTH;
+		hRatio = ofGetHeight() / (float)HEIGHT;
+	
+		scale = MIN( wRatio, hRatio );
+		
+		glPushMatrix();
+		glTranslatef
+		( 
+			(int)( ( ofGetWidth() - ( WIDTH * scale ) ) * 0.5f ),
+			(int)( ( ofGetHeight() - ( HEIGHT * scale ) ) * 0.5f ),
+			0
+		);
+		glScalef( scale, scale, 0 );
+	
+	#endif
+	
 	ofSetColor( 0xffffff );
-	displayImage.draw( 0, 0 );	
-	sampleImage.draw( WIDTH, 0 );
-
-	//haarFinder.draw(20, 20);
+	displayImage.draw( 0, 0 );
+	
+	#ifdef _DEBUG_MODE
+		sampleImage.draw( WIDTH, 0 );
+	#endif
 
 	drawCameraText();
 	
@@ -109,40 +133,62 @@ void testApp::draw()
 	interlace.draw( 0, -interlaceY );
 	ofDisableAlphaBlending();
 	
-	numFace = faceTracker.haarFinder.blobs.size();
-	
-	for(int i = 0; i < numFace; i++)
+	while( faceTracker.hasNextFace() )
 	{
-		float x = faceTracker.haarFinder.blobs[i].boundingRect.x * sourceToSampleScale;
-		float y = faceTracker.haarFinder.blobs[i].boundingRect.y * sourceToSampleScale;
-		float w = faceTracker.haarFinder.blobs[i].boundingRect.width * sourceToSampleScale;
-		float h = faceTracker.haarFinder.blobs[i].boundingRect.height * sourceToSampleScale;
+		faceID		= faceTracker.getFaceID();
+		crimMode	= ( faceID % 10 ) / 10.0f;
 		
-		float cx = faceTracker.haarFinder.blobs[i].centroid.x * sourceToSampleScale;
-		float cy = faceTracker.haarFinder.blobs[i].centroid.y * sourceToSampleScale;
+		faceTracker.getFaceProperties( &x, &y, &w, &h, &cx, &cy );
 		
-//		drawFaceRect( x, y, w, h, cx, cy );
-		
-		if( crimModeIndex == 0 )
+		x	*= sourceToSampleScale;
+		y	*= sourceToSampleScale;
+		w	*= sourceToSampleScale;
+		h	*= sourceToSampleScale;
+		cx	*= sourceToSampleScale;
+		cy	*= sourceToSampleScale;
+
+		if( crimMode >= 0.72f )
 		{
 			drawBlackBar( x, y, w, h, cx, cy );
 		}
-		
-		if( crimModeIndex == 1 )
+		else if( crimMode >= 0.42f )
 		{
 			drawCross( x, y, w, h, cx, cy );
 		}
-		
-		if( crimModeIndex == 2 )
+		else if( crimMode >= 0.16f )
+		{
+			drawSquares( x, y, w, h, cx, cy );
+		}
+		else
 		{
 			drawBlur( x, y, w, h, cx, cy );
 		}
 		
-		if(  crimModeIndex == 3 )
-		{
-			drawSquares( x, y, w, h, cx, cy );
-		}
+//		if( crimModeIndex == 0 )
+//		{
+//			drawBlackBar( x, y, w, h, cx, cy );
+//		}
+//		
+//		if( crimModeIndex == 1 )
+//		{
+//			drawCross( x, y, w, h, cx, cy );
+//		}
+//		
+//		if( crimModeIndex == 2 )
+//		{
+//			drawBlur( x, y, w, h, cx, cy );
+//		}
+//		
+//		if(  crimModeIndex == 3 )
+//		{
+//			drawSquares( x, y, w, h, cx, cy );
+//		}
 	}
+	
+	#ifdef _DEBUG_MODE
+	#else
+		glPopMatrix();
+	#endif
 }
 
 void testApp :: drawFaceRect ( float x, float y, float w, float h, float cx, float cy )
@@ -166,6 +212,7 @@ void testApp :: drawBlackBar ( float x, float y, float w, float h, float cx, flo
 
 void testApp :: drawCross ( float x, float y, float w, float h, float cx, float cy )
 {
+	ofNoFill();
 	ofSetColor(0xFFFFFF);
 	ofEnableAlphaBlending();
 	cross.draw
@@ -180,6 +227,7 @@ void testApp :: drawCross ( float x, float y, float w, float h, float cx, float 
 
 void testApp :: drawWantedSketch ( float x, float y, float w, float h, float cx, float cy )
 {
+	ofNoFill();
 	ofSetColor(0xFFFFFF);
 	ofEnableAlphaBlending();
 	wantedSketch.draw
@@ -312,6 +360,8 @@ void testApp :: drawBlur ( float x, float y, float w, float h, float cx, float c
 	
 	blurTexture.loadData( blurPixels, WIDTH, HEIGHT, GL_RGBA );
 	
+	ofNoFill();
+	ofSetColor( 255, 255, 255 );
 	ofEnableAlphaBlending();
 	blurTexture.draw( 0, 0 );
 	ofDisableAlphaBlending();
@@ -424,6 +474,8 @@ void testApp :: drawSquares ( float x, float y, float w, float h, float cx, floa
 	
 	squareTexture.loadData( squarePixels, WIDTH, HEIGHT, GL_RGBA );
 	
+	ofNoFill();
+	ofSetColor( 255, 255, 255 );
 	ofEnableAlphaBlending();
 	squareTexture.draw( 0, 0 );
 	ofDisableAlphaBlending();
