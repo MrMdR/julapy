@@ -28,8 +28,8 @@
 #endif
 
 #define USE_OPTICAL_FIELD
-
 #define USE_VIDEO
+#define	USE_TIME_DISTORTION
 
 
 class testApp : public ofSimpleApp{
@@ -92,13 +92,20 @@ public:
 	
 	ofVideoPlayer		videoPlayer;
 	ofTexture			videoPlayerTexture;
-	unsigned char *		videoPlayerTexturePixels;
+	unsigned char		*videoPlayerTexturePixels;
 	int					videoPlayerWidth;
 	int					videoPlayerHeight;
 	int					videoPlayerPixelsPerFrame;
-	unsigned char * 	frameBuffer;
+	unsigned char		*frameBuffer;
 	int					frameBufferTotal;
 	int					frameBufferPlayIndex;
+	
+#endif
+	
+#ifdef USE_TIME_DISTORTION
+	
+	ofTexture			timeDistTexture;
+	unsigned char		*timeDistPixels;		
 	
 #endif
 	

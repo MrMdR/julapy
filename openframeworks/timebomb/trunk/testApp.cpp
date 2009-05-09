@@ -61,46 +61,12 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 }
 
 
-
-
-
 #pragma mark App callbacks
 
 //--------------------------------------------------------------
-void testApp::setup() {	 
-	// initialize stuff according to current window size
-	windowResized(ofGetWidth(), ofGetHeight());	
-	
-	// setup fluid stuff
-	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
-    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
-	fluidDrawer.setup(&fluidSolver);
-	
-	drawFluid			= true;
-	drawParticles		= true;
-	renderUsingVA		= true;
-	
-	ofBackground(0, 0, 0);
-	ofSetVerticalSync(true);
-	ofSetFrameRate(60);
-	
-#ifdef USE_TUIO
-	tuioClient.start(3333);
-#endif
-
-	
-#ifdef USE_GUI 
-	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5); 
-	gui.addSlider("fs.colorDiffusion", &fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5); 
-	gui.addSlider("fs.fadeSpeed", &fluidSolver.fadeSpeed, 0.0, 0.1, 0.5); 
-	gui.addSlider("fs.solverIterations", &fluidSolver.solverIterations, 1, 20); 
-	gui.addSlider("fd.drawMode", &fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1); 
-	gui.addToggle("fs.doRGB", &fluidSolver.doRGB); 
-	gui.addToggle("fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement); 
-	gui.addToggle("drawFluid", &drawFluid); 
-	gui.addToggle("drawParticles", &drawParticles); 
-	gui.addToggle("renderUsingVA", &renderUsingVA); 
-#endif
+void testApp::setup() 
+{	 
+	windowResized( ofGetWidth(), ofGetHeight() );		// initialize stuff according to current window size
 	
 #ifdef USE_OPTICAL_FIELD
 	
@@ -110,7 +76,7 @@ void testApp::setup() {
 	
 #endif
 	
-
+	
 #ifdef USE_VIDEO
 	
 	int i;
@@ -141,7 +107,50 @@ void testApp::setup() {
 	}
 	
 	videoPlayerTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
+	
+#endif
+	
+#ifdef USE_TIME_DISTORTION
+	
+	timeDistTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
+	timeDistPixels	= new unsigned char[ videoPlayerPixelsPerFrame ];
+	
+#endif
+	
+	// setup fluid stuff
+	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
+    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
+	fluidDrawer.setRenderDimensions( videoPlayerWidth, videoPlayerHeight );
+	fluidDrawer.setup(&fluidSolver);
+	
+	drawFluid			= true;
+	drawParticles		= false;
+	renderUsingVA		= true;
+	
+	ofBackground(0, 0, 0);
+	ofSetVerticalSync(true);
+	ofSetFrameRate(60);
+	
+#ifdef USE_TUIO
+	
+	tuioClient.start(3333);
+	
+#endif
 
+	
+#ifdef USE_GUI 
+	
+	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5); 
+	gui.addSlider("fs.colorDiffusion", &fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5); 
+	gui.addSlider("fs.fadeSpeed", &fluidSolver.fadeSpeed, 0.0, 0.1, 0.5); 
+	gui.addSlider("fs.solverIterations", &fluidSolver.solverIterations, 1, 20); 
+	gui.addSlider("fd.drawMode", &fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1); 
+	gui.addToggle("fs.doRGB", &fluidSolver.doRGB); 
+	gui.addToggle("fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement); 
+	gui.addToggle("drawFluid", &drawFluid); 
+	gui.addToggle("drawParticles", &drawParticles); 
+	gui.addToggle("renderUsingVA", &renderUsingVA); 
+	
 #endif
 	
 }
@@ -223,6 +232,14 @@ void testApp::update()
 #endif
 	
 	
+	fluidSolver.update();
+	fluidDrawer.update();
+	
+	// save old mouse position (openFrameworks doesn't do this automatically like processing does)
+	pmouseX = mouseX;
+	pmouseY = mouseY;
+
+	
 #ifdef USE_VIDEO
 	
 	int i;
@@ -240,14 +257,15 @@ void testApp::update()
 	{
 		frameBufferPlayIndex = 0;
 	}
-
+	
 #endif
 	
-	fluidSolver.update();
 	
-	// save old mouse position (openFrameworks doesn't do this automatically like processing does)
-	pmouseX = mouseX;
-	pmouseY = mouseY;
+#ifdef USE_TIME_DISTORTION
+	
+	timeDistTexture.loadData( timeDistPixels, videoPlayerWidth, videoPlayerHeight, GL_RGB );
+	
+#endif
 }
 
 //--------------------------------------------------------------
@@ -255,9 +273,23 @@ void testApp::draw()
 {
 	ofSetBackgroundAuto(drawFluid);
 	
-	if(drawFluid) {
-		glColor3f(1, 1, 1);
-		fluidDrawer.draw(0, 0, window.width, window.height);
+	if( drawFluid )
+	{
+		glColor3f( 1, 1, 1 );
+		
+#ifdef USE_VIDEO
+		
+		glPushMatrix();
+		glTranslatef( 270, 74 + videoPlayerHeight + 10, 0 );
+		fluidDrawer.draw( 0, 0, videoPlayerWidth, videoPlayerHeight );
+		glPopMatrix();
+		
+#else
+		
+		fluidDrawer.draw( 0, 0, window.width, window.height );
+		
+#endif
+		
 	}
 	if(drawParticles) particleSystem.updateAndDraw();
 
@@ -270,10 +302,21 @@ void testApp::draw()
 
 #ifdef USE_VIDEO
 	
-	ofSetColor( 0xFFFFFF );
+	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 800, 100, 0 );
+	glTranslatef( 270, 74, 0 );
 	videoPlayerTexture.draw( 0, 0 );
+	glPopMatrix();
+	
+#endif
+
+	
+#ifdef USE_TIME_DISTORTION
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( 270 + videoPlayerWidth + 10, 74, 0 );
+	timeDistTexture.draw( 0, 0 );
 	glPopMatrix();
 	
 #endif
@@ -281,7 +324,8 @@ void testApp::draw()
 }
 
 
-void testApp::windowResized(int w, int h) {
+void testApp::windowResized(int w, int h)
+{
 	printf("TEST windowResized(%i, %i)\n", w, h);
 	window.width		= w;
 	window.height		= h;
@@ -296,8 +340,11 @@ void testApp::windowResized(int w, int h) {
 #pragma mark Input callbacks
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){ 
-    switch(key) {
+void testApp::keyPressed  (int key)
+{
+    switch(key)
+	{
+
 #ifdef USE_GUI
 		case ' ':
 			
