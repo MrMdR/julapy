@@ -63,20 +63,82 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 
 #pragma mark App callbacks
 
-//--------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SETUP.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void testApp::setup() 
 {	 
+	ofBackground(0, 0, 0);
+	ofSetVerticalSync(true);
+	ofSetFrameRate(60);
+	
 	windowResized( ofGetWidth(), ofGetHeight() );		// initialize stuff according to current window size
 	
+	initVideoGrabber();
+	
+#ifdef USE_OPTICAL_FIELD
+	initOpticalField();
+#endif
+	
+#ifdef USE_VIDEO
+	initVideo();
+#endif
+	
+#ifdef USE_CAMERA
+	initCamera();
+#endif
+	
+#ifdef USE_TIME_DISTORTION
+	#ifdef USE_VIDEO
+		initTimeDistortionForVideo();
+	#endif
+	#ifdef USE_CAMERA
+		initTimeDistortionForCamera();
+	#endif
+#endif
+	
+#ifdef USE_VIDEO	
+	initFluidForVideo();
+#endif
+	
+#ifdef USE_CAMERA
+	initFluidForCamera();
+#endif
+	
+#ifdef USE_TUIO
+	tuioClient.start( 3333 );
+#endif
+
+#ifdef USE_GUI 
+	initGui();
+#endif
+	
+}
+
+void testApp :: initVideoGrabber ()
+{
+	videoGrabber.setVerbose( true );
+	videoGrabber.initGrabber( 320, 240 );
+	
+	isVideoGrabberNewFrame = false;
+}
+
+void testApp :: initOpticalField ()
+{
 #ifdef USE_OPTICAL_FIELD
 	
 	camWidth	= 320;
 	camHeight	= 240;
 	opticalField.init( camWidth, camHeight );
 	
+	videoGrabber.initGrabber( camWidth, camHeight );
+	
 #endif
-	
-	
+}
+
+void testApp :: initVideo ()
+{
 #ifdef USE_VIDEO
 	
 	int i;
@@ -109,15 +171,70 @@ void testApp::setup()
 	videoPlayerTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
 	
 #endif
+}
+
+void testApp :: initCamera ()
+{
+#ifdef USE_CAMERA
 	
+//	videoGrabberWidth	= 640;
+//	videoGrabberHeight	= 480;
+	videoGrabberWidth	= 320;
+	videoGrabberHeight	= 240;
+	
+	videoGrabberPixelsPerFrame = videoGrabberWidth * videoGrabberHeight * 3;
+	
+	frameBufferLimit	= 255;
+	frameBufferIndex	= 0;
+	frameBufferCount	= 0;
+	
+	videoGrabberTexture.allocate( videoGrabberWidth, videoGrabberHeight, GL_RGB );
+	
+	videoGrabberTexturePixels 	= new unsigned char[ videoGrabberPixelsPerFrame ];
+	frameBuffer					= new unsigned char[ videoGrabberPixelsPerFrame * frameBufferLimit ];
+	
+#endif
+}
+
+void testApp :: initTimeDistortionForVideo ()
+{
 #ifdef USE_TIME_DISTORTION
+#ifdef USE_VIDEO
 	
 	timeDistTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
 	timeDistPixels	= new unsigned char[ videoPlayerPixelsPerFrame ];
 	
 #endif
+#endif
+}
+
+void testApp :: initTimeDistortionForCamera ()
+{
+#ifdef USE_TIME_DISTORTION
+#ifdef USE_CAMERA
 	
-	// setup fluid stuff
+	timeDistTexture.allocate( videoGrabberWidth, videoGrabberHeight, GL_RGB );
+	timeDistPixels	= new unsigned char[ videoGrabberPixelsPerFrame ];
+	
+#endif
+#endif
+}
+
+void testApp :: initFluid()
+{
+	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
+    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
+	fluidDrawer.setup(&fluidSolver);
+	
+	drawFluid			= true;
+	drawParticles		= false;
+	renderUsingVA		= true;
+}
+
+void testApp :: initFluidForVideo ()
+{
+#ifdef USE_VIDEO
+
 	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
     fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
 	fluidDrawer.setRenderDimensions( videoPlayerWidth, videoPlayerHeight );
@@ -127,17 +244,27 @@ void testApp::setup()
 	drawParticles		= false;
 	renderUsingVA		= true;
 	
-	ofBackground(0, 0, 0);
-	ofSetVerticalSync(true);
-	ofSetFrameRate(60);
+#endif
+}
+
+void testApp :: initFluidForCamera ()
+{
+#ifdef USE_CAMERA	
 	
-#ifdef USE_TUIO
+	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
+    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
+	fluidDrawer.setRenderDimensions( videoGrabberWidth, videoGrabberHeight );
+	fluidDrawer.setup(&fluidSolver);
 	
-	tuioClient.start(3333);
+	drawFluid			= true;
+	drawParticles		= false;
+	renderUsingVA		= true;
 	
 #endif
+}
 
-	
+void testApp :: initGui ()
+{
 #ifdef USE_GUI 
 	
 	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5); 
@@ -152,14 +279,48 @@ void testApp::setup()
 	gui.addToggle("renderUsingVA", &renderUsingVA); 
 	
 #endif
-	
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// UPDATE.
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//--------------------------------------------------------------
 void testApp::update()
 {
 
+#ifdef USE_TUIO
+	updateTuio();
+#endif
+	
+	updateVideoGrabber();
+	
+#ifdef USE_OPTICAL_FIELD
+	updateOpticalField();
+#endif
+	
+	updateFluid();
+
+#ifdef USE_VIDEO
+	updateVideo();
+#endif
+	
+#ifdef USE_CAMERA
+	updateCamera();
+#endif
+	
+#ifdef USE_TIME_DISTORTION
+	#ifdef USE_VIDEO	
+		updateTimeDistortionForVideo();
+	#endif
+	#ifdef USE_CAMERA
+		updateTimeDistortionForCamera();
+	#endif
+#endif
+	
+}
+
+void testApp :: updateTuio ()
+{
 #ifdef USE_TUIO
 	
 	tuioClient.getMessage();
@@ -178,14 +339,23 @@ void testApp::update()
     }
 	
 #endif
-	
-	
-#ifdef USE_OPTICAL_FIELD
+}
 
-	opticalField.update();
+void testApp :: updateVideoGrabber ()
+{
+	videoGrabber.grabFrame();
 	
-	if( opticalField.newFrame )
+	isVideoGrabberNewFrame = videoGrabber.isFrameNew();
+}
+
+void testApp :: updateOpticalField ()
+{
+#ifdef USE_OPTICAL_FIELD
+	
+	if( isVideoGrabberNewFrame )
 	{
+		opticalField.update( videoGrabber.getPixels() );
+		
 		float os = 0.005f;
 		float ot = 0.1f;
 		float cap = 0.2f;
@@ -201,9 +371,9 @@ void testApp::update()
 					float dx = x / (float)camWidth;
 					float dy = y / (float)camHeight;
 					float ox, oy;
-			
+					
 					opticalField.getVelAtPixel( x, y, &ox, &oy );
-			
+					
 					ox *= os;
 					oy *= os;
 					
@@ -230,21 +400,22 @@ void testApp::update()
 	}
 	
 #endif
-	
-	
+}
+
+void testApp :: updateFluid ()
+{
 	fluidSolver.update();
 	fluidDrawer.update();
 	
-	// save old mouse position (openFrameworks doesn't do this automatically like processing does)
 	pmouseX = mouseX;
 	pmouseY = mouseY;
+}
 
-	
+void testApp :: updateVideo ()
+{
 #ifdef USE_VIDEO
 	
-	int i;
-	
-	for( i=0; i<videoPlayerPixelsPerFrame; i++ )
+	for( int i=0; i<videoPlayerPixelsPerFrame; i++ )
 	{
 		videoPlayerTexturePixels[ i ] = frameBuffer[ frameBufferPlayIndex * videoPlayerPixelsPerFrame + i ];
 	}
@@ -259,47 +430,208 @@ void testApp::update()
 	}
 	
 #endif
+}
+
+void testApp :: updateCamera ()
+{
+#ifdef USE_CAMERA
 	
-	
-#ifdef USE_TIME_DISTORTION
-	
-	timeDistTexture.loadData( timeDistPixels, videoPlayerWidth, videoPlayerHeight, GL_RGB );
+	if( isVideoGrabberNewFrame )
+	{
+		unsigned char *vidPixels = videoGrabber.getPixels();
+		
+		if( frameBufferCount < frameBufferLimit - 1 )	// add frames to frameBuffer until the buffer is full.
+		{
+			++frameBufferCount;
+			++frameBufferIndex;
+			
+			for( int i=0; i<videoGrabberPixelsPerFrame; i++ ) 
+			{
+				frameBuffer[ ( frameBufferIndex * videoGrabberPixelsPerFrame ) + i ] = vidPixels[ i ];
+				
+				videoGrabberTexturePixels[ i ] = vidPixels[ i ];
+			}
+			
+			videoGrabberTexture.loadData( videoGrabberTexturePixels, videoGrabberWidth, videoGrabberHeight, GL_RGB );			
+		}
+		else
+		{
+			if( ++frameBufferIndex > frameBufferLimit - 1 )
+			{
+				frameBufferIndex = 0;
+			}
+			
+			for( int i=0; i<videoGrabberPixelsPerFrame; i++ )	// add new frame to buffer at frame buffer index.
+			{
+				frameBuffer[ ( frameBufferIndex * videoGrabberPixelsPerFrame ) + i ] = vidPixels[ i ];
+				
+				videoGrabberTexturePixels[ i ] = vidPixels[ i ];
+			}
+			
+			videoGrabberTexture.loadData( videoGrabberTexturePixels, videoGrabberWidth, videoGrabberHeight, GL_RGB );
+		}
+	}
 	
 #endif
 }
 
-//--------------------------------------------------------------
+void testApp :: updateTimeDistortionForVideo ()
+{
+#ifdef USE_TIME_DISTORTION
+#ifdef USE_VIDEO
+	
+	unsigned char *fluidPixels = fluidDrawer.getFluidPixels();
+	
+	for( int i=0; i<videoPlayerPixelsPerFrame; i+=3 )
+	{
+		float p = fluidPixels[ i ] / 255.0f;
+		//		float p = 1.0f - fluidPixels[ i ] / 255.0f;
+		int j	= (int)( p * ( frameBufferTotal - 1 ) );
+		
+		timeDistPixels[ i + 0 ] = frameBuffer[ j * videoPlayerPixelsPerFrame + i + 0 ];
+		timeDistPixels[ i + 1 ] = frameBuffer[ j * videoPlayerPixelsPerFrame + i + 1 ];
+		timeDistPixels[ i + 2 ] = frameBuffer[ j * videoPlayerPixelsPerFrame + i + 2 ];
+	}
+	
+	timeDistTexture.loadData( timeDistPixels, videoPlayerWidth, videoPlayerHeight, GL_RGB );
+	
+#endif
+#endif
+}
+
+void testApp :: updateTimeDistortionForCamera ()
+{
+#ifdef USE_TIME_DISTORTION
+#ifdef USE_CAMERA
+	
+	unsigned char *fluidPixels = fluidDrawer.getFluidPixels();
+	
+	for( int i=0; i<videoGrabberPixelsPerFrame; i+=3 )
+	{
+		float p = fluidPixels[ i ] / 255.0f;
+		int j	= (int)( p * frameBufferCount );
+		int k	= frameBufferIndex - j;
+		if( k < 0 )
+		{
+			k += frameBufferLimit - 1;
+		}
+		
+		timeDistPixels[ i + 0 ] = frameBuffer[ k * videoGrabberPixelsPerFrame + i + 0 ];
+		timeDistPixels[ i + 1 ] = frameBuffer[ k * videoGrabberPixelsPerFrame + i + 1 ];
+		timeDistPixels[ i + 2 ] = frameBuffer[ k * videoGrabberPixelsPerFrame + i + 2 ];
+	}
+	
+	timeDistTexture.loadData( timeDistPixels, videoGrabberWidth, videoGrabberHeight, GL_RGB );
+	
+#endif
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// DRAW.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void testApp::draw()
 {
+
+#ifdef SHOW_DEBUG
+	
 	ofSetBackgroundAuto(drawFluid);
+	
+	#ifdef USE_VIDEO
+		drawFluidToVideoDimensions();
+	#endif
+	
+	#ifdef USE_CAMERA
+		drawFluidToCameraDimensions();
+	#endif
+	
+	if( drawParticles )
+	{
+		particleSystem.updateAndDraw();
+	}
+
+	#ifdef USE_GUI 
+		gui.draw();
+	#endif
+
+	#ifdef USE_VIDEO
+		drawVideoSource();
+	#endif
+	
+	#ifdef USE_CAMERA
+		drawCameraSource();
+	#endif
+	
+	#ifdef USE_TIME_DISTORTION
+	
+		#ifdef USE_VIDEO	
+			drawTimeDistortionFromVideoSource();
+		#endif
+	
+		#ifdef USE_CAMERA
+			drawTimeDistortionFromCameraSource();
+		#endif
+	
+	#endif
+	
+#else
+	
+	#ifdef USE_TIME_DISTORTION
+	
+		#ifdef USE_VIDEO
+			drawTimeDistortionFromVideoSourceFullScreen();
+		#endif
+	
+		#ifdef USE_CAMERA
+			drawTimeDistortionFromCameraSourceFullScreen();
+		#endif
+	
+	#endif
+	
+#endif
+	
+}
+
+void testApp :: drawFluidFullScreen ()
+{
+	fluidDrawer.draw( 0, 0, window.width, window.height );
+}
+
+void testApp :: drawFluidToVideoDimensions ()
+{
+#ifdef USE_VIDEO
 	
 	if( drawFluid )
 	{
 		glColor3f( 1, 1, 1 );
-		
-#ifdef USE_VIDEO
-		
 		glPushMatrix();
 		glTranslatef( 270, 74 + videoPlayerHeight + 10, 0 );
 		fluidDrawer.draw( 0, 0, videoPlayerWidth, videoPlayerHeight );
 		glPopMatrix();
-		
-#else
-		
-		fluidDrawer.draw( 0, 0, window.width, window.height );
-		
-#endif
-		
 	}
-	if(drawParticles) particleSystem.updateAndDraw();
-
-#ifdef USE_GUI 
-	
-	gui.draw();
 	
 #endif
-	
+}
 
+void testApp :: drawFluidToCameraDimensions ()
+{
+#ifdef USE_CAMERA	
+	
+	if( drawFluid )
+	{
+		glColor3f( 1, 1, 1 );
+		glPushMatrix();
+		glTranslatef( 270, 74 + videoGrabberHeight + 10, 0 );
+		fluidDrawer.draw( 0, 0, videoGrabberWidth, videoGrabberHeight );
+		glPopMatrix();
+	}
+	
+#endif
+}
+
+void testApp :: drawVideoSource ()
+{
 #ifdef USE_VIDEO
 	
 	glColor3f( 1, 1, 1 );
@@ -309,9 +641,24 @@ void testApp::draw()
 	glPopMatrix();
 	
 #endif
+}
 
+void testApp :: drawCameraSource ()
+{
+#ifdef USE_CAMERA	
 	
-#ifdef USE_TIME_DISTORTION
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( 270, 74, 0 );
+	videoGrabberTexture.draw( 0, 0 );
+	glPopMatrix();
+	
+#endif
+}
+
+void testApp :: drawTimeDistortionFromVideoSource ()
+{
+#ifdef USE_VIDEO
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
@@ -320,9 +667,86 @@ void testApp::draw()
 	glPopMatrix();
 	
 #endif
-	
 }
 
+void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
+{
+#ifdef USE_VIDEO	
+	
+	float wRatio, hRatio, scale;
+	
+	bool scaleToFitFullScreen = false;
+	
+	wRatio = ofGetWidth() / (float)videoPlayerWidth;
+	hRatio = ofGetHeight() / (float)videoPlayerHeight;
+	
+	if( scaleToFitFullScreen )
+		scale = MIN( wRatio, hRatio );
+	else
+		scale = MAX( wRatio, hRatio );
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef
+	( 
+		(int)( ( ofGetWidth() - ( videoPlayerWidth * scale ) ) * 0.5f ),
+		(int)( ( ofGetHeight() - ( videoPlayerHeight * scale ) ) * 0.5f ),
+		0
+	);
+	glScalef( scale, scale, 0 );
+	timeDistTexture.draw( 0, 0 );
+	glPopMatrix();
+	
+#endif
+}
+
+void testApp :: drawTimeDistortionFromCameraSource ()
+{
+#ifdef USE_CAMERA		
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( 270 + videoGrabberWidth + 10, 74, 0 );
+	timeDistTexture.draw( 0, 0 );
+	glPopMatrix();
+	
+#endif
+}
+
+void testApp :: drawTimeDistortionFromCameraSourceFullScreen ()
+{
+#ifdef USE_CAMERA	
+	
+	float wRatio, hRatio, scale;
+	
+	bool scaleToFitFullScreen = false;
+	
+	wRatio = ofGetWidth() / (float)videoGrabberWidth;
+	hRatio = ofGetHeight() / (float)videoGrabberHeight;
+	
+	if( scaleToFitFullScreen )
+		scale = MIN( wRatio, hRatio );
+	else
+		scale = MAX( wRatio, hRatio );
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef
+	( 
+		(int)( ( ofGetWidth() - ( videoGrabberWidth * scale ) ) * 0.5f ),
+		(int)( ( ofGetHeight() - ( videoGrabberHeight * scale ) ) * 0.5f ),
+		0
+	);
+	glScalef( scale, scale, 0 );
+	timeDistTexture.draw( 0, 0 );
+	glPopMatrix();
+	
+#endif
+}
+
+////////////////////////////////////////////////////////
+// RESIZE.
+////////////////////////////////////////////////////////
 
 void testApp::windowResized(int w, int h)
 {
@@ -339,7 +763,10 @@ void testApp::windowResized(int w, int h)
 
 #pragma mark Input callbacks
 
-//--------------------------------------------------------------
+////////////////////////////////////////////////////////
+// KEY HANDLER.
+////////////////////////////////////////////////////////
+
 void testApp::keyPressed  (int key)
 {
     switch(key)
@@ -368,8 +795,12 @@ void testApp::keyPressed  (int key)
 }
 
 
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+////////////////////////////////////////////////////////
+// MOUSE HANDLER.
+////////////////////////////////////////////////////////
+
+void testApp::mouseMoved(int x, int y )
+{
 	float mouseNormX = x * window.invWidth;
     float mouseNormY = y * window.invHeight;
     float mouseVelX = (x - pmouseX) * window.invWidth;
@@ -378,7 +809,8 @@ void testApp::mouseMoved(int x, int y ){
     addToFluid(mouseNormX, mouseNormY, mouseVelX, mouseVelY, true);
 }
 
-void testApp::mouseDragged(int x, int y, int button) {
+void testApp::mouseDragged(int x, int y, int button)
+{
 	float mouseNormX = x * window.invWidth;
     float mouseNormY = y * window.invHeight;
     float mouseVelX = (x - pmouseX) * window.invWidth;
