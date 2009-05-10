@@ -22,42 +22,30 @@ OpticalField :: ~OpticalField()
 
 void OpticalField :: init ( int w, int h )
 {
-	camWidth	= w;
-	camHeight	= h;
-	
-	cam.initGrabber( camWidth, camHeight );
-	
-	colorImg.allocate( camWidth, camHeight );
-	greyNow.allocate( camWidth, camHeight );
-	greyPrev.allocate( camWidth, camHeight );
-	greyCurDiff.allocate( camWidth, camHeight );
-	opticalFlow.allocate( camWidth, camHeight );
-	
-	newFrame	= false;
+	colorImg.allocate( WIDTH, HEIGHT );
+	greyNow.allocate( WIDTH, HEIGHT );
+	greyPrev.allocate( WIDTH, HEIGHT );
+	greyCurDiff.allocate( WIDTH, HEIGHT );
+	opticalFlow.allocate( WIDTH, HEIGHT );
 	
 	reset();
 }
 
-void OpticalField :: update ()
+void OpticalField :: update ( unsigned char *pixels )
 {
-	cam.grabFrame();
-	
-	if( newFrame = cam.isFrameNew() )
-	{
-		colorImg.setFromPixels( cam.getPixels(), camWidth, camHeight );
-		colorImg.mirror( false, true );
-		greyNow.setFromColorImage( colorImg );
+	colorImg.setFromPixels( pixels, WIDTH, HEIGHT );
+	colorImg.mirror( false, true );
+	greyNow.setFromColorImage( colorImg );
 		
-		opticalFlow.calc( greyPrev, greyNow, 11 );
-		cvSmooth( opticalFlow.vel_x, opticalFlow.vel_x, CV_BLUR , 15 );
-		cvSmooth( opticalFlow.vel_y, opticalFlow.vel_y, CV_BLUR , 15 );
+	opticalFlow.calc( greyPrev, greyNow, 11 );
+	cvSmooth( opticalFlow.vel_x, opticalFlow.vel_x, CV_BLUR , 15 );
+	cvSmooth( opticalFlow.vel_y, opticalFlow.vel_y, CV_BLUR , 15 );
 			
-		greyCurDiff.absDiff( greyPrev, greyNow );
-		greyCurDiff.threshold( 30, CV_THRESH_TOZERO );
-		greyCurDiff.blur( 3 );
+	greyCurDiff.absDiff( greyPrev, greyNow );
+	greyCurDiff.threshold( 30, CV_THRESH_TOZERO );
+	greyCurDiff.blur( 3 );
 		
-		greyPrev = greyNow;
-	}
+	greyPrev = greyNow;
 }
 
 void OpticalField :: drawCurrentColorImage ( int x, int y, int w, int h )
@@ -102,25 +90,25 @@ void OpticalField :: getVelAtPixel( int x, int y, float *u, float *v )
 
 void OpticalField :: getVelAtNorm( float x, float y, float *u, float *v )
 {
-	int ix = x * camWidth;
-	int iy = y * camHeight;
+	int ix = x * WIDTH;
+	int iy = y * HEIGHT;
 	
 	if( ix < 0 )
 	{
 		ix = 0; 
 	}
-	else if( ix >= camWidth )
+	else if( ix >= WIDTH )
 	{
-		ix = camWidth - 1;
+		ix = WIDTH - 1;
 	}
 	
 	if( iy < 0 ) 
 	{
 		iy = 0; 
 	}
-	else if( iy >= camHeight )
+	else if( iy >= HEIGHT )
 	{
-		iy = camHeight - 1;
+		iy = HEIGHT - 1;
 	}
 	
 	*u = cvGetReal2D( opticalFlow.vel_x, iy, ix );
