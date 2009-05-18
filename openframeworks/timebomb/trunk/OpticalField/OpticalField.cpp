@@ -1,0 +1,137 @@
+/*
+ *  MotionDetection.cpp
+ *  openFrameworks
+ *
+ *  Created by lukasz karluk on 13/04/09.
+ *  Copyright 2009 __MyCompanyName__. All rights reserved.
+ *
+ */
+
+#include "OpticalField.h"
+#include "testApp.h"
+
+OpticalField :: OpticalField()
+{
+	//
+}
+
+OpticalField :: ~OpticalField()
+{
+	//
+}
+
+void OpticalField :: init ( int w, int h )
+{
+	camWidth	= w;
+	camHeight	= h;
+	
+	sourceImg.allocate( camWidth, camHeight );
+	resizeImg.allocate( WIDTH, HEIGHT );
+	greyNow.allocate( WIDTH, HEIGHT );
+	greyPrev.allocate( WIDTH, HEIGHT );
+	greyCurDiff.allocate( WIDTH, HEIGHT );
+	opticalFlow.allocate( WIDTH, HEIGHT );
+	
+	reset();
+}
+
+void OpticalField :: update ( unsigned char *pixels )
+{
+	if( camWidth == WIDTH && camHeight == HEIGHT )
+	{
+		resizeImg.setFromPixels( pixels, WIDTH, HEIGHT );
+	}
+	else
+	{
+		sourceImg.setFromPixels( pixels, camWidth, camHeight );
+		resizeImg.scaleIntoMe( sourceImg );
+	}
+	
+	resizeImg.mirror( false, true );
+	greyNow.setFromColorImage( resizeImg );
+		
+	opticalFlow.calc( greyPrev, greyNow, 11 );
+	cvSmooth( opticalFlow.vel_x, opticalFlow.vel_x, CV_BLUR , 15 );
+	cvSmooth( opticalFlow.vel_y, opticalFlow.vel_y, CV_BLUR , 15 );
+			
+	greyCurDiff.absDiff( greyPrev, greyNow );
+	greyCurDiff.threshold( 30, CV_THRESH_TOZERO );
+	greyCurDiff.blur( 3 );
+		
+	greyPrev = greyNow;
+}
+
+void OpticalField :: drawCurrentColorImage ( )
+{
+	resizeImg.draw( 0, 0 );
+}
+
+void OpticalField :: drawCurrentGreyImage ( )
+{
+	greyNow.draw( 0, 0 );
+}
+
+void OpticalField :: drawDifference ( )
+{
+	greyCurDiff.draw( 0, 0 );
+}
+
+void OpticalField :: drawOpticalFlow ( )
+{
+	opticalFlow.draw();
+}
+
+int OpticalField :: getWidth()
+{
+	return WIDTH;
+}
+
+int OpticalField :: getHeight()
+{
+	return HEIGHT;
+}
+
+void OpticalField :: reset()
+{
+	sourceImg.set( 0 );
+	resizeImg.set( 0 );
+	greyNow.set( 0 );
+	greyPrev.set( 0 );
+	greyCurDiff.set( 0 );
+    cvSetZero( opticalFlow.vel_x );
+    cvSetZero( opticalFlow.vel_y );
+}
+
+void OpticalField :: getVelAtPixel( int x, int y, float *u, float *v )
+{
+	*u = cvGetReal2D( opticalFlow.vel_x, y, x );
+	*v = cvGetReal2D( opticalFlow.vel_y, y, x );
+}
+
+void OpticalField :: getVelAtNorm( float x, float y, float *u, float *v )
+{
+	int ix = x * WIDTH;
+	int iy = y * HEIGHT;
+	
+	if( ix < 0 )
+	{
+		ix = 0; 
+	}
+	else if( ix >= WIDTH )
+	{
+		ix = WIDTH - 1;
+	}
+	
+	if( iy < 0 ) 
+	{
+		iy = 0; 
+	}
+	else if( iy >= HEIGHT )
+	{
+		iy = HEIGHT - 1;
+	}
+	
+	*u = cvGetReal2D( opticalFlow.vel_x, iy, ix );
+	*v = cvGetReal2D( opticalFlow.vel_y, iy, ix );
+}
+
