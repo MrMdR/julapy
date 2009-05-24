@@ -18,6 +18,7 @@
 class ofCvOpticalFlowLK
 {
 public:
+
 	ofCvOpticalFlowLK(void);
 	~ofCvOpticalFlowLK(void);
 		
@@ -25,27 +26,17 @@ public:
 
 	void calc( ofxCvGrayscaleImage & pastImage, ofxCvGrayscaleImage & currentImage, int size);
 
-	void setCalcStep(int _cols, int _rows);
-		
 	void reset();
-	void draw();
 
 	int captureWidth;
 	int captureHeight;
 	
 	IplImage* vel_x;
 	IplImage* vel_y;
+
 private:
 
 	static const int DEFAULT_CAPTURE_WIDTH = 320;
 	static const int DEFAULT_CAPTURE_HEIGHT = 240;
-
-
-	static const int DEFAULT_CAPTURE_COLS_STEP = 4;
-	static const int DEFAULT_CAPTURE_ROWS_STEP = 4;
-
-	int captureColsStep;
-	int captureRowsStep;
-
 
 };
