@@ -1,12 +1,33 @@
 
 #include "testApp.h"
 
+#define DEBUG						// SELECT ONLY ONE OF THESE
+//#define FULLSCREEN					// SELECT ONLY ONE OF THESE
+//#define FULLSCREEN_LEFT			// SELECT ONLY ONE OF THESE
+//#define FULLSCREEN_RIGHT			// SELECT ONLY ONE OF THESE
+
 testApp *myApp;
 int main( )
 {
-	ofSetupOpenGL( 1360, 800, OF_WINDOW );			// <-------- setup the GL context
-//	ofSetupOpenGL( 1280, 800, OF_FULLSCREEN );
-//	ofSetWindowPosition( 1920, 0 );
+
+#ifdef DEBUG
+	ofSetupOpenGL( 1360, 800, OF_WINDOW );
+#endif
+	
+#ifdef FULLSCREEN
+	ofSetupOpenGL( 1280, 800, OF_FULLSCREEN );
+#endif
+	
+#ifdef FULLSCREEN_LEFT
+	ofSetupOpenGL( 1280, 800, OF_FULLSCREEN );
+	ofSetWindowPosition( -1920, 0 );
+#endif
+	
+#ifdef FULLSCREEN_RIGHT
+	ofSetupOpenGL( 1280, 800, OF_FULLSCREEN );
+	ofSetWindowPosition( 1920, 0 );
+#endif
+	
 	myApp = new testApp;
 	ofRunApp( myApp );
 }
