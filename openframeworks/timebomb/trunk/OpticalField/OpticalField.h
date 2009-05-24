@@ -47,6 +47,16 @@ public :
 	ofxCvGrayscaleImage		greyCurDiff;
 	ofCvOpticalFlowLK		opticalFlow;
 	
-	int camWidth;
-	int camHeight;
+	int		camWidth;
+	int		camHeight;
+	
+	float	opticalFlowMin;
+	float	opticalFlowMax;
+	float	opticalFlowScale;
+	
+	int		opticalFlowSize;
+	int		opticalFlowBlur;
+	int		sourceImgBlur;
+	
+	bool	showDifferenceImage;
 };

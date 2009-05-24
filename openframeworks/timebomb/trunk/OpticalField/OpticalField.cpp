@@ -25,6 +25,16 @@ void OpticalField :: init ( int w, int h )
 	camWidth	= w;
 	camHeight	= h;
 	
+	opticalFlowMin		= 2.0f;
+	opticalFlowMax		= 10.0f;
+	opticalFlowScale	= 1.0f;
+
+	opticalFlowSize		= 5;
+	opticalFlowBlur		= 7;
+	sourceImgBlur		= 0;
+	
+	showDifferenceImage	= false;
+	
 	sourceImg.allocate( camWidth, camHeight );
 	resizeImg.allocate( WIDTH, HEIGHT );
 	greyNow.allocate( WIDTH, HEIGHT );
@@ -49,14 +59,17 @@ void OpticalField :: update ( unsigned char *pixels )
 	
 	resizeImg.mirror( false, true );
 	greyNow.setFromColorImage( resizeImg );
-		
-	opticalFlow.calc( greyPrev, greyNow, 11 );
-	cvSmooth( opticalFlow.vel_x, opticalFlow.vel_x, CV_BLUR , 15 );
-	cvSmooth( opticalFlow.vel_y, opticalFlow.vel_y, CV_BLUR , 15 );
-			
-	greyCurDiff.absDiff( greyPrev, greyNow );
-	greyCurDiff.threshold( 30, CV_THRESH_TOZERO );
-	greyCurDiff.blur( 3 );
+	greyNow.blur( sourceImgBlur );
+
+	if( showDifferenceImage )
+	{
+		greyCurDiff.absDiff( greyPrev, greyNow );
+		greyCurDiff.threshold( 30, CV_THRESH_TOZERO );
+	}
+	
+	opticalFlow.calc( greyPrev, greyNow, opticalFlowSize * 2 + 1 );
+	cvSmooth( opticalFlow.vel_x, opticalFlow.vel_x, CV_BLUR, opticalFlowBlur * 2 + 1 );
+	cvSmooth( opticalFlow.vel_y, opticalFlow.vel_y, CV_BLUR, opticalFlowBlur * 2 + 1 );
 		
 	greyPrev = greyNow;
 }
@@ -78,7 +91,31 @@ void OpticalField :: drawDifference ( )
 
 void OpticalField :: drawOpticalFlow ( )
 {
-	opticalFlow.draw();
+	ofSetColor( 0x000000 );
+	ofFill();
+	ofRect( 0, 0, WIDTH, HEIGHT );
+	
+	ofSetColor( 0xffffff );
+	ofNoFill();
+	
+	int x, y;
+	float dx, dy;
+	int res = 4;
+	
+	for( y=0; y<HEIGHT; y+=res )
+	{
+		for( x=0; x<WIDTH; x+=res )
+		{
+			getVelAtPixel( x, y, &dx, &dy );
+			ofLine
+			(
+				x,
+				y,
+				x + dx,
+				y + dy
+			);
+		}
+	}
 }
 
 int OpticalField :: getWidth()
@@ -104,8 +141,37 @@ void OpticalField :: reset()
 
 void OpticalField :: getVelAtPixel( int x, int y, float *u, float *v )
 {
-	*u = cvGetReal2D( opticalFlow.vel_x, y, x );
-	*v = cvGetReal2D( opticalFlow.vel_y, y, x );
+	float dx, dy;
+	
+	dx = cvGetReal2D( opticalFlow.vel_x, y, x );
+	dy = cvGetReal2D( opticalFlow.vel_y, y, x );
+	
+	// MIN THRESHOLD,
+	if( dx < opticalFlowMin && dx > -opticalFlowMin )
+		dx = 0;
+	
+	if( dy < opticalFlowMin && dy > -opticalFlowMin )
+		dy = 0;
+	
+	// MAX CAP.
+	if( dx > opticalFlowMax )
+		dx = opticalFlowMax;
+	
+	if( dx < -opticalFlowMax )
+		dx = -opticalFlowMax;
+	
+	if( dy > opticalFlowMax )
+		dy = opticalFlowMax;
+	
+	if( dy < -opticalFlowMax )
+		dy = -opticalFlowMax;
+	
+	// SCALE.
+	dx *= opticalFlowScale;
+	dy *= opticalFlowScale;
+	
+	*u = dx;
+	*v = dy;
 }
 
 void OpticalField :: getVelAtNorm( float x, float y, float *u, float *v )
@@ -131,7 +197,6 @@ void OpticalField :: getVelAtNorm( float x, float y, float *u, float *v )
 		iy = HEIGHT - 1;
 	}
 	
-	*u = cvGetReal2D( opticalFlow.vel_x, iy, ix );
-	*v = cvGetReal2D( opticalFlow.vel_y, iy, ix );
+	getVelAtPixel( ix, iy, u, v );
 }
 
