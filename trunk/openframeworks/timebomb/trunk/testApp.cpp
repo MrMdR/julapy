@@ -23,43 +23,44 @@ void fadeToColor(float r, float g, float b, float speed) {
 }
 
 
-// add force and dye to fluid, and create particles
-void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bool addForce) {
-    float speed = dx * dx  + dy * dy * window.aspectRatio2;    // balance the x and y components of speed with the screen aspect ratio
+void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bool addForce)
+{
+	float speed = dx * dx  + dy * dy * window.aspectRatio2;    // balance the x and y components of speed with the screen aspect ratio
 	
-    if(speed > 0) {
-        if(x<0) x = 0; 
-        else if(x>1) x = 1;
-        if(y<0) y = 0; 
-        else if(y>1) y = 1;
+	if(speed > 0)
+	{
+		if(x<0) x = 0; 
+		else if(x>1) x = 1;
+		if(y<0) y = 0; 
+		else if(y>1) y = 1;
 		
-        float colorMult = 50;
-        float velocityMult = 30;
+//		float colorMult = 50;
+		float velocityMult = 30;
 		
         int index = fluidSolver.getIndexForNormalizedPosition(x, y);
 		
-		if(addColor) {
-			msaColor drawColor;
-			int hue = lroundf((x + y) * 180 + ofGetFrameNum()) % 360;
-			drawColor.setHSV(hue, 1, 1);
+		if(addColor)
+		{
+			fluidSolver.r[index]  += fluidColorScale;
+			fluidSolver.g[index]  += fluidColorScale;
+			fluidSolver.b[index]  += fluidColorScale;
 			
-//			fluidSolver.r[index]  += drawColor.r * colorMult;
-//			fluidSolver.g[index]  += drawColor.g * colorMult;
-//			fluidSolver.b[index]  += drawColor.b * colorMult;
-
-			fluidSolver.r[index]  += 1 * colorMult;
-			fluidSolver.g[index]  += 1 * colorMult;
-			fluidSolver.b[index]  += 1 * colorMult;
-			
-			if(drawParticles) particleSystem.addParticles(x * window.width, y * window.height, 10);
+			if(drawParticles)
+			{
+				particleSystem.addParticles(x * window.width, y * window.height, 10);
+			}
 		}
 		
-		if(addForce) {
+		if(addForce)
+		{
 			fluidSolver.u[index] += dx * velocityMult;
 			fluidSolver.v[index] += dy * velocityMult;
 		}
 		
-		if(!drawFluid && ofGetFrameNum()%5 ==0) fadeToColor(0, 0, 0, 0.1);
+		if(!drawFluid && ofGetFrameNum()%5 ==0) 
+		{
+			fadeToColor(0, 0, 0, 0.1);
+		}
     }
 }
 
@@ -137,11 +138,8 @@ void testApp :: initOpticalField ()
 {
 #ifdef USE_OPTICAL_FIELD
 
-	opticalScale	= 0.01f;
-	opticalFloor	= 0.01f;
-	opticalCeil		= 0.2f;
-	
 	opticalField.init( camWidth, camHeight );
+	opticalField.opticalFlowScale	= 0.001f;
 	
 #endif
 }
@@ -155,8 +153,9 @@ void testApp :: initVideo ()
 	unsigned char * videoPlayerPixels;
 	
 //	videoPlayer.loadMovie("movies/decompose_450x248.mov");
-//	videoPlayer.loadMovie("movies/timebomb_600x600.mov");
-	videoPlayer.loadMovie("movies/timebomb_320x320.mov");
+	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
+//	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
+//	videoPlayer.loadMovie("movies/timebomb_final_1200x1200.mov");
 	videoPlayer.setPaused( true );
 	
 	videoPlayerWidth			= videoPlayer.getWidth();
@@ -235,8 +234,10 @@ void testApp :: initTimeDistortionForCamera ()
 void testApp :: initFluid()
 {
 	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
-    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
+	fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
 	fluidDrawer.setup(&fluidSolver);
+	
+	fluidColorScale		= 1.0f;
 	
 	drawFluid			= true;
 	drawParticles		= false;
@@ -248,9 +249,14 @@ void testApp :: initFluidForVideo ()
 #ifdef USE_VIDEO
 
 	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
-    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
+    fluidSolver.enableRGB( false ).setFadeSpeed( 0.0042 ).setDeltaT( 0.5 ).setVisc( 0.00007 ).setColorDiffusion( 0.00004 );
+	fluidSolver.doVorticityConfinement	= true;
+	fluidSolver.solverIterations		= 5;
+
 	fluidDrawer.setRenderDimensions( videoPlayerWidth, videoPlayerHeight );
 	fluidDrawer.setup(&fluidSolver);
+	
+	fluidColorScale		= 1.0f;
 	
 	drawFluid			= true;
 	drawParticles		= false;
@@ -267,6 +273,8 @@ void testApp :: initFluidForCamera ()
     fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
 	fluidDrawer.setRenderDimensions( videoGrabberWidth, videoGrabberHeight );
 	fluidDrawer.setup(&fluidSolver);
+	
+	fluidColorScale		= 1.0f;	
 	
 	drawFluid			= true;
 	drawParticles		= false;
@@ -290,9 +298,10 @@ void testApp :: initGui ()
 	gui.addToggle("drawParticles", &drawParticles); 
 	gui.addToggle("renderUsingVA", &renderUsingVA); 
 
-	gui.addSlider("optical scale", &opticalScale, 0.0, 0.1, 0.05 );	
-	gui.addSlider("optical floor", &opticalFloor, 0.0, 0.1, 0.1 );
-	gui.addSlider("optical ceil", &opticalCeil, 0.0, 0.5, 0.2 );
+	gui.addSlider("optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
+	gui.addSlider("optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
+	gui.addSlider("optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
+	gui.addSlider("fluid color scale",	&fluidColorScale,				0.0, 2.0, 0.5 );
 	
 #endif
 }
@@ -397,18 +406,6 @@ void testApp :: updateOpticalField ()
 					float ox, oy;
 					
 					opticalField.getVelAtPixel( x, y, &ox, &oy );
-					
-					ox *= opticalScale;
-					oy *= opticalScale;
-					
-					if( ox < opticalFloor && ox > -opticalFloor )
-						ox = 0;
-					
-					if( oy < opticalFloor && oy > -opticalFloor )
-						oy = 0;
-					
-					ox = MIN( opticalCeil, ox );
-					oy = MIN( opticalCeil, oy );
 					
 					addToFluid( dx, dy, ox, oy, true );
 				}
@@ -743,15 +740,23 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 	
 	float wRatio, hRatio, scale;
 	
-	bool scaleToFitFullScreen = true;
+	bool scaleVideo				= false;
+	bool scaleToFitFullScreen	= true;
 	
 	wRatio = ofGetWidth() / (float)videoPlayerWidth;
 	hRatio = ofGetHeight() / (float)videoPlayerHeight;
 	
-	if( scaleToFitFullScreen )
-		scale = MIN( wRatio, hRatio );
+	if( scaleVideo )
+	{
+		if( scaleToFitFullScreen )
+			scale = MIN( wRatio, hRatio );
+		else
+			scale = MAX( wRatio, hRatio );
+	}
 	else
-		scale = MAX( wRatio, hRatio );
+	{
+		scale = 1;
+	}
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
@@ -839,13 +844,15 @@ void testApp::keyPressed  (int key)
 {
     switch(key)
 	{
+		case ' ' :
+			videoGrabber.videoSettings();
+			break;
 
 #ifdef USE_GUI
-		case ' ':
-			
+		case 'g':
 			gui.toggleDraw();	
 			glClear(GL_COLOR_BUFFER_BIT);
-			break;
+			break; 
 #endif			
 		case 'f':
 			ofToggleFullscreen();

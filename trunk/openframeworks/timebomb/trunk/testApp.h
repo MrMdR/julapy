@@ -27,8 +27,8 @@
 #endif
 
 #define USE_OPTICAL_FIELD
-#define USE_VIDEO
-//#define USE_CAMERA
+#define USE_VIDEO					// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
+//#define USE_CAMERA				// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
 #define	USE_TIME_DISTORTION
 
 #define SHOW_DEBUG
@@ -84,7 +84,8 @@ public:
 	bool				renderUsingVA;
 	
 	ofxMSAFluidSolver	fluidSolver;
-	ofxMSAFluidDrawer	fluidDrawer;	
+	ofxMSAFluidDrawer	fluidDrawer;
+	float				fluidColorScale;
 	
 	ParticleSystem		particleSystem;
 	
@@ -119,9 +120,6 @@ public:
 #ifdef USE_OPTICAL_FIELD
 	
 	OpticalField		opticalField;
-	float				opticalScale;
-	float				opticalFloor;
-	float				opticalCeil;
 	int					camWidth;
 	int					camHeight;
 	
