@@ -87,11 +87,11 @@ void OpCirlce :: draw()
 		{
 			if( inverse )
 			{
-				ofSetColor( 0, 0, 0 );
+				ofSetColor( 0x000000 );
 			}
 			else
 			{
-				ofSetColor( 255, 255, 255 );
+				ofSetColor( 0xFFFFFF );
 			}
 		}
 		
