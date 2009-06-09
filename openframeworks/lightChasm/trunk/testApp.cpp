@@ -6,6 +6,9 @@ void testApp::setup()
 	ofEnableSmoothing();
 	ofSetCircleResolution( 100 );
 	ofSetFrameRate( 25 );
+	ofSoundStreamSetup( 0, 2, this, 44100, 512, 4 );
+	
+	audioIn.init();
 	
 	oscPad.init();
 	oscPad.setOffOnRelease( false );
@@ -22,28 +25,41 @@ void testApp::setup()
 	opCirlce.setCirlceResolution( opCirlceRes = 6 );
 	opCirlce.setRotation( opCirlceRot = 0 );
 	
+	opBars.init( 640, 480 );
+	opBars.setNumberOfBars( audioIn.averagesTotal );
+	
 	testVideo.loadMovie( "squares_640x480.mov" );
 	testVideo.play();
 }
 
 void testApp::update()
 {
+	audioIn.update();
 	oscPad.update();
 	opCirlce.update();
+	
+	opBars.setAudioInData( audioIn.averages );
+	opBars.update();
 }
 
 void testApp::draw()
 {
+	ofSetColor( 0xFFFFFF );
+	
+	glEnable( GL_BLEND );
+	glBlendFunc( GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR );
+
 	if( oscPad.getButtonState( 1, 1 ) )
 	{
 		testVideo.draw( 0, 0, testVideo.width, testVideo.height );
 	}
-
-	glEnable( GL_BLEND );
-	glBlendFunc( GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR );
+	
+	opBars.draw();
 	opCirlce.draw();
 	
 	glDisable( GL_BLEND );
+
+	audioIn.draw();
 }
 
 //--------------------------------------------------------------
@@ -103,5 +119,15 @@ void testApp::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 
+}
+
+
+void testApp :: audioReceived( float *input, int bufferSize, int nChannels )
+{
+	for( int i=0; i<bufferSize; i++)
+	{
+		audioIn.left[ i ]	= input[ i * 2 ];
+		audioIn.right[ i ]	= input[ i * 2 + 1 ];
+	}
 }
 
