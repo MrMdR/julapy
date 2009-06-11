@@ -7,14 +7,25 @@
 #include "OscPad.h"
 #include "OpCirlce.h"
 #include "OpBars.h"
+#include "OpCheckers.h"
+#include "OpScope.h"
 
 class testApp : public ofBaseApp{
 
 	public:
+
 		void setup();
 		void update();
 		void draw();
-
+	
+		void initAudioIn();
+		void initOsc();
+		void initOpScope();
+		void initOpCheckers();
+		void initOpCircle();
+		void initOpBars();
+		void initVideos();
+	
 		void keyPressed  (int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -34,10 +45,22 @@ class testApp : public ofBaseApp{
 		float		opCirlceRot;
 	
 		OpBars		opBars;
+		float		opBarsAudioAvgMin;
+	
+		OpCheckers	opCheckers;
+		float		opCheckersSize;
+	
+		OpScope		opScope;
 	
 		LiveAudioIn		audioIn;
 	
-		ofVideoPlayer	testVideo;
+		ofVideoPlayer	video01;
+		ofVideoPlayer	video02;
+		ofVideoPlayer	video03;
+		int				videoPlayIndex;
+		bool			isVideo01Playing;
+		bool			isVideo02Playing;
+		bool			isVideo03Playing;
 };
 
 #endif

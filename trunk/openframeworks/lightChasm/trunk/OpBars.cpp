@@ -27,6 +27,7 @@ void OpBars :: init( int w, int h )
 	barsTotal	= 0;
 
 	setNumberOfBars( BARS_MAX );
+	setAudioAvgMin( 15 );
 }
 
 void OpBars :: setNumberOfBars( int value )
@@ -46,6 +47,8 @@ void OpBars :: setNumberOfBars( int value )
 		while( bars.size() <= barsTotal )
 		{
 			bars.push_back( ofRectangle() );
+			bars.back().x		= ofRandom( 0, width );
+			bars.back().height	= height;
 		}
 	}
 }
@@ -54,12 +57,34 @@ void OpBars :: setAudioInData ( float *data )
 {
 	for( int i=0; i<bars.size(); i++ )
 	{
-		audioInData[ i ] = data[ i ];
+		audioAverage[ i ] = data[ i ];
 		
-		bars[ i ].x			= i * width / bars.size();
-		bars[ i ].width		= width / bars.size();
-		bars[ i ].height	= audioInData[ i ] * 8;
+		if( audioAverage[ i ] < audioAvgMin )
+		{
+			audioAverage[ i ] = 0;
+		}
+		
+		audioPeak[ i ] *= 0.96;
+		
+		if( audioPeak[ i ] < audioAverage[ i ] )
+		{
+			audioPeak[ i ] = audioAverage[ i ] * 3;
+		}
+		
+		float aup = audioPeak[ i ] * 5;
+		
+		bars[ i ].width	+= ( aup - bars[ i ].width ) * 0.7;
+		
+		if( bars[ i ].width < 3 )
+		{
+			bars[ i ].width = 0;
+		}
 	}
+}
+
+void OpBars :: setAudioAvgMin( float avgMin )
+{
+	audioAvgMin = avgMin;
 }
 
 void OpBars :: update()
@@ -82,6 +107,12 @@ void OpBars :: draw()
 			ofSetColor( 0x000000 );
 		}
 		
-		ofRect( bars[ i ].x, bars[ i ].y, bars[ i ].width, bars[ i ].height );
+		ofRect
+		(
+			bars[ i ].x - bars[ i ].width * 0.5f,
+			bars[ i ].y,
+			bars[ i ].width,
+			bars[ i ].height
+		);
 	}
 }

@@ -22,6 +22,7 @@ public :
 	void init( int w = 640, int h = 480 );
 	void setNumberOfBars( int value = BARS_MAX );
 	void setAudioInData( float *data );
+	void setAudioAvgMin( float avgMin );
 	void update();
 	void draw();
 	
@@ -32,6 +33,8 @@ private :
 	int		width;
 	int		height;
 	int		barsTotal;
-	float	audioInData[ BARS_MAX ];
+	float	audioAvgMin;
+	float	audioAverage[ BARS_MAX ];
+	float	audioPeak[ BARS_MAX ];
 
 };
