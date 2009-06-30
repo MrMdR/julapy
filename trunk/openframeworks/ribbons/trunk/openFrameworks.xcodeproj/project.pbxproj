@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		159CD6810FECC07B005DBB2F /* DataNormaliser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159CD67F0FECC07B005DBB2F /* DataNormaliser.cpp */; };
-		15A1AB450FED4C2E00F3BF57 /* CircularBufferUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15A1AB440FED4C2E00F3BF57 /* CircularBufferUtil.cpp */; };
+		15AFDFC50FF74D5500678D87 /* CircularBufferUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15AFDFC40FF74D5500678D87 /* CircularBufferUtil.cpp */; };
 		15B800470FEDDB0000621AEF /* ofxColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B800460FEDDB0000621AEF /* ofxColor.cpp */; };
 		15BB3FEA0FEC4DD400E67167 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BB3FE20FEC4DD400E67167 /* ofxMatrix3x3.cpp */; };
 		15BB3FEB0FEC4DD400E67167 /* ofxPoint2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BB3FE30FEC4DD400E67167 /* ofxPoint2f.cpp */; };
@@ -67,8 +67,8 @@
 /* Begin PBXFileReference section */
 		159CD67F0FECC07B005DBB2F /* DataNormaliser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataNormaliser.cpp; path = src/DataNormaliser.cpp; sourceTree = "<group>"; };
 		159CD6800FECC07B005DBB2F /* DataNormaliser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataNormaliser.h; path = src/DataNormaliser.h; sourceTree = "<group>"; };
-		15A1AB430FED4C2E00F3BF57 /* CircularBufferUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBufferUtil.h; sourceTree = "<group>"; };
-		15A1AB440FED4C2E00F3BF57 /* CircularBufferUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CircularBufferUtil.cpp; sourceTree = "<group>"; };
+		15AFDFC30FF74D5500678D87 /* CircularBufferUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CircularBufferUtil.h; path = ../../../addons/ofxDataUtils/src/CircularBufferUtil.h; sourceTree = SOURCE_ROOT; };
+		15AFDFC40FF74D5500678D87 /* CircularBufferUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CircularBufferUtil.cpp; path = ../../../addons/ofxDataUtils/src/CircularBufferUtil.cpp; sourceTree = SOURCE_ROOT; };
 		15B800450FEDDB0000621AEF /* ofxColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColor.h; path = ../../../addons/ofxColor/ofxColor.h; sourceTree = SOURCE_ROOT; };
 		15B800460FEDDB0000621AEF /* ofxColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColor.cpp; path = ../../../addons/ofxColor/ofxColor.cpp; sourceTree = SOURCE_ROOT; };
 		15BB3FDB0FEC4DD400E67167 /* ofxMatrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMatrix3x3.h; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.h; sourceTree = SOURCE_ROOT; };
@@ -304,10 +304,10 @@
 		159CD67D0FECC07B005DBB2F /* ofxDataUtils */ = {
 			isa = PBXGroup;
 			children = (
+				15AFDFC30FF74D5500678D87 /* CircularBufferUtil.h */,
+				15AFDFC40FF74D5500678D87 /* CircularBufferUtil.cpp */,
 				159CD67F0FECC07B005DBB2F /* DataNormaliser.cpp */,
 				159CD6800FECC07B005DBB2F /* DataNormaliser.h */,
-				15A1AB430FED4C2E00F3BF57 /* CircularBufferUtil.h */,
-				15A1AB440FED4C2E00F3BF57 /* CircularBufferUtil.cpp */,
 			);
 			name = ofxDataUtils;
 			path = ../../../addons/ofxDataUtils;
@@ -983,8 +983,8 @@
 				15BB40310FEC545100E67167 /* NoiseField.cpp in Sources */,
 				15BB40320FEC545100E67167 /* SphericalField.cpp in Sources */,
 				159CD6810FECC07B005DBB2F /* DataNormaliser.cpp in Sources */,
-				15A1AB450FED4C2E00F3BF57 /* CircularBufferUtil.cpp in Sources */,
 				15B800470FEDDB0000621AEF /* ofxColor.cpp in Sources */,
+				15AFDFC50FF74D5500678D87 /* CircularBufferUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
