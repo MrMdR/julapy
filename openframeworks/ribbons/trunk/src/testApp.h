@@ -6,8 +6,9 @@
 #include "NoiseField.h"
 #include "ofxTileSaver.h"
 
-#define MAX_PARTICLES		1000
-#define MAX_TRAIL_LENGTH	200
+#define MAX_PARTICLES		2000
+#define MAX_TRAIL_LENGTH	100
+
 #define USE_VBO
 
 class testApp : public ofBaseApp{
@@ -21,9 +22,9 @@ class testApp : public ofBaseApp{
 		void initVBO();
 		void mapColour( float x, float y, int *r, int *g, int *b );
 		void drawPoint();
-		void drawTrailFill();	
-		void drawTrailFillVBO();
-		void drawTrailOutline();
+		void drawRibbonFill();	
+		void drawRibbonFillVBO();
+		void drawRibbonMesh();
 	
 		void keyPressed  (int key);
 		void keyReleased(int key);

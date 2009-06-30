@@ -49,9 +49,11 @@ void testApp :: setup()
 	
 #endif
 	
-//	colourMapImage.loadImage( "colour_map_01.jpg" );
-//	colourMapImage.loadImage( "colour_map_02.jpg" );
-	colourMapImage.loadImage( "bw_map.jpg" );
+//	colourMapImage.loadImage( "bw_map.jpg" );
+	colourMapImage.loadImage( "bw_red_map.jpg" );
+//	colourMapImage.loadImage( "3426927909_2c8066cec6.jpg" );
+//	colourMapImage.loadImage( "3276739319_f3b90fef70.jpg" );
+//	colourMapImage.loadImage( "3277282859_41d0df132b.jpg" );
 
 	upAxis.set( 0, 1, 0 );
 	upAxisRot = 5;
@@ -70,10 +72,10 @@ void testApp :: initVBO ()
 	for( int i=0; i<MAX_PARTICLES; i++ )
 	{
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, vbo[ i * 2 + 0 ] );
-		glBufferDataARB( GL_ARRAY_BUFFER_ARB, sizeof( tvr[ i ] ), tvr[ i ], GL_STREAM_DRAW_ARB );
+		glBufferDataARB( GL_ARRAY_BUFFER_ARB, MAX_TRAIL_LENGTH * 3 * 2 * sizeof( float ), tvr[ i ], GL_STREAM_DRAW_ARB );
 		
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, vbo[ i * 2 + 1 ] );
-		glBufferDataARB( GL_ARRAY_BUFFER_ARB, sizeof( tcl[ i ] ), tcl[ i ], GL_STREAM_DRAW_ARB );
+		glBufferDataARB( GL_ARRAY_BUFFER_ARB, MAX_TRAIL_LENGTH * 4 * 2 * sizeof( float ), tcl[ i ], GL_STREAM_DRAW_ARB );
 	}
 	
 #endif
@@ -178,7 +180,8 @@ void testApp :: update()
 		
 		// TRAIL COLOUR.
 		int r, g, b;
-		mapColour( pos[ i ][ 0 ], pos[ i ][ 1 ], &r, &g, &b );
+//		mapColour( pos[ i ][ 0 ], pos[ i ][ 1 ], &r, &g, &b );
+		mapColour( pos[ i ][ 0 ], pos[ i ][ 2 ], &r, &g, &b );
 
 		if( trailIndex > 0 )
 		{
@@ -213,8 +216,8 @@ void testApp :: mapColour ( float x, float y, int *r, int *g, int *b )
 	
 	unsigned char *pixels = colourMapImage.getPixels();
 	
-	int w = (int)( colourMapImage.width * cx ) * 3;
-	int h = (int)( colourMapImage.height * cy );
+	int w = (int)( ( colourMapImage.width - 1 ) * cx ) * 3;
+	int h = (int)( ( colourMapImage.height - 1 ) * cy );
 	int i = h * colourMapImage.width * 3 + w;
 	
 	*r = pixels[ i + 0 ];
@@ -238,15 +241,16 @@ void testApp :: draw()
 	
 #ifdef USE_VBO
 	
-	drawTrailFillVBO();
+	drawRibbonFillVBO();
 	
 #else
 	
 //	drawPoint();
-	drawTrailFill();
-//	drawTrailOutline();
+//	drawRibbonFill();
 	
 #endif
+	
+//	drawRibbonMesh();
 	
 	glPopMatrix();
 	
@@ -273,7 +277,7 @@ void testApp :: drawPoint()
 	}
 }
 
-void testApp :: drawTrailFill()
+void testApp :: drawRibbonFill()
 {
 	for( int i=0; i<pTotal; i++ )
 	{
@@ -303,10 +307,9 @@ void testApp :: drawTrailFill()
 	}
 }
 
-void testApp :: drawTrailOutline()
+void testApp :: drawRibbonMesh()
 {
-	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-	glEnable( GL_LINE_SMOOTH );
+	bool drawDiagonal = true;
 	
 	for( int i=0; i<pTotal; i++ )
 	{
@@ -314,12 +317,12 @@ void testApp :: drawTrailOutline()
 		
 		for( int j=0; j<trailIndex; j++ )
 		{
-			int r = tcl[ i ][ j * 4 + 0 ];
-			int g = tcl[ i ][ j * 4 + 1 ];
-			int b = tcl[ i ][ j * 4 + 2 ];
-			int a = tcl[ i ][ j * 4 + 3 ];
+			float r = tcl[ i ][ j * 4 * 2 + 0 ];
+			float g = tcl[ i ][ j * 4 * 2 + 1 ];
+			float b = tcl[ i ][ j * 4 * 2 + 2 ];
+			float a = tcl[ i ][ j * 4 * 2 + 3 ];
 			
-			ofSetColor( r, g, b, a );
+			glColor4f( r, g, b, a );
 			
 			float v0x = tvr[ i ][ j * 6 + 0 ];
 			float v0y = tvr[ i ][ j * 6 + 1 ];
@@ -328,16 +331,42 @@ void testApp :: drawTrailOutline()
 			float v1y = tvr[ i ][ j * 6 + 4 ];
 			float v1z = tvr[ i ][ j * 6 + 5 ];
 			
-			glVertex3f( v0x, v0y, v0z );
-			glVertex3f( v1x, v1y, v1z );
+			if( j < trailIndex - 1 )
+			{
+				float v2x = tvr[ i ][ j * 6 + 6 ];
+				float v2y = tvr[ i ][ j * 6 + 7 ];
+				float v2z = tvr[ i ][ j * 6 + 8 ];
+				float v3x = tvr[ i ][ j * 6 + 9 ];
+				float v3y = tvr[ i ][ j * 6 + 10 ];
+				float v3z = tvr[ i ][ j * 6 + 11 ];
+				
+				glVertex3f( v2x, v2y, v2z );
+				glVertex3f( v0x, v0y, v0z );
+				
+				glVertex3f( v0x, v0y, v0z );
+				glVertex3f( v1x, v1y, v1z );
+				
+				glVertex3f( v1x, v1y, v1z );
+				glVertex3f( v3x, v3y, v3z );
+				
+				if( drawDiagonal )
+				{
+					glVertex3f( v3x, v3y, v3z );
+					glVertex3f( v0x, v0y, v0z );
+				}
+			}
+			else
+			{
+				glVertex3f( v0x, v0y, v0z );
+				glVertex3f( v1x, v1y, v1z );
+			}
 		}
 		
 		glEnd();
 	}
 }
 
-
-void testApp :: drawTrailFillVBO()
+void testApp :: drawRibbonFillVBO()
 {
 #ifdef USE_VBO
 	
@@ -347,14 +376,14 @@ void testApp :: drawTrailFillVBO()
 		glEnableClientState( GL_COLOR_ARRAY );
 		
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, vbo[ i * 2 + 0 ] );
-		glBufferSubDataARB( GL_ARRAY_BUFFER_ARB, 0, sizeof( tvr[ i ] ), tvr[ i ] );
+		glBufferSubDataARB( GL_ARRAY_BUFFER_ARB, 0, MAX_TRAIL_LENGTH * 3 * 2 * sizeof( float ), tvr[ i ] );
 		glVertexPointer( 3, GL_FLOAT, 0, 0 );
 		
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, vbo[ i * 2 + 1 ] );
-		glBufferSubDataARB( GL_ARRAY_BUFFER_ARB, 0, sizeof( tcl[ i ] ), tcl[ i ] );
+		glBufferSubDataARB( GL_ARRAY_BUFFER_ARB, 0, MAX_TRAIL_LENGTH * 4 * 2 * sizeof( float ), tcl[ i ] );
 		glColorPointer( 4, GL_FLOAT, 0, 0 );
 		
-		glDrawArrays( GL_QUAD_STRIP, 0, MAX_TRAIL_LENGTH );
+		glDrawArrays( GL_QUAD_STRIP, 0, MAX_TRAIL_LENGTH * 2 );
 		
 		glDisableClientState( GL_VERTEX_ARRAY );
 		glDisableClientState( GL_COLOR_ARRAY );
