@@ -7,6 +7,7 @@ void testApp::setup()
 	ofSetVerticalSync( true );
 //	ofEnableSmoothing();
 
+	int i;
 	float x = 100;
 	float y = (int)( ofGetHeight() * 0.5 );
 	float w = ofGetWidth() - 200;
@@ -21,13 +22,6 @@ void testApp::setup()
 		rps[ i * 3 + 1 ] = y;
 		rps[ i * 3 + 2 ] = z;
 		
-		rvt[ i * 6 + 0 ] = rps[ i * 3 + 0 ];
-		rvt[ i * 6 + 1 ] = rps[ i * 3 + 1 ] + h * 0.5;
-		rvt[ i * 6 + 2 ] = rps[ i * 3 + 2 ];
-		rvt[ i * 6 + 3 ] = rps[ i * 3 + 0 ];
-		rvt[ i * 6 + 4 ] = rps[ i * 3 + 1 ] - h * 0.5;
-		rvt[ i * 6 + 5 ] = rps[ i * 3 + 2 ];
-
 		float cl = 0.7;
 		
 		rcl[ i * 4 + 0 ] = cl;
@@ -38,6 +32,62 @@ void testApp::setup()
 		rcl[ i * 4 + 5 ] = cl;
 		rcl[ i * 4 + 6 ] = cl;
 		rcl[ i * 4 + 7 ] = cl;
+	}
+	
+	ofxVec3f upAxis = ofxVec3f( 0, 1, 0 );
+	
+	for( int i=0; i<RIBBON_MAX_LENGTH; i++ )
+	{
+		if( i < RIBBON_MAX_LENGTH - 1 )
+		{
+			float t0x = rps[ i * 3 + 0 ];	// xyz position of 1st trail point.
+			float t0y = rps[ i * 3 + 1 ];
+			float t0z = rps[ i * 3 + 2 ];
+			
+			float t1x = rps[ i * 3 + 3 ];	// xyz position of 2nd trail point.
+			float t1y = rps[ i * 3 + 4 ];
+			float t1z = rps[ i * 3 + 5 ];
+			
+			ofxVec3f t0 = ofxVec3f( t0x, t0y, t0z );	// position vector of 1st trail point.
+			ofxVec3f t1 = ofxVec3f( t1x, t1y, t1z );	// position vector of 2nd trail point.
+			
+			ofxVec3f v1 = t0 - t1;
+			v1.normalize();
+			ofxVec3f ya = ofxVec3f( upAxis );
+			ofxVec3f v2 = ya.cross( v1 );
+			ofxVec3f v3 = v1.cross( v2 ).normalize();
+
+			rvd[ i * 3 + 0 ] = v3.x;
+			rvd[ i * 3 + 1 ] = v3.y;
+			rvd[ i * 3 + 2 ] = v3.z;
+			
+			float w		= h * 0.5;
+			float xOff	= v3.x * w;
+			float yOff	= v3.y * w;
+			float zOff	= v3.z * w;
+			
+			rvt[ i * 6 + 0 ] = t0x - xOff;
+			rvt[ i * 6 + 1 ] = t0y - yOff;
+			rvt[ i * 6 + 2 ] = t0z - zOff;
+			rvt[ i * 6 + 3 ] = t0x + xOff;
+			rvt[ i * 6 + 4 ] = t0y + yOff;
+			rvt[ i * 6 + 5 ] = t0z + zOff;
+		}
+		else
+		{
+			rvd[ i * 3 + 0 ] = 0;
+			rvd[ i * 3 + 1 ] = 0;
+			rvd[ i * 3 + 2 ] = 0;
+			
+			rvt[ i * 6 + 0 ] = rps[ i * 3 + 0 ];
+			rvt[ i * 6 + 1 ] = rps[ i * 3 + 1 ];
+			rvt[ i * 6 + 2 ] = rps[ i * 3 + 2 ];
+			rvt[ i * 6 + 3 ] = rps[ i * 3 + 0 ];
+			rvt[ i * 6 + 4 ] = rps[ i * 3 + 1 ];
+			rvt[ i * 6 + 5 ] = rps[ i * 3 + 2 ];
+		}
+		
+		upAxis.rotate( 1, ofxVec3f( 1, 0, 0 ) );
 	}
 	
 	fontSize = 120;
@@ -131,41 +181,41 @@ void testApp :: drawLetterOnRibbon ( int letter, float xOffset, float yOffset )
 			float lx = 0;	// lower x bounds.
 			float ux = 0;	// upper x bounds.
 
-			ofxVec3f poi;	// point of intersect with the center line of the ribbon.
+			ofxVec3f cp;	// contour point.
+			ofxVec3f p1;	// current ribbon point position.
+			ofxVec3f p2;	// next ribbon point position.
+			ofxVec3f p21;	// direction from p1 to p2;
 			
 			int j;
 			for( j=0; j<( RIBBON_MAX_LENGTH - 1 ) * 3; j+=3 )
 			{
-				ofxVec3f p1 = ofxVec3f( rps[ j + 0 ], rps[ j + 1 ], rps[ j + 2 ] );
-				ofxVec3f p2 = ofxVec3f( rps[ j + 3 ], rps[ j + 4 ], rps[ j + 5 ] );
-				ofxVec3f p21 = p2 - p1;
+				p1	= ofxVec3f( rps[ j + 0 ], rps[ j + 1 ], rps[ j + 2 ] );
+				p2	= ofxVec3f( rps[ j + 3 ], rps[ j + 4 ], rps[ j + 5 ] );
+				p21	= p2 - p1;
 				
 				lx = rw;
-				rw += p21.length();
-				ux = rw;
+				ux = rw + p21.length();
+				rw = ux;
 				
 				if( px >= lx && px < ux )
 				{
 					float p = ( px - lx ) / ( ux - lx );
 					
-					poi = p1 + p21 * p;
+					cp = p1 + p21 * p;
+					
+					break;
 				}
 			}
 			
-			poi += ofxVec3f( 0, py, 0 );
-			
-//			ofxVec3f v0 = ofxVec3f( rps[ j + 0 ], rps[ j + 1 ], rps[ j + 2 ] );
-//			ofxVec3f v1 = ofxVec3f( rvt[ j * 6 + 0 ], rvt[ j * 6 + 1 ], rvt[ j * 6 + 2 ] );
-//			ofxVec3f v2 = ofxVec3f( rvt[ j * 6 + 3 ], rvt[ j * 6 + 4 ], rvt[ j * 6 + 5 ] );
-//			ofxVec3f v10 = v1 - v0;
-//			ofxVec3f v20 = v2 - v0;
-//			v10.normalize();
-//			v20.normalize();
+			ofxVec3f cd = ofxVec3f( rvd[ j + 0 ], rvd[ j + 1 ], rvd[ j + 2 ] );
+//			ofxVec3f cd = ofxVec3f( 0, 1, 0 );
+			cd *= py;
+			cp += cd;
 			
 			float *point = new float[ 3 ];
-			point[ 0 ] = poi.x;
-			point[ 1 ] = poi.y;
-			point[ 2 ] = poi.z;
+			point[ 0 ] = cp.x;
+			point[ 1 ] = cp.y;
+			point[ 2 ] = cp.z;
 			
 			polyVertices.push_back( point );
 		}
