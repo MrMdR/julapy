@@ -6,7 +6,7 @@
 #include "NoiseField.h"
 #include "ofxTileSaver.h"
 
-#define MAX_PARTICLES		2000
+#define MAX_PARTICLES		1000
 #define MAX_TRAIL_LENGTH	100
 
 #define USE_VBO
