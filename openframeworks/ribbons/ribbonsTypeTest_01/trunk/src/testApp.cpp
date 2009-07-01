@@ -90,12 +90,7 @@ void testApp::setup()
 		upAxis.rotate( 1, ofxVec3f( 1, 0, 0 ) );
 	}
 	
-	fontSize = 120;
-	letter = 'Q';
-
-	font.loadFont( "ChartITCbyBTBla.ttf", fontSize, true, true, true );
-	
-	clearLetterVertices();
+	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 120 );
 }
 
 //--------------------------------------------------------------
@@ -114,218 +109,7 @@ void testApp::draw()
 //	drawRibbonFill();
 	drawRibbonMesh();
 	
-	drawRibbonType();
-	drawLetter( letter );
-	drawLetterOF();
-}
-
-void testApp :: drawRibbonType ()
-{
-	int strLength = 13;
-	
-	char hello[ strLength ];
-	hello[ 0 ] = 'T';
-	hello[ 1 ] = 'y';
-	hello[ 2 ] = 'p';
-	hello[ 3 ] = 'e';
-	hello[ 4 ] = ' ';
-	hello[ 5 ] = 'r';
-	hello[ 6 ] = 'i';
-	hello[ 7 ] = 'b';
-	hello[ 8 ] = 'b';
-	hello[ 9 ] = 'o';
-	hello[ 10 ] = 'n';
-	hello[ 11 ] = 's';
-	hello[ 12 ] = '!';
-	
-	int x = 0;
-	int pad = 10;
-	
-	for( int i=0; i<strLength; i++ )
-	{
-		string str = "";
-		str += hello[ i ];
-		
-		drawLetterOnRibbon( hello[ i ], x, fontSize * 0.5 );
-
-		if( hello[ i ] == ' ' )
-		{
-			x += 50;
-		}
-		else
-		{
-			ofRectangle rect = font.getStringBoundingBox( str, 0, 0 );
-			x += rect.width + pad;
-		}
-	}
-}
-
-void testApp :: drawLetterOnRibbon ( int letter, float xOffset, float yOffset )
-{
-	ofTTFCharacter ttfChar;
-	ttfChar = font.getCharacterAsPoints( letter );
-
-	for( int k=0; k<ttfChar.contours.size(); k++ )
-	{
-		if( k != 0 )
-		{
-			drawLetterVertices();
-		}
-		
-		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
-		{
-			float px = ttfChar.contours[ k ].pts[ i ].x + xOffset;
-			float py = ttfChar.contours[ k ].pts[ i ].y + yOffset;
-			
-			float rw = 0;	// ribbon width.
-			float lx = 0;	// lower x bounds.
-			float ux = 0;	// upper x bounds.
-
-			ofxVec3f cp;	// contour point.
-			ofxVec3f p1;	// current ribbon point position.
-			ofxVec3f p2;	// next ribbon point position.
-			ofxVec3f p21;	// direction from p1 to p2;
-			
-			int j;
-			for( j=0; j<( RIBBON_MAX_LENGTH - 1 ) * 3; j+=3 )
-			{
-				p1	= ofxVec3f( rps[ j + 0 ], rps[ j + 1 ], rps[ j + 2 ] );
-				p2	= ofxVec3f( rps[ j + 3 ], rps[ j + 4 ], rps[ j + 5 ] );
-				p21	= p2 - p1;
-				
-				lx = rw;
-				ux = rw + p21.length();
-				rw = ux;
-				
-				if( px >= lx && px < ux )
-				{
-					float p = ( px - lx ) / ( ux - lx );
-					
-					cp = p1 + p21 * p;
-					
-					break;
-				}
-			}
-			
-			ofxVec3f cd = ofxVec3f( rvd[ j + 0 ], rvd[ j + 1 ], rvd[ j + 2 ] );
-//			ofxVec3f cd = ofxVec3f( 0, 1, 0 );
-			cd *= py;
-			cp += cd;
-			
-			float *point = new float[ 3 ];
-			point[ 0 ] = cp.x;
-			point[ 1 ] = cp.y;
-			point[ 2 ] = cp.z;
-			
-			polyVertices.push_back( point );
-		}
-	}
-	drawLetterVertices();
-	clearLetterVertices();
-}
-
-void testApp :: drawLetter ( int letter )
-{
-	ofTTFCharacter ttfChar;
-	ttfChar = font.getCharacterAsPoints( letter );
-	
-	ofPushMatrix();
-	ofTranslate( 400, 180, 0 );
-	
-	for( int k=0; k<ttfChar.contours.size(); k++ )
-	{
-		if( k != 0 ) 
-		{
-			drawLetterVertices();
-		}
-		
-		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
-		{
-			float *point = new float[ 3 ];
-			point[ 0 ] = ttfChar.contours[ k ].pts[ i ].x;
-			point[ 1 ] = ttfChar.contours[ k ].pts[ i ].y;
-			point[ 2 ] = 0;
-			polyVertices.push_back( point );
-		}
-	}
-	drawLetterVertices();
-	clearLetterVertices();
-	
-	ofPopMatrix();	
-}
-
-void testApp :: clearLetterVertices ()
-{
-	currentStartVertex = 0;
-	for( vector<float*>::iterator itr=polyVertices.begin(); itr!=polyVertices.end(); ++itr )
-	{
-		delete [] (*itr);
-	}
-	polyVertices.clear();
-}
-
-void testApp :: drawLetterVertices ()
-{
-	if( (int)polyVertices.size() > currentStartVertex )
-	{
-		float *point = new float[ 3 ];
-		point[ 0 ] = polyVertices[ currentStartVertex ][ 0 ];
-		point[ 1 ] = polyVertices[ currentStartVertex ][ 1 ];
-		point[ 2 ] = polyVertices[ currentStartVertex ][ 2 ];
-		polyVertices.push_back( point );
-	}
-	
-	int numToDraw = polyVertices.size() - currentStartVertex;
-	if( numToDraw > 0)
-	{
-		GLfloat *points = new GLfloat[ polyVertices.size() * 3 ];
-		
-		int k = 0;
-		
-		for( int i=currentStartVertex; i<(int)polyVertices.size(); i++ )
-		{
-			points[ k + 0 ]	= polyVertices[ i ][ 0 ];
-			points[ k + 1 ] = polyVertices[ i ][ 1 ];
-			points[ k + 2 ] = polyVertices[ i ][ 2 ];
-			
-			k += 3;
-		}
-		
-		glColor4f( 0, 0, 0, 1 );
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glVertexPointer( 3, GL_FLOAT, 0, &points[0] );
-		glDrawArrays( GL_LINE_STRIP, 0, numToDraw );
-		
-		delete [] points;
-		
-		currentStartVertex = (int)polyVertices.size();
-	}
-}
-
-void testApp :: drawLetterOF ()
-{
-	string str = "";
-	str += char(letter);
-	
-	font.drawString( str, 550, 180 );
-	
-	ofTTFCharacter testChar;
-	testChar = font.getCharacterAsPoints(letter);
-	
-	ofNoFill();
-	ofPushMatrix();
-		ofTranslate( 700, 180, 0);
-		ofBeginShape();
-			for(int k = 0; k <testChar.contours.size(); k++)
-			{
-				if( k!= 0)ofNextContour(true);
-				for(int i = 0; i < testChar.contours[k].pts.size(); i++)
-				{
-					ofVertex(testChar.contours[k].pts[i].x, testChar.contours[k].pts[i].y);
-				}
-			}
-		ofEndShape( true );
-	ofPopMatrix();
+	ribbonType.drawTypeOnRibbon( "hello ribbons! 1234", rps, rvd, RIBBON_MAX_LENGTH );
 }
 
 void testApp :: drawRibbonFill()
@@ -414,8 +198,8 @@ void testApp :: drawRibbonMesh()
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
-	letter = key;
+void testApp::keyPressed  (int key)
+{
 	if( key == 'f')ofToggleFullscreen();
 }
 
