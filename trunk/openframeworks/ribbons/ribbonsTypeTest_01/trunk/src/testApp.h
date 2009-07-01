@@ -3,6 +3,7 @@
 
 #include "ofMain.h"
 #include "ofxVectorMath.h"
+#include "RibbonType.h"
 
 #define RIBBON_MAX_LENGTH  100
 
@@ -15,13 +16,6 @@ class testApp : public ofSimpleApp{
 		void draw();
 		void drawRibbonFill();
 		void drawRibbonMesh();
-		void drawLetterOF();
-	
-		void drawRibbonType();
-		void drawLetter( int letter );
-		void drawLetterOnRibbon( int letter, float xOffset = 0, float yOffset = 0 );
-		void drawLetterVertices();
-		void clearLetterVertices();
 
 		void keyPressed  (int key);
 		void keyReleased (int key);
@@ -37,11 +31,7 @@ class testApp : public ofSimpleApp{
 		float rvd[ RIBBON_MAX_LENGTH * 3 * 1 ];		// ribbon vertex direction - 3 points per ribbon section - xyz.
 		float rcl[ RIBBON_MAX_LENGTH * 4 * 2 ];		// 4 colour values per vertex
 	
-		ofTrueTypeFont font;
-		int fontSize;
-		int letter;
-		vector <float*> polyVertices;
-		int currentStartVertex;
+		RibbonType	ribbonType;
 };
 
 #endif
