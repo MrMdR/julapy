@@ -15,6 +15,7 @@ void testApp :: setup()
 
 	pTotal		= MAX_PARTICLES;
 	trailIndex	= 0;
+	trailCount	= 0;
 	
 	stageWidth		= ofGetWidth();
 	stageHeight		= ofGetHeight();
@@ -61,6 +62,8 @@ void testApp :: setup()
 	tileSaver.init( 10, 0, true );
 	
 	useAdditiveBlending = false;
+	
+	initRibbonType();
 }
 
 void testApp :: initVBO ()
@@ -79,6 +82,11 @@ void testApp :: initVBO ()
 	}
 	
 #endif
+}
+
+void testApp :: initRibbonType ()
+{
+	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 10 );
 }
 
 //////////////////////////////////////////////
@@ -131,11 +139,16 @@ void testApp :: update()
 		// TRAIL VERTEX.
 		if( trailIndex > 0 )
 		{
+			memmove( tvd[ i ] + 3, tvd[ i ], 3 * j * sizeof(float) );
 			memmove( tvr[ i ] + 6, tvr[ i ], 6 * j * sizeof(float) );
 		}
 			
 		if( trailIndex == 0 )
 		{
+			tvd[ i ][ 0 ] = 0;
+			tvd[ i ][ 1 ] = 0;
+			tvd[ i ][ 2 ] = 0;
+			
 			tvr[ i ][ 0 ] = pos[ i ][ 0 ];
 			tvr[ i ][ 1 ] = pos[ i ][ 1 ];
 			tvr[ i ][ 2 ] = pos[ i ][ 2 ];
@@ -164,6 +177,10 @@ void testApp :: update()
 			ofxVec3f ya = ofxVec3f( upAxis );
 			ofxVec3f v2 = ya.cross( v1 );
 			ofxVec3f v3 = v1.cross( v2 ).normalize();
+			
+			tvd[ i ][ 0 ] = v3.x;
+			tvd[ i ][ 1 ] = v3.y;
+			tvd[ i ][ 2 ] = v3.z;
 			
 			float w		= 2;
 			float xOff	= v3.x * w;
@@ -196,7 +213,8 @@ void testApp :: update()
 	
 	if( trailIndex < MAX_TRAIL_LENGTH )
 	{
-		++trailIndex;
+		trailIndex += 1;
+		trailCount = trailIndex;
 	}
 	
 	upAxis.rotate( upAxisRot, ofxVec3f( 1, 0, 0 ) );
@@ -251,6 +269,7 @@ void testApp :: draw()
 #endif
 	
 //	drawRibbonMesh();
+	drawRibbonType();
 	
 	glPopMatrix();
 	
@@ -283,7 +302,7 @@ void testApp :: drawRibbonFill()
 	{
 		glBegin( GL_QUAD_STRIP );
 		
-		for( int j=0; j<trailIndex; j++ )
+		for( int j=0; j<trailCount; j++ )
 		{
 			float r = tcl[ i ][ j * 4 * 2 + 0 ];
 			float g = tcl[ i ][ j * 4 * 2 + 1 ];
@@ -315,7 +334,7 @@ void testApp :: drawRibbonMesh()
 	{
 		glBegin( GL_LINES );
 		
-		for( int j=0; j<trailIndex; j++ )
+		for( int j=0; j<trailCount; j++ )
 		{
 			float r = tcl[ i ][ j * 4 * 2 + 0 ];
 			float g = tcl[ i ][ j * 4 * 2 + 1 ];
@@ -331,7 +350,7 @@ void testApp :: drawRibbonMesh()
 			float v1y = tvr[ i ][ j * 6 + 4 ];
 			float v1z = tvr[ i ][ j * 6 + 5 ];
 			
-			if( j < trailIndex - 1 )
+			if( j < trailCount - 1 )
 			{
 				float v2x = tvr[ i ][ j * 6 + 6 ];
 				float v2y = tvr[ i ][ j * 6 + 7 ];
@@ -394,6 +413,16 @@ void testApp :: drawRibbonFillVBO()
 #endif
 }
 
+void testApp :: drawRibbonType()
+{
+	for( int i=0; i<pTotal; i++ )
+	{
+		if( trailCount > 0 )
+		{
+			ribbonType.drawTypeOnRibbon( "hello ribbons!", trl[ i ], tvd[ i ], trailCount );
+		}
+	}
+}
 
 //////////////////////////////////////////////
 //	HANDLERS.
