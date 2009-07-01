@@ -11,18 +11,54 @@
 
 RibbonType :: RibbonType()
 {
+	initCharacters();
 	clearLetterVertices();
+	
+	setKerning( 1.0 );
 }
 
 RibbonType :: ~RibbonType()
 {
+	//
+}
 
+void RibbonType :: initCharacters()
+{
+	string supportedCharacter = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	
+	charactersTotal	= supportedCharacter.size();
+	characters		= new char[ supportedCharacter.size() + 1 ];
+	strcpy( characters, supportedCharacter.c_str() );
 }
 
 void RibbonType :: loadTrueTypeFont( string fontName, int size )
 {
 	fontSize = size;
 	font.loadFont( fontName, fontSize, true, true, true );
+	
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		characterContours.push_back( font.getCharacterAsPoints( characters[ i ] ) );
+		
+		string str = "";
+		str += characters[ i ];
+		ofRectangle rect = font.getStringBoundingBox( str, 0, 0 );
+		characterRectangles.push_back( CharacterRect() );
+		characterRectangles.back().width	= rect.width;
+		characterRectangles.back().height	= rect.height;
+	}
+}
+
+int RibbonType :: getCharacterIndex ( int letter )
+{
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		if( characters[ i ] == letter )
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize )
@@ -30,29 +66,50 @@ void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, fl
 	ribbonPositions		= ribbonPositionArray;
 	ribbonDirections	= ribbonDirectionArray;
 	ribbonLength		= ribbonSize;
+	ribbonLengths		= new float[ ribbonLength ];
+	contourStartIndex	= 0;
+	
+	for( int i=0; i<ribbonLength; i++ )
+	{
+		int k = i * 3;
+		
+		if( i == 0 )
+		{
+			ribbonLengths[ i ] = 0;
+		}
+		else
+		{
+			ofxVec3f p1		= ofxVec3f( ribbonPositions[ k - 3 ], ribbonPositions[ k - 2 ], ribbonPositions[ k - 1 ] );
+			ofxVec3f p2		= ofxVec3f( ribbonPositions[ k + 0 ], ribbonPositions[ k + 1 ], ribbonPositions[ k + 2 ] );
+			ofxVec3f p21	= p2 - p1;
+			
+			ribbonLengths[ i ] = ribbonLengths[ i - 1 ] + p21.length();
+		}
+	}
 	
 	char * cstr;
 	cstr = new char[ copy.size() + 1 ];
 	strcpy( cstr, copy.c_str() );
 	
-	int x = 0;
-	int pad = 10;
+	float x = 0;
 	
 	for( int i=0; i<copy.size(); i++ )
 	{
-		string str = "";
-		str += cstr[ i ];
-		
 		drawLetter( cstr[ i ], x, fontSize * 0.5 );
 		
 		if( cstr[ i ] == ' ' )
 		{
-			x += 50;
+			x += fontSize;
 		}
 		else
 		{
-			ofRectangle rect = font.getStringBoundingBox( str, 0, 0 );
-			x += rect.width + pad;
+			int characterIndex = getCharacterIndex( cstr[ i ] );
+			if( characterIndex > -1 )
+			{
+				CharacterRect rect;
+				rect = characterRectangles.at( characterIndex );
+				x += rect.width + kerning;
+			}
 		}
 	}
 	
@@ -63,14 +120,22 @@ void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, fl
 	
 	delete ribbonPositions;
 	delete ribbonDirections;
+	delete ribbonLengths;
 }
 
 void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 {
+	int characterIndex = getCharacterIndex( letter );
+	if( characterIndex == -1 )
+	{
+		return;
+	}
+	
 	ofTTFCharacter ttfChar;
-	ttfChar = font.getCharacterAsPoints( letter );
+	ttfChar = characterContours.at( characterIndex );
 	
 	bool outsideOfRibbon = false;
+	int contourMaxIndex = contourStartIndex;
 	
 	for( int k=0; k<ttfChar.contours.size(); k++ )
 	{
@@ -84,28 +149,29 @@ void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 			float px = ttfChar.contours[ k ].pts[ i ].x + xOffset;
 			float py = ttfChar.contours[ k ].pts[ i ].y + yOffset;
 			
-			float rw = 0;	// ribbon width.
-			float lx = 0;	// lower x bounds.
-			float ux = 0;	// upper x bounds.
-			
 			ofxVec3f cp;	// contour point.
 			ofxVec3f p1;	// current ribbon point position.
 			ofxVec3f p2;	// next ribbon point position.
 			ofxVec3f p21;	// direction from p1 to p2;
 			
 			int j;
-			for( j=0; j<( ribbonLength - 1 ) * 3; j+=3 )
+			for( j=contourStartIndex; j<( ribbonLength - 1 ) * 3; j+=3 )
 			{
 				p1	= ofxVec3f( ribbonPositions[ j + 0 ], ribbonPositions[ j + 1 ], ribbonPositions[ j + 2 ] );
 				p2	= ofxVec3f( ribbonPositions[ j + 3 ], ribbonPositions[ j + 4 ], ribbonPositions[ j + 5 ] );
 				p21	= p2 - p1;
 				
-				lx = rw;
-				ux = rw + p21.length();
-				rw = ux;
+				int ribbonLengthIndex = (int)( j / 3 );
+				float lx = ribbonLengths[ ribbonLengthIndex ];		// lower x bounds.
+				float ux = ribbonLengths[ ribbonLengthIndex + 1 ];	// upper x bounds.
 				
-				if( px >= lx && px < ux )
+				if( px >= lx && px < ux )	// found! contour lies between p1 and p2.
 				{
+					if( j > contourMaxIndex )
+					{
+						contourMaxIndex = j;
+					}
+					
 					float p = ( px - lx ) / ( ux - lx );
 					
 					cp = p1 + p21 * p;
@@ -141,6 +207,8 @@ void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 			break;
 		}
 	}
+	
+	contourStartIndex = contourMaxIndex;
 	
 	if( !outsideOfRibbon )
 	{
@@ -196,4 +264,13 @@ void RibbonType :: clearLetterVertices()
 		delete [] (*itr);
 	}
 	polyVertices.clear();
+}
+
+////////////////////////////////////////////////////////////
+//	SETTERS.
+////////////////////////////////////////////////////////////
+
+void RibbonType :: setKerning( float value )
+{
+	kerning = value;
 }
