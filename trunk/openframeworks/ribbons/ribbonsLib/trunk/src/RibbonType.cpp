@@ -12,7 +12,6 @@
 RibbonType :: RibbonType()
 {
 	initCharacters();
-	clearLetterVertices();
 	
 	setKerning( 1.0 );
 }
@@ -30,6 +29,10 @@ void RibbonType :: initCharacters()
 	characters		= new char[ supportedCharacter.size() + 1 ];
 	strcpy( characters, supportedCharacter.c_str() );
 }
+
+////////////////////////////////////////////////////////////
+//	LOAD / PREP FONT.
+////////////////////////////////////////////////////////////
 
 void RibbonType :: loadTrueTypeFont( string fontName, int size )
 {
@@ -49,18 +52,6 @@ void RibbonType :: loadTrueTypeFont( string fontName, int size )
 	}
 }
 
-int RibbonType :: getCharacterIndex ( int letter )
-{
-	for( int i=0; i<charactersTotal; i++ )
-	{
-		if( characters[ i ] == letter )
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
 void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize )
 {
 	ribbonPositions		= ribbonPositionArray;
@@ -69,23 +60,7 @@ void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, fl
 	ribbonLengths		= new float[ ribbonLength ];
 	contourStartIndex	= 0;
 	
-	for( int i=0; i<ribbonLength; i++ )
-	{
-		int k = i * 3;
-		
-		if( i == 0 )
-		{
-			ribbonLengths[ i ] = 0;
-		}
-		else
-		{
-			ofxVec3f p1		= ofxVec3f( ribbonPositions[ k - 3 ], ribbonPositions[ k - 2 ], ribbonPositions[ k - 1 ] );
-			ofxVec3f p2		= ofxVec3f( ribbonPositions[ k + 0 ], ribbonPositions[ k + 1 ], ribbonPositions[ k + 2 ] );
-			ofxVec3f p21	= p2 - p1;
-			
-			ribbonLengths[ i ] = ribbonLengths[ i - 1 ] + p21.length();
-		}
-	}
+	calcRibbonLengths();
 	
 	char * cstr;
 	cstr = new char[ copy.size() + 1 ];
@@ -123,6 +98,47 @@ void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, fl
 	delete ribbonLengths;
 }
 
+////////////////////////////////////////////////////////////
+//	LIFE HACKER METHODS - MAKING LIFE EASIER.
+////////////////////////////////////////////////////////////
+
+void RibbonType :: calcRibbonLengths()
+{
+	for( int i=0; i<ribbonLength; i++ )
+	{
+		int k = i * 3;
+		
+		if( i == 0 )
+		{
+			ribbonLengths[ i ] = 0;
+		}
+		else
+		{
+			ofxVec3f p1		= ofxVec3f( ribbonPositions[ k - 3 ], ribbonPositions[ k - 2 ], ribbonPositions[ k - 1 ] );
+			ofxVec3f p2		= ofxVec3f( ribbonPositions[ k + 0 ], ribbonPositions[ k + 1 ], ribbonPositions[ k + 2 ] );
+			ofxVec3f p21	= p2 - p1;
+			
+			ribbonLengths[ i ] = ribbonLengths[ i - 1 ] + p21.length();
+		}
+	}
+}
+
+int RibbonType :: getCharacterIndex ( int letter )
+{
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		if( characters[ i ] == letter )
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+////////////////////////////////////////////////////////////
+//	DRAWING ROUTINE.
+////////////////////////////////////////////////////////////
+
 void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 {
 	int characterIndex = getCharacterIndex( letter );
@@ -137,11 +153,13 @@ void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 	bool outsideOfRibbon = false;
 	int contourMaxIndex = contourStartIndex;
 	
+	ofBeginShape();
+	
 	for( int k=0; k<ttfChar.contours.size(); k++ )
 	{
 		if( k != 0 )
 		{
-			drawLetterVertices();
+			ofNextContour(true);
 		}
 		
 		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
@@ -194,12 +212,7 @@ void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 			cd *= py;
 			cp += cd;
 			
-			float *point = new float[ 3 ];
-			point[ 0 ] = cp.x;
-			point[ 1 ] = cp.y;
-			point[ 2 ] = cp.z;
-			
-			polyVertices.push_back( point );
+			ofVertex( cp.x, cp.y, cp.z );
 		}
 		
 		if( outsideOfRibbon )
@@ -212,58 +225,8 @@ void RibbonType :: drawLetter( int letter, float xOffset, float yOffset )
 	
 	if( !outsideOfRibbon )
 	{
-		drawLetterVertices();
+		ofEndShape( true );
 	}
-	
-	clearLetterVertices();
-}
-
-void RibbonType :: drawLetterVertices()
-{
-	if( (int)polyVertices.size() > currentStartVertex )
-	{
-		float *point = new float[ 3 ];
-		point[ 0 ] = polyVertices[ currentStartVertex ][ 0 ];
-		point[ 1 ] = polyVertices[ currentStartVertex ][ 1 ];
-		point[ 2 ] = polyVertices[ currentStartVertex ][ 2 ];
-		polyVertices.push_back( point );
-	}
-	
-	int numToDraw = polyVertices.size() - currentStartVertex;
-	if( numToDraw > 0)
-	{
-		GLfloat *points = new GLfloat[ polyVertices.size() * 3 ];
-		
-		int k = 0;
-		
-		for( int i=currentStartVertex; i<(int)polyVertices.size(); i++ )
-		{
-			points[ k + 0 ]	= polyVertices[ i ][ 0 ];
-			points[ k + 1 ] = polyVertices[ i ][ 1 ];
-			points[ k + 2 ] = polyVertices[ i ][ 2 ];
-			
-			k += 3;
-		}
-		
-		glColor4f( 0, 0, 0, 1 );
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glVertexPointer( 3, GL_FLOAT, 0, &points[0] );
-		glDrawArrays( GL_LINE_STRIP, 0, numToDraw );
-		
-		delete [] points;
-		
-		currentStartVertex = (int)polyVertices.size();
-	}
-}
-
-void RibbonType :: clearLetterVertices()
-{
-	currentStartVertex = 0;
-	for( vector<float*>::iterator itr=polyVertices.begin(); itr!=polyVertices.end(); ++itr )
-	{
-		delete [] (*itr);
-	}
-	polyVertices.clear();
 }
 
 ////////////////////////////////////////////////////////////

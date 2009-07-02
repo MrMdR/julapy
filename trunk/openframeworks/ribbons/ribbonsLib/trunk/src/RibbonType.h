@@ -10,8 +10,6 @@
 #include "ofMain.h"
 #include "ofxVec3f.h"
 
-#define MAX_CHARACTERS_SUPPORTED	52
-
 class CharacterRect
 {
 	public:
@@ -30,14 +28,14 @@ public :
 	void loadTrueTypeFont( string fontName, int size = 50 );
 	void drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize );
 	void setKerning( float value );
+	void setFill( bool value );
 	
 private :
 	
 	void initCharacters();
+	void calcRibbonLengths();
 	int  getCharacterIndex( int c );
 	void drawLetter( int letter, float xOffset = 0, float yOffset = 0 );
-	void drawLetterVertices();
-	void clearLetterVertices();
 	
 	ofTrueTypeFont font;
 	int fontSize;
@@ -48,12 +46,10 @@ private :
 	float *ribbonLengths;
 	int ribbonLength;
 	
-	vector <float*> polyVertices;
-	int currentStartVertex;
-	
 	int		charactersTotal;
 	char	*characters;
 	vector <ofTTFCharacter> characterContours;
 	vector <CharacterRect> characterRectangles;
 	int		contourStartIndex;
+
 };
