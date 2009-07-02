@@ -5,7 +5,7 @@ void testApp::setup()
 {
 	ofBackground(255,255,255);
 	ofSetVerticalSync( true );
-//	ofEnableSmoothing();
+	ofEnableSmoothing();
 
 	int i;
 	float x = 100;
@@ -109,7 +109,13 @@ void testApp::draw()
 //	drawRibbonFill();
 	drawRibbonMesh();
 	
-	ribbonType.drawTypeOnRibbon( "hello ribbons! 1234", rps, rvd, RIBBON_MAX_LENGTH );
+	ofFill();
+	ofSetColor( 0, 0, 0 );
+	ribbonType.drawTypeOnRibbon( "hello ribbonsss", rps, rvd, RIBBON_MAX_LENGTH );
+
+	ofNoFill();
+	ofSetColor( 0, 0, 0 );
+	ribbonType.drawTypeOnRibbon( "hello ribbonsss", rps, rvd, RIBBON_MAX_LENGTH );
 }
 
 void testApp :: drawRibbonFill()
