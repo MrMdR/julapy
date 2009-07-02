@@ -7,7 +7,7 @@
 #include "ofxTileSaver.h"
 #include "RibbonType.h"
 
-#define MAX_PARTICLES		20
+#define MAX_PARTICLES		100
 #define MAX_TRAIL_LENGTH	200
 
 //#define USE_VBO

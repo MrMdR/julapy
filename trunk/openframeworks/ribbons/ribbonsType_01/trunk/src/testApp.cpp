@@ -86,7 +86,7 @@ void testApp :: initVBO ()
 
 void testApp :: initRibbonType ()
 {
-	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 10 );
+	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 14 );
 }
 
 //////////////////////////////////////////////
@@ -415,11 +415,17 @@ void testApp :: drawRibbonFillVBO()
 
 void testApp :: drawRibbonType()
 {
+	ofSetColor( 0, 0, 0 );
+	
 	for( int i=0; i<pTotal; i++ )
 	{
 		if( trailCount > 0 )
 		{
+			ofFill();
 			ribbonType.drawTypeOnRibbon( "hello ribbons!", trl[ i ], tvd[ i ], trailCount );
+			
+//			ofNoFill();
+//			ribbonType.drawTypeOnRibbon( "hello ribbons!", trl[ i ], tvd[ i ], trailCount );
 		}
 	}
 }
