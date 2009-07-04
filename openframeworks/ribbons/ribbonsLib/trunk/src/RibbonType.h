@@ -28,23 +28,25 @@ public :
 	void loadTrueTypeFont( string fontName, int size = 50 );
 	void drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize );
 	void setKerning( float value );
-	void setFill( bool value );
+	void wrapRibbonSurface( bool value );
 	
 private :
 	
 	void initCharacters();
 	void calcRibbonLengths();
 	int  getCharacterIndex( int c );
-	void drawLetter( int letter, float xOffset = 0, float yOffset = 0 );
+	void drawLetterWrap( int letter, float xOffset = 0, float yOffset = 0 );
+	void drawLetterAsPlane( int letter, float xOffset = 0, float yOffset = 0 );
 	
 	ofTrueTypeFont font;
-	int fontSize;
-	float kerning;
+	int		fontSize;
+	float	kerning;
+	bool	wrapSurface;
 	
-	float *ribbonPositions;
-	float *ribbonDirections;
-	float *ribbonLengths;
-	int ribbonLength;
+	float	*ribbonPositions;
+	float	*ribbonDirections;
+	float	*ribbonLengths;
+	int		ribbonLength;
 	
 	int		charactersTotal;
 	char	*characters;
