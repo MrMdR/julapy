@@ -2,10 +2,11 @@
 #define _TEST_APP
 
 #include "ofMain.h"
+#include "ofxScreenGrabUtil.h"
 #include "ofxVectorMath.h"
 #include "RibbonType.h"
 
-#define RIBBON_MAX_LENGTH  100
+#define RIBBON_MAX_LENGTH  200
 
 class testApp : public ofSimpleApp{
 
@@ -32,6 +33,11 @@ class testApp : public ofSimpleApp{
 		float rcl[ RIBBON_MAX_LENGTH * 4 * 2 ];		// 4 colour values per vertex
 	
 		RibbonType	ribbonType;
+		float ribbonRotation;
+		float ribbonRotationCount;
+		bool wrapTypeOnRibbon;
+	
+		ofxScreenGrabUtil screenGrabUtil;
 };
 
 #endif
