@@ -6,7 +6,18 @@ void testApp::setup()
 	ofBackground(255,255,255);
 	ofSetVerticalSync( true );
 	ofEnableSmoothing();
+	
+	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 120 );
+	ribbonRotation		= 0;
+	ribbonRotationCount	= 0;
+	wrapTypeOnRibbon	= false;
+	
+	ribbonType.wrapRibbonSurface( wrapTypeOnRibbon );
+}
 
+//--------------------------------------------------------------
+void testApp::update()
+{
 	int i;
 	float x = 100;
 	float y = (int)( ofGetHeight() * 0.5 );
@@ -34,6 +45,7 @@ void testApp::setup()
 		rcl[ i * 4 + 7 ] = cl;
 	}
 	
+	ribbonRotation = 2 * sin( ++ribbonRotationCount / 1000 * PI );
 	ofxVec3f upAxis = ofxVec3f( 0, 1, 0 );
 	
 	for( int i=0; i<RIBBON_MAX_LENGTH; i++ )
@@ -56,7 +68,7 @@ void testApp::setup()
 			ofxVec3f ya = ofxVec3f( upAxis );
 			ofxVec3f v2 = ya.cross( v1 );
 			ofxVec3f v3 = v1.cross( v2 ).normalize();
-
+			
 			rvd[ i * 3 + 0 ] = v3.x;
 			rvd[ i * 3 + 1 ] = v3.y;
 			rvd[ i * 3 + 2 ] = v3.z;
@@ -87,16 +99,8 @@ void testApp::setup()
 			rvt[ i * 6 + 5 ] = rps[ i * 3 + 2 ];
 		}
 		
-		upAxis.rotate( 1, ofxVec3f( 1, 0, 0 ) );
+		upAxis.rotate( ribbonRotation, ofxVec3f( 1, 0, 0 ) );
 	}
-	
-	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 120 );
-}
-
-//--------------------------------------------------------------
-void testApp::update()
-{
-	//
 }
 
 //--------------------------------------------------------------
@@ -116,6 +120,11 @@ void testApp::draw()
 	ofNoFill();
 	ofSetColor( 0, 0, 0 );
 	ribbonType.drawTypeOnRibbon( "hello ribbonsss", rps, rvd, RIBBON_MAX_LENGTH );
+	
+	if( screenGrabUtil.isRecording() )
+	{
+		screenGrabUtil.save();
+	}
 }
 
 void testApp :: drawRibbonFill()
@@ -207,10 +216,27 @@ void testApp :: drawRibbonMesh()
 void testApp::keyPressed  (int key)
 {
 	if( key == 'f')ofToggleFullscreen();
+	
+	if( key == 'r' )
+	{
+		if( screenGrabUtil.isRecording() )
+		{
+			screenGrabUtil.stop();
+		}
+		else
+		{
+			screenGrabUtil.start( "type_ribbons" );
+		}
+	}
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased  (int key){
+void testApp::keyReleased  (int key)
+{
+	if( key == 'w' )
+	{
+		ribbonType.wrapRibbonSurface( wrapTypeOnRibbon = !wrapTypeOnRibbon );
+	}
 }
 
 //--------------------------------------------------------------
