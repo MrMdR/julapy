@@ -7,10 +7,10 @@
 #include "ofxTileSaver.h"
 #include "RibbonType.h"
 
-#define MAX_PARTICLES		100
+#define MAX_PARTICLES		1000
 #define MAX_TRAIL_LENGTH	200
 
-//#define USE_VBO
+#define USE_VBO
 
 class testApp : public ofBaseApp{
 
@@ -43,6 +43,7 @@ class testApp : public ofBaseApp{
 		int stageCenterY;
 	
 		bool useAdditiveBlending;
+		bool showRibbonType;
 	
 		NoiseField		noiseField;
 		SphericalField	sphericalField;

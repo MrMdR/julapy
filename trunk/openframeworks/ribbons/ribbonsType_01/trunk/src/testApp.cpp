@@ -62,6 +62,7 @@ void testApp :: setup()
 	tileSaver.init( 10, 0, true );
 	
 	useAdditiveBlending = false;
+	showRibbonType		= false;
 	
 	initRibbonType();
 }
@@ -86,7 +87,8 @@ void testApp :: initVBO ()
 
 void testApp :: initRibbonType ()
 {
-	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 14 );
+	ribbonType.loadTrueTypeFont( "ChartITCbyBTBla.ttf", 20 );
+	ribbonType.wrapRibbonSurface( false );
 }
 
 //////////////////////////////////////////////
@@ -182,7 +184,7 @@ void testApp :: update()
 			tvd[ i ][ 1 ] = v3.y;
 			tvd[ i ][ 2 ] = v3.z;
 			
-			float w		= 2;
+			float w		= 0.2;
 			float xOff	= v3.x * w;
 			float yOff	= v3.y * w;
 			float zOff	= v3.z * w;
@@ -256,6 +258,12 @@ void testApp :: draw()
 	glPushMatrix();
 	glTranslatef( stageCenterX, stageCenterY, 0 );
 	glRotatef( rotateY, 0, 1, 0 );
+
+	ofEnableAlphaBlending();
+	if( showRibbonType )
+	{
+		drawRibbonType();
+	}
 	
 #ifdef USE_VBO
 	
@@ -269,7 +277,6 @@ void testApp :: draw()
 #endif
 	
 //	drawRibbonMesh();
-	drawRibbonType();
 	
 	glPopMatrix();
 	
@@ -415,17 +422,17 @@ void testApp :: drawRibbonFillVBO()
 
 void testApp :: drawRibbonType()
 {
-	ofSetColor( 0, 0, 0 );
+	ofSetColor( 0, 0, 0, 80 );
 	
 	for( int i=0; i<pTotal; i++ )
 	{
 		if( trailCount > 0 )
 		{
 			ofFill();
-			ribbonType.drawTypeOnRibbon( "hello ribbons!", trl[ i ], tvd[ i ], trailCount );
+			ribbonType.drawTypeOnRibbon( "hey bee do your thing with that sting", trl[ i ], tvd[ i ], trailCount );
 			
-//			ofNoFill();
-//			ribbonType.drawTypeOnRibbon( "hello ribbons!", trl[ i ], tvd[ i ], trailCount );
+			ofNoFill();
+			ribbonType.drawTypeOnRibbon( "hey bee do your thing with that sting", trl[ i ], tvd[ i ], trailCount );
 		}
 	}
 }
@@ -463,6 +470,11 @@ void testApp :: keyReleased( int key )
 			glEnable( GL_DEPTH_TEST );
 			glBlendFunc( GL_ONE, GL_ZERO );
 		}
+	}
+	
+	if( key == 'r' )
+	{
+		showRibbonType = !showRibbonType;
 	}
 }
 
