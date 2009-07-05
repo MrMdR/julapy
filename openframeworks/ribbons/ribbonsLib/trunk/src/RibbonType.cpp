@@ -53,6 +53,12 @@ void RibbonType :: loadTrueTypeFont( string fontName, int size )
 	}
 }
 
+void RibbonType :: setRibbinColorArray( float *ribbonColorArray )
+{
+	ribbonColors		= ribbonColorArray;
+	useRibbonColorArray	= true;
+}
+
 void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize )
 {
 	ribbonPositions		= ribbonPositionArray;
@@ -95,6 +101,8 @@ void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, fl
 			}
 		}
 	}
+	
+	useRibbonColorArray = false;
 	
 	delete[] cstr;
 	delete[] ribbonLengths;
@@ -318,6 +326,12 @@ void RibbonType :: drawLetterAsPlane( int letter, float xOffset, float yOffset )
 	glMultMatrixf( mat );
 	
 	delete[] mat;
+	
+	if( useRibbonColorArray )
+	{
+		int k = ( j / 3 ) * 4;
+		glColor4f( ribbonColors[ k + 0 ], ribbonColors[ k + 1 ], ribbonColors[ k + 2 ], ribbonColors[ k + 3 ] );
+	}
 	
 	ofBeginShape();
 	
