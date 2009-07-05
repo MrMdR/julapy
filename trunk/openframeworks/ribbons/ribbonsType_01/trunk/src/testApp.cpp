@@ -62,7 +62,7 @@ void testApp :: setup()
 	tileSaver.init( 10, 0, true );
 	
 	useAdditiveBlending = false;
-	showRibbonType		= false;
+	showRibbonType		= true;
 	
 	initRibbonType();
 }
@@ -429,9 +429,11 @@ void testApp :: drawRibbonType()
 		if( trailCount > 0 )
 		{
 			ofFill();
+			ribbonType.setRibbinColorArray( tcl[ i ] );
 			ribbonType.drawTypeOnRibbon( "hey bee do your thing with that sting", trl[ i ], tvd[ i ], trailCount );
 			
 			ofNoFill();
+			ribbonType.setRibbinColorArray( tcl[ i ] );
 			ribbonType.drawTypeOnRibbon( "hey bee do your thing with that sting", trl[ i ], tvd[ i ], trailCount );
 		}
 	}
