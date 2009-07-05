@@ -26,6 +26,7 @@ public :
 	~RibbonType();
 	
 	void loadTrueTypeFont( string fontName, int size = 50 );
+	void setRibbinColorArray( float *ribbonColorArray );
 	void drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize );
 	void setKerning( float value );
 	void wrapRibbonSurface( bool value );
@@ -42,9 +43,11 @@ private :
 	int		fontSize;
 	float	kerning;
 	bool	wrapSurface;
+	bool	useRibbonColorArray;
 	
 	float	*ribbonPositions;
 	float	*ribbonDirections;
+	float	*ribbonColors;
 	float	*ribbonLengths;
 	int		ribbonLength;
 	
