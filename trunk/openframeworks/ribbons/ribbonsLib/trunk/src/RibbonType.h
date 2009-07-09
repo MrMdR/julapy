@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef RIBBON_TYPE
+#define RIBBON_TYPE
+
 #include "ofMain.h"
 #include "ofxVec3f.h"
 
@@ -15,6 +18,17 @@ class CharacterRect
 	public:
 		float width;
 		float height;
+};
+
+class CharShape 
+{
+public :
+	int		shapesTotal;
+	int		shapePointsTotal;
+	int		*shapeIndex;
+	int		*shapePointsLength;
+	float	*shapePoints;
+	GLuint	*shapeVBOs;
 };
 
 class RibbonType
@@ -34,10 +48,14 @@ public :
 private :
 	
 	void initCharacters();
+	void initCharacterContours();
+	void initCharacterVBOs();
+	
 	void calcRibbonLengths();
 	int  getCharacterIndex( int c );
 	void drawLetterWrap( int letter, float xOffset = 0, float yOffset = 0 );
 	void drawLetterAsPlane( int letter, float xOffset = 0, float yOffset = 0 );
+	void drawLetterFromVBO( int characterIndex );
 	
 	ofTrueTypeFont font;
 	int		fontSize;
@@ -51,10 +69,14 @@ private :
 	float	*ribbonLengths;
 	int		ribbonLength;
 	
-	int		charactersTotal;
-	char	*characters;
-	vector <ofTTFCharacter> characterContours;
-	vector <CharacterRect> characterRectangles;
-	int		contourStartIndex;
+	int			charactersTotal;
+	char		*characters;
+	CharShape	*charShapes;
+	GLuint		*charShapeVBOs;
+	vector		<ofTTFCharacter> characterContours;
+	vector		<CharacterRect> characterRectangles;
+	int			contourStartIndex;
 
 };
+
+#endif
