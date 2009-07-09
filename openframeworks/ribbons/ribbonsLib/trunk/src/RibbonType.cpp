@@ -31,15 +31,8 @@ void RibbonType :: initCharacters()
 	strcpy( characters, supportedCharacter.c_str() );
 }
 
-////////////////////////////////////////////////////////////
-//	LOAD / PREP FONT.
-////////////////////////////////////////////////////////////
-
-void RibbonType :: loadTrueTypeFont( string fontName, int size )
+void RibbonType :: initCharacterContours ()
 {
-	fontSize = size;
-	font.loadFont( fontName, fontSize, true, true, true );
-	
 	for( int i=0; i<charactersTotal; i++ )
 	{
 		characterContours.push_back( font.getCharacterAsPoints( characters[ i ] ) );
@@ -51,6 +44,97 @@ void RibbonType :: loadTrueTypeFont( string fontName, int size )
 		characterRectangles.back().width	= rect.width;
 		characterRectangles.back().height	= rect.height;
 	}
+}
+
+void RibbonType :: initCharacterVBOs()
+{
+	charShapes = new CharShape[ charactersTotal ];
+	
+	int vboTotal = 0;
+	
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		ofTTFCharacter ttfChar;
+		ttfChar = characterContours.at( i );
+		
+		CharacterRect charRect;
+		charRect = characterRectangles.at( i );
+		
+		int shapesTotal			= 0;
+		int shapeIndex			= 0;
+		int shapePointsTotal	= 0;
+		
+		shapesTotal = ttfChar.contours.size();
+		vboTotal	+= shapesTotal;
+		for( int j=0; j<shapesTotal; j++ )
+		{
+			shapePointsTotal += ( ttfChar.contours[ j ].pts.size() + 1 ) * 3;
+		}
+		
+		charShapes[ i ].shapesTotal			= shapesTotal;
+		charShapes[ i ].shapePointsTotal	= shapePointsTotal;
+		charShapes[ i ].shapeIndex			= new int[ shapesTotal ];
+		charShapes[ i ].shapePointsLength	= new int[ shapesTotal ];
+		charShapes[ i ].shapePoints			= new float[ shapePointsTotal ];
+		
+		for( int j=0; j<shapesTotal; j++ )
+		{
+			charShapes[ i ].shapeIndex[ j ]	= shapeIndex;
+			
+			int n = 0;
+			for( int k=0; k<ttfChar.contours[ j ].pts.size(); k++ )
+			{
+				n = shapeIndex + ( k * 3 );
+				charShapes[ i ].shapePoints[ n + 0 ] = ttfChar.contours[ j ].pts[ k ].x - charRect.width * 0.5;
+				charShapes[ i ].shapePoints[ n + 1 ] = ttfChar.contours[ j ].pts[ k ].y + fontSize * 0.5;
+				charShapes[ i ].shapePoints[ n + 2 ] = 0;
+			}
+			n += 3;
+			
+			charShapes[ i ].shapePoints[ n + 0 ] = charShapes[ i ].shapePoints[ shapeIndex + 0 ];	// close loop by adding first value of shape 
+			charShapes[ i ].shapePoints[ n + 1 ] = charShapes[ i ].shapePoints[ shapeIndex + 0 ];	// as last value.
+			charShapes[ i ].shapePoints[ n + 2 ] = charShapes[ i ].shapePoints[ shapeIndex + 0 ];
+			
+			charShapes[ i ].shapePointsLength[ j ] = ( n + 3 - shapeIndex );
+			
+			shapeIndex += ( n + 3 );
+		}
+	}
+	
+	charShapeVBOs = new GLuint[ vboTotal ];
+	glGenBuffersARB( vboTotal, &charShapeVBOs[ 0 ] );
+	
+	int vboIndex = 0;
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		charShapes[ i ].shapeVBOs = new GLuint[ charShapes[ i ].shapesTotal ];
+		
+		for( int j=0; j<charShapes[ i ].shapesTotal; j++ )
+		{
+			int shapeIndex			= charShapes[ i ].shapeIndex[ j ];
+			int shapePointsLength	= charShapes[ i ].shapePointsLength[ j ];
+			
+			glBindBufferARB( GL_ARRAY_BUFFER_ARB, charShapeVBOs[ vboIndex ] );
+			glBufferDataARB( GL_ARRAY_BUFFER_ARB, shapePointsLength * sizeof( float ), &(charShapes[ i ].shapePoints[ j ]), GL_STATIC_DRAW_ARB );
+			
+			charShapes[ i ].shapeVBOs[ j ] = vboIndex;
+			
+			++vboIndex;
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////
+//	LOAD / PREP FONT.
+////////////////////////////////////////////////////////////
+
+void RibbonType :: loadTrueTypeFont( string fontName, int size )
+{
+	fontSize = size;
+	font.loadFont( fontName, fontSize, true, true, true );
+	
+	initCharacterContours();
+	initCharacterVBOs();
 }
 
 void RibbonType :: setRibbinColorArray( float *ribbonColorArray )
@@ -332,28 +416,50 @@ void RibbonType :: drawLetterAsPlane( int letter, float xOffset, float yOffset )
 		int k = ( j / 3 ) * 4;
 		glColor4f( ribbonColors[ k + 0 ], ribbonColors[ k + 1 ], ribbonColors[ k + 2 ], ribbonColors[ k + 3 ] );
 	}
-	
-	ofBeginShape();
-	
-	for( int k=0; k<ttfChar.contours.size(); k++ )
-	{
-		if( k != 0 )
-		{
-			ofNextContour(true);
-		}
-		
-		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
-		{
-			float cx = ttfChar.contours[ k ].pts[ i ].x - charRect.width * 0.5;
-			float cy = ttfChar.contours[ k ].pts[ i ].y + yOffset;
-			
-			ofVertex( cx, cy, 0 );
-		}
-	}
 
-	ofEndShape( true );
+	drawLetterFromVBO( characterIndex );
+	
+//	ofBeginShape();
+//	
+//	for( int k=0; k<ttfChar.contours.size(); k++ )
+//	{
+//		if( k != 0 )
+//		{
+//			ofNextContour(true);
+//		}
+//		
+//		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
+//		{
+//			float cx = ttfChar.contours[ k ].pts[ i ].x - charRect.width * 0.5;
+//			float cy = ttfChar.contours[ k ].pts[ i ].y + yOffset;
+//			
+//			ofVertex( cx, cy );
+//		}
+//	}
+//
+//	ofEndShape( true );
 	
 	glPopMatrix();
+}
+
+void RibbonType :: drawLetterFromVBO ( int characterIndex )
+{
+	for( int i=0; i<charShapes[ characterIndex ].shapesTotal; i++ )
+	{
+		glEnableClientState( GL_VERTEX_ARRAY );
+		
+		int vboIndex	= charShapes[ characterIndex ].shapeVBOs[ i ];
+		int vboLendth	= charShapes[ characterIndex ].shapePointsLength[ i ];
+		
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB, charShapeVBOs[ vboIndex ] );
+		glVertexPointer( 3, GL_FLOAT, 0, 0 );
+		
+		glDrawArrays( GL_LINE_STRIP, 0, vboLendth );
+		
+		glDisableClientState( GL_VERTEX_ARRAY );
+		
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+	}
 }
 
 ////////////////////////////////////////////////////////////
