@@ -15,14 +15,69 @@ void testApp::setup()
 
 	ofxMultiTouch.addListener(this);
 	
+	verdana.loadFont( ofToDataPath( "verdana.ttf" ), 8, true, true );
+	
 //	earthMap.loadImage( "EarthMap_2048x1024.jpg" );
 //	earthMap.loadImage( "EarthMap_1024x512.jpg" );
-//	earthMap.loadImage( "EarthMap_1024x512_hFlip.jpg" );
-	earthMap.loadImage( "EarthMap_1024x512_hFlip_debug.jpg" );
+	earthMap.loadImage( "EarthMap_1024x512_hFlip.jpg" );
+//	earthMap.loadImage( "EarthMap_1024x512_hFlip_debug.jpg" );
 	earthMapTexture = earthMap.getTextureReference();
+	
+	initLocations();
+	initCurveHop();
 	
 	initTrackball();
 //	initLighting();
+}
+
+void testApp :: initLocations()
+{
+	locationIndex	= 0;
+	locationsTotal	= 14;
+	locations		= new float[ locationsTotal ];	// latitude and longitude pairs.
+	locations[ 0 ]	= -33.87784462833714;	// Holler Sydney
+	locations[ 1 ]	= 151.2179660797119;	// Holler Sydney
+	locations[ 2 ]	= 40.756054;			// New York
+	locations[ 3 ]	= -73.986951;			// New York
+	locations[ 4 ]	= 48.856667;			// Paris
+	locations[ 5 ]	= 2.350987;				// Paris
+	locations[ 6 ]	= 51.500152;			// London
+	locations[ 7 ]	= -0.126236;			// London
+	locations[ 8 ]	= 25.271139;			// Dubai
+	locations[ 9 ]	= 55.307485;			// Dubai
+	locations[ 10 ]	= 9.009697;				// Panama City
+	locations[ 11 ]	= -79.603243;			// Panama City
+	locations[ 12 ]	= 35.689488;			// Tokyo
+	locations[ 13 ]	= 139.691706;			// Tokyo
+}
+
+void testApp :: initCurveHop ()
+{
+	ofxVec3f p1 = sphericalToCartesian( locations[ 0 ], locations[ 1 ], 1 );
+	ofxVec3f c1 = sphericalToCartesian( locations[ 0 ], locations[ 1 ], 2 );
+	ofxVec3f p2 = sphericalToCartesian( locations[ 2 ], locations[ 3 ], 1 );
+	ofxVec3f c2 = sphericalToCartesian( locations[ 2 ], locations[ 3 ], 2 );
+	
+	float *bezierPoints	= new float[ 12 ];
+	bezierPoints[ 0 ]	= p1.x;
+	bezierPoints[ 1 ]	= p1.y;
+	bezierPoints[ 2 ]	= p1.z;
+
+	bezierPoints[ 3 ]	= c1.x;
+	bezierPoints[ 4 ]	= c1.y;
+	bezierPoints[ 5 ]	= c1.z;
+
+	bezierPoints[ 6 ]	= c2.x;
+	bezierPoints[ 7 ]	= c2.y;
+	bezierPoints[ 8 ]	= c2.z;
+
+	bezierPoints[ 9 ]	= p2.x;
+	bezierPoints[ 10 ]	= p2.y;
+	bezierPoints[ 11 ]	= p2.z;
+	
+	curveHop.set( bezierPoints );
+	
+	delete[] bezierPoints;
 }
 
 void testApp :: initLighting()
@@ -72,11 +127,6 @@ void testApp :: initTrackball ()
 	gWorldRotation[ 2 ]	= 0.0f;
 	gWorldRotation[ 3 ]	= 0.0f;
 	
-//	gWorldRotation[ 0 ]	= 155.0f;
-//	gWorldRotation[ 1 ]	= 0.0f;
-//	gWorldRotation[ 2 ]	= -1.0f;
-//	gWorldRotation[ 3 ]	= 0.0f;
-	
 	gTrackBall = false;
 }
 
@@ -114,12 +164,36 @@ void testApp::update()
 	//
 }
 
+ofxVec3f testApp :: sphericalToCartesian( float lat, float lon, float radius )
+{
+	ofxVec3f result;
+	
+	lat	*= -1;		// inverse latitude.
+	lat += 90;		// latitude offset to match geometry of the sphere.
+	lon *= -1;		// inverse longitude.
+	lon -= 90;		// longitude offset to match geometry of the sphere.
+	
+	lat *= DEG_TO_RAD;
+	lon *= DEG_TO_RAD;
+	
+	result.x = radius * sin( lat ) * cos( lon );
+	result.y = radius * sin( lat ) * sin( lon );
+	result.z = radius * cos( lat );
+	
+	return result;
+}
+
 ///////////////////////////////////////////////////////////
 // DRAW.
 ///////////////////////////////////////////////////////////
 
 void testApp::draw()
 {
+//	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+//	char str[ 255 ];
+//	sprintf( str, "lat :: %1.2d", latDebug );
+//	verdana.drawString( str, 10, 10 );
+	
 	glEnable( GL_DEPTH_TEST );
 	
 	glPushMatrix();
@@ -131,12 +205,13 @@ void testApp::draw()
 
 	earthMapTexture.bind();
 	
+	sphere.setSphereDrawStyle( 100012 );
 	sphere.drawSphere( 1, 20, 20 );
 	
 	earthMapTexture.unbind();
 	
-	sphere.setSphereDrawStyle( 100013 );
-	sphere.drawSphere( 1, 20, 20 );
+//	sphere.setSphereDrawStyle( 100013 );
+//	sphere.drawSphere( 1.01, 20, 20 );
 	
 	drawLines();
 	
@@ -148,20 +223,17 @@ void testApp::draw()
 
 void testApp :: drawLines ()
 {
-	float lat		= -33.87784462833714;
-	float lon		= 151.2179660797119;
-	
-//	float lat		= 40.756054;
-//	float lon		= -73.986951;
+	float lat		= locations[ locationIndex + 0 ];
+	float lon		= locations[ locationIndex + 1 ];
 	float radius	= 2;
 
-	float x = radius * cos( ( -lon * DEG_TO_RAD ) ) * cos( ( lat * DEG_TO_RAD ) );
-	float y = radius * sin( ( lat * DEG_TO_RAD ) );
-	float z = radius * sin( ( -lon * DEG_TO_RAD ) ) * cos( ( lat * DEG_TO_RAD ) );
-
+//	printf( "longitude :: %1.3f\n", lon );
+	
+	ofxVec3f p = sphericalToCartesian( lat, lon, radius );
+	
 	GLfloat lines[] = {
 		0.0f, 0.0f, 0.0f,
-		x, y, z
+		p.x, p.y, p.z
 	};
 	
 	GLfloat colors[] = {
@@ -169,8 +241,8 @@ void testApp :: drawLines ()
 		1.0f, 0.0f, 0.0f, 1.0f
 	};
 	
-	glVertexPointer( 3, GL_FLOAT, 0, lines);
-	glColorPointer( 4, GL_FLOAT, 0, colors);
+	glVertexPointer( 3, GL_FLOAT, 0, lines );
+	glColorPointer( 4, GL_FLOAT, 0, colors );
 	
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glEnableClientState( GL_COLOR_ARRAY );
