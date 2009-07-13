@@ -76,6 +76,7 @@ void RibbonType :: initCharacterVBOs()
 		charShapes[ i ].shapeIndex			= new int[ shapesTotal ];
 		charShapes[ i ].shapePointsLength	= new int[ shapesTotal ];
 		charShapes[ i ].shapePoints			= new float[ shapePointsTotal ];
+		charShapes[ i ].shapeVBOs			= new GLuint[ shapesTotal ];
 		
 		for( int j=0; j<shapesTotal; j++ )
 		{
@@ -92,12 +93,14 @@ void RibbonType :: initCharacterVBOs()
 			n += 3;
 			
 			charShapes[ i ].shapePoints[ n + 0 ] = charShapes[ i ].shapePoints[ shapeIndex + 0 ];	// close loop by adding first value of shape 
-			charShapes[ i ].shapePoints[ n + 1 ] = charShapes[ i ].shapePoints[ shapeIndex + 0 ];	// as last value.
-			charShapes[ i ].shapePoints[ n + 2 ] = charShapes[ i ].shapePoints[ shapeIndex + 0 ];
+			charShapes[ i ].shapePoints[ n + 1 ] = charShapes[ i ].shapePoints[ shapeIndex + 1 ];	// as last value.
+			charShapes[ i ].shapePoints[ n + 2 ] = charShapes[ i ].shapePoints[ shapeIndex + 2 ];
 			
-			charShapes[ i ].shapePointsLength[ j ] = ( n + 3 - shapeIndex );
+			n += 3;
 			
-			shapeIndex += ( n + 3 );
+			charShapes[ i ].shapePointsLength[ j ] = ( n - shapeIndex );
+			
+			shapeIndex += n;
 		}
 	}
 	
@@ -107,22 +110,39 @@ void RibbonType :: initCharacterVBOs()
 	int vboIndex = 0;
 	for( int i=0; i<charactersTotal; i++ )
 	{
-		charShapes[ i ].shapeVBOs = new GLuint[ charShapes[ i ].shapesTotal ];
-		
 		for( int j=0; j<charShapes[ i ].shapesTotal; j++ )
 		{
 			int shapeIndex			= charShapes[ i ].shapeIndex[ j ];
 			int shapePointsLength	= charShapes[ i ].shapePointsLength[ j ];
 			
 			glBindBufferARB( GL_ARRAY_BUFFER_ARB, charShapeVBOs[ vboIndex ] );
-			glBufferDataARB( GL_ARRAY_BUFFER_ARB, shapePointsLength * sizeof( float ), &(charShapes[ i ].shapePoints[ j ]), GL_STATIC_DRAW_ARB );
+			glBufferDataARB( GL_ARRAY_BUFFER_ARB, shapePointsLength * sizeof( float ), &(charShapes[ i ].shapePoints[ shapeIndex ]), GL_STATIC_DRAW_ARB );
 			
 			charShapes[ i ].shapeVBOs[ j ] = vboIndex;
 			
 			++vboIndex;
 		}
 	}
+	
+	tessObj = gluNewTess();
+//	gluTessCallback( tessObj, GLU_TESS_VERTEX,	( GLvoid (*) () ) &tesselationVertex );
+//	gluTessCallback( tessObj, GLU_TESS_BEGIN,	( GLvoid (*) () ) &tesselationBegin );
+//	gluTessCallback( tessObj, GLU_TESS_END,		( GLvoid (*) () ) &tesselationEnd );
+//	gluTessCallback( tessObj, GLU_TESS_ERROR,	( GLvoid (*) () ) &tesselationError );
+	
+	if( tessObj != NULL )
+	{
+		gluTessEndPolygon( tessObj );
+		gluDeleteTess(tessObj );
+		tessObj = NULL;
+	}
 }
+
+void RibbonType :: tesselationBegin( GLint type )
+{
+	//
+}
+
 
 ////////////////////////////////////////////////////////////
 //	LOAD / PREP FONT.
@@ -332,9 +352,6 @@ void RibbonType :: drawLetterAsPlane( int letter, float xOffset, float yOffset )
 		return;
 	}
 	
-	ofTTFCharacter ttfChar;
-	ttfChar = characterContours.at( characterIndex );
-	
 	CharacterRect charRect;
 	charRect = characterRectangles.at( characterIndex );
 	
@@ -419,26 +436,6 @@ void RibbonType :: drawLetterAsPlane( int letter, float xOffset, float yOffset )
 
 	drawLetterFromVBO( characterIndex );
 	
-//	ofBeginShape();
-//	
-//	for( int k=0; k<ttfChar.contours.size(); k++ )
-//	{
-//		if( k != 0 )
-//		{
-//			ofNextContour(true);
-//		}
-//		
-//		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
-//		{
-//			float cx = ttfChar.contours[ k ].pts[ i ].x - charRect.width * 0.5;
-//			float cy = ttfChar.contours[ k ].pts[ i ].y + yOffset;
-//			
-//			ofVertex( cx, cy );
-//		}
-//	}
-//
-//	ofEndShape( true );
-	
 	glPopMatrix();
 }
 
@@ -446,10 +443,10 @@ void RibbonType :: drawLetterFromVBO ( int characterIndex )
 {
 	for( int i=0; i<charShapes[ characterIndex ].shapesTotal; i++ )
 	{
-		glEnableClientState( GL_VERTEX_ARRAY );
-		
 		int vboIndex	= charShapes[ characterIndex ].shapeVBOs[ i ];
-		int vboLendth	= charShapes[ characterIndex ].shapePointsLength[ i ];
+		int vboLendth	= charShapes[ characterIndex ].shapePointsLength[ i ] / 3;
+		
+		glEnableClientState( GL_VERTEX_ARRAY );
 		
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, charShapeVBOs[ vboIndex ] );
 		glVertexPointer( 3, GL_FLOAT, 0, 0 );
