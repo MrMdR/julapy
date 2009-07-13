@@ -33,51 +33,33 @@ void testApp::setup()
 void testApp :: initLocations()
 {
 	locationIndex	= 0;
-	locationsTotal	= 14;
-	locations		= new float[ locationsTotal ];	// latitude and longitude pairs.
-	locations[ 0 ]	= -33.87784462833714;	// Holler Sydney
-	locations[ 1 ]	= 151.2179660797119;	// Holler Sydney
-	locations[ 2 ]	= 40.756054;			// New York
-	locations[ 3 ]	= -73.986951;			// New York
-	locations[ 4 ]	= 48.856667;			// Paris
-	locations[ 5 ]	= 2.350987;				// Paris
-	locations[ 6 ]	= 51.500152;			// London
-	locations[ 7 ]	= -0.126236;			// London
-	locations[ 8 ]	= 25.271139;			// Dubai
-	locations[ 9 ]	= 55.307485;			// Dubai
-	locations[ 10 ]	= 9.009697;				// Panama City
-	locations[ 11 ]	= -79.603243;			// Panama City
-	locations[ 12 ]	= 35.689488;			// Tokyo
-	locations[ 13 ]	= 139.691706;			// Tokyo
+	locationsTotal	= 0;
+	locationsMax	= 50;
+	locations		= new float[ locationsMax * 2 ];	// latitude and longitude pairs.
+	
+	addLocation( -33.87784462833714, 151.2179660797119 );	// Holler Sydney
+	addLocation( 35.689488, 139.691706 );					// Tokyo
+	addLocation( 9.009697, -79.603243 );					// Panama City
+	addLocation( 40.756054, -73.986951 );					// New York
+	addLocation( 48.856667, 2.350987 );						// Paris
+	addLocation( 25.271139, 55.307485 );					// Dubai
+	addLocation( 51.500152, -0.126236 );					// London
+}
+
+void testApp :: addLocation( float lat, float lon )
+{
+	locations[ locationsTotal * 2 + 0 ] = lat;
+	locations[ locationsTotal * 2 + 1 ] = lon;
+	
+	++locationsTotal;
 }
 
 void testApp :: initCurveHop ()
 {
-	ofxVec3f p1 = sphericalToCartesian( locations[ 0 ], locations[ 1 ], 1 );
-	ofxVec3f c1 = sphericalToCartesian( locations[ 0 ], locations[ 1 ], 2 );
-	ofxVec3f p2 = sphericalToCartesian( locations[ 2 ], locations[ 3 ], 1 );
-	ofxVec3f c2 = sphericalToCartesian( locations[ 2 ], locations[ 3 ], 2 );
+	curveHop.setProgressStep( 0.01 );
+	curveHop.setCurveWidth( 0.1 );
 	
-	float *bezierPoints	= new float[ 12 ];
-	bezierPoints[ 0 ]	= p1.x;
-	bezierPoints[ 1 ]	= p1.y;
-	bezierPoints[ 2 ]	= p1.z;
-
-	bezierPoints[ 3 ]	= c1.x;
-	bezierPoints[ 4 ]	= c1.y;
-	bezierPoints[ 5 ]	= c1.z;
-
-	bezierPoints[ 6 ]	= c2.x;
-	bezierPoints[ 7 ]	= c2.y;
-	bezierPoints[ 8 ]	= c2.z;
-
-	bezierPoints[ 9 ]	= p2.x;
-	bezierPoints[ 10 ]	= p2.y;
-	bezierPoints[ 11 ]	= p2.z;
-	
-	curveHop.set( bezierPoints );
-	
-	delete[] bezierPoints;
+	changeCurveHopLocation();
 }
 
 void testApp :: initLighting()
@@ -161,7 +143,69 @@ void testApp :: mouseTrackballMove( int x, int y )
 
 void testApp::update()
 {
-	//
+	updateCurveHop();
+}
+
+void testApp :: updateCurveHop()
+{
+	if( !curveHop.isPlayedIn() )
+	{
+		curveHop.playInStep();
+	}
+	else
+	{
+		if( !curveHop.isPlayedOut() )
+		{
+			curveHop.playOutStep();
+		}
+		else
+		{
+			stepLocation();
+			changeCurveHopLocation();
+		}
+	}
+}
+
+void testApp :: stepLocation ()
+{
+	if( ++locationIndex > locationsTotal - 1 )
+		locationIndex = 0;
+}
+
+void testApp :: changeCurveHopLocation ()
+{
+	int i = locationIndex;
+	int j = locationIndex + 1;
+	
+	if( j > locationsTotal - 1 )
+		j = 0;
+	
+	ofxVec3f p1 = sphericalToCartesian( locations[ i * 2 + 0 ], locations[ i * 2 + 1 ], 1 );
+	ofxVec3f c1 = sphericalToCartesian( locations[ i * 2 + 0 ], locations[ i * 2 + 1 ], 2 );
+	ofxVec3f p2 = sphericalToCartesian( locations[ j * 2 + 0 ], locations[ j * 2 + 1 ], 1 );
+	ofxVec3f c2 = sphericalToCartesian( locations[ j * 2 + 0 ], locations[ j * 2 + 1 ], 2 );
+	
+	float *bezierPoints	= new float[ 12 ];
+	bezierPoints[ 0 ]	= p2.x;
+	bezierPoints[ 1 ]	= p2.y;
+	bezierPoints[ 2 ]	= p2.z;
+	
+	bezierPoints[ 3 ]	= c2.x;
+	bezierPoints[ 4 ]	= c2.y;
+	bezierPoints[ 5 ]	= c2.z;
+	
+	bezierPoints[ 6 ]	= c1.x;
+	bezierPoints[ 7 ]	= c1.y;
+	bezierPoints[ 8 ]	= c1.z;
+	
+	bezierPoints[ 9 ]	= p1.x;
+	bezierPoints[ 10 ]	= p1.y;
+	bezierPoints[ 11 ]	= p1.z;
+	
+	curveHop.reset();
+	curveHop.set( bezierPoints );
+	
+	delete[] bezierPoints;
 }
 
 ofxVec3f testApp :: sphericalToCartesian( float lat, float lon, float radius )
@@ -203,6 +247,18 @@ void testApp::draw()
 	glRotatef( gTrackBallRotation[ 0 ], gTrackBallRotation[ 1 ], gTrackBallRotation[ 2 ], gTrackBallRotation[ 3 ] );
 	glRotatef( gWorldRotation[ 0 ], gWorldRotation[ 1 ], gWorldRotation[ 2 ], gWorldRotation[ 3 ] );
 
+	drawSphere();
+	drawLines();
+	drawCurveHop();
+	
+//	drawTriangle();
+//	drawCube();
+	
+	glPopMatrix();
+}
+
+void testApp :: drawSphere ()
+{
 	earthMapTexture.bind();
 	
 	sphere.setSphereDrawStyle( 100012 );
@@ -212,13 +268,6 @@ void testApp::draw()
 	
 //	sphere.setSphereDrawStyle( 100013 );
 //	sphere.drawSphere( 1.01, 20, 20 );
-	
-	drawLines();
-	
-//	drawTriangle();
-//	drawCube();
-	
-	glPopMatrix();
 }
 
 void testApp :: drawLines ()
@@ -247,7 +296,15 @@ void testApp :: drawLines ()
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glEnableClientState( GL_COLOR_ARRAY );
 	
-	glDrawArrays( GL_LINES, 0, 3 );
+	glDrawArrays( GL_LINES, 0, 2 );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
+}
+
+void testApp :: drawCurveHop()
+{
+	curveHop.draw();
 }
 
 void testApp :: drawTriangle ()
@@ -276,6 +333,9 @@ void testApp :: drawTriangle ()
 	glEnableClientState(GL_COLOR_ARRAY);
 	
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
 	
 	glPopMatrix();
 }

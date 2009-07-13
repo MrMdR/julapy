@@ -17,13 +17,22 @@ public :
 	~CurveHop();
 	
 	void set( float *bezPoints );
+	void reset();
+	void setProgressIn( float value );
+	void setProgressOut( float value );
+	void setProgressStep( float value );
+	void setCurveWidth( float value );
 	void playInStep();
 	void playOutStep();
+	bool isPlayedIn();
+	bool isPlayedOut();
 	void draw();
 	
 private :
 	
 	ofxVec3f bernstein( float u, float *bezPoints );
+	void drawCurveLineStrip( GLfloat *vertex, GLfloat *color, int length );
+	void drawCurveTriangleStrip( GLfloat *vertex, GLfloat *color, int length );
 	
 	float bezierPoints[ 12 ];
 	float progressIn;
@@ -32,4 +41,5 @@ private :
 	int	  bezierDetail;
 	bool  playedIn;
 	bool  playedOut;
+	float curveWidth;
 };
