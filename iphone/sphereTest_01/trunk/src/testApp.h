@@ -19,6 +19,8 @@ public:
 	void initLocations();
 	void initCurveHop();
 	void initLighting();
+
+	void addLocation( float lat, float lon );
 	
 	void initTrackball();
 	void mouseTrackballDown( int x, int y );
@@ -26,10 +28,16 @@ public:
 	void mouseTrackballMove( int x, int y );
 	
 	ofxVec3f sphericalToCartesian( float lat, float lon, float radius );
+
+	void updateCurveHop();
+	void stepLocation();
+	void changeCurveHopLocation();
 	
+	void drawSphere();
+	void drawLines();
+	void drawCurveHop();
 	void drawTriangle();
 	void drawCube();
-	void drawLines();
 	
 	void keyPressed(int key) {}
 	void keyReleased(int key)  {}
@@ -66,6 +74,7 @@ public:
 	// locations.
 	float	*locations;
 	int		locationsTotal;
+	int		locationsMax;
 	int		locationIndex;
 	
 };

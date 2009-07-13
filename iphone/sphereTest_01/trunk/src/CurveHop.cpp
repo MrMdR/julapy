@@ -13,7 +13,8 @@ CurveHop :: CurveHop()
 {
 	progressIn		= 0;
 	progressOut		= 0;
-	progressStep	= 0.05f;
+	progressStep	= 0.05;
+	curveWidth		= 0.05;
 	bezierDetail	= 50;
 	playedIn		= false;
 	playedOut		= false;
@@ -30,6 +31,35 @@ void CurveHop :: set( float *bezPoints )
 	{
 		bezierPoints[ i ] = bezPoints[ i ];
 	}
+}
+
+void CurveHop :: reset()
+{
+	progressIn	= 0;
+	progressOut	= 0;
+	
+	playedIn	= false;
+	playedOut	= false;
+}
+
+void CurveHop :: setProgressIn( float value )
+{
+	progressIn = value;
+}
+
+void CurveHop :: setProgressOut( float value )
+{
+	progressOut = value;
+}
+
+void CurveHop :: setProgressStep( float value )
+{
+	progressStep = value;
+}
+
+void CurveHop :: setCurveWidth( float value )
+{
+	curveWidth = value;
 }
 
 void CurveHop :: playInStep ()
@@ -51,58 +81,152 @@ void CurveHop :: playOutStep ()
 	}
 }
 
+bool CurveHop :: isPlayedIn()
+{
+	return playedIn;
+}
+
+bool CurveHop :: isPlayedOut()
+{
+	return playedOut;
+}
+
 void CurveHop :: draw ()
 {
-	int j, j1, j2;
-	
 	ofxVec3f prev;
 	ofxVec3f next;
 	ofxVec3f up;
 	ofxVec3f right;
 	ofxVec3f look;
 	
-//	glBegin( GL_QUAD_STRIP );
+	int j1	= (int)( bezierDetail * progressIn );
+	int j2	= (int)( bezierDetail * progressOut );
+	int n	= j2 - j1 + 1;
 	
-	float dt;
+	GLfloat *curveLineStrip	= new GLfloat[ n * 3 ];
+	GLfloat	*curveColor		= new GLfloat[ n * 4 ];
 	
-	j1 = (int)( bezierDetail * progressIn );
-	j2 = (int)( bezierDetail * progressOut );
-	for( j=j1; j<=j2; j++)									// draw bezier connections.
-	{									
-		dt = (float)j/(float) bezierDetail;					// percent of bezier.
+	GLfloat *curveTriangles	= new GLfloat[ n * 6 ];
+	GLfloat *curveTrigColor	= new GLfloat[ n * 8 ];
+	
+	for( int j=j1; j<=j2; j++ )									// draw bezier connections.
+	{
+		int k = j - j1;
+		
+		float dt = j/(float) bezierDetail;						// percent of bezier.
 		
 		if( j == j1 )
 		{
 			prev = bernstein( dt, bezierPoints );			// generate new point.
+			
+			// lines.
+			curveLineStrip[ k * 3 + 0 ] = prev.x;
+			curveLineStrip[ k * 3 + 1 ] = prev.y;
+			curveLineStrip[ k * 3 + 2 ] = prev.z;
+			
+			curveColor[ k * 4 + 0 ]	= 1.0f;
+			curveColor[ k * 4 + 1 ]	= 1.0f;
+			curveColor[ k * 4 + 2 ]	= 1.0f;
+			curveColor[ k * 4 + 3 ]	= 1.0f;
+			
+			// triangles.
+			curveTriangles[ k * 6 + 0 ]  = prev.x;
+			curveTriangles[ k * 6 + 1 ]  = prev.y;
+			curveTriangles[ k * 6 + 2 ]  = prev.z;
+			curveTriangles[ k * 6 + 3 ]  = prev.x;
+			curveTriangles[ k * 6 + 4 ]  = prev.y;
+			curveTriangles[ k * 6 + 5 ]  = prev.z;
+			
+			curveTrigColor[ k * 8 + 0 ]  = 1.0;
+			curveTrigColor[ k * 8 + 1 ]  = 1.0;
+			curveTrigColor[ k * 8 + 2 ]  = 1.0;
+			curveTrigColor[ k * 8 + 3 ]  = 1.0;
+			curveTrigColor[ k * 8 + 4 ]  = 1.0;
+			curveTrigColor[ k * 8 + 5 ]  = 1.0;
+			curveTrigColor[ k * 8 + 6 ]  = 1.0;
+			curveTrigColor[ k * 8 + 7 ]  = 1.0;
 		}
 		else
 		{
 			next = bernstein( dt, bezierPoints );			// generate new point.
 			
-			up		= prev - next;
-			right	= up.cross( prev ).normalize();
-			look	= up.cross( right ).normalize();
-			right	= up.cross( look ).normalize();
+			// lines.
+			curveLineStrip[ k * 3 + 0 ] = next.x;
+			curveLineStrip[ k * 3 + 1 ] = next.y;
+			curveLineStrip[ k * 3 + 2 ] = next.z;
 			
-			float ss	= sin( dt * PI );					// sine width sale.
-			float xOff	= right.x * 6 * ss;
-			float yOff	= right.y * 6 * ss;
-			float zOff	= right.z * 6 * ss;
+			curveColor[ k * 4 + 0 ]	= 1.0f;
+			curveColor[ k * 4 + 1 ]	= 1.0f;
+			curveColor[ k * 4 + 2 ]	= 1.0f;
+			curveColor[ k * 4 + 3 ]	= 1.0f;
 			
-//			gl.glColor4f( 1, 0.75f * ss, 0.23f * ss, max( 0.2f, ss ) );
-//			gl.glNormal3f( look.x, look.y, look.z ); 						// not sure if this is right.
-//			gl.glVertex3f( prev.x - xOff, prev.y - yOff, prev.z - zOff );
-//			gl.glVertex3f( prev.x + xOff, prev.y + yOff, prev.z + zOff );
+			up		= next - prev;
+			right	= up.getCrossed( prev ).normalize();
+			look	= up.getCrossed( right ).normalize();
+			right	= up.getCrossed( look ).normalize();
+
+			float ss	= sin( dt * PI ) * curveWidth;			// sine width sale.
+			float xOff	= right.x * ss;
+			float yOff	= right.y * ss;
+			float zOff	= right.z * ss;
 			
-			/* draw line */
-			//gl.glVertex3d( nextPoint.x, nextPoint.y, nextPoint.z );	// draw vertex for point.
+			// triangles.
+			curveTriangles[ k * 6 + 0 ] = next.x - xOff;
+			curveTriangles[ k * 6 + 1 ] = next.y - yOff;
+			curveTriangles[ k * 6 + 2 ] = next.z - zOff;
+			curveTriangles[ k * 6 + 3 ] = next.x + xOff;
+			curveTriangles[ k * 6 + 4 ]	= next.y + yOff;
+			curveTriangles[ k * 6 + 5 ] = next.z + zOff;
+			
+			curveTrigColor[ k * 8 + 0 ] = 1.0;
+			curveTrigColor[ k * 8 + 1 ] = 1.0;
+			curveTrigColor[ k * 8 + 2 ] = 1.0;
+			curveTrigColor[ k * 8 + 3 ] = 1.0;
+			curveTrigColor[ k * 8 + 4 ] = 1.0;
+			curveTrigColor[ k * 8 + 5 ] = 1.0;
+			curveTrigColor[ k * 8 + 6 ] = 1.0;
+			curveTrigColor[ k * 8 + 7 ] = 1.0;
 			
 			prev = next;
 		}
 	}
-//	glEnd();
+	
+	drawCurveLineStrip( curveLineStrip, curveColor, n );
+	drawCurveTriangleStrip( curveTriangles, curveTrigColor, n * 2 );
+	
+	delete[] curveLineStrip;
+	delete[] curveColor;
+	delete[] curveTriangles;
+	delete[] curveTrigColor;
 }
 
+void CurveHop :: drawCurveLineStrip( GLfloat *vertex, GLfloat *color, int length )
+{
+	glVertexPointer( 3, GL_FLOAT, 0, &vertex[ 0 ] );
+	glColorPointer( 4, GL_FLOAT, 0, &color[ 0 ] );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	glDrawArrays( GL_LINE_STRIP, 0, length );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
+}
+
+void CurveHop :: drawCurveTriangleStrip( GLfloat *vertex, GLfloat *color, int length )
+{
+	glVertexPointer( 3, GL_FLOAT, 0, &vertex[ 0 ] );
+	glColorPointer( 4, GL_FLOAT, 0, &color[ 0 ] );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, length );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
+}
 
 ofxVec3f CurveHop :: bernstein( float u, float *bezPoints )
 {
