@@ -51,6 +51,8 @@ private :
 	void initCharacterContours();
 	void initCharacterVBOs();
 	
+	void tesselationBegin( GLint type );
+	
 	void calcRibbonLengths();
 	int  getCharacterIndex( int c );
 	void drawLetterWrap( int letter, float xOffset = 0, float yOffset = 0 );
@@ -76,6 +78,8 @@ private :
 	vector		<ofTTFCharacter> characterContours;
 	vector		<CharacterRect> characterRectangles;
 	int			contourStartIndex;
+	
+	GLUtesselator *tessObj;
 
 };
 
