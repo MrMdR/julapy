@@ -11,7 +11,23 @@
 
 #include "ofMain.h"
 #include "ofxCvHaarTracker.h"
+
 #include "Animation.h"
+#include "CarlaAnimation.h"
+#include "DaftPunkAnimation.h"
+#include "MarianneAnimation.h"
+#include "MarieAntoinetteAnimation.h"
+#include "SarkoAnimation.h"
+
+class Face
+{
+public :
+	int faceID;
+	int x, y, w, h;
+	int currentFrame;
+	bool found;
+	Animation *animation;
+};
 
 class testApp : public ofSimpleApp{
 
@@ -21,15 +37,13 @@ class testApp : public ofSimpleApp{
 		void update();
 		void draw();
 	
-		void loadCarlaWin();
-		void loadDaftPunkWin();
-		void loadMarianneWin();
+		void addFace( int faceID, int x, int y, int w, int h );
+		bool hasFace( int faceID );
+		void updateFace( int faceID, int x, int y, int w, int h );
+		void cullFaces();
+		void renderFaces();
 	
-		void drawCarlaWin( float x, float y, float w, float h );
-		void drawDaftPunkWin( float x, float y, float w, float h );
-		void drawMarianneWin( float x, float y, float w, float h );
-	
-		void keyPressed  (int key);
+		void keyPressed(int key);
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
@@ -48,9 +62,9 @@ class testApp : public ofSimpleApp{
 		float					sourceToSampleScale;
 		float					sampleToSourceScale;
 	
-		Animation		carla_win;
-		Animation		daftpunk_win;
-		Animation		marianne_win;
+		int						animationsTotal;
+		Animation				**animations;
+		vector<Face>			faces;
 };
 
 #endif
