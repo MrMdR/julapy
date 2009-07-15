@@ -12,8 +12,8 @@ int main( ){
 	
 	#else
 	
-		ofSetupOpenGL( 1600, 768, OF_WINDOW );
-		ofSetWindowPosition( -1280, 0 );
+		ofSetupOpenGL( 1280, 768, OF_WINDOW );
+//		ofSetWindowPosition( -1600, 0 );
 	
 	#endif
 	
