@@ -21,36 +21,13 @@ void testApp::setup()
 	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
 	haarTracker.setup( &haarFinder );
 	
-//	loadCarlaWin();
-//	loadDaftPunkWin();
-	loadMarianneWin();
-}
-
-void testApp :: loadCarlaWin()
-{
-	for( int i=0; i<72; i++ )
-	{
-		string imagePath = "animations/carla/carla_win" + ofToString( i ) + ".png";
-		carla_win.addImage( imagePath );
-	}
-}
-
-void testApp :: loadDaftPunkWin()
-{
-	for( int i=0; i<94; i++ )
-	{
-		string imagePath = "animations/daftpunk/daftpunk_win" + ofToString( i ) + ".png";
-		daftpunk_win.addImage( imagePath );
-	}
-}
-
-void testApp :: loadMarianneWin()
-{
-	for( int i=0; i<102; i++ )
-	{
-		string imagePath = "animations/marianne/marianne_win" + ofToString( i ) + ".png";
-		marianne_win.addImage( imagePath );
-	}
+	animationsTotal = 3;
+	animations		= new Animation *[ animationsTotal ];
+	animations[ 0 ] = new CarlaAnimation();
+	animations[ 1 ] = new DaftPunkAnimation();
+//	animations[ 0 ] = new MarianneAnimation();
+	animations[ 2 ] = new MarieAntoinetteAnimation();
+	animations[ 3 ] = new SarkoAnimation();
 }
 
 //--------------------------------------------------------------
@@ -75,10 +52,96 @@ void testApp::update()
 		
 		haarTracker.findHaarObjects( graySmallImage );
 	}
+}
+
+//--------------------------------------------------------------
+
+void testApp :: addFace( int faceID, int x, int y, int w, int h )
+{
+	int animationIndex = (int)ofRandom( 0, animationsTotal );
 	
-	carla_win.nextFrame();
-	daftpunk_win.nextFrame();
-	marianne_win.nextFrame();
+	faces.push_back( Face() );
+	faces.back().faceID			= faceID;
+	faces.back().x				= x;
+	faces.back().y				= y;
+	faces.back().w				= w;
+	faces.back().h				= h;
+	faces.back().currentFrame	= 0;
+	faces.back().found			= true;
+	faces.back().animation		= animations[ animationIndex ];
+}
+
+bool testApp :: hasFace( int faceID )
+{
+	bool found = false;
+	
+	for( int i=0; i<faces.size(); i++ )
+	{
+		if( faces.at( i ).faceID == faceID )
+		{
+			faces.at( i ).found = true;
+			found = true;
+			break;
+		}
+	}
+	
+	return found;
+}
+
+void testApp :: updateFace( int faceID, int x, int y, int w, int h )
+{
+	for( int i=0; i<faces.size(); i++ )
+	{
+		if( faces.at( i ).faceID == faceID )
+		{
+			faces.at( i ).x = x;
+			faces.at( i ).y = y;
+			faces.at( i ).w = w;
+			faces.at( i ).h = h;
+		}
+	}
+}
+
+void testApp :: cullFaces()
+{
+	for( int i=0; i<faces.size(); i++ )
+	{
+		if( faces.at( i ).found )
+		{
+			faces.at( i ).found = false;
+		}
+		else
+		{
+			faces.erase( faces.begin() + i );
+		}
+	}
+}
+
+void testApp :: renderFaces ()
+{
+	for( int i=0; i<faces.size(); i++ )
+	{
+		int currentFrame;
+		int totalFrames;
+		int faceX, faceY, faceW, faceH;
+		
+		currentFrame	= faces.at( i ).currentFrame;
+		totalFrames		= faces.at( i ).animation->totalFrames();
+		faceX			= faces.at( i ).x;
+		faceY			= faces.at( i ).y;
+		faceW			= faces.at( i ).w;
+		faceH			= faces.at( i ).h;
+
+		currentFrame += 1;
+		if( currentFrame > totalFrames - 1 )
+		{
+			currentFrame = 0;
+		}
+		
+		faces.at( i ).currentFrame = currentFrame;
+		faces.at( i ).animation->gotoFrame( currentFrame );
+		faces.at( i ).animation->draw( faceX, faceY, faceW, faceH );
+	}
 }
 
 //--------------------------------------------------------------
@@ -127,93 +190,24 @@ void testApp::draw()
 		y	*= sourceToSampleScale;
 		w	*= sourceToSampleScale;
 		h	*= sourceToSampleScale;
-
-		if( faceMode > 0.66 )
+		
+		if( hasFace( faceID ) )
 		{
-			//
-		}
-		else if( faceMode > 0.33 )
-		{
-			//
+			updateFace( faceID, x, y, w, h );
 		}
 		else
 		{
-			//
+			addFace( faceID, x, y, w, h );
 		}
-		
-		drawMarianneWin( x, y, w, h );
 	}
+	
+	cullFaces();
+	renderFaces();
 	
 	#ifdef DEBUG_MODE
 	#else
 		glPopMatrix();
 	#endif
-}
-
-void testApp :: drawCarlaWin ( float x, float y, float w, float h )
-{
-	float dx = 0.03;
-	float dy = -0.25;
-	float dw = 2.15;
-	float dh = 2.15;
-	float ws = h / carla_win.height() * carla_win.width();
-	float hs = w / carla_win.width() * carla_win.height();
-	
-	ofNoFill();
-	ofSetColor(0xFFFFFF);
-	ofEnableAlphaBlending();
-	carla_win.draw
-	(
-		x - w * ( dw - 1 ) * 0.5 + dx * w,
-		y - h * ( dh - 1 ) * 0.5 + dy * h,
-		w * dw,
-		hs * dh
-	);
-	ofDisableAlphaBlending();
-}
-
-void testApp :: drawDaftPunkWin( float x, float y, float w, float h )
-{
-	float dx = 0;
-	float dy = -0.4;
-	float dw = 1.9;
-	float dh = 2.0;
-	float ws = h / daftpunk_win.height() * daftpunk_win.width();
-	float hs = w / daftpunk_win.width() * daftpunk_win.height();
-	
-	ofNoFill();
-	ofSetColor(0xFFFFFF);
-	ofEnableAlphaBlending();
-	daftpunk_win.draw
-	(
-		x - w * ( dw - 1 ) * 0.5 + dx * w,
-		y - h * ( dh - 1 ) * 0.5 + dy * h,
-		w * dw,
-		hs * dh
-	);
-	ofDisableAlphaBlending();
-}
-
-void testApp :: drawMarianneWin( float x, float y, float w, float h )
-{
-	float dx = -1.28;
-	float dy = 0.7;
-	float dw = 4.8;
-	float dh = 4.8;
-	float ws = h / marianne_win.height() * marianne_win.width();
-	float hs = w / marianne_win.width() * marianne_win.height();
-	
-	ofNoFill();
-	ofSetColor(0xFFFFFF);
-	ofEnableAlphaBlending();
-	marianne_win.draw
-	(
-		x - w * ( dw - 1 ) * 0.5 + dx * w,
-		y - h * ( dh - 1 ) * 0.5 + dy * h,
-		w * dw,
-		hs * dh
-	);
-	ofDisableAlphaBlending();
 }
 
 //--------------------------------------------------------------

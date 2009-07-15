@@ -19,17 +19,19 @@ public :
 	Animation();
 	~Animation();
 	
-	void addImage( string imagePath );
-	void draw( int x, int y, int w, int h );
+	void addFrame( string imagePath );
+	virtual void draw( int x, int y, int w, int h );
 	void reset();
 	void nextFrame();
 	void prevFrame();
+	void gotoFrame( int frame );
+	int  totalFrames();
 	int  width();
 	int	 height();
 	
-private :
 	vector<ofImage>	images;
-	int				imageIndex;
+	int	imageIndex;
+	
 };
 
 #endif

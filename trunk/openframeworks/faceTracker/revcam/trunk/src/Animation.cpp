@@ -16,10 +16,10 @@ Animation :: Animation()
 
 Animation :: ~Animation()
 {
-
+	images.clear();
 }
 
-void Animation :: addImage( string imagePath )
+void Animation :: addFrame( string imagePath )
 {
 	images.push_back( ofImage() );
 	images.back().loadImage( imagePath );
@@ -54,11 +54,31 @@ void Animation :: prevFrame()
 	}
 }
 
+void Animation :: gotoFrame( int frame )
+{
+	if( frame < 0 )
+	{
+		frame = 0;
+	}
+	
+	if( frame > images.size() - 1 )
+	{
+		frame = images.size() - 1;
+	}
+	
+	imageIndex = frame;
+}
+
+int Animation :: totalFrames()
+{
+	return images.size();
+}
+
 int Animation :: width()
 {
 	if( images.size() > 0 )
 	{
-		return images.at( 0 ).width;
+		return images.at( imageIndex ).width;
 	}
 	else
 	{
@@ -70,7 +90,7 @@ int Animation :: height()
 {
 	if( images.size() > 0 )
 	{
-		return images.at( 0 ).height;
+		return images.at( imageIndex ).height;
 	}
 	else
 	{
