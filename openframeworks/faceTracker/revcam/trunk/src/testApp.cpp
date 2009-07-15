@@ -5,6 +5,7 @@
 void testApp::setup()
 {	 
 	ofSetVerticalSync( true );
+	ofSetFrameRate( 30 );
 	
 	vidGrabber.setVerbose( true );
 	vidGrabber.initGrabber( WIDTH, HEIGHT );
@@ -19,6 +20,37 @@ void testApp::setup()
 
 	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
 	haarTracker.setup( &haarFinder );
+	
+//	loadCarlaWin();
+//	loadDaftPunkWin();
+	loadMarianneWin();
+}
+
+void testApp :: loadCarlaWin()
+{
+	for( int i=0; i<72; i++ )
+	{
+		string imagePath = "animations/carla/carla_win" + ofToString( i ) + ".png";
+		carla_win.addImage( imagePath );
+	}
+}
+
+void testApp :: loadDaftPunkWin()
+{
+	for( int i=0; i<94; i++ )
+	{
+		string imagePath = "animations/daftpunk/daftpunk_win" + ofToString( i ) + ".png";
+		daftpunk_win.addImage( imagePath );
+	}
+}
+
+void testApp :: loadMarianneWin()
+{
+	for( int i=0; i<102; i++ )
+	{
+		string imagePath = "animations/marianne/marianne_win" + ofToString( i ) + ".png";
+		marianne_win.addImage( imagePath );
+	}
 }
 
 //--------------------------------------------------------------
@@ -43,6 +75,10 @@ void testApp::update()
 		
 		haarTracker.findHaarObjects( graySmallImage );
 	}
+	
+	carla_win.nextFrame();
+	daftpunk_win.nextFrame();
+	marianne_win.nextFrame();
 }
 
 //--------------------------------------------------------------
@@ -94,26 +130,90 @@ void testApp::draw()
 
 		if( faceMode > 0.66 )
 		{
-			ofSetColor( 0xFF0000 );
+			//
 		}
 		else if( faceMode > 0.33 )
 		{
-			ofSetColor( 0x00FF00 );
+			//
 		}
 		else
 		{
-			ofSetColor( 0x0000FF );
+			//
 		}
 		
-		ofNoFill();
-		ofSetLineWidth( 10 );
-		ofRect( x, y, w, h );
+		drawMarianneWin( x, y, w, h );
 	}
 	
 	#ifdef DEBUG_MODE
 	#else
 		glPopMatrix();
 	#endif
+}
+
+void testApp :: drawCarlaWin ( float x, float y, float w, float h )
+{
+	float dx = 0.03;
+	float dy = -0.25;
+	float dw = 2.15;
+	float dh = 2.15;
+	float ws = h / carla_win.height() * carla_win.width();
+	float hs = w / carla_win.width() * carla_win.height();
+	
+	ofNoFill();
+	ofSetColor(0xFFFFFF);
+	ofEnableAlphaBlending();
+	carla_win.draw
+	(
+		x - w * ( dw - 1 ) * 0.5 + dx * w,
+		y - h * ( dh - 1 ) * 0.5 + dy * h,
+		w * dw,
+		hs * dh
+	);
+	ofDisableAlphaBlending();
+}
+
+void testApp :: drawDaftPunkWin( float x, float y, float w, float h )
+{
+	float dx = 0;
+	float dy = -0.4;
+	float dw = 1.9;
+	float dh = 2.0;
+	float ws = h / daftpunk_win.height() * daftpunk_win.width();
+	float hs = w / daftpunk_win.width() * daftpunk_win.height();
+	
+	ofNoFill();
+	ofSetColor(0xFFFFFF);
+	ofEnableAlphaBlending();
+	daftpunk_win.draw
+	(
+		x - w * ( dw - 1 ) * 0.5 + dx * w,
+		y - h * ( dh - 1 ) * 0.5 + dy * h,
+		w * dw,
+		hs * dh
+	);
+	ofDisableAlphaBlending();
+}
+
+void testApp :: drawMarianneWin( float x, float y, float w, float h )
+{
+	float dx = -1.28;
+	float dy = 0.7;
+	float dw = 4.8;
+	float dh = 4.8;
+	float ws = h / marianne_win.height() * marianne_win.width();
+	float hs = w / marianne_win.width() * marianne_win.height();
+	
+	ofNoFill();
+	ofSetColor(0xFFFFFF);
+	ofEnableAlphaBlending();
+	marianne_win.draw
+	(
+		x - w * ( dw - 1 ) * 0.5 + dx * w,
+		y - h * ( dh - 1 ) * 0.5 + dy * h,
+		w * dw,
+		hs * dh
+	);
+	ofDisableAlphaBlending();
 }
 
 //--------------------------------------------------------------
