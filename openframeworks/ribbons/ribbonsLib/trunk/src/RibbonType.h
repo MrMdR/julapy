@@ -29,6 +29,14 @@ public :
 	int		*shapePointsLength;
 	float	*shapePoints;
 	GLuint	*shapeVBOs;
+
+	int		shapeFillTotal;
+	int		shapeFillPointsTotal;
+	int		*shapeFillIndex;
+	int		*shapeFillTypes;
+	int		*shapeFillPointsLength;
+	float	*shapeFillPoints;
+	GLuint	*shapeFillVBOs;
 };
 
 class RibbonType
@@ -44,26 +52,31 @@ public :
 	void drawTypeOnRibbon( string copy, float *ribbonPositionArray, float *ribbonDirectionArray, int ribbonSize );
 	void setKerning( float value );
 	void wrapRibbonSurface( bool value );
+	void fill();
+	void noFill();
 	
 private :
 	
 	void initCharacters();
 	void initCharacterContours();
-	void initCharacterVBOs();
-	
-	void tesselationBegin( GLint type );
+	void initCharacterRectangles();
+	void initCharacterVertices();
+	void initCharacterOutline();
+	void initCharacterFill();
 	
 	void calcRibbonLengths();
 	int  getCharacterIndex( int c );
 	void drawLetterWrap( int letter, float xOffset = 0, float yOffset = 0 );
 	void drawLetterAsPlane( int letter, float xOffset = 0, float yOffset = 0 );
-	void drawLetterFromVBO( int characterIndex );
+	void drawLetterOutline( int characterIndex );
+	void drawLetterFill( int characterIndex );
 	
 	ofTrueTypeFont font;
 	int		fontSize;
 	float	kerning;
 	bool	wrapSurface;
 	bool	useRibbonColorArray;
+	bool	useFill;
 	
 	float	*ribbonPositions;
 	float	*ribbonDirections;
@@ -75,12 +88,10 @@ private :
 	char		*characters;
 	CharShape	*charShapes;
 	GLuint		*charShapeVBOs;
+	GLuint		*charShapeFillVBOs;
 	vector		<ofTTFCharacter> characterContours;
 	vector		<CharacterRect> characterRectangles;
 	int			contourStartIndex;
-	
-	GLUtesselator *tessObj;
-
 };
 
 #endif
