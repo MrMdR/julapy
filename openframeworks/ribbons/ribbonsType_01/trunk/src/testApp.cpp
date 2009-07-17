@@ -6,7 +6,7 @@
 
 void testApp :: setup()
 {
-	ofSetFrameRate( 100 );
+	ofSetFrameRate( 60 );
 	ofSetVerticalSync( true );
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
@@ -44,11 +44,7 @@ void testApp :: setup()
 	sphericalField.setCenter( 0, 0, 0 );
 	sphericalField.setRadius( posSpread );
 	
-#ifdef USE_VBO
-	
 	initVBO();
-	
-#endif
 	
 //	colourMapImage.loadImage( "bw_map.jpg" );
 	colourMapImage.loadImage( "bw_red_map.jpg" );
@@ -69,8 +65,6 @@ void testApp :: setup()
 
 void testApp :: initVBO ()
 {
-#ifdef USE_VBO
-	
 	glGenBuffersARB( MAX_PARTICLES * 2, &vbo[ 0 ] );
 	
 	for( int i=0; i<MAX_PARTICLES; i++ )
@@ -81,8 +75,6 @@ void testApp :: initVBO ()
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, vbo[ i * 2 + 1 ] );
 		glBufferDataARB( GL_ARRAY_BUFFER_ARB, MAX_TRAIL_LENGTH * 4 * 2 * sizeof( float ), tcl[ i ], GL_STREAM_DRAW_ARB );
 	}
-	
-#endif
 }
 
 void testApp :: initRibbonType ()
@@ -184,7 +176,7 @@ void testApp :: update()
 			tvd[ i ][ 1 ] = v3.y;
 			tvd[ i ][ 2 ] = v3.z;
 			
-			float w		= 0.2;
+			float w		= 2.0;
 			float xOff	= v3.x * w;
 			float yOff	= v3.y * w;
 			float zOff	= v3.z * w;
@@ -260,22 +252,20 @@ void testApp :: draw()
 	glRotatef( rotateY, 0, 1, 0 );
 
 	ofEnableAlphaBlending();
+
 	if( showRibbonType )
-	{
 		drawRibbonType();
-	}
+//	drawRibbonFillVBO();
 	
-#ifdef USE_VBO
-	
-	drawRibbonFillVBO();
-	
-#else
+//	glScalef( 1, -1, 1 );
+//
+//	drawRibbonFillVBO();
+//	if( showRibbonType )
+//		drawRibbonType();
+
 	
 //	drawPoint();
 //	drawRibbonFill();
-	
-#endif
-	
 //	drawRibbonMesh();
 	
 	glPopMatrix();
@@ -394,8 +384,6 @@ void testApp :: drawRibbonMesh()
 
 void testApp :: drawRibbonFillVBO()
 {
-#ifdef USE_VBO
-	
 	for( int i=0; i<MAX_PARTICLES; i++ )
 	{
 		glEnableClientState( GL_VERTEX_ARRAY );
@@ -416,8 +404,6 @@ void testApp :: drawRibbonFillVBO()
 		
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 	}
-	
-#endif
 }
 
 void testApp :: drawRibbonType()
@@ -428,11 +414,11 @@ void testApp :: drawRibbonType()
 	{
 		if( trailCount > 0 )
 		{
-//			ofFill();
+//			ribbonType.noFill();
 //			ribbonType.setRibbinColorArray( tcl[ i ] );
 //			ribbonType.drawTypeOnRibbon( "hey bee do your thing with that sting", trl[ i ], tvd[ i ], trailCount );
 			
-			ofNoFill();
+			ribbonType.fill();
 			ribbonType.setRibbinColorArray( tcl[ i ] );
 			ribbonType.drawTypeOnRibbon( "hey bee do your thing with that sting", trl[ i ], tvd[ i ], trailCount );
 		}

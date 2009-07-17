@@ -10,8 +10,6 @@
 #define MAX_PARTICLES		100
 #define MAX_TRAIL_LENGTH	200
 
-#define USE_VBO
-
 class testApp : public ofBaseApp{
 
 	public:
