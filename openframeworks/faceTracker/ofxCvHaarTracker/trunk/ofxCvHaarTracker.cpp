@@ -27,11 +27,15 @@ ofxCvHaarFinder* ofxCvHaarTracker :: setup( string haarFile )
 {
 	haarFinder = new ofxCvHaarFinder();
 	haarFinder->setup( haarFile );
+	
+	return haarFinder;
 }
 
 ofxCvHaarFinder* ofxCvHaarTracker :: setup( ofxCvHaarFinder* hf )
 {
 	haarFinder = hf;
+	
+	return haarFinder;
 }
 
 void ofxCvHaarTracker :: findHaarObjects( ofxCvGrayscaleImage &image )
