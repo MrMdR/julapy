@@ -3,7 +3,9 @@
 
 //--------------------------------------------------------------
 void testApp::setup()
-{	 
+{
+	ofSetVerticalSync( true );
+	
 	vidGrabber.setVerbose(true);
 	vidGrabber.initGrabber( WIDTH, HEIGHT );
         
