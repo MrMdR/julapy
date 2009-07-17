@@ -5,6 +5,7 @@
 #include "SphericalField.h"
 #include "NoiseField.h"
 #include "ofxTileSaver.h"
+#include "RibbonAudio.h"
 
 #define MAX_PARTICLES		1000
 #define MAX_TRAIL_LENGTH	100
@@ -26,7 +27,8 @@ class testApp : public ofBaseApp{
 		void drawRibbonFillVBO();
 		void drawRibbonMesh();
 	
-		void keyPressed  (int key);
+		void audioReceived(float * input, int bufferSize, int nChannels );
+		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
@@ -54,6 +56,7 @@ class testApp : public ofBaseApp{
 		float	vel[ MAX_PARTICLES ][ 3 ];
 		float	col[ MAX_PARTICLES ][ 4 ];
 		float	trl[ MAX_PARTICLES ][ 3 * MAX_TRAIL_LENGTH ];		// trail position.
+		float	tvd[ MAX_PARTICLES ][ 3 * MAX_TRAIL_LENGTH ];		// trail vertex direction.
 		float	tvr[ MAX_PARTICLES ][ 3 * MAX_TRAIL_LENGTH * 2 ];	// trail vertexes.
 		float	tcl[ MAX_PARTICLES ][ 4 * MAX_TRAIL_LENGTH * 2 ];	// trail colour.
 		GLuint	vbo[ MAX_PARTICLES * 2 ];
@@ -63,6 +66,8 @@ class testApp : public ofBaseApp{
 		float		rotateY;
 	
 		ofxTileSaver	tileSaver;
+	
+		RibbonAudio		ribbonAudio;
 };
 
 #endif
