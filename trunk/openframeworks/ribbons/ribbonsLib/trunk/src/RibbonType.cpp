@@ -15,6 +15,7 @@ RibbonType :: RibbonType()
 	
 	setKerning( 1.0 );
 	wrapRibbonSurface( false );
+	noFill();
 }
 
 RibbonType :: ~RibbonType()
@@ -36,7 +37,13 @@ void RibbonType :: initCharacterContours ()
 	for( int i=0; i<charactersTotal; i++ )
 	{
 		characterContours.push_back( font.getCharacterAsPoints( characters[ i ] ) );
-		
+	}
+}
+
+void RibbonType :: initCharacterRectangles()
+{
+	for( int i=0; i<charactersTotal; i++ )
+	{
 		string str = "";
 		str += characters[ i ];
 		ofRectangle rect = font.getStringBoundingBox( str, 0, 0 );
@@ -46,11 +53,9 @@ void RibbonType :: initCharacterContours ()
 	}
 }
 
-void RibbonType :: initCharacterVBOs()
+void RibbonType :: initCharacterVertices()
 {
 	charShapes = new CharShape[ charactersTotal ];
-	
-	int vboTotal = 0;
 	
 	for( int i=0; i<charactersTotal; i++ )
 	{
@@ -65,7 +70,6 @@ void RibbonType :: initCharacterVBOs()
 		int shapePointsTotal	= 0;
 		
 		shapesTotal = ttfChar.contours.size();
-		vboTotal	+= shapesTotal;
 		for( int j=0; j<shapesTotal; j++ )
 		{
 			shapePointsTotal += ( ttfChar.contours[ j ].pts.size() + 1 ) * 3;
@@ -103,7 +107,18 @@ void RibbonType :: initCharacterVBOs()
 			shapeIndex += n;
 		}
 	}
-	
+}
+
+void RibbonType :: initCharacterOutline()
+{
+	int vboTotal = 0;
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		ofTTFCharacter ttfChar;
+		ttfChar		= characterContours.at( i );
+		vboTotal	+= ttfChar.contours.size();
+	}
+		
 	charShapeVBOs = new GLuint[ vboTotal ];
 	glGenBuffersARB( vboTotal, &charShapeVBOs[ 0 ] );
 	
@@ -123,26 +138,154 @@ void RibbonType :: initCharacterVBOs()
 			++vboIndex;
 		}
 	}
-	
-	tessObj = gluNewTess();
-//	gluTessCallback( tessObj, GLU_TESS_VERTEX,	( GLvoid (*) () ) &tesselationVertex );
-//	gluTessCallback( tessObj, GLU_TESS_BEGIN,	( GLvoid (*) () ) &tesselationBegin );
-//	gluTessCallback( tessObj, GLU_TESS_END,		( GLvoid (*) () ) &tesselationEnd );
-//	gluTessCallback( tessObj, GLU_TESS_ERROR,	( GLvoid (*) () ) &tesselationError );
-	
-	if( tessObj != NULL )
-	{
-		gluTessEndPolygon( tessObj );
-		gluDeleteTess(tessObj );
-		tessObj = NULL;
-	}
 }
 
-void RibbonType :: tesselationBegin( GLint type )
+////////////////////////////////////////////////////////////
+//	TESSELATION.
+////////////////////////////////////////////////////////////
+
+GLUtesselator *tessObj = NULL;
+std::vector <int> tessShapeFillIndex;
+std::vector <int> tessShapeFillTypes;
+std::vector <float> tessShapeFillPoints;
+
+void tesselationVertex( void *data );
+void tesselationBegin( GLint type );
+void tesselationEnd();
+
+void tesselationVertex( void *data )
+{
+	tessShapeFillPoints.push_back( ( (double *)data)[0] );
+	tessShapeFillPoints.push_back( ( (double *)data)[1] );
+	tessShapeFillPoints.push_back( ( (double *)data)[2] );
+}
+
+void tesselationBegin( GLint type )
+{
+	tessShapeFillIndex.push_back( tessShapeFillPoints.size() );
+	tessShapeFillTypes.push_back( type );
+}
+
+void tesselationEnd()
 {
 	//
 }
 
+void RibbonType :: initCharacterFill()
+{
+	int vboTotal = 0; 
+	
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		tessObj = gluNewTess();
+		gluTessCallback( tessObj, GLU_TESS_VERTEX,	(GLvoid(*)())&tesselationVertex );
+		gluTessCallback( tessObj, GLU_TESS_BEGIN,	(GLvoid(*)())&tesselationBegin );
+		gluTessCallback( tessObj, GLU_TESS_END,		(GLvoid(*)())&tesselationEnd );
+		
+		gluTessProperty( tessObj, GLU_TESS_WINDING_RULE, OF_POLY_WINDING_ODD );
+		gluTessProperty( tessObj, GLU_TESS_BOUNDARY_ONLY, false );
+		gluTessProperty( tessObj, GLU_TESS_TOLERANCE, 0 );
+		gluTessNormal( tessObj, 0.0, 0.0, 1.0 );
+		gluTessBeginPolygon( tessObj, NULL );
+		
+		vector <double*> shapePoints;
+		
+		for( int j=0; j<charShapes[ i ].shapesTotal; j++ )
+		{
+			int shapeIndex			= charShapes[ i ].shapeIndex[ j ];
+			int shapePointsLength	= charShapes[ i ].shapePointsLength[ j ];
+			
+			gluTessBeginContour( tessObj );
+			for( int k=shapeIndex; k<shapeIndex+shapePointsLength; k+=3 )
+			{
+				double *point = new double[ 3 ];
+				point[ 0 ] = charShapes[ i ].shapePoints[ k + 0 ];
+				point[ 1 ] = charShapes[ i ].shapePoints[ k + 1 ];
+				point[ 2 ] = charShapes[ i ].shapePoints[ k + 2 ];
+				
+				shapePoints.push_back( point );
+				
+				gluTessVertex( tessObj, point, point );
+			}
+			gluTessEndContour( tessObj );
+		}
+		
+		if( tessObj != NULL )
+		{
+			gluTessEndPolygon( tessObj );
+			gluDeleteTess( tessObj );
+			tessObj = NULL;
+		}
+		
+		for( vector<double*>::iterator itr=shapePoints.begin(); itr!=shapePoints.end(); ++itr )
+		{
+			delete [] (*itr);
+		}
+		shapePoints.clear();
+		
+		int tessShapesTotal			= tessShapeFillIndex.size();
+		int tessShapePointsTotal	= tessShapeFillPoints.size();
+		
+		charShapes[ i ].shapeFillTotal			= tessShapesTotal;
+		charShapes[ i ].shapeFillPointsTotal	= tessShapePointsTotal;
+		charShapes[ i ].shapeFillIndex			= new int[ tessShapesTotal ];
+		charShapes[ i ].shapeFillTypes			= new int[ tessShapesTotal ];
+		charShapes[ i ].shapeFillPointsLength	= new int[ tessShapesTotal ];
+		charShapes[ i ].shapeFillPoints			= new float[ tessShapePointsTotal ];
+		charShapes[ i ].shapeFillVBOs			= new GLuint[ tessShapesTotal ];
+
+		vboTotal += tessShapesTotal;
+		
+		for( int j=0; j<tessShapesTotal; j++ )
+		{
+			int shapeFillIndex			= tessShapeFillIndex.at( j );
+			int shapeFillTypes			= tessShapeFillTypes.at( j );
+			int shapeFillPointsLength	= 0;
+			
+			if( j < tessShapesTotal - 1 )
+			{
+				shapeFillPointsLength = tessShapeFillIndex.at( j + 1 ) - tessShapeFillIndex.at( j );
+			}
+			else
+			{
+				shapeFillPointsLength = tessShapeFillPoints.size() - tessShapeFillIndex.at( j );
+			}
+			
+			charShapes[ i ].shapeFillIndex[ j ]			= shapeFillIndex;
+			charShapes[ i ].shapeFillTypes[ j ]			= shapeFillTypes;
+			charShapes[ i ].shapeFillPointsLength[ j ]	= shapeFillPointsLength;
+		}
+		
+		for( int j=0; j<tessShapePointsTotal; j++ )
+		{
+			charShapes[ i ].shapeFillPoints[ j ] = tessShapeFillPoints.at( j );
+		}
+		
+		tessShapeFillIndex.clear();
+		tessShapeFillTypes.clear();
+		tessShapeFillPoints.clear();
+	}
+	
+	charShapeFillVBOs = new GLuint[ vboTotal ];
+	glGenBuffersARB( vboTotal, &charShapeFillVBOs[ 0 ] );
+	
+	int vboIndex = 0;
+	for( int i=0; i<charactersTotal; i++ )
+	{
+		for( int j=0; j<charShapes[ i ].shapeFillTotal; j++ )
+		{
+			int shapeFillIndex			= charShapes[ i ].shapeFillIndex[ j ];
+			int shapeFillPointsLength	= charShapes[ i ].shapeFillPointsLength[ j ];
+			
+			glBindBufferARB( GL_ARRAY_BUFFER_ARB, charShapeFillVBOs[ vboIndex ] );
+			glBufferDataARB( GL_ARRAY_BUFFER_ARB, shapeFillPointsLength * sizeof( float ), &(charShapes[ i ].shapeFillPoints[ shapeFillIndex ]), GL_STATIC_DRAW_ARB );
+			
+			charShapes[ i ].shapeFillVBOs[ j ] = vboIndex;
+			
+			++vboIndex;
+		}
+	}
+}
 
 ////////////////////////////////////////////////////////////
 //	LOAD / PREP FONT.
@@ -154,7 +297,10 @@ void RibbonType :: loadTrueTypeFont( string fontName, int size )
 	font.loadFont( fontName, fontSize, true, true, true );
 	
 	initCharacterContours();
-	initCharacterVBOs();
+	initCharacterRectangles();
+	initCharacterVertices();
+	initCharacterOutline();
+	initCharacterFill();
 }
 
 void RibbonType :: setRibbinColorArray( float *ribbonColorArray )
@@ -172,6 +318,14 @@ void RibbonType :: drawTypeOnRibbon( string copy, float *ribbonPositionArray, fl
 	contourStartIndex	= 0;
 	
 	calcRibbonLengths();
+	
+	if( !useFill )	// smooth.
+	{
+		glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+		glEnable( GL_LINE_SMOOTH );
+		glEnable( GL_BLEND );
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	}
 	
 	char *cstr;
 	cstr = new char[ copy.size() + 1 ];
@@ -402,7 +556,7 @@ void RibbonType :: drawLetterAsPlane( int letter, float xOffset, float yOffset )
 	
 	glPushMatrix();
 	
-	ofxVec3f upVec		= ofxVec3f( cd );;
+	ofxVec3f upVec		= cd;
 	ofxVec3f rightVec	= p21.getNormalized();
 	ofxVec3f outVec		= upVec.getCrossed( rightVec );
 	
@@ -434,12 +588,20 @@ void RibbonType :: drawLetterAsPlane( int letter, float xOffset, float yOffset )
 		glColor4f( ribbonColors[ k + 0 ], ribbonColors[ k + 1 ], ribbonColors[ k + 2 ], ribbonColors[ k + 3 ] );
 	}
 
-	drawLetterFromVBO( characterIndex );
+	if( useFill )
+	{
+		drawLetterFill( characterIndex );
+	}
+	else
+	{
+		drawLetterOutline( characterIndex );
+	}
+	
 	
 	glPopMatrix();
 }
 
-void RibbonType :: drawLetterFromVBO ( int characterIndex )
+void RibbonType :: drawLetterOutline ( int characterIndex )
 {
 	for( int i=0; i<charShapes[ characterIndex ].shapesTotal; i++ )
 	{
@@ -459,6 +621,27 @@ void RibbonType :: drawLetterFromVBO ( int characterIndex )
 	}
 }
 
+void RibbonType :: drawLetterFill ( int characterIndex )
+{
+	for( int i=0; i<charShapes[ characterIndex ].shapeFillTotal; i++ )
+	{
+		int vboIndex	= charShapes[ characterIndex ].shapeFillVBOs[ i ];
+		int vboType		= charShapes[ characterIndex ].shapeFillTypes[ i ];
+		int vboLendth	= charShapes[ characterIndex ].shapeFillPointsLength[ i ] / 3;
+		
+		glEnableClientState( GL_VERTEX_ARRAY );
+		
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB, charShapeFillVBOs[ vboIndex ] );
+		glVertexPointer( 3, GL_FLOAT, 0, 0 );
+		
+		glDrawArrays( vboType, 0, vboLendth );
+		
+		glDisableClientState( GL_VERTEX_ARRAY );
+		
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+	}
+}
+
 ////////////////////////////////////////////////////////////
 //	SETTERS.
 ////////////////////////////////////////////////////////////
@@ -471,4 +654,14 @@ void RibbonType :: setKerning( float value )
 void RibbonType :: wrapRibbonSurface( bool value )
 {
 	wrapSurface = value;
+}
+
+void RibbonType :: fill()
+{
+	useFill = true;
+}
+
+void RibbonType :: noFill()
+{
+	useFill = false;
 }
