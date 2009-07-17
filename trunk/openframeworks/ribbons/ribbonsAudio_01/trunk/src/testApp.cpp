@@ -61,6 +61,8 @@ void testApp :: setup()
 	tileSaver.init( 10, 0, true );
 	
 	useAdditiveBlending = false;
+	
+	ofSoundStreamSetup( 0, 2, this, 44100, ribbonAudio.getBufferSize(), 4 );
 }
 
 void testApp :: initVBO ()
@@ -131,11 +133,16 @@ void testApp :: update()
 		// TRAIL VERTEX.
 		if( trailIndex > 0 )
 		{
+			memmove( tvd[ i ] + 3, tvd[ i ], 3 * j * sizeof(float) );
 			memmove( tvr[ i ] + 6, tvr[ i ], 6 * j * sizeof(float) );
 		}
 			
 		if( trailIndex == 0 )
 		{
+			tvd[ i ][ 0 ] = 0;
+			tvd[ i ][ 1 ] = 0;
+			tvd[ i ][ 2 ] = 0;
+			
 			tvr[ i ][ 0 ] = pos[ i ][ 0 ];
 			tvr[ i ][ 1 ] = pos[ i ][ 1 ];
 			tvr[ i ][ 2 ] = pos[ i ][ 2 ];
@@ -164,6 +171,10 @@ void testApp :: update()
 			ofxVec3f ya = ofxVec3f( upAxis );
 			ofxVec3f v2 = ya.cross( v1 );
 			ofxVec3f v3 = v1.cross( v2 ).normalize();
+			
+			tvd[ i ][ 0 ] = v3.x;
+			tvd[ i ][ 1 ] = v3.y;
+			tvd[ i ][ 2 ] = v3.z;
 			
 			float w		= 2;
 			float xOff	= v3.x * w;
@@ -398,6 +409,11 @@ void testApp :: drawRibbonFillVBO()
 //////////////////////////////////////////////
 //	HANDLERS.
 //////////////////////////////////////////////
+
+void testApp :: audioReceived( float * input, int bufferSize, int nChannels )
+{
+	ribbonAudio.audioReceived( input, bufferSize, nChannels );
+}
 
 void testApp :: keyPressed( int key )
 {
