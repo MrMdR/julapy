@@ -25,6 +25,8 @@ public :
 	int faceID;
 	int x, y, w, h;
 	int currentFrame;
+	int idleCount;
+	int idleCountLimit;
 	bool found;
 	Animation *animation;
 };

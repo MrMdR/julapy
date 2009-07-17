@@ -21,7 +21,7 @@ void testApp::setup()
 	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
 	haarTracker.setup( &haarFinder );
 	
-	animationsTotal = 3;
+	animationsTotal = 4;
 	animations		= new Animation *[ animationsTotal ];
 	animations[ 0 ] = new CarlaAnimation();
 	animations[ 1 ] = new DaftPunkAnimation();
@@ -67,6 +67,8 @@ void testApp :: addFace( int faceID, int x, int y, int w, int h )
 	faces.back().w				= w;
 	faces.back().h				= h;
 	faces.back().currentFrame	= 0;
+	faces.back().idleCount		= 0;
+	faces.back().idleCountLimit	= 100;
 	faces.back().found			= true;
 	faces.back().animation		= animations[ animationIndex ];
 }
