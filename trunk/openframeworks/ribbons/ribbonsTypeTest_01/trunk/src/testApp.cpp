@@ -113,12 +113,12 @@ void testApp::draw()
 //	drawRibbonFill();
 	drawRibbonMesh();
 	
-	ofFill();
 	ofSetColor( 0, 0, 0 );
+	ribbonType.fill();
 	ribbonType.drawTypeOnRibbon( "hello ribbonsss", rps, rvd, RIBBON_MAX_LENGTH );
 
-	ofNoFill();
 	ofSetColor( 0, 0, 0 );
+	ribbonType.noFill();
 	ribbonType.drawTypeOnRibbon( "hello ribbonsss", rps, rvd, RIBBON_MAX_LENGTH );
 	
 	if( screenGrabUtil.isRecording() )
