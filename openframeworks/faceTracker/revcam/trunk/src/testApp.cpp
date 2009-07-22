@@ -22,7 +22,7 @@ void testApp::setup()
 	haarTracker.setup( &haarFinder );
 	
 	animationsTotal = 4;
-	animations		= new Animation *[ animationsTotal ];
+	animations		= new ofxFrameAnimation *[ animationsTotal ];
 	animations[ 0 ] = new CarlaAnimation();
 	animations[ 1 ] = new DaftPunkAnimation();
 //	animations[ 0 ] = new MarianneAnimation();

@@ -7,9 +7,9 @@
  *
  */
 
-#include "Animation.h"
+#include "ofxFrameAnimation.h"
 
-class SarkoAnimation: public Animation
+class SarkoAnimation: public ofxFrameAnimation
 {
 		
 public :
