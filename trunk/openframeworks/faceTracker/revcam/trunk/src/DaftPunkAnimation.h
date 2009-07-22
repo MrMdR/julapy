@@ -7,9 +7,9 @@
  *
  */
 
-#include "Animation.h"
+#include "ofxFrameAnimation.h"
 
-class DaftPunkAnimation: public Animation
+class DaftPunkAnimation: public ofxFrameAnimation
 {
 		
 public :

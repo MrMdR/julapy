@@ -12,7 +12,7 @@
 #include "ofMain.h"
 #include "ofxCvHaarTracker.h"
 
-#include "Animation.h"
+#include "ofxFrameAnimation.h"
 #include "CarlaAnimation.h"
 #include "DaftPunkAnimation.h"
 #include "MarianneAnimation.h"
@@ -28,7 +28,7 @@ public :
 	int idleCount;
 	int idleCountLimit;
 	bool found;
-	Animation *animation;
+	ofxFrameAnimation *animation;
 };
 
 class testApp : public ofSimpleApp{
@@ -65,7 +65,7 @@ class testApp : public ofSimpleApp{
 		float					sampleToSourceScale;
 	
 		int						animationsTotal;
-		Animation				**animations;
+		ofxFrameAnimation		**animations;
 		vector<Face>			faces;
 };
 
