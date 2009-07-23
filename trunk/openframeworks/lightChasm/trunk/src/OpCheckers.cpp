@@ -35,18 +35,33 @@ void OpCheckers :: update()
 
 void OpCheckers :: draw()
 {
-	float dx = 0;
-	float dy = 0;
-	int xi = 0;
-	int yi = 0;
-	
 	ofFill();
 	
-	while( dx < width + size )
+	int cx = ceil( width * 0.5 / size );
+	int cy = ceil( height * 0.5 / size );
+	
+	float dx = width * 0.5 - cx * size;
+	float dy = height * 0.5 - cy * size;
+	
+	int ix = 0;
+	int iy = 0;
+	
+	bool odd = true;
+	if( ( cx % 2 == 0 && cy % 2 != 0 )  || ( cx % 2 != 0 && cy % 2 == 0 ) )
 	{
-		while( dy < height + size )
+		odd = false;
+	}
+	
+	if( odd )
+	{
+		iy = 1;
+	}
+	
+	for( int x=0; x<=cx*2; x++ )
+	{
+		for( int y=0; y<=cy*2; y++ )
 		{
-			if( yi % 2 == 0 )
+			if( iy % 2 == 0 )
 			{
 				ofSetColor( 0x000000 );
 			}
@@ -55,24 +70,31 @@ void OpCheckers :: draw()
 				ofSetColor( 0xFFFFFF );
 			}
 				
-			ofRect( dx, dy, size, size );
+			ofRect
+			(
+				dx + x * size,
+				dy + y * size,
+				size,
+				size
+			);
 			
-			dy += size;
-			yi += 1;
+			iy += 1;
 		}
 		
-		dy = 0;
-		if( xi % 2 == 0 )
+		if( ix % 2 == 0 )
 		{
-			yi = 1;
+			iy = 1;
+			if( odd )
+				iy = 0;
 		}
 		else
 		{
-			yi = 0;
+			iy = 0;
+			if( odd )
+				iy = 1;
 		}
 		
-		dx += size;
-		xi += 1;
+		ix += 1;
 	}
 }
 

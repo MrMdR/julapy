@@ -77,7 +77,7 @@ void OpCirlce :: setRgbScale( float r, float g, float b )
 	gScale = g;
 	bScale = b;
 	
-	printf( "rScale: %4.2f gScale: %4.2f bScale: %4.2f \n", rScale, gScale, bScale );
+//	printf( "rScale: %4.2f gScale: %4.2f bScale: %4.2f \n", rScale, gScale, bScale );
 }
 
 void OpCirlce :: update()
