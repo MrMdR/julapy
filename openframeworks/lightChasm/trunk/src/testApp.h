@@ -3,7 +3,6 @@
 
 
 #include "ofMain.h"
-#include "ofEvents.h"
 #include "LiveAudioIn.h"
 #include "DataNormaliser.h"
 #include "OpCirlce.h"
@@ -11,7 +10,6 @@
 #include "OpCheckers.h"
 #include "OpScope.h"
 
-//#include "OscPad.h"
 #include "OscReceiver.h"
 #include "TouchOscLayout01.h"
 
@@ -34,8 +32,6 @@ class testApp : public ofBaseApp{
 		void updateOsc();
 		void updateVideo();
 	
-		void oscPadChangeEvent( int &x );
-	
 		void keyPressed  (int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -47,27 +43,24 @@ class testApp : public ofBaseApp{
 		void audioReceived( float * input, int bufferSize, int nChannels );
 
 		ofxOscReceiver	oscReceiver;
-//		OscPad			oscPad;
-		float			slider01;
-		float			slider02;
-		float			slider03;
-		float			slider04;
-		float			slider05;
-		float			slider06;
-	
 		OscReceiver		oscRcvr;
 	
 		OpCirlce	opCirlce;
 		int			opCirlceWidth;
 		int			opCirlceHeight;
 		int			opCirlceRes;
+		float		opCirlceResScale;
 		float		opCirlceRot;
+		float		opCirlceRotScale;
+		float		opCirlceColor;
 	
 		OpBars		opBars;
 		float		opBarsAudioAvgMin;
+		float		opBarsAudioAvgMinScale;
 	
 		OpCheckers	opCheckers;
 		float		opCheckersSize;
+		float		opCheckersSizeScale;
 	
 		OpScope		opScope;
 	

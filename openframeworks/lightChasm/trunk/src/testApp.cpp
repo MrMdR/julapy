@@ -1,17 +1,13 @@
 #include "testApp.h"
-#include "Poco/Delegate.h"
-#include "Poco/Timestamp.h"
 
 void testApp::setup()
 {
-	ofSetFrameRate( 25 );
+	ofSetFrameRate( 30 );
 	ofBackground( 255, 255, 255 );
 	ofEnableSmoothing();
 	ofSetCircleResolution( 100 );
-//	ofSetVerticalSync( true );
+	ofSetVerticalSync( true );
 	ofSoundStreamSetup( 0, 2, this, 44100, 512, 4 );
-	
-//	ofAddListener( oscPad.oscPadChangeEvent, this, &testApp :: oscPadChangeEvent );
 	
 	initAudioIn();
 	initOsc();
@@ -36,19 +32,22 @@ void testApp :: initOsc ()
 {
 	oscReceiver.setup( 12345 );
 	
-//	oscPad.init( &oscReceiver );
-//	oscPad.setOrientation( );
-//	oscPad.setOffOnRelease( false );
-//	oscPad.setExclusiveMode( true );
-	
 	oscRcvr.init( &oscReceiver );
-	oscRcvr.addInput( "/1/fader0", &opCheckersSize );
+	oscRcvr.addInput( "/1/fader0", &opCheckersSizeScale );
+//	oscRcvr.addInput( "/1/fader1", & );
+	oscRcvr.addInput( "/1/fader2", &opBarsAudioAvgMinScale );
+	oscRcvr.addInput( "/1/fader3", &opCirlceResScale );
+	oscRcvr.addInput( "/1/fader4", &opCirlceRotScale );
+	oscRcvr.addInput( "/1/fader5", &opCirlceColor );
 }
 
 void testApp :: initOpCheckers ()
 {
+	opCheckersSize		= 150;
+	opCheckersSizeScale	= 0.5f;
+	
 	opCheckers.init( 640, 480 );
-	opCheckers.setSize( opCheckersSize = 30 );
+	opCheckers.setSize( opCheckersSize * opCheckersSizeScale );
 }
 
 void testApp :: initOpScope ()
@@ -64,20 +63,27 @@ void testApp :: initOpCircle ()
 	float rx = opCirlceWidth / 2.0f;
 	float ry = opCirlceHeight / 2.0f;
 	
+	opCirlceRot			= 0.0f;
+	opCirlceRotScale	= 0.0f;
+	opCirlceRes			= MIN_CIRCLE_PTS;
+	opCirlceResScale	= 0.5f;
+	opCirlceColor		= 0.0f;
+	
 	opCirlce.x		= rx;
 	opCirlce.y		= ry;
 	opCirlce.radius	= sqrt( rx * rx + ry * ry ) * 1.5f;
-	opCirlce.setCirlceResolution( opCirlceRes = 10 );
-	opCirlce.setRotation( opCirlceRot = 0 );
+	opCirlce.setCirlceResolution( opCirlceRes = (int)( opCirlceResScale * MAX_CIRCLE_PTS ) );
+	opCirlce.setRotation( opCirlceRot );
 }
 
 void testApp :: initOpBars ()
 {
-	opBarsAudioAvgMin = 15;
+	opBarsAudioAvgMin		= 60;
+	opBarsAudioAvgMinScale	= 0.5f;
 	
 	opBars.init( 640, 480 );
 	opBars.setNumberOfBars( audioIn.averagesTotal );
-	opBars.setAudioAvgMin( opBarsAudioAvgMin );
+	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
 }
 
 void testApp :: initVideos ()
@@ -85,15 +91,7 @@ void testApp :: initVideos ()
 	videoIndex	= 0;
 	videosTotal	= 3;
 	
-	videos		= new ofVideoPlayer[ videosTotal ];
-//	videos[ 0 ].loadMovie( "squares_640x480.mov" );
-//	videos[ 1 ].loadMovie( "koyaanisqatsi_sky_04_white_on_black.mov" );
-//	videos[ 2 ].loadMovie( "clouds_white_on_black.mov" );
-
-//	videos[ 0 ].loadMovie( "nionr_01.mov" );
-//	videos[ 1 ].loadMovie( "nionr_02.mov" );
-//	videos[ 2 ].loadMovie( "nionr_04.mov" );
-
+	videos = new ofVideoPlayer[ videosTotal ];
 	videos[ 0 ].loadMovie( "flight_01.mov" );
 	videos[ 1 ].loadMovie( "nionr_02.mov" );
 	videos[ 2 ].loadMovie( "flight_02.mov" );
@@ -122,24 +120,22 @@ void testApp::update()
 	
 	opScope.update( videos[ videoIndex ].getPixels() );
 	
-	opCirlce.setRotation( opCirlceRot += 0.1 );
+	opCirlce.setRotation( opCirlceRot += opCirlceRotScale * 1.0 + 0.1 );
 	opCirlce.setAudioInValue( avgPowerScaled );
-	opCirlce.setRgbScale( slider01, slider02, slider03 );
-	opCirlce.setCirlceResolution( opCirlceRes = slider05 * 200 );
+	opCirlce.setRgbScale( opCirlceColor, opCirlceColor, opCirlceColor );
+	opCirlce.setCirlceResolution( opCirlceRes = (int)( opCirlceResScale * ( ( MAX_CIRCLE_PTS - 1 ) * 0.5 ) ) * 2 );
 	opCirlce.update();
 
-	opBars.setAudioAvgMin( opBarsAudioAvgMin = slider04 * 100 );
+	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
 	opBars.setAudioInData( audioIn.averages );
 	opBars.update();
 	
-	opCheckers.setSize( opCheckersSize * 100 );
+	opCheckers.setSize( MAX( 3, opCheckersSize * opCheckersSizeScale ) );
 	opCheckers.update();
 }
 
 void testApp :: updateOsc ()
 {
-//	oscPad.update();
-//	
 //	if( oscPad.getButtonState( 1, 1 ) )
 //	{
 //		videoPlayStates[ 0 ]	= true;
@@ -160,13 +156,6 @@ void testApp :: updateOsc ()
 //		videoPlayStates[ 1 ]	= false;
 //		videoPlayStates[ 2 ]	= true;
 //	}
-//	
-//	slider01 = oscPad.getSliderValue( 1 );
-//	slider02 = oscPad.getSliderValue( 2 );
-//	slider03 = oscPad.getSliderValue( 3 );
-//	slider04 = oscPad.getSliderValue( 4 );
-//	slider05 = oscPad.getSliderValue( 5 );
-//	slider06 = oscPad.getSliderValue( 6 );
 	
 	oscRcvr.ping();
 }
@@ -220,59 +209,8 @@ void testApp::draw()
 
 //--------------------------------------------------------------
 
-void testApp :: oscPadChangeEvent ( int &x )
-{
-//	printf( "x: %d y: %d\n", x, y );
-	printf( "x: %d \n", x );
-}
-
 void testApp :: keyPressed(int key)
 {
-	if( key == ',' )
-	{
-		opCirlce.setCirlceResolution( opCirlceRes -= 2 );
-	}
-	
-	if( key == '.' )
-	{
-		opCirlce.setCirlceResolution( opCirlceRes += 2 );
-	}
-	
-	if( key == 'l' )
-	{
-		opCirlce.setRotation( opCirlceRot += 0.1 );
-	}
-	
-	if( key == ';' )
-	{
-		opCirlce.setRotation( opCirlceRot -= 0.1 );
-	}
-	
-	if( key == 'n' )
-	{
-		opBars.setAudioAvgMin( opBarsAudioAvgMin -= 1 );
-	}
-
-	if( key == 'm' )
-	{
-		opBars.setAudioAvgMin( opBarsAudioAvgMin += 1 );
-	}
-	
-	if( key == 'j' )
-	{
-		opCheckers.setSize( opCheckersSize -= 1 );
-	}
-
-	if( key == 'k' )
-	{
-		opCheckers.setSize( opCheckersSize += 1 );
-	}
-	
-	if( key == 'i' )
-	{
-		opCirlce.setInverse();
-	}
-	
 	if( key == '1' )
 	{
 		videoPlayStates[ 0 ]	= true;
