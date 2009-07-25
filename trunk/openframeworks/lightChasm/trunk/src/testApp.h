@@ -5,13 +5,25 @@
 #include "ofMain.h"
 #include "LiveAudioIn.h"
 #include "DataNormaliser.h"
+
 #include "OpCirlce.h"
 #include "OpBars.h"
 #include "OpCheckers.h"
 #include "OpScope.h"
+#include "OpParticleRain.h"
 
 #include "OscReceiver.h"
 #include "TouchOscLayout01.h"
+
+class VideoObj
+{
+public :		
+	ofVideoPlayer	video;
+	float			duration;
+	float			startTime;
+	bool			playing;
+	bool			oscPlaying;
+};
 
 class testApp : public ofBaseApp{
 
@@ -27,10 +39,13 @@ class testApp : public ofBaseApp{
 		void initOpCheckers();
 		void initOpCircle();
 		void initOpBars();
+		void initOpRain();
 		void initVideos();
 	
 		void updateOsc();
 		void updateVideo();
+	
+		void drawVideos();
 	
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -62,15 +77,18 @@ class testApp : public ofBaseApp{
 		float		opCheckersSize;
 		float		opCheckersSizeScale;
 	
+		OpParticleRain opRain;
+	
 		OpScope		opScope;
 	
 		LiveAudioIn		audioIn;
 		DataNormaliser	audioInAvgPower;
 	
-		ofVideoPlayer	*videos;
-		bool			*videoPlayStates;
-		int				videosTotal;
-		int				videoIndex;
+		VideoObj	*videos;
+		int			videosTotal;
+		bool		videoPositionOverride;
+		float		videoPositionOsc;
+		float		videoPosition;
 };
 
 #endif
