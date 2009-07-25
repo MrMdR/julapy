@@ -10,12 +10,13 @@ void testApp::setup()
 	ofSoundStreamSetup( 0, 2, this, 44100, 512, 4 );
 	
 	initAudioIn();
-	initOsc();
 	initOpScope();
 	initOpCheckers();
 	initOpCircle();
 	initOpBars();
+	initOpRain();
 	initVideos();
+	initOsc();
 }
 
 ///////////////////////////////////////////////////
@@ -26,19 +27,6 @@ void testApp :: initAudioIn ()
 {
 	audioIn.init();
 	audioInAvgPower.init();
-}
-
-void testApp :: initOsc ()
-{
-	oscReceiver.setup( 12345 );
-	
-	oscRcvr.init( &oscReceiver );
-	oscRcvr.addInput( "/1/fader0", &opCheckersSizeScale );
-//	oscRcvr.addInput( "/1/fader1", & );
-	oscRcvr.addInput( "/1/fader2", &opBarsAudioAvgMinScale );
-	oscRcvr.addInput( "/1/fader3", &opCirlceResScale );
-	oscRcvr.addInput( "/1/fader4", &opCirlceRotScale );
-	oscRcvr.addInput( "/1/fader5", &opCirlceColor );
 }
 
 void testApp :: initOpCheckers ()
@@ -86,22 +74,49 @@ void testApp :: initOpBars ()
 	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
 }
 
+void testApp :: initOpRain()
+{
+	opRain.init( 640, 480 );
+}
+
 void testApp :: initVideos ()
 {
-	videoIndex	= 0;
-	videosTotal	= 3;
+	videosTotal				= 3;
+	videoPosition			= 0;
+	videoPositionOsc		= 0;
+	videoPositionOverride	= false;
 	
-	videos = new ofVideoPlayer[ videosTotal ];
-	videos[ 0 ].loadMovie( "flight_01.mov" );
-	videos[ 1 ].loadMovie( "nionr_02.mov" );
-	videos[ 2 ].loadMovie( "flight_02.mov" );
+	videos = new VideoObj[ videosTotal ];
+	videos[ 0 ].video.loadMovie( "flight_01.mov" );
+	videos[ 1 ].video.loadMovie( "nionr_02.mov" );
+	videos[ 2 ].video.loadMovie( "flight_02.mov" );
 	
-	videos[ 0 ].play();
+	for( int i=0; i<videosTotal; i++ )
+	{
+		videos[ i ].video.setPaused( true );
+		videos[ i ].duration	= videos[ i ].video.getDuration();
+		videos[ i ].startTime	= 0;
+		videos[ i ].playing		= false;
+		videos[ i ].oscPlaying	= false;
+	}
+}
+
+void testApp :: initOsc ()
+{
+	oscReceiver.setup( 12345 );
 	
-	videoPlayStates			= new bool[ videosTotal ];
-	videoPlayStates[ 0 ]	= true;
-	videoPlayStates[ 1 ]	= false;
-	videoPlayStates[ 2 ]	= false;
+	oscRcvr.init( &oscReceiver );
+	oscRcvr.addInput( "/1/fader0", &opCheckersSizeScale );
+	oscRcvr.addInput( "/1/fader1", &videoPositionOsc );
+	oscRcvr.addInput( "/1/fader2", &opBarsAudioAvgMinScale );
+	oscRcvr.addInput( "/1/fader3", &opCirlceResScale );
+	oscRcvr.addInput( "/1/fader4", &opCirlceRotScale );
+	oscRcvr.addInput( "/1/fader5", &opCirlceColor );
+	
+	oscRcvr.addInput( "/1/toggle1", &videos[ 0 ].oscPlaying );
+	oscRcvr.addInput( "/1/toggle2", &videos[ 1 ].oscPlaying );
+	oscRcvr.addInput( "/1/toggle3", &videos[ 2 ].oscPlaying );
+	oscRcvr.addInput( "/1/toggle4", &videoPositionOverride );
 }
 
 ///////////////////////////////////////////////////
@@ -118,8 +133,6 @@ void testApp::update()
 	
 	updateVideo();
 	
-	opScope.update( videos[ videoIndex ].getPixels() );
-	
 	opCirlce.setRotation( opCirlceRot += opCirlceRotScale * 1.0 + 0.1 );
 	opCirlce.setAudioInValue( avgPowerScaled );
 	opCirlce.setRgbScale( opCirlceColor, opCirlceColor, opCirlceColor );
@@ -132,48 +145,48 @@ void testApp::update()
 	
 	opCheckers.setSize( MAX( 3, opCheckersSize * opCheckersSizeScale ) );
 	opCheckers.update();
+	
+	opRain.update();
 }
 
 void testApp :: updateOsc ()
 {
-//	if( oscPad.getButtonState( 1, 1 ) )
-//	{
-//		videoPlayStates[ 0 ]	= true;
-//		videoPlayStates[ 1 ]	= false;
-//		videoPlayStates[ 2 ]	= false;
-//	}
-//	
-//	if( oscPad.getButtonState( 2, 1 ) )
-//	{
-//		videoPlayStates[ 0 ]	= false;
-//		videoPlayStates[ 1 ]	= true;
-//		videoPlayStates[ 2 ]	= false;
-//	}
-//	
-//	if( oscPad.getButtonState( 3, 1 ) )
-//	{
-//		videoPlayStates[ 0 ]	= false;
-//		videoPlayStates[ 1 ]	= false;
-//		videoPlayStates[ 2 ]	= true;
-//	}
-	
 	oscRcvr.ping();
 }
 
 void testApp :: updateVideo ()
 {
+	videoPosition += ( videoPositionOsc - videoPosition ) * 0.02;
+	
 	for( int i=0; i<videosTotal; i++ )
 	{
-		if( !videoPlayStates[ i ] && videoIndex == i )
+		if( videos[ i ].playing != videos[ i ].oscPlaying )	// osc toggle button has changed.
 		{
-			videos[ i ].stop();
+			videos[ i ].playing = videos[ i ].oscPlaying;
+			
+			if( videos[ i ].playing )
+			{
+				videos[ i ].startTime = ofGetElapsedTimef();
+			}
 		}
 		
-		if( videoPlayStates[ i ] && videoIndex != i )
+		if( videos[ i ].playing )
 		{
-			videoIndex = i;
-			videos[ i ].setPosition( 0 );
-			videos[ i ].play();
+			float t = ( ofGetElapsedTimef() - videos[ i ].startTime ) / videos[ i ].duration;
+			if( t > 1 )
+			{
+				t = 0;
+				videos[ i ].startTime = ofGetElapsedTimef();
+			}
+			
+			if( videoPositionOverride )
+			{
+				videos[ i ].video.setPosition( videoPosition );
+			}
+			else
+			{
+				videos[ i ].video.setPosition( t );
+			}
 		}
 	}
 }
@@ -184,15 +197,17 @@ void testApp :: updateVideo ()
 
 void testApp::draw()
 {
-	ofSetColor( 0xFFFFFF );
-
+	opRain.drawToFBO();
+	opCirlce.drawToFBO();
+	
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR );
-
-	opScope.draw();
-	opCheckers.draw();	
+	
+	drawVideos();
+	opCheckers.draw();
 	opBars.draw();
-	opCirlce.draw();
+	opCirlce.drawFBOToScreen();
+	opRain.drawFBOToScreen();
 	
 	glDisable( GL_BLEND );
 
@@ -207,30 +222,23 @@ void testApp::draw()
 	);
 }
 
+void testApp :: drawVideos()
+{
+	for( int i=0; i<videosTotal; i++ )
+	{
+		if( videos[ i ].playing )
+		{
+			opScope.update( videos[ i ].video.getPixels() );
+			opScope.draw();
+		}
+	}
+}
+
 //--------------------------------------------------------------
 
 void testApp :: keyPressed(int key)
 {
-	if( key == '1' )
-	{
-		videoPlayStates[ 0 ]	= true;
-		videoPlayStates[ 1 ]	= false;
-		videoPlayStates[ 2 ]	= false;
-	}
-
-	if( key == '2' )
-	{
-		videoPlayStates[ 0 ]	= false;
-		videoPlayStates[ 1 ]	= true;
-		videoPlayStates[ 2 ]	= false;
-	}
-
-	if( key == '3' )
-	{
-		videoPlayStates[ 0 ]	= false;
-		videoPlayStates[ 1 ]	= false;
-		videoPlayStates[ 2 ]	= true;
-	}
+	//
 }
 
 //--------------------------------------------------------------
