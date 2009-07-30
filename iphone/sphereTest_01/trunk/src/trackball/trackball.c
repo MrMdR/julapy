@@ -41,74 +41,85 @@ void startTrackball (long x, long y, long originX, long originY, long width, lon
      */
     nx = width;
     ny = height;
-    if (nx > ny)
+    if( nx > ny )
+	{
         gRadiusTrackball = ny * 0.5;
+	}
     else
+	{
         gRadiusTrackball = nx * 0.5;
+	}
     // Figure the center of the view.
     gXCenterTrackball = originX + width * 0.5;
-   gYCenterTrackball = originY + height * 0.5;
+	gYCenterTrackball = originY + height * 0.5;
     
     // Compute the starting vector from the surface of the ball to its center.
-    gStartPtTrackball [0] = x - gXCenterTrackball;
-    gStartPtTrackball [1] = y -gYCenterTrackball;
-    xxyy = gStartPtTrackball [0] * gStartPtTrackball[0] + gStartPtTrackball [1] * gStartPtTrackball [1];
-    if (xxyy > gRadiusTrackball * gRadiusTrackball) {
-        // Outside the sphere.
-        gStartPtTrackball[2] = 0.;
-    } else
-        gStartPtTrackball[2] = sqrt (gRadiusTrackball * gRadiusTrackball - xxyy);
-    
+    gStartPtTrackball[ 0 ] = x - gXCenterTrackball;
+    gStartPtTrackball[ 1 ] = y - gYCenterTrackball;
+    xxyy = gStartPtTrackball[ 0 ] * gStartPtTrackball[ 0 ] + gStartPtTrackball[ 1 ] * gStartPtTrackball[ 1 ];
+    if( xxyy > gRadiusTrackball * gRadiusTrackball )
+	{
+		gStartPtTrackball[ 2 ] = 0.0;		// Outside the sphere.
+    }
+	else
+	{
+		gStartPtTrackball[ 2 ] = sqrt( gRadiusTrackball * gRadiusTrackball - xxyy );
+	}
 }
 
 // update to new mouse position, output rotation angle
-void rollToTrackball (long x, long y, float rot [4]) // rot is output rotation angle
+void rollToTrackball ( long x, long y, float rot[ 4 ] ) // rot is output rotation angle
 {
     float xxyy;
     float cosAng, sinAng;
     float ls, le, lr;
     
-    gEndPtTrackball[0] = x - gXCenterTrackball;
-    gEndPtTrackball[1] = y -gYCenterTrackball;
-    if (fabs (gEndPtTrackball [0] - gStartPtTrackball [0]) < kTol && fabs (gEndPtTrackball [1] - gStartPtTrackball [1]) < kTol)
-        return; // Not enough change in the vectors to have an action.
+    gEndPtTrackball[ 0 ] = x - gXCenterTrackball;
+    gEndPtTrackball[ 1 ] = y - gYCenterTrackball;
+    if
+	(
+		fabs( gEndPtTrackball[ 0 ] - gStartPtTrackball[ 0 ]) < kTol && 
+		fabs( gEndPtTrackball[ 1 ] - gStartPtTrackball[ 1 ]) < kTol
+	)
+	return;		// Not enough change in the vectors to have an action.
 
-    // Compute the ending vector from the surface of the ball to its center.
-    xxyy = gEndPtTrackball [0] * gEndPtTrackball [0] + gEndPtTrackball [1] * gEndPtTrackball [1];
-    if (xxyy > gRadiusTrackball * gRadiusTrackball) {
-        // Outside the sphere.
-        gEndPtTrackball [2] = 0.;
-    } else
-        gEndPtTrackball[ 2] = sqrt (gRadiusTrackball * gRadiusTrackball - xxyy);
+	// Compute the ending vector from the surface of the ball to its center.
+	
+    xxyy = gEndPtTrackball[ 0 ] * gEndPtTrackball[ 0 ] + gEndPtTrackball[ 1 ] * gEndPtTrackball[ 1 ];
+    if( xxyy > gRadiusTrackball * gRadiusTrackball )
+	{
+        gEndPtTrackball[ 2 ] = 0.;		// Outside the sphere.
+    }
+	else
+	{
+        gEndPtTrackball[ 2 ] = sqrt( gRadiusTrackball * gRadiusTrackball - xxyy );
+	}
         
     // Take the cross product of the two vectors. r = s X e
-    rot[1] =  gStartPtTrackball[1] * gEndPtTrackball[2] - gStartPtTrackball[2] * gEndPtTrackball[1];
-    rot[2] = -gStartPtTrackball[0] * gEndPtTrackball[2] + gStartPtTrackball[2] * gEndPtTrackball[0];
-    rot[3] =  gStartPtTrackball[0] * gEndPtTrackball[1] - gStartPtTrackball[1] * gEndPtTrackball[0];
+    rot[ 1 ] =  gStartPtTrackball[ 1 ] * gEndPtTrackball[ 2 ] - gStartPtTrackball[ 2 ] * gEndPtTrackball[ 1 ];
+    rot[ 2 ] = -gStartPtTrackball[ 0 ] * gEndPtTrackball[ 2 ] + gStartPtTrackball[ 2 ] * gEndPtTrackball[ 0 ];
+    rot[ 3 ] =  gStartPtTrackball[ 0 ] * gEndPtTrackball[ 1 ] - gStartPtTrackball[ 1 ] * gEndPtTrackball[ 0 ];
     
     // Use atan for a better angle.  If you use only cos or sin, you only get
     // half the possible angles, and you can end up with rotations that flip around near
     // the poles.
     
-    // cos(a) = (s . e) / (||s|| ||e||)
-    cosAng = gStartPtTrackball[0] * gEndPtTrackball[0] + gStartPtTrackball[1] * gEndPtTrackball[1] + gStartPtTrackball[2] * gEndPtTrackball[2]; // (s . e)
-    ls = sqrt(gStartPtTrackball[0] * gStartPtTrackball[0] + gStartPtTrackball[1] * gStartPtTrackball[1] + gStartPtTrackball[2] * gStartPtTrackball[2]);
-    ls = 1. / ls; // 1 / ||s||
-    le = sqrt(gEndPtTrackball[0] * gEndPtTrackball[0] + gEndPtTrackball[1] * gEndPtTrackball[1] + gEndPtTrackball[2] * gEndPtTrackball[2]);
-    le = 1. / le; // 1 / ||e||
-    cosAng = cosAng * ls * le;
+    cosAng	= gStartPtTrackball[ 0 ] * gEndPtTrackball[ 0 ] + gStartPtTrackball[ 1 ] * gEndPtTrackball[ 1 ] + gStartPtTrackball[ 2 ] * gEndPtTrackball[ 2 ];				// (s . e) dot product.
+    ls		= sqrt( gStartPtTrackball[ 0 ] * gStartPtTrackball[ 0 ] + gStartPtTrackball[ 1 ] * gStartPtTrackball[ 1 ] + gStartPtTrackball[ 2 ] * gStartPtTrackball[ 2 ] );	// length of starting point from center.
+    ls		= 1.0 / ls;																																						// inverse of starting point length.
+    le		= sqrt( gEndPtTrackball[ 0 ] * gEndPtTrackball[ 0 ] + gEndPtTrackball[ 1 ] * gEndPtTrackball[ 1 ] + gEndPtTrackball[ 2 ] * gEndPtTrackball[ 2 ] );				// length of end point from center.
+    le		= 1.0 / le;																																						// inverse of end point length.
+    cosAng	= cosAng * ls * le;
     
     // sin(a) = ||(s X e)|| / (||s|| ||e||)
-    sinAng = lr = sqrt(rot[1] * rot[1] + rot[2] * rot[2] + rot[3] * rot[3]); // ||(s X e)||;
-                                // keep this length in lr for normalizing the rotation vector later.
-    sinAng = sinAng * ls * le;
-    rot[0] = (float) atan2 (sinAng, cosAng) * kRad2Deg; // GL rotations are in degrees.
+	lr		 = sqrt( rot[ 1 ] * rot[ 1 ] + rot[ 2 ] * rot[ 2 ] + rot[ 3 ] * rot[ 3 ] ); // length of the cross product of the starting point and end point. || r = s X e ||
+    sinAng	 = lr * ls * le;
+    rot[ 0 ] = (float)atan2( sinAng, cosAng ) * kRad2Deg; // GL rotations are in degrees.
     
-    // Normalize the rotation axis.
-    lr = 1. / lr;
-    rot[1] *= lr; rot[2] *= lr; rot[3] *= lr;
-    
-    // returns rotate
+    lr		 = 1.0 / lr;	// normalize the rotation axis.
+    rot[ 1 ] *= lr;
+	rot[ 2 ] *= lr;
+	rot[ 3 ] *= lr;
 }
 
 static void rotation2Quat (float *A, float *q)
@@ -170,4 +181,56 @@ void addToRotationTrackball (float * dA, float * A)
     A[1] = q2[0] * sinTheta2;
     A[2] = q2[1] * sinTheta2;
     A[3] = q2[2] * sinTheta2;
+}
+
+void rollToTrackballSingle( float center[ 2 ], float mouseCurr[ 2 ], float mousePrev[ 2 ], float worldRot[ 4 ] )
+{
+	float sPoint[ 3 ];	// start point.
+	float ePoint[ 3 ];	// end point.
+	
+	float radius = 300;
+	
+	sPoint[ 0 ] = mousePrev[ 0 ] - center[ 0 ];
+	sPoint[ 1 ] = mousePrev[ 1 ] - center[ 1 ];
+	sPoint[ 2 ] = sqrt( radius * radius - ( sPoint[ 0 ] * sPoint[ 0 ] + sPoint[ 1 ] * sPoint[ 1 ] ) );
+
+	ePoint[ 0 ] = mouseCurr[ 0 ] - center[ 0 ];
+	ePoint[ 1 ] = mouseCurr[ 1 ] - center[ 1 ];
+	ePoint[ 2 ] = sqrt( radius * radius - ( ePoint[ 0 ] * ePoint[ 0 ] + ePoint[ 1 ] * ePoint[ 1 ] ) );
+	
+    if
+	(
+		fabs( ePoint[ 0 ] - sPoint[ 0 ]) < kTol && 
+		fabs( ePoint[ 1 ] - sPoint[ 1 ]) < kTol
+	)
+	return;		// Not enough change in the vectors to have an action.
+	
+	float rot[ 4 ];
+    float cosAng, sinAng;
+    float ls, le, lr;
+	
+    rot[ 1 ] =  sPoint[ 1 ] * ePoint[ 2 ] - sPoint[ 2 ] * ePoint[ 1 ];	// cross product.  r = s X e
+    rot[ 2 ] = -sPoint[ 0 ] * ePoint[ 2 ] + sPoint[ 2 ] * ePoint[ 0 ];
+    rot[ 3 ] =  sPoint[ 0 ] * ePoint[ 1 ] - sPoint[ 1 ] * ePoint[ 0 ];
+    
+    cosAng	= sPoint[ 0 ] * ePoint[ 0 ] + sPoint[ 1 ] * ePoint[ 1 ] + sPoint[ 2 ] * ePoint[ 2 ];			// (s . e) dot product.
+    ls		= sqrt( sPoint[ 0 ] * sPoint[ 0 ] + sPoint[ 1 ] * sPoint[ 1 ] + sPoint[ 2 ] * sPoint[ 2 ] );	// length of starting point from center.
+    ls		= 1.0 / ls;																						// inverse of starting point length.
+    le		= sqrt( ePoint[ 0 ] * ePoint[ 0 ] + ePoint[ 1 ] * ePoint[ 1 ] + ePoint[ 2 ] * ePoint[ 2 ] );	// length of end point from center.
+    le		= 1.0 / le;																						// inverse of end point length.
+    cosAng	= cosAng * ls * le;
+    
+	lr		 = sqrt( rot[ 1 ] * rot[ 1 ] + rot[ 2 ] * rot[ 2 ] + rot[ 3 ] * rot[ 3 ] ); // length of the cross product of the starting point and end point. || r = s X e ||
+    sinAng	 = lr * ls * le;
+    rot[ 0 ] = (float)atan2( sinAng, cosAng ) * kRad2Deg;
+    
+    lr		 = 1.0 / lr;	// normalize the rotation axis.
+    rot[ 1 ] *= lr;
+	rot[ 2 ] *= lr;
+	rot[ 3 ] *= lr;
+	
+	if( rot[0] != 0.0 )
+	{
+		addToRotationTrackball( rot, worldRot );
+	}
 }
