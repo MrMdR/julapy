@@ -21,9 +21,11 @@ void testApp::setup()
 	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
 	haarTracker.setup( &haarFinder );
 	
-	animationsTotal = 1;
+	animationsTotal = 3;
 	animations		= new ofxFrameAnimation *[ animationsTotal ];
 	animations[ 0 ] = new HeadphoneAnimation();
+	animations[ 1 ] = new KraftwerkAnimation();
+	animations[ 2 ] = new DaftpunkAnimation();
 }
 
 //--------------------------------------------------------------

@@ -13,6 +13,8 @@
 #include "ofxCvHaarTracker.h"
 #include "ofxFrameAnimation.h"
 #include "HeadphoneAnimation.h"
+#include "KraftwerkAnimation.h"
+#include "DaftpunkAnimation.h"
 
 class Face
 	{
