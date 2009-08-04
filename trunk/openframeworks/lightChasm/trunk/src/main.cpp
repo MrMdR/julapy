@@ -2,8 +2,8 @@
 #include "testApp.h"
 #include "ofAppGlutWindow.h"
 
-//#define	FULL_SCREEN
-//#define RIGHT_MONITOR
+#define	FULL_SCREEN
+#define RIGHT_MONITOR
 
 int main( )
 {

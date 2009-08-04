@@ -124,8 +124,7 @@ void OpCirlce :: draw()
 			}
 			else
 			{
-				ofSetColor( 0, 0, 0 );
-//				glColor4f( rScale * audioInValue, gScale * audioInValue, bScale * audioInValue, 1 );
+				ofSetColor( (int)( rScale * audioInValue * 255 ), (int)( gScale * audioInValue * 255 ), (int)( bScale * audioInValue * 255 ) );
 			}
 		}
 		else

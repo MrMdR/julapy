@@ -54,7 +54,7 @@ void testApp :: initOpCircle ()
 	opCirlceRot			= 0.0f;
 	opCirlceRotScale	= 0.0f;
 	opCirlceRes			= MIN_CIRCLE_PTS;
-	opCirlceResScale	= 0.5f;
+	opCirlceResScale	= 0.1f;
 	opCirlceColor		= 0.0f;
 	
 	opCirlce.x		= rx;
@@ -76,6 +76,9 @@ void testApp :: initOpBars ()
 
 void testApp :: initOpRain()
 {
+	opRainMakeRate		= 0.2;
+	opRainMakeRateScale	= 1.0;
+	
 	opRain.init( 640, 480 );
 }
 
@@ -87,7 +90,7 @@ void testApp :: initVideos ()
 	videoPositionOverride	= false;
 	
 	videos = new VideoObj[ videosTotal ];
-	videos[ 0 ].video.loadMovie( "flight_01.mov" );
+	videos[ 0 ].video.loadMovie( "flight_01_inv.mov" );
 	videos[ 1 ].video.loadMovie( "nionr_02.mov" );
 	videos[ 2 ].video.loadMovie( "flight_02.mov" );
 	
@@ -106,12 +109,12 @@ void testApp :: initOsc ()
 	oscReceiver.setup( 12345 );
 	
 	oscRcvr.init( &oscReceiver );
-	oscRcvr.addInput( "/1/fader0", &opCheckersSizeScale );
-	oscRcvr.addInput( "/1/fader1", &videoPositionOsc );
-	oscRcvr.addInput( "/1/fader2", &opBarsAudioAvgMinScale );
-	oscRcvr.addInput( "/1/fader3", &opCirlceResScale );
-	oscRcvr.addInput( "/1/fader4", &opCirlceRotScale );
-	oscRcvr.addInput( "/1/fader5", &opCirlceColor );
+	oscRcvr.addInput( "/1/fader0", &opCirlceResScale );
+	oscRcvr.addInput( "/1/fader1", &opCirlceRotScale );
+	oscRcvr.addInput( "/1/fader2", &opCheckersSizeScale );
+	oscRcvr.addInput( "/1/fader3", &opBarsAudioAvgMinScale );
+	oscRcvr.addInput( "/1/fader4", &opRainMakeRateScale );
+	oscRcvr.addInput( "/1/fader5", &videoPositionOsc );
 	
 	oscRcvr.addInput( "/1/toggle1", &videos[ 0 ].oscPlaying );
 	oscRcvr.addInput( "/1/toggle2", &videos[ 1 ].oscPlaying );
@@ -145,7 +148,9 @@ void testApp::update()
 	
 	opCheckers.setSize( MAX( 3, opCheckersSize * opCheckersSizeScale ) );
 	opCheckers.update();
-	
+
+	opRainMakeRate = avgPowerScaled;
+	opRain.setMakeRate( opRainMakeRate * opRainMakeRateScale );
 	opRain.update();
 }
 
@@ -213,13 +218,13 @@ void testApp::draw()
 
 //	audioIn.draw();
 	
-	ofSetColor( 0xFF0000 );
-	ofDrawBitmapString
-	(
-		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
-		20,
-		20
-	);
+//	ofSetColor( 0xFF0000 );
+//	ofDrawBitmapString
+//	(
+//		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
+//		20,
+//		20
+//	);
 }
 
 void testApp :: drawVideos()

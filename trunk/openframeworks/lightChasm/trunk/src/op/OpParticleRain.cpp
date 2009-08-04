@@ -24,34 +24,44 @@ void OpParticleRain :: init( int w, int h )
 	width	= w;
 	height	= h;
 	
-	setMinParticleSize( 5 );
-	setMaxParticleSize( 20 );
-	setMinParticleVel( 2 );
-	setMaxParticleVel( 5 );
+	setMinParticleSize( 1 );
+	setMaxParticleSize( 7 );
+	setMinParticleVel( 1.5 );
+	setMaxParticleVel( 4.0 );
+	setMakeRate( 0.2 );
 	
 	fbo.allocate( w, h, true );
 }
 
 void OpParticleRain :: update()
 {
-	if( ofRandom( 0.0, 1.0 ) > 0.8 )
+	if( ofRandom( 0.0, 1.0 ) < makeRate )
 	{
-		float size		= ofRandom( minParticleSize, maxParticleSize );
-		float sizeScale	= ( size - minParticleSize ) / ( maxParticleSize - minParticleSize );
+		int makeNo = (int)( ofRandom( 0, makeRate ) * 30 ) + 1;
 		
-		particles.push_back( OpParticleRainDrop() );
-		particles.back().alive	  = true;
-		particles.back().size	  = size;
-		particles.back().loc[ 0 ] = ofRandom( 0, width );
-		particles.back().loc[ 1 ] = height + size;
-		particles.back().vel[ 0 ] = 0;
-		particles.back().vel[ 1 ] = minParticleVel + sizeScale * maxParticleVel;
+		for( int i=0; i<makeNo; i++ )
+		{
+			float size		= ofRandom( minParticleSize, maxParticleSize );
+			float sizeScale	= ( size - minParticleSize ) / ( maxParticleSize - minParticleSize );
+			
+			particles.push_back( OpParticleRainDrop() );
+			particles.back().alive			= true;
+			particles.back().size			= size;
+			particles.back().wobbleMag		= ofRandom( 1, 10 );
+			particles.back().wobbleAng		= ofRandom( 0, 2 * PI );
+			particles.back().wobbleAngInc	= 2 * PI * 0.05 * MAX( 0.1, sizeScale );
+			particles.back().loc[ 0 ] = ofRandom( 0, width );
+			particles.back().loc[ 1 ] = height + size;
+			particles.back().vel[ 0 ] = 0;
+			particles.back().vel[ 1 ] = ( minParticleVel + sizeScale * maxParticleVel ) * ( ofRandom( 0.0, 0.15 ) + 1 );
+		}
 	}
 	
 	for( int i=0; i<particles.size(); i++ )
 	{
-		particles.at( i ).loc[ 0 ] -= particles.at( i ).vel[ 0 ];
-		particles.at( i ).loc[ 1 ] -= particles.at( i ).vel[ 1 ];
+		particles.at( i ).loc[ 0 ]	-= particles.at( i ).vel[ 0 ];
+		particles.at( i ).loc[ 1 ]	-= particles.at( i ).vel[ 1 ];
+		particles.at( i ).wobbleAng += particles.at( i ).wobbleAngInc;
 		
 		if( particles.at( i ).loc[ 1 ] < -particles.at( i ).size )
 		{
@@ -75,7 +85,7 @@ void OpParticleRain :: drawToFBO()
 	fbo.setupScreenForMe();
 
 	draw();
-	
+
 	fbo.swapOut();
 	fbo.setupScreenForThem();
 }
@@ -94,10 +104,16 @@ void OpParticleRain :: draw()
 	
 	for( int i=0; i<particles.size(); i++ )
 	{
+		float x = particles.at( i ).loc[ 0 ];
+		float y = particles.at( i ).loc[ 1 ];
+		float s = particles.at( i ).size;
+		
+		x += particles.at( i ).wobbleMag * sin( particles.at( i ).wobbleAng );
+		
 		ofNoFill();
-		ofCircle( particles.at( i ).loc[ 0 ], particles.at( i ).loc[ 1 ], particles.at( i ).size );
+		ofCircle( x, y, s );
 		ofFill();
-		ofCircle( particles.at( i ).loc[ 0 ], particles.at( i ).loc[ 1 ], particles.at( i ).size );
+		ofCircle( x, y, s );
 	}
 	
 	ofDisableSmoothing();
@@ -127,4 +143,13 @@ void OpParticleRain :: setMinParticleVel( float value )
 void OpParticleRain :: setMaxParticleVel( float value )
 {
 	maxParticleVel = value;
+}
+
+void OpParticleRain :: setMakeRate( float value )
+{
+	makeRate = value;
+	if( makeRate < 0 )
+		makeRate = 0;
+	if( makeRate > 1 )
+		makeRate = 1;
 }
