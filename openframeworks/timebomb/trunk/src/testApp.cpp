@@ -108,10 +108,6 @@ void testApp::setup()
 	initFluidForCamera();
 #endif
 	
-#ifdef USE_TUIO
-	tuioClient.start( 3333 );
-#endif
-
 #ifdef USE_GUI 
 	initGui();
 #endif
@@ -123,14 +119,16 @@ void testApp::setup()
 
 void testApp :: initVideoGrabber ()
 {
-//	camWidth	= 640;
-//	camHeight	= 480;
+	camWidth		= 640;
+	camHeight		= 480;
 	
-	camWidth	= 320;
-	camHeight	= 240;
+	camWidthHalf	= 320;
+	camHeightHalf	= 240;
 	
 	videoGrabber.setVerbose( true );
 	videoGrabber.initGrabber( camWidth, camHeight );
+	
+	videoGrabberImage.allocate( camWidth, camHeight );
 	
 	isVideoGrabberNewFrame = false;
 }
@@ -174,6 +172,7 @@ void testApp :: initVideoOutput ()
 #ifdef SHOW_DEBUG
 	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
 #else
+//	videoPlayer.loadMovie("movies/decompose.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_720x720.mov");
 	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_1200x1200.mov");
@@ -209,12 +208,9 @@ void testApp :: initCameraOutput ()
 {
 #ifdef USE_CAMERA_OUTPUT
 	
-//	videoGrabberWidth	= 640;
-//	videoGrabberHeight	= 480;
+	videoGrabberWidth	= 640;
+	videoGrabberHeight	= 480;
 
-	videoGrabberWidth	= 320;
-	videoGrabberHeight	= 240;
-	
 	videoGrabberPixelsPerFrame = videoGrabberWidth * videoGrabberHeight * 3;
 	
 	frameBufferLimit	= 255;
@@ -349,10 +345,6 @@ void testApp :: initVideoSaver()
 void testApp::update()
 {
 
-#ifdef USE_TUIO
-	updateTuio();
-#endif
-	
 	updateVideoGrabber();
 	
 #ifdef USE_VIDEO_INPUT
@@ -384,44 +376,30 @@ void testApp::update()
 
 }
 
-void testApp :: updateTuio ()
-{
-#ifdef USE_TUIO
-	
-	tuioClient.getMessage();
-	
-	// do finger stuff
-	list<ofxTuioCursor*>cursorList = tuioClient.getTuioCursors();
-	for(list<ofxTuioCursor*>::iterator it=cursorList.begin(); it != cursorList.end(); it++) {
-		ofxTuioCursor *tcur = (*it);
-        float vx = tcur->getXSpeed() * tuioCursorSpeedMult;
-        float vy = tcur->getYSpeed() * tuioCursorSpeedMult;
-        if(vx == 0 && vy == 0) {
-            vx = ofRandom(-tuioStationaryForce, tuioStationaryForce);
-            vy = ofRandom(-tuioStationaryForce, tuioStationaryForce);
-        }
-        addToFluid(tcur->getX(), tcur->getY(), vx, vy);
-    }
-	
-#endif
-}
-
 void testApp :: updateVideoGrabber ()
 {
 	videoGrabber.grabFrame();
 	
 	isVideoGrabberNewFrame = videoGrabber.isFrameNew();
+	
+	if( isVideoGrabberNewFrame )
+	{
+		videoGrabberImage.setFromPixels( videoGrabber.getPixels(), camWidth, camHeight );
+		videoGrabberImage.mirror( false, true );
+	}
 }
 
 void testApp :: updateVideoInput()
 {
-#ifdef USE_VIDEO_INPUT	
+#ifdef USE_VIDEO_INPUT
+	
 	int videoInputTotalFrames	= videoInput.getTotalNumFrames();
 	int videoInputFrame			= ofGetFrameNum() % videoInputTotalFrames;
 	
 	videoInputPosition			= videoInputFrame / (float)( videoInputTotalFrames - 1 );
 	
 	videoInput.setPosition( videoInputPosition );
+	
 #endif
 }
 
@@ -544,7 +522,7 @@ void testApp :: updateCamera ()
 	
 	if( isVideoGrabberNewFrame )
 	{
-		unsigned char *vidPixels = videoGrabber.getPixels();
+		unsigned char *vidPixels = videoGrabberImage.getPixels();
 		
 		if( frameBufferCount < frameBufferLimit - 1 )	// add frames to frameBuffer until the buffer is full.
 		{
@@ -732,7 +710,7 @@ void testApp :: drawVideoSource ()
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + camWidth + 10, 74, 0 );
+	glTranslatef( 270 + camWidthHalf + 10, 74, 0 );
 	videoPlayerTexture.draw( 0, 0 );
 	glPopMatrix();
 	
@@ -754,6 +732,8 @@ void testApp :: drawCameraSource ()
 
 void testApp :: drawCameraSourceForOpticalField()
 {
+#ifdef SHOW_DEBUG
+	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 270 + videoPlayerWidth + 320 + 20, 74 + videoPlayerHeight - 240, 0 );
@@ -771,6 +751,8 @@ void testApp :: drawCameraSourceForOpticalField()
 	glTranslatef( 270 + videoPlayerWidth, 74 + videoPlayerHeight + 10, 0 );
 	opticalField.drawOpticalFlow();
 	glPopMatrix();
+	
+#endif
 }
 
 void testApp :: drawTimeDistortionFromVideoSource ()
@@ -847,7 +829,7 @@ void testApp :: drawTimeDistortionFromCameraSourceFullScreen ()
 	
 	float wRatio, hRatio, scale;
 	
-	bool scaleToFitFullScreen = false;
+	bool scaleToFitFullScreen = true;
 	
 	wRatio = ofGetWidth() / (float)videoGrabberWidth;
 	hRatio = ofGetHeight() / (float)videoGrabberHeight;

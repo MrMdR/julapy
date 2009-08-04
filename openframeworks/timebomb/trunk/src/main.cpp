@@ -1,11 +1,11 @@
 
 #include "testApp.h"
 
-//#define DEBUG						// SELECT ONLY ONE OF THESE
+#define DEBUG						// SELECT ONLY ONE OF THESE
 //#define FULLSCREEN					// SELECT ONLY ONE OF THESE
 //#define FULLSCREEN_LEFT			// SELECT ONLY ONE OF THESE
 //#define FULLSCREEN_RIGHT			// SELECT ONLY ONE OF THESE
-#define RECORD					// SELECT ONLY ONE OF THESE
+//#define RECORD					// SELECT ONLY ONE OF THESE
 
 testApp *myApp;
 int main( )

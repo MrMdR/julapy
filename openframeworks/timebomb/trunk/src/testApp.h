@@ -1,21 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
-#include "ofxMSAFluid.h"
-#include "OpticalField.h"
-#include "ofQtVideoSaver.h"
-
-//#define USE_TUIO
-#ifdef USE_TUIO
-	#include "ofxTuio.h"
-	#define tuioCursorSpeedMult				0.02f	// the iphone screen is so small, easy to rack up huge velocities! need to scale down 
-	#define tuioStationaryForce				0.001f	// force exerted when cursor is stationary
-#endif
-
-#define USE_GUI		
-#ifdef USE_GUI 
-	#include "ofxSimpleGuiToo.h"
-#endif
+//#define USE_GUI
 
 //#define USE_VIDEO_INPUT			// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
 #define USE_CAMERA_INPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
@@ -24,8 +9,19 @@
 //#define USE_CAMERA_OUTPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
 
 //#define USE_VIDEO_SAVER
-//#define SHOW_DEBUG
+#define SHOW_DEBUG
 
+#include "ofMain.h"
+#include "ofxMSAFluid.h"
+#include "OpticalField.h"
+
+#ifdef USE_GUI 
+	#include "ofxSimpleGuiToo.h"
+#endif
+
+#ifdef USE_VIDEO_SAVER
+	#include "ofQtVideoSaver.h"
+#endif
 
 class testApp : public ofSimpleApp{
 public:
@@ -47,7 +43,6 @@ public:
 	void initGui();
 	void initVideoSaver();
 	
-	void updateTuio();
 	void updateVideoGrabber();
 	void updateVideoInput();
 	void updateOpticalFieldFromCameraInput();
@@ -100,6 +95,11 @@ public:
 	
 	ofVideoGrabber		videoGrabber;
 	bool				isVideoGrabberNewFrame;
+	ofxCvColorImage		videoGrabberImage;
+	int					camWidth;
+	int					camHeight;
+	int					camWidthHalf;
+	int					camHeightHalf;
 	
 #ifdef USE_VIDEO_SAVER
 	
@@ -125,8 +125,6 @@ public:
 #endif
 	
 	OpticalField		opticalField;
-	int					camWidth;
-	int					camHeight;
 	float				interactionScale;
 	
 #ifdef USE_VIDEO_INPUT
