@@ -30,7 +30,8 @@ void testApp :: initEarth()
 //	earthMap.loadImage( "EarthMap_2048x1024.jpg" );
 //	earthMap.loadImage( "EarthMap_1024x512.jpg" );
 //	earthMap.loadImage( "EarthMap_1024x512_hFlip_debug.jpg" );
-	earthMap.loadImage( "EarthMap_1024x512_hFlip.jpg" );
+//	earthMap.loadImage( "EarthMap_1024x512_hFlip.jpg" );
+	earthMap.loadImage( "EarthMap_02_1024x512_hFlip.jpg" );
 	
 //	earthGlow.loadImage( "orange_glow_256x128.png" );
 }
