@@ -19,6 +19,9 @@ public :
 	float loc[ 2 ];
 	float vel[ 2 ];
 	float size;
+	float wobbleMag;
+	float wobbleAng;
+	float wobbleAngInc;
 	bool  alive;
 };
 
@@ -42,6 +45,7 @@ public :
 	void setMaxParticleSize( float value );
 	void setMinParticleVel( float value );
 	void setMaxParticleVel( float value );
+	void setMakeRate( float value );
 	
 private :
 	
@@ -54,6 +58,7 @@ private :
 	float maxParticleSize;
 	float minParticleVel;
 	float maxParticleVel;
+	float makeRate;
 	
 };
 

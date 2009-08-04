@@ -87,8 +87,6 @@ void OpBars :: setAudioInData ( float *data )
 void OpBars :: setAudioAvgMin( float avgMin )
 {
 	audioAvgMin = avgMin;
-	
-//	printf( "audioAvgMin: %4.2f \n", audioAvgMin );
 }
 
 void OpBars :: update()

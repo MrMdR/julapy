@@ -78,6 +78,8 @@ class testApp : public ofBaseApp{
 		float		opCheckersSizeScale;
 	
 		OpParticleRain opRain;
+		float		   opRainMakeRate;
+		float		   opRainMakeRateScale;
 	
 		OpScope		opScope;
 	
