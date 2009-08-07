@@ -11,21 +11,35 @@
 
 ofxVec3f sphericalToCartesian( float lat, float lon, float radius )
 {
-	ofxVec3f result;
+//	ofxVec3f result;
+//	
+//	lat	*= -1;		// inverse latitude.
+//	lat += 90;		// latitude offset to match geometry of the sphere.
+//	lon *= -1;		// inverse longitude.
+//	lon -= 90;		// longitude offset to match geometry of the sphere.
+//	
+//	lat *= DEG_TO_RAD;
+//	lon *= DEG_TO_RAD;
+//	
+//	result.x = radius * sin( lat ) * cos( lon );
+//	result.y = radius * sin( lat ) * sin( lon );
+//	result.z = radius * cos( lat );
+//	
+//	return result;
 	
-	lat	*= -1;		// inverse latitude.
-	lat += 90;		// latitude offset to match geometry of the sphere.
-	lon *= -1;		// inverse longitude.
-	lon -= 90;		// longitude offset to match geometry of the sphere.
+	ofxVec3f p;
 	
 	lat *= DEG_TO_RAD;
 	lon *= DEG_TO_RAD;
 	
-	result.x = radius * sin( lat ) * cos( lon );
-	result.y = radius * sin( lat ) * sin( lon );
-	result.z = radius * cos( lat );
+	lat *= -1;		// latitude is inversed as normally y-axis points up but in openframeworks it points down.
 	
-	return result;
+	p.x = radius * cos( lat ) * sin( lon );
+	p.y = radius * sin( lat );
+	p.z = radius * cos( lat ) * cos( lon );
+	
+	return p;
+	
 }
 
 ofxVec3f bernstein( float u, float *bezPoints )
