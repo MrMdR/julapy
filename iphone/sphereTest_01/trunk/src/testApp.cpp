@@ -10,11 +10,18 @@ void testApp::setup()
 	ofBackground(0, 0, 0);
 	ofSetBackgroundAuto(true);
 	ofSetFrameRate(60);
+	ofDisableArbTex();
+	ofEnableAlphaBlending();
+	
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
 	
 	ofxAccelerometer.setup();
 
 	ofxMultiTouch.addListener(this);
 	
+	initGeom();
+	initBg();
 	initEarth();
 	initLocations();
 	initRibbons();
@@ -25,15 +32,93 @@ void testApp::setup()
 //	initLighting();
 }
 
+void testApp :: initGeom()
+{
+	planeBottomCenter[ 0 ]  = -0.5f;
+	planeBottomCenter[ 1 ]  =  0.0f;
+	planeBottomCenter[ 2 ]  =  0.0f;
+	planeBottomCenter[ 3 ]  =  0.5f;
+	planeBottomCenter[ 4 ]  =  0.0f;
+	planeBottomCenter[ 5 ]  =  0.0f;
+	planeBottomCenter[ 6 ]  = -0.5f;
+	planeBottomCenter[ 7 ]  =  1.0f;
+	planeBottomCenter[ 8 ]  =  0.0f;
+	planeBottomCenter[ 9 ]  =  0.5f;
+	planeBottomCenter[ 10 ] =  1.0f;
+	planeBottomCenter[ 11 ] =  0.0f;
+	
+	planeCenter[ 0 ]  = -0.5f;
+	planeCenter[ 1 ]  = -0.5f;
+	planeCenter[ 2 ]  =  0.0f;
+	planeCenter[ 3 ]  =  0.5f;
+	planeCenter[ 4 ]  = -0.5f;
+	planeCenter[ 5 ]  =  0.0f;
+	planeCenter[ 6 ]  = -0.5f;
+	planeCenter[ 7 ]  =  0.5f;
+	planeCenter[ 8 ]  =  0.0f;
+	planeCenter[ 9 ]  =  0.5f;
+	planeCenter[ 10 ] =  0.5f;
+	planeCenter[ 11 ] =  0.0f;
+	
+	planeTexture[ 0 ] = 0.0f;
+	planeTexture[ 1 ] = 1.0f;
+	planeTexture[ 2 ] = 1.0f;
+	planeTexture[ 3 ] = 1.0f;
+	planeTexture[ 4 ] = 0.0f;
+	planeTexture[ 5 ] = 0.0f;
+	planeTexture[ 6 ] = 1.0f;
+	planeTexture[ 7 ] = 0.0f;
+	
+	planeTextureInv[ 0 ] = 0.0f;
+	planeTextureInv[ 1 ] = 0.0f;
+	planeTextureInv[ 2 ] = 1.0f;
+	planeTextureInv[ 3 ] = 0.0f;
+	planeTextureInv[ 4 ] = 0.0f;
+	planeTextureInv[ 5 ] = 1.0f;
+	planeTextureInv[ 6 ] = 1.0f;
+	planeTextureInv[ 7 ] = 1.0f;
+}
+
+void testApp :: initBg()
+{
+//	earthBg.loadImage( "bg01_512x512.jpg" );
+//	earthBg.loadImage( "bg02_512x512.jpg" );
+//	earthBg.loadImage( "bg03_512x512.jpg" );
+//	earthBg.loadImage( "bg04_512x512.jpg" );
+	earthBg.loadImage( "bg05_512x512.jpg" );
+}
+
 void testApp :: initEarth()
 {
-//	earthMap.loadImage( "EarthMap_2048x1024.jpg" );
-//	earthMap.loadImage( "EarthMap_1024x512.jpg" );
-//	earthMap.loadImage( "EarthMap_1024x512_hFlip_debug.jpg" );
-//	earthMap.loadImage( "EarthMap_1024x512_hFlip.jpg" );
-	earthMap.loadImage( "EarthMap_02_1024x512_hFlip.jpg" );
+	ofxVec3f right;
+	ofxVec3f up;
+	ofxVec3f out;
 	
-//	earthGlow.loadImage( "orange_glow_256x128.png" );
+	right = ofxVec3f(  1,  0,  0 );
+	up    = ofxVec3f(  0,  0, -1 );
+	out   = ofxVec3f(  0, -1,  0 );
+	
+	sphereOrientation[ 0 ]  = right.x;
+	sphereOrientation[ 1 ]  = right.y;
+	sphereOrientation[ 2 ]  = right.z;
+	sphereOrientation[ 3 ]  = 0;
+	sphereOrientation[ 4 ]  = up.x;
+	sphereOrientation[ 5 ]  = up.y;
+	sphereOrientation[ 6 ]  = up.z;
+	sphereOrientation[ 7 ]  = 0;
+	sphereOrientation[ 8 ]  = out.x;
+	sphereOrientation[ 9 ]  = out.y;
+	sphereOrientation[ 10 ] = out.z;
+	sphereOrientation[ 11 ] = 0;
+	sphereOrientation[ 12 ] = 0;
+	sphereOrientation[ 13 ] = 0;
+	sphereOrientation[ 14 ] = 0;
+	sphereOrientation[ 15 ] = 1;
+	
+//	earthMap.loadImage( "earth_texture01_1024x512.jpg" );
+//	earthMap.loadImage( "earth_texture02_1024x512.jpg" );
+//	earthMap.loadImage( "earth_texture03_1024x512.jpg" );
+	earthMap.loadImage( "earth_texture04_1024x512.jpg" );
 }
 
 void testApp :: initLocations()
@@ -43,21 +128,26 @@ void testApp :: initLocations()
 	locationsMax	= 200;
 	locations		= new float[ locationsMax * 2 ];	// latitude and longitude pairs.
 	
-//	addLocation( -33.87784462833714, 151.2179660797119 );	// Holler Sydney
-//	addLocation( 35.689488, 139.691706 );					// Tokyo
-//	addLocation( 9.009697, -79.603243 );					// Panama City
-//	addLocation( 40.756054, -73.986951 );					// New York
-//	addLocation( 48.856667, 2.350987 );						// Paris
-//	addLocation( 25.271139, 55.307485 );					// Dubai
-//	addLocation( 51.500152, -0.126236 );					// London
+	addLocation( -33.87784462833714, 151.2179660797119 );	// Holler Sydney
+	addLocation( 35.689488, 139.691706 );					// Tokyo
+	addLocation( 9.009697, -79.603243 );					// Panama City
+	addLocation( 40.756054, -73.986951 );					// New York
+	addLocation( 48.856667, 2.350987 );						// Paris
+	addLocation( 25.271139, 55.307485 );					// Dubai
+	addLocation( 51.500152, -0.126236 );					// London
+
+	ofxVec3f p = sphericalToCartesian( 55.676294, 12.568116, 1 );
+	copenhagen[ 0 ] = p.x;
+	copenhagen[ 1 ] = p.y;
+	copenhagen[ 2 ] = p.z;
 	
-	for( int i=0; i<locationsMax; i++ )
-	{
-		float rndLat = ofRandom( -90, 90 );
-		float rndLon = ofRandom( -180, 180 );
-		
-		addLocation( rndLat, rndLon );
-	}
+//	for( int i=0; i<locationsMax; i++ )
+//	{
+//		float rndLat = ofRandom( -90, 90 );
+//		float rndLon = ofRandom( -180, 180 );
+//		
+//		addLocation( rndLat, rndLon );
+//	}
 }
 
 void testApp :: addLocation( float lat, float lon )
@@ -94,15 +184,15 @@ void testApp :: initRibbons()
 
 void testApp :: initRays()
 {
-	raysTotal = 40;
+	raysTotal = locationsTotal;
 	rays = new Ray[ raysTotal ];
 	
 	for( int i=0; i<raysTotal; i++ )
 	{
-		float randLat = ofRandom( -90, 90 );
-		float randLon = ofRandom( -180, 180 );
+		float lat = locations[ i * 2 + 0 ];
+		float lon = locations[ i * 2 + 1 ];
 		
-		rays[ i ].p.set( sphericalToCartesian( randLat, randLon, 1 ) );
+		rays[ i ].p.set( sphericalToCartesian( lat, lon, 1 ) );
 		rays[ i ].p.normalize();
 	}
 	
@@ -110,8 +200,6 @@ void testApp :: initRays()
 	rayTarget[ 0 ]	= 0;
 	rayTarget[ 1 ]	= 0;
 
-//	rayImage.loadImage( "green_lines05.png" );
-//	rayImage.loadImage( "green_lines06.png" );
 	rayImage.loadImage( "white01.png" );
 	rayBaseImage.loadImage( "white_base01.png" );
 }
@@ -351,11 +439,13 @@ void testApp :: updateRibbonLocation( RibbonInfo *ribbon )
 
 void testApp::draw()
 {
-	glEnable( GL_DEPTH_TEST );
-
+	drawBg();
+	
+	float s = 290;
+	
 	glPushMatrix();
 	glTranslatef( ofGetWidth() * 0.5, ofGetHeight() * 0.5, -ofGetHeight() );
-	glScalef( 300, 300, 300 );
+	glScalef( s, s, s );
 	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 
 	glRotatef( gTrackBallRotation[ 0 ], gTrackBallRotation[ 1 ], gTrackBallRotation[ 2 ], gTrackBallRotation[ 3 ] );
@@ -372,93 +462,65 @@ void testApp::draw()
 	glPopMatrix();
 }
 
+void testApp :: drawBg()
+{
+	glDisable( GL_DEPTH_TEST );
+	
+	glPushMatrix();
+	
+	int screenW = 320;
+	int screenH = 480;
+	
+	glTranslatef( (float)( screenW * 0.5f ), (float)( screenH * 0.5f ), 0 );
+	glScalef( 512, 512, 0 );
+	
+	earthBg.getTextureReference().bind();
+	
+	glVertexPointer( 3, GL_FLOAT, 0, planeCenter );
+	glTexCoordPointer( 2, GL_FLOAT, 0, planeTexture );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+	glNormal3f( 0.0f, 0.0f, 1.0f );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+	
+	earthBg.getTextureReference().unbind();
+	
+	glPopMatrix();
+	
+	glEnable( GL_DEPTH_TEST );
+}
+
 void testApp :: drawSphere ()
 {
+	glPushMatrix();
+	glMultMatrixf( &sphereOrientation[ 0 ] );
+	
 	earthMap.getTextureReference().bind();
 	sphere.setSphereDrawStyle( 100012 );
 //	sphere.setSphereDrawStyle( 100013 );
 	sphere.drawSphere( 1, 20, 20 );
 	earthMap.getTextureReference().unbind();
-
-//	ofEnableAlphaBlending();
-//	earthGlowTexture.bind();
-//	sphere.setSphereDrawStyle( 100012 );
-//	sphere.drawSphere( 1.05, 20, 20 );
-//	earthGlowTexture.unbind();
-//	ofDisableAlphaBlending();
 	
-//	sphere.setSphereDrawStyle( 100013 );
-//	sphere.drawSphere( 1.01, 20, 20 );
+	glPopMatrix();
 }
 
 void testApp :: drawRibbons()
 {
-	ofEnableAlphaBlending();
-	
 	for( int i=0; i<ribbonsTotal; i++ )
 	{
 		ribbons[ i ].ribbon->drawLine();
 //		ribbons[ i ].ribbon->drawFill();
 	}
-	
-	ofDisableAlphaBlending();
 }
 
 void testApp :: drawRays()
 {
-	GLfloat plane[] = 
-	{
-		-0.5f, 0.0f, 0.0f,
-		 0.5f, 0.0f, 0.0f,
-		-0.5f, 1.0f, 0.0f,
-		 0.5f, 1.0f, 0.0f,
-	};
-
-	GLfloat planeCenter[] = 
-	{
-		-0.5f, -0.5f,  0.0f,
-		 0.5f, -0.5f,  0.0f,
-		-0.5f,  0.5f,  0.0f,
-		 0.5f,  0.5f,  0.0f
-	};
-	
-	GLfloat planeTex[] = 
-	{
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-	};
+	glDepthMask( GL_FALSE );
+//	glBlendFunc( GL_SRC_ALPHA, GL_ONE );	// additive blending.
 		
-//	rayTarget[ 0 ] += 0.1;
-//	rayTarget[ 1 ] += 0.1;
-//	float *rtm = new float[ 16 ];
-//	
-//	ofxVec3f rtp = sphericalToCartesian( rayTarget[ 0 ], rayTarget[ 1 ], 1 );
-//	rtp *= 1.3;
-//	rotateToSphereSurface( rtm, rayTarget[ 0 ], rayTarget[ 1 ] );
-//	
-//	glPushMatrix();
-//		
-//		glTranslatef( rtp.x, rtp.y, rtp.z );
-//	
-//		glMultMatrixf( rtm );
-//		delete[] rtm;
-//	
-//		glScalef( 0.1, 0.1, 0.1 );
-//	
-//		glEnable( GL_DEPTH_TEST );
-//		glDepthFunc( GL_LEQUAL );
-//	
-//		glVertexPointer( 3, GL_FLOAT, 0, square );
-//		glEnableClientState( GL_VERTEX_ARRAY );
-//	
-//		glColor4f( 1.0f, 0.0f, 0.0f, 1.0f );
-//		glNormal3f( 0.0f, 0.0f, 1.0f );
-//		glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-//	
-//	glPopMatrix();
-	
 	ofxMatrix4x4 mvMat;						// model view matrix, to work out the eye position.
 	float modelview[ 16 ];
 	glGetFloatv( GL_MODELVIEW_MATRIX, modelview );
@@ -484,122 +546,123 @@ void testApp :: drawRays()
     mvMatInv.invert( mvMat );
 	ofxVec3f eye = ofxVec3f( 0.0, 0.0, 0.0 ) * mvMatInv;
 	
-	ofEnableAlphaBlending();
-
+	float e[] =  { eye.x, eye.y, eye.z };
+	float rs[] = { 0.03, 0.50, 0.05 };
+	float rc[] = { 0.94, 0.40, 0.18, 0.70 };
+	float cs[] = { 0.06, 0.60, 0.05 };
+	float cc[] = { 1.00, 1.00, 1.00, 0.70 };
+	
 	rayImage.getTextureReference().bind();
 	for( int i=0; i<raysTotal; i++ )
 	{
-		ofxVec3f uv;	// up vector.
-		ofxVec3f rv;	// right vector.
-		ofxVec3f ov;	// out vector.
-		
-		glPushMatrix();
-		glTranslatef( rays[ i ].p.x, rays[ i ].p.y, rays[ i ].p.z );
-		
-//		glPushMatrix();
-//		
-//			glScalef( 0.05, 0.05, 0.05 );
-//		
-//			float ls = 5;	// line scale.
-//			GLfloat line[] = 
-//			{
-//				0.0f, 0.0f, 0.0f,
-//				rays[ i ].p.x * ls, rays[ i ].p.y * ls, rays[ i ].p.z * ls
-//			};
-//		
-//			glVertexPointer( 3, GL_FLOAT, 0, line );	// line.
-//			glEnableClientState( GL_VERTEX_ARRAY );
-//		
-//			glColor4f( 0.0f, 1.0f, 0.0f, 1.0f );
-//			glNormal3f( 0.0f, 0.0f, 1.0f );
-//			glDrawArrays(GL_LINES, 0, 2 );
-//		
-//		glPopMatrix();
-
-		uv.set( rays[ i ].p );
-		rv = eye - uv;
-		rv.normalize();
-		ov = rv.getCrossed( uv );
-		ov.normalize();
-		rv = ov.getCrossed( uv );
-		rv.normalize();
-		
-		float *mat = new float[ 16 ];
-		mat[0]	= rv.x;
-		mat[1]	= rv.y;
-		mat[2]	= rv.z;
-		mat[3]	= 0;
-		mat[4]	= uv.x;
-		mat[5]	= uv.y;
-		mat[6]	= uv.z;
-		mat[7]	= 0;
-		mat[8]	= ov.x;
-		mat[9]	= ov.y;
-		mat[10]	= ov.z;
-		mat[11]	= 0;
-		mat[12]	= 0;
-		mat[13]	= 0;
-		mat[14]	= 0;
-		mat[15]	= 1;
-		
-		glPushMatrix();	// draw ray.
-		
-			glMultMatrixf( mat );
-			delete[] mat;
-			glRotatef( 90, 0, 1, 0 );
-		
-			glScalef( 0.03, 0.5, 0.05 );
-		
-			glEnable( GL_DEPTH_TEST );
-			glDepthFunc( GL_LEQUAL );
-		
-			glVertexPointer( 3, GL_FLOAT, 0, plane );
-			glTexCoordPointer( 2, GL_FLOAT, 0, planeTex );
-		
-			glEnableClientState( GL_VERTEX_ARRAY );
-			glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-		
-			glColor4f( 0.94f, 0.40f, 0.18f, 0.7f );		// blood orange.
-			glNormal3f( 0.0f, 0.0f, 1.0f );
-			glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-		
-		glPopMatrix();
-		
-		glPopMatrix();
+		float rp[] = { rays[ i ].p.x, rays[ i ].p.y, rays[ i ].p.z };
+		drawRay( &rp[ 0 ], &e[ 0 ], &rs[ 0 ], &rc[ 0 ] );
 	}
+	drawRay( &copenhagen[ 0 ], &e[ 0 ], &cs[ 0 ], &cc[ 0 ] );
 	rayImage.getTextureReference().unbind();
+	
+	float bs[] = { 0.05, 0.05, 0.05 };
+	float bc[] = { 0.94, 0.40, 0.18, 0.70 };
+	float cbs[] = { 0.10, 0.10, 0.00 };
+	float cbc[] = { 1.00, 1.00, 1.00, 0.70 };
 	
 	rayBaseImage.getTextureReference().bind();
 	for( int i=0; i<raysTotal; i++ )
 	{
-		glPushMatrix();
-		glTranslatef( rays[ i ].p.x, rays[ i ].p.y, rays[ i ].p.z );
-		
-		float *rbm = new float[ 16 ];		// ray base matrix.
-		rotateToSphereSurface( rbm, rays[ i ].p.x, rays[ i ].p.y, rays[ i ].p.z );
-		glMultMatrixf( rbm );
-		delete[] rbm;
-		
-		glScalef( 0.05, 0.05, 0.05 );
-		
-		glEnable( GL_DEPTH_TEST );
-		glDepthFunc( GL_LEQUAL );
-		
-		glVertexPointer( 3, GL_FLOAT, 0, planeCenter );
-		glTexCoordPointer( 2, GL_FLOAT, 0, planeTex );
-		
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-		
-		glColor4f( 0.94f, 0.40f, 0.18f, 0.7f );		// blood orange.
-		glNormal3f( 0.0f, 0.0f, 1.0f );
-		glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-		
-		glPopMatrix();
+		float bp[] = { rays[ i ].p.x, rays[ i ].p.y, rays[ i ].p.z };
+		drawRayBase( &bp[ 0 ], &bs[ 0 ], &bc[ 0 ] );
 	}
+	drawRayBase( &copenhagen[ 0 ], &cbs[ 0 ], &cbc[ 0 ] );
 	rayBaseImage.getTextureReference().unbind();
 	
-	ofDisableAlphaBlending();
+	glDepthMask( GL_TRUE );
+//	glBlendFunc( GL_ONE, GL_ZERO );
+}
+
+void testApp :: drawRay( float *p, float *e, float *s, float *c )
+{
+	ofxVec3f eye;	// camera eye vector.
+	ofxVec3f uv;	// up vector.
+	ofxVec3f rv;	// right vector.
+	ofxVec3f ov;	// out vector.
+
+	eye.set( e[ 0 ], e[ 1 ], e[ 2 ] );
+	
+	uv.set( p[ 0 ], p[ 1 ], p[ 2 ] );
+	rv = eye - uv;
+	rv.normalize();
+	ov = rv.getCrossed( uv );
+	ov.normalize();
+	rv = ov.getCrossed( uv );
+	rv.normalize();
+	
+	float *mat = new float[ 16 ];
+	mat[0]	= rv.x;
+	mat[1]	= rv.y;
+	mat[2]	= rv.z;
+	mat[3]	= 0;
+	mat[4]	= uv.x;
+	mat[5]	= uv.y;
+	mat[6]	= uv.z;
+	mat[7]	= 0;
+	mat[8]	= ov.x;
+	mat[9]	= ov.y;
+	mat[10]	= ov.z;
+	mat[11]	= 0;
+	mat[12]	= 0;
+	mat[13]	= 0;
+	mat[14]	= 0;
+	mat[15]	= 1;
+	
+	glPushMatrix();
+	glTranslatef( p[ 0 ], p[ 1 ], p[ 2 ] );
+	
+	glPushMatrix();	// draw ray.
+	
+	glMultMatrixf( mat );
+	delete[] mat;
+	glRotatef( 90, 0, 1, 0 );
+	
+	glScalef( s[ 0 ], s[ 1 ], s[ 2 ] );
+	
+	glVertexPointer( 3, GL_FLOAT, 0, planeBottomCenter );
+	glTexCoordPointer( 2, GL_FLOAT, 0, planeTextureInv );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	glColor4f( c[ 0 ], c[ 1 ], c[ 2 ], c[ 3 ] );		// blood orange.
+	glNormal3f( 0.0f, 0.0f, 1.0f );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+	
+	glPopMatrix();
+	
+	glPopMatrix();
+}
+
+void testApp :: drawRayBase( float *p, float *s, float *c )
+{
+	glPushMatrix();
+	glTranslatef( p[ 0 ], p[ 1 ], p[ 2 ] );
+	
+	float *rbm = new float[ 16 ];		// ray base matrix.
+	rotateToSphereSurface( rbm, p[ 0 ],  p[ 1 ],  p[ 2 ] );
+	glMultMatrixf( rbm );
+	delete[] rbm;
+	
+	glScalef( s[ 0 ], s[ 1 ], s[ 2 ] );
+	
+	glVertexPointer( 3, GL_FLOAT, 0, planeCenter );
+	glTexCoordPointer( 2, GL_FLOAT, 0, planeTexture );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	glColor4f( c[ 0 ], c[ 1 ], c[ 2 ], c[ 3 ] );
+	glNormal3f( 0.0f, 0.0f, 1.0f );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+	
+	glPopMatrix();
 }
 
 void testApp :: drawLines ()

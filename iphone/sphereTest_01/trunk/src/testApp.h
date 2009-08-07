@@ -35,6 +35,8 @@ public:
 	void draw();
 	void exit();
 
+	void initGeom();
+	void initBg();
 	void initEarth();
 	void initLocations();
 	void initRibbons();
@@ -58,9 +60,12 @@ public:
 	void stepRibbonLocation( RibbonInfo *ribbon );
 	void updateRibbonLocation( RibbonInfo *ribbon );
 	
+	void drawBg();
 	void drawSphere();
 	void drawRibbons();
 	void drawRays();
+	void drawRay( float *p, float *e, float *s, float *c );
+	void drawRayBase( float *p, float *s, float *c );
 	void drawLines();
 	void drawTriangle();
 	void drawCube();
@@ -78,10 +83,17 @@ public:
 	void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL);
 	void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL);
 	
+	ofImage		earthBg;
 	ofImage		earthMap;
 	ofImage		earthGlow;
 	
+	float		planeBottomCenter[ 12 ];
+	float		planeCenter[ 12 ];
+	float		planeTexture[ 8 ];
+	float		planeTextureInv[ 8 ];
+	
 	Sphere			sphere;
+	float			sphereOrientation[ 16 ];
 	
 	RibbonInfo		*ribbons;
 	int				ribbonsTotal;
@@ -93,9 +105,9 @@ public:
 	ofImage			rayBaseImage;
 	
 	// trackball.
-	GLfloat gTrackBallRotation[ 4 ];
-	GLfloat gWorldRotation[ 4 ];
-	bool	gTrackBall;
+	GLfloat		gTrackBallRotation[ 4 ];
+	GLfloat		gWorldRotation[ 4 ];
+	bool		gTrackBall;
 	
 	// rotation.
 	ofxVec2f	center;
@@ -111,6 +123,7 @@ public:
 	float	matDiffuse[ 4 ];
 	
 	// locations.
+	float	copenhagen[ 3 ];
 	float	*locations;
 	int		locationsTotal;
 	int		locationsMax;
