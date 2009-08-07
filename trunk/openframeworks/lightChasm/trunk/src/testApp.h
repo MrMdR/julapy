@@ -1,6 +1,7 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
+//#define USE_VIDEO_SAVER
 
 #include "ofMain.h"
 #include "LiveAudioIn.h"
@@ -15,12 +16,21 @@
 #include "OscReceiver.h"
 #include "TouchOscLayout01.h"
 
+#include "ofxScreenGrabUtil.h"
+
+#ifdef USE_VIDEO_SAVER
+	#include "ofQtVideoSaver.h"
+#endif
+
+
 class VideoObj
 {
 public :		
 	ofVideoPlayer	video;
 	float			duration;
+	int				frames;
 	float			startTime;
+	float			startFrame;
 	bool			playing;
 	bool			oscPlaying;
 };
@@ -41,11 +51,14 @@ class testApp : public ofBaseApp{
 		void initOpBars();
 		void initOpRain();
 		void initVideos();
+		void initVideoSaver();
 	
 		void updateOsc();
 		void updateVideo();
 	
 		void drawVideos();
+		void drawToVideoSaver();
+		void drawDebug();
 	
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -91,6 +104,17 @@ class testApp : public ofBaseApp{
 		bool		videoPositionOverride;
 		float		videoPositionOsc;
 		float		videoPosition;
+	
+#ifdef USE_VIDEO_SAVER
+		ofQtVideoSaver		videoSaver;
+		ofImage				videoSaverImage;
+		int					videoSaverWidth;
+		int					videoSaverHeight;
+		bool				videoSaverRecording;
+		string				videoSaverPath;
+#endif
+	
+		ofxScreenGrabUtil	screenGrabUtil;
 };
 
 #endif

@@ -17,6 +17,7 @@ void testApp::setup()
 	initOpRain();
 	initVideos();
 	initOsc();
+	initVideoSaver();
 }
 
 ///////////////////////////////////////////////////
@@ -98,7 +99,9 @@ void testApp :: initVideos ()
 	{
 		videos[ i ].video.setPaused( true );
 		videos[ i ].duration	= videos[ i ].video.getDuration();
+		videos[ i ].frames		= videos[ i ].video.getTotalNumFrames();
 		videos[ i ].startTime	= 0;
+		videos[ i ].startFrame	= 0;
 		videos[ i ].playing		= false;
 		videos[ i ].oscPlaying	= false;
 	}
@@ -122,6 +125,28 @@ void testApp :: initOsc ()
 	oscRcvr.addInput( "/1/toggle4", &videoPositionOverride );
 }
 
+void testApp :: initVideoSaver()
+{
+#ifdef USE_VIDEO_SAVER
+	videoSaverWidth		= ofGetWidth();
+	videoSaverHeight	= ofGetHeight();
+	
+	char str[ 512 ];
+	sprintf( str, "lc_%02d%02d%02d_%02d%02d%02d_%dx%d", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds(), videoSaverWidth, videoSaverHeight );
+	
+	videoSaverPath = str;
+	
+	videoSaverImage.allocate( videoSaverWidth, videoSaverHeight, GL_RGB );
+	
+	videoSaver.listCodecs();
+	videoSaver.setCodecType( 2 );
+	videoSaver.setCodecQualityLevel( OF_QT_SAVER_CODEC_QUALITY_LOSSLESS );
+	videoSaver.setup( videoSaverWidth, videoSaverHeight, videoSaverPath );
+	
+	videoSaverRecording = true;
+#endif
+}
+
 ///////////////////////////////////////////////////
 //	UPDATE.
 ///////////////////////////////////////////////////
@@ -136,6 +161,8 @@ void testApp::update()
 	
 	updateVideo();
 	
+//	opCirlceResScale = 0.5 + 0.5 * sin( ofGetElapsedTimef() / (float)500 * PI - PI * 0.5 );
+//	opCirlceRotScale = 0.5 + 0.5 * sin( ofGetElapsedTimef() * PI );
 	opCirlce.setRotation( opCirlceRot += opCirlceRotScale * 1.0 + 0.1 );
 	opCirlce.setAudioInValue( avgPowerScaled );
 	opCirlce.setRgbScale( opCirlceColor, opCirlceColor, opCirlceColor );
@@ -146,6 +173,7 @@ void testApp::update()
 	opBars.setAudioInData( audioIn.averages );
 	opBars.update();
 	
+//	opCheckersSizeScale = 0.5 + 0.5 * sin( ofGetElapsedTimef() / (float)500 * PI - PI * 0.5 );
 	opCheckers.setSize( MAX( 3, opCheckersSize * opCheckersSizeScale ) );
 	opCheckers.update();
 
@@ -171,17 +199,19 @@ void testApp :: updateVideo ()
 			
 			if( videos[ i ].playing )
 			{
-				videos[ i ].startTime = ofGetElapsedTimef();
+				videos[ i ].startTime  = ofGetElapsedTimef();
+				videos[ i ].startFrame = ofGetFrameNum();
 			}
 		}
 		
 		if( videos[ i ].playing )
 		{
-			float t = ( ofGetElapsedTimef() - videos[ i ].startTime ) / videos[ i ].duration;
+			float t = ( ofGetFrameNum() - videos[ i ].startFrame ) / videos[ i ].frames;
 			if( t > 1 )
 			{
 				t = 0;
-				videos[ i ].startTime = ofGetElapsedTimef();
+				videos[ i ].startTime  = ofGetElapsedTimef();
+				videos[ i ].startFrame = ofGetFrameNum();
 			}
 			
 			if( videoPositionOverride )
@@ -218,13 +248,11 @@ void testApp::draw()
 
 //	audioIn.draw();
 	
-//	ofSetColor( 0xFF0000 );
-//	ofDrawBitmapString
-//	(
-//		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
-//		20,
-//		20
-//	);
+	if( screenGrabUtil.isRecording() )
+		screenGrabUtil.save();
+	
+	drawToVideoSaver();
+	drawDebug();
 }
 
 void testApp :: drawVideos()
@@ -239,11 +267,57 @@ void testApp :: drawVideos()
 	}
 }
 
+void testApp :: drawToVideoSaver()
+{
+#ifdef USE_VIDEO_SAVER
+	if( videoSaverRecording )
+	{
+		videoSaverImage.grabScreen( 0, 0, videoSaverWidth, videoSaverHeight );
+		videoSaver.addFrame( videoSaverImage.getPixels(), 1.0f / 30.0f ); 
+	}
+#endif
+}
+
+void testApp :: drawDebug()
+{
+	ofSetColor( 0xFF0000 );
+	ofDrawBitmapString
+	(
+		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
+		20,
+		20
+	);
+}
+
 //--------------------------------------------------------------
 
 void testApp :: keyPressed(int key)
 {
-	//
+	
+	if( key == 'm' )
+	{
+		if( screenGrabUtil.isRecording() )
+		{
+			screenGrabUtil.stop();
+		}
+		else
+		{
+			screenGrabUtil.start( "movie/type_ribbons" );
+		}
+	}
+	
+#ifdef USE_VIDEO_SAVER
+	if( key == 'r' )
+	{
+		videoSaverRecording = !videoSaverRecording;
+		
+		if( !videoSaverRecording )
+		{
+			videoSaver.finishMovie();
+		}
+	}
+#endif
+	
 }
 
 //--------------------------------------------------------------
