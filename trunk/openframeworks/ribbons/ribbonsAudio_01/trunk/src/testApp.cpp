@@ -6,13 +6,16 @@
 
 void testApp :: setup()
 {
-	ofSetFrameRate( 100 );
+	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
+	ofDisableArbTex();
 	ofBackground( 150, 150, 150 );
-//	ofBackground( 0, 0, 0 );
 
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
+	
 	pTotal		= MAX_PARTICLES;
 	trailIndex	= 0;
 	
@@ -55,14 +58,25 @@ void testApp :: setup()
 //	colourMapImage.loadImage( "3276739319_f3b90fef70.jpg" );
 //	colourMapImage.loadImage( "3277282859_41d0df132b.jpg" );
 
+	sphereBg.init();
+	
 	upAxis.set( 0, 1, 0 );
 	upAxisRot = 5;
 	
 	tileSaver.init( 10, 0, true );
+	screenGrabUtil.start( "movie/ar" );
 	
 	useAdditiveBlending = false;
 	
-	ofSoundStreamSetup( 0, 2, this, 44100, ribbonAudio.getBufferSize(), 4 );
+#ifdef USE_LIVE_AUDIO
+	ofSoundStreamSetup( 0, 2, this, 44100, ribbonLiveAudio.getBufferSize(), 4 );
+//	ofSoundStreamSetup( 0, 2, 44100, ribbonAudio.getBufferSize(), 4 );		// there is a way of receiving sound stream events,
+																			// i just don't know how to do it yet. this will do for now.
+#else
+	ribbonFileAudio.init();
+	ribbonFileAudio.setFrameRateSync( true );
+#endif
+	
 }
 
 void testApp :: initVBO ()
@@ -91,7 +105,7 @@ void testApp :: update()
 {
 	if( tileSaver.bGoTiling )
 		return;
-	
+
 	noiseField.update();
 	
 	for( int i=0; i<pTotal; i++ )
@@ -101,10 +115,15 @@ void testApp :: update()
 		ofxVec3f noi = noiseField.getNormalisedForce( pos[ i ][ 0 ], pos[ i ][ 1 ], pos[ i ][ 2 ] );
 		
 		sph *= 1.2;
+//		noi *= ribbonAudio.getAveragePowerScale() * 0.1;
 		
 		vel = sph + noi;
 		vel.normalize();
-		vel *= 3;
+		vel *= 6;
+		
+#ifdef USE_LIVE_AUDIO
+		vel *= ribbonLiveAudio.getAveragePowerScale();
+#endif
 		
 		pos[ i ][ 0 ] += vel.x;
 		pos[ i ][ 1 ] += vel.y;
@@ -202,7 +221,16 @@ void testApp :: update()
 		tcl[ i ][ 0 ] = tcl[ i ][ 4 ] = r / 255.0f;
 		tcl[ i ][ 1 ] = tcl[ i ][ 5 ] = g / 255.0f;
 		tcl[ i ][ 2 ] = tcl[ i ][ 6 ] = b / 255.0f;
-		tcl[ i ][ 3 ] = tcl[ i ][ 7 ] = 0.7f;
+		tcl[ i ][ 3 ] = tcl[ i ][ 7 ] = 0.8f;
+
+		if( trailIndex > 0 )
+		{
+#ifdef USE_LIVE_AUDIO
+			ribbonLiveAudio.scaleRibbon( &trl[ i ][ 0 ], &tvd[ i ][ 0 ], &tvr[ i ][ 0 ], i, pTotal, trailIndex );
+#else
+			ribbonFileAudio.scaleRibbon( &trl[ i ][ 0 ], &tvd[ i ][ 0 ], &tvr[ i ][ 0 ], i, pTotal, trailIndex );
+#endif
+		}
 	}
 	
 	if( trailIndex < MAX_TRAIL_LENGTH )
@@ -213,6 +241,13 @@ void testApp :: update()
 	upAxis.rotate( upAxisRot, ofxVec3f( 1, 0, 0 ) );
 	
 	rotateY += 0.1;
+	
+	sphereBg.update();
+	
+#ifndef USE_LIVE_AUDIO
+	ribbonFileAudio.update();
+#endif
+
 }
 
 void testApp :: mapColour ( float x, float y, int *r, int *g, int *b )
@@ -249,6 +284,8 @@ void testApp :: draw()
 	glPushMatrix();
 	glTranslatef( stageCenterX, stageCenterY, 0 );
 	glRotatef( rotateY, 0, 1, 0 );
+
+	sphereBg.draw();
 	
 #ifdef USE_VBO
 	
@@ -266,7 +303,12 @@ void testApp :: draw()
 	glPopMatrix();
 	
 	tileSaver.end();
-
+	
+	if( screenGrabUtil.isRecording() )
+	{
+		screenGrabUtil.save();
+	}
+	
 	ofSetColor( 0x000000 );
 	ofDrawBitmapString
 	(
@@ -412,7 +454,9 @@ void testApp :: drawRibbonFillVBO()
 
 void testApp :: audioReceived( float * input, int bufferSize, int nChannels )
 {
-	ribbonAudio.audioReceived( input, bufferSize, nChannels );
+#ifdef USE_LIVE_AUDIO
+	ribbonLiveAudio.audioReceived( input, bufferSize, nChannels );
+#endif
 }
 
 void testApp :: keyPressed( int key )
@@ -430,18 +474,28 @@ void testApp :: keyReleased( int key )
 		tileSaver.finish( str, false );
 	}
 	
+	if( key == 'm' )
+	{
+		if( screenGrabUtil.isRecording() )
+		{
+			screenGrabUtil.stop();
+		}
+		else
+		{
+			screenGrabUtil.start( "movie/ar" );
+		}
+	}
+	
 	if( key == 'a' )
 	{
 		useAdditiveBlending = !useAdditiveBlending;
 		
 		if( useAdditiveBlending )
 		{
-			glDisable( GL_DEPTH_TEST );
 			glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 		}
 		else
 		{
-			glEnable( GL_DEPTH_TEST );
 			glBlendFunc( GL_ONE, GL_ZERO );
 		}
 	}
