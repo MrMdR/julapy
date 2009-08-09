@@ -409,92 +409,92 @@ int RibbonType :: getCharacterIndex ( int letter )
 
 void RibbonType :: drawLetterWrap( int letter, float xOffset, float yOffset )
 {
-	int characterIndex = getCharacterIndex( letter );
-	if( characterIndex == -1 )
-	{
-		return;
-	}
-	
-	ofTTFCharacter ttfChar;
-	ttfChar = characterContours.at( characterIndex );
-	
-	bool outsideOfRibbon = false;
-	int contourMaxIndex = contourStartIndex;
-	
-	ofBeginShape();
-	
-	for( int k=0; k<ttfChar.contours.size(); k++ )
-	{
-		if( k != 0 )
-		{
-			ofNextContour(true);
-		}
-		
-		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
-		{
-			float cx = ttfChar.contours[ k ].pts[ i ].x + xOffset;
-			float cy = ttfChar.contours[ k ].pts[ i ].y + yOffset;
-			
-			ofxVec3f cp;	// contour point.
-			ofxVec3f p1;	// current ribbon point position.
-			ofxVec3f p2;	// next ribbon point position.
-			ofxVec3f p21;	// direction from p1 to p2;
-			
-			int j;
-			for( j=contourStartIndex; j<( ribbonLength - 1 ) * 3; j+=3 )
-			{
-				p1	= ofxVec3f( ribbonPositions[ j + 0 ], ribbonPositions[ j + 1 ], ribbonPositions[ j + 2 ] );
-				p2	= ofxVec3f( ribbonPositions[ j + 3 ], ribbonPositions[ j + 4 ], ribbonPositions[ j + 5 ] );
-				p21	= p2 - p1;
-				
-				int ribbonLengthIndex = (int)( j / 3 );
-				float lx = ribbonLengths[ ribbonLengthIndex ];		// lower x bounds.
-				float ux = ribbonLengths[ ribbonLengthIndex + 1 ];	// upper x bounds.
-				
-				if( cx >= lx && cx < ux )	// found! contour lies between p1 and p2.
-				{
-					if( j > contourMaxIndex )
-					{
-						contourMaxIndex = j;
-					}
-					
-					float p = ( cx - lx ) / ( ux - lx );
-					
-					cp = p1 + p21 * p;
-					
-					break;
-				}
-				
-				if( j == ( ribbonLength - 2 ) * 3 )	// last point.
-				{
-					outsideOfRibbon = true;
-				}
-			}
-			
-			if( outsideOfRibbon )
-			{
-				break;
-			}
-			
-			ofxVec3f cd = ofxVec3f( ribbonDirections[ j + 0 ], ribbonDirections[ j + 1 ], ribbonDirections[ j + 2 ] );
-			cd *= cy;
-			cp += cd;
-			
-			ofVertex( cp.x, cp.y, cp.z );
-		}
-		
-		if( outsideOfRibbon )
-		{
-			break;
-		}
-	}
-	
-	contourStartIndex = contourMaxIndex;
-	
-	if( !outsideOfRibbon )
-	{
-		ofEndShape( true );
-	}
+//	int characterIndex = getCharacterIndex( letter );
+//	if( characterIndex == -1 )
+//	{
+//		return;
+//	}
+//	
+//	ofTTFCharacter ttfChar;
+//	ttfChar = characterContours.at( characterIndex );
+//	
+//	bool outsideOfRibbon = false;
+//	int contourMaxIndex = contourStartIndex;
+//	
+//	ofBeginShape();
+//	
+//	for( int k=0; k<ttfChar.contours.size(); k++ )
+//	{
+//		if( k != 0 )
+//		{
+//			ofNextContour(true);
+//		}
+//		
+//		for( int i=0; i<ttfChar.contours[ k ].pts.size(); i++ )
+//		{
+//			float cx = ttfChar.contours[ k ].pts[ i ].x + xOffset;
+//			float cy = ttfChar.contours[ k ].pts[ i ].y + yOffset;
+//			
+//			ofxVec3f cp;	// contour point.
+//			ofxVec3f p1;	// current ribbon point position.
+//			ofxVec3f p2;	// next ribbon point position.
+//			ofxVec3f p21;	// direction from p1 to p2;
+//			
+//			int j;
+//			for( j=contourStartIndex; j<( ribbonLength - 1 ) * 3; j+=3 )
+//			{
+//				p1	= ofxVec3f( ribbonPositions[ j + 0 ], ribbonPositions[ j + 1 ], ribbonPositions[ j + 2 ] );
+//				p2	= ofxVec3f( ribbonPositions[ j + 3 ], ribbonPositions[ j + 4 ], ribbonPositions[ j + 5 ] );
+//				p21	= p2 - p1;
+//				
+//				int ribbonLengthIndex = (int)( j / 3 );
+//				float lx = ribbonLengths[ ribbonLengthIndex ];		// lower x bounds.
+//				float ux = ribbonLengths[ ribbonLengthIndex + 1 ];	// upper x bounds.
+//				
+//				if( cx >= lx && cx < ux )	// found! contour lies between p1 and p2.
+//				{
+//					if( j > contourMaxIndex )
+//					{
+//						contourMaxIndex = j;
+//					}
+//					
+//					float p = ( cx - lx ) / ( ux - lx );
+//					
+//					cp = p1 + p21 * p;
+//					
+//					break;
+//				}
+//				
+//				if( j == ( ribbonLength - 2 ) * 3 )	// last point.
+//				{
+//					outsideOfRibbon = true;
+//				}
+//			}
+//			
+//			if( outsideOfRibbon )
+//			{
+//				break;
+//			}
+//			
+//			ofxVec3f cd = ofxVec3f( ribbonDirections[ j + 0 ], ribbonDirections[ j + 1 ], ribbonDirections[ j + 2 ] );
+//			cd *= cy;
+//			cp += cd;
+//			
+//			ofVertex( cp.x, cp.y, cp.z );
+//		}
+//		
+//		if( outsideOfRibbon )
+//		{
+//			break;
+//		}
+//	}
+//	
+//	contourStartIndex = contourMaxIndex;
+//	
+//	if( !outsideOfRibbon )
+//	{
+//		ofEndShape( true );
+//	}
 }
 
 
