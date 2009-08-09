@@ -1,16 +1,24 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
+#define USE_VBO
+//#define USE_LIVE_AUDIO
+
 #include "ofMain.h"
+#include "SphereBg.h"
 #include "SphericalField.h"
 #include "NoiseField.h"
 #include "ofxTileSaver.h"
-#include "RibbonAudio.h"
+#include "ofxScreenGrabUtil.h"
+
+#ifdef USE_LIVE_AUDIO
+	#include "RibbonLiveAudio.h"
+#else
+	#include "RibbonFileAudio.h"
+#endif
 
 #define MAX_PARTICLES		1000
 #define MAX_TRAIL_LENGTH	100
-
-#define USE_VBO
 
 class testApp : public ofBaseApp{
 
@@ -46,6 +54,7 @@ class testApp : public ofBaseApp{
 		NoiseField		noiseField;
 		SphericalField	sphericalField;
 	
+		SphereBg		sphereBg;
 		ofImage			colourMapImage;
 	
 		int		pTotal;
@@ -65,9 +74,15 @@ class testApp : public ofBaseApp{
 		float		upAxisRot;
 		float		rotateY;
 	
-		ofxTileSaver	tileSaver;
+		ofxTileSaver		tileSaver;
+		ofxScreenGrabUtil	screenGrabUtil;
 	
-		RibbonAudio		ribbonAudio;
+#ifdef USE_LIVE_AUDIO
+		RibbonLiveAudio		ribbonLiveAudio;
+#else
+		RibbonFileAudio		ribbonFileAudio;
+#endif
+	
 };
 
 #endif
