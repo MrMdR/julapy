@@ -12,19 +12,33 @@ class TriangleField
 public :
 	float				*sColor;
 	float				*eColor;
+	float				*bsColor;
+	float				*beColor;
 
 	float				scale;
+	int					scaleInc;
 	float				cutoff;
+	
+	bool				drawOutline;
 	
 	float				noiseX;
 	float				noiseY;
 	float				noiseZ;
+	
+	float				noiseXInit;
+	float				noiseYInit;
+	float				noiseZInit;
+	
 	float				noiseXRes;
 	float				noiseYRes;
 	float				noiseZRes;
+	
 	float				noiseXVel;
 	float				noiseYVel;
 	float				noiseZVel;
+	
+	float				noiseXScl;
+	float				noiseYScl;
 };
 
 class testApp : public ofBaseApp{
@@ -53,8 +67,12 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 
+	int					screenWidth;
+	int					screenHeight;
+	
 	int					dbInc;
 	int					frameCount;
+	bool				showDebug;
 	
 	float				**colors;
 	int					colorsMax;
