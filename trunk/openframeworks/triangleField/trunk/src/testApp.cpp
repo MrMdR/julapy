@@ -15,14 +15,32 @@ void testApp :: setup()
 	glEnable( GL_DEPTH_TEST );
 	glDepthFunc( GL_LEQUAL );
 	
-	screenWidth  = ofGetWidth();
-	screenHeight = ofGetHeight();
-	
-	tileSaver.init( 10, 0, true );
-	
+	initRenderArea();
 	initColor();
 	initFields();
 	initDebug();
+	initGui();
+	
+	tileSaver.init( 10, 0, true );
+	screenGrabUtil.setup( "movie/trigfield", &renderArea );
+}
+
+void testApp :: initRenderArea()
+{
+	renderAreaWindow.x      = 0;
+	renderAreaWindow.y      = 0;
+	renderAreaWindow.width  = 1280;
+	renderAreaWindow.height = 720;
+	
+	renderAreaFullScreen.x      = 1440;
+	renderAreaFullScreen.y      = 0;
+	renderAreaFullScreen.width  = 800;
+	renderAreaFullScreen.height = 480;
+	
+	renderArea.x		= renderAreaWindow.x;
+	renderArea.y		= renderAreaWindow.y;
+	renderArea.width	= renderAreaWindow.width;
+	renderArea.height	= renderAreaWindow.height;
 }
 
 void testApp :: initDebug()
@@ -74,7 +92,7 @@ void testApp :: addColor( int r, int g, int b, int a )
 void testApp :: initFields()
 {
 	fieldIndex  = 0;
-	fieldsTotal = 4;
+	fieldsTotal = 3;
 	fields = new TriangleField[ fieldsTotal ];
 	
 	for( int i=0; i<fieldsTotal; i++ )
@@ -82,6 +100,11 @@ void testApp :: initFields()
 		fields[ i ].scale    = 1;
 		fields[ i ].scaleInc = 1;
 		fields[ i ].cutoff   = 1.0;
+		
+		fields[ i ].sColor  = new float[ 4 ];
+		fields[ i ].eColor  = new float[ 4 ];
+		fields[ i ].bsColor = new float[ 4 ];
+		fields[ i ].beColor = new float[ 4 ];
 		
 		fields[ i ].drawOutline = true;
 		
@@ -101,51 +124,82 @@ void testApp :: initFields()
 		fields[ i ].noiseYVel = 0.0;
 		fields[ i ].noiseZVel = 0.005;
 		
-		fields[ i ].noiseXScl = screenHeight / (float)screenWidth;
+		fields[ i ].noiseXScl = renderArea.height / (float)renderArea.width;
 		fields[ i ].noiseYScl = 1.0;
 	}
 	
-	fields[ 0 ].sColor    = &colors[ 0 ][ 0 ];
-	fields[ 0 ].eColor    = &colors[ 2 ][ 0 ];
-	fields[ 0 ].bsColor   = fields[ 0 ].sColor;
-	fields[ 0 ].beColor   = fields[ 0 ].eColor;
 	fields[ 0 ].scaleInc  = 4;
 	fields[ 0 ].scale     = pow( 2, fields[ 0 ].scaleInc );
 	fields[ 0 ].cutoff    = 0.0;
 	fields[ 0 ].noiseXVel = 0.0;
 	fields[ 0 ].noiseYVel = 0.01;
 
-	fields[ 1 ].sColor    = &colors[ 0 ][ 0 ];
-	fields[ 1 ].eColor    = &colors[ 4 ][ 0 ];
-	fields[ 1 ].bsColor   = fields[ 1 ].sColor;
-	fields[ 1 ].beColor   = fields[ 1 ].eColor;
 	fields[ 1 ].scaleInc  = 3;
 	fields[ 1 ].scale     = pow( 2, fields[ 1 ].scaleInc );
 	fields[ 1 ].cutoff    = 0.6;
 	fields[ 1 ].noiseXVel = 0.0;
 	fields[ 1 ].noiseYVel = -0.01;
 
-	fields[ 2 ].sColor    = &colors[ 1 ][ 0 ];
-	fields[ 2 ].eColor    = &colors[ 2 ][ 0 ];
-	fields[ 2 ].bsColor   = fields[ 2 ].sColor;
-	fields[ 2 ].beColor   = fields[ 2 ].eColor;
 	fields[ 2 ].scaleInc  = 2;
 	fields[ 2 ].scale     = pow( 2, fields[ 2 ].scaleInc );
 	fields[ 2 ].cutoff    = 0.4;
 	fields[ 2 ].noiseXVel = 0.0;
 	fields[ 2 ].noiseYVel = 0.02;
 	
-	fields[ 3 ].sColor    = &colors[ 5 ][ 0 ];
-	fields[ 3 ].eColor    = &colors[ 4 ][ 0 ];
-	fields[ 3 ].bsColor   = fields[ 3 ].sColor;
-	fields[ 3 ].beColor   = fields[ 3 ].eColor;
-	fields[ 3 ].scaleInc  = 1;
-	fields[ 3 ].scale     = pow( 2, fields[ 3 ].scaleInc );
-	fields[ 3 ].cutoff    = 0.6;
-	fields[ 3 ].noiseXVel = 0.015;
-	fields[ 3 ].noiseYVel = 0.015;
-
+//	fields[ 3 ].sColor    = &colors[ 5 ][ 0 ];
+//	fields[ 3 ].eColor    = &colors[ 4 ][ 0 ];
+//	fields[ 3 ].bsColor   = fields[ 3 ].sColor;
+//	fields[ 3 ].beColor   = fields[ 3 ].eColor;
+//	fields[ 3 ].scaleInc  = 1;
+//	fields[ 3 ].scale     = pow( 2, fields[ 3 ].scaleInc );
+//	fields[ 3 ].cutoff    = 0.6;
+//	fields[ 3 ].noiseXVel = 0.015;
+//	fields[ 3 ].noiseYVel = 0.015;
 }
+
+//////////////////////////////////////////////
+//	UI.
+//////////////////////////////////////////////
+
+void testApp :: initGui()
+{
+//	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5);
+//	gui.addSlider("fs.colorDiffusion", &fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5); 
+//	gui.addSlider("fs.fadeSpeed", &fluidSolver.fadeSpeed, 0.0, 0.1, 0.5); 
+//	gui.addSlider("fs.solverIterations", &fluidSolver.solverIterations, 1, 20); 
+//	gui.addSlider("fd.drawMode", &fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1); 
+//	gui.addToggle("fs.doRGB", &fluidSolver.doRGB); 
+//	gui.addToggle("fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement); 
+//	gui.addToggle("drawFluid", &drawFluid); 
+//	gui.addToggle("renderUsingVA", &renderUsingVA); 
+//	
+//	gui.addSlider("optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
+//	gui.addSlider("optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
+//	gui.addSlider("optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
+//	gui.addSlider("fluid color scale",	&fluidColorScale,				0.0, 2.0, 0.5 );
+	
+	colorPickers = new ColorPicker[ fieldsTotal * 2 ];
+	
+	int colorWheelWidth  = 100;
+	int colorWheelHeight = 100;
+	
+	int py = 430;
+	int px = 30;
+	int sx = 30;
+	
+	for( int i=0; i<fieldsTotal; i++ )
+	{
+		colorPickers[ i * 2 + 0 ].init( px, py, colorWheelWidth, colorWheelHeight );
+		colorPickers[ i * 2 + 0 ].setMode( COLOR_PICKER_MODE_MOUSE);
+		
+		px += colorWheelWidth + sx;
+		
+		colorPickers[ i * 2 + 1 ].init( px, py, colorWheelWidth, colorWheelHeight );
+		colorPickers[ i * 2 + 1 ].setMode( COLOR_PICKER_MODE_MOUSE);
+		
+		px += colorWheelWidth + sx + 20;
+	}
+}	
 
 //////////////////////////////////////////////
 //	UPDATE.
@@ -155,8 +209,31 @@ void testApp :: update()
 {
 	if( tileSaver.bGoTiling )
 		return;
+	
+	updateFieldColors();
 
 	++frameCount;
+}
+
+void testApp :: updateFieldColors()
+{
+	for( int i=0; i<fieldsTotal; i++ )
+	{
+		Color sColor;
+		Color eColor;
+		colorPickers[ i * 2 + 0 ].getColor( &sColor );
+		colorPickers[ i * 2 + 1 ].getColor( &eColor );
+		
+		fields[ i ].sColor[ 0 ] = sColor.r;
+		fields[ i ].sColor[ 1 ] = sColor.g;
+		fields[ i ].sColor[ 2 ] = sColor.b;
+		fields[ i ].sColor[ 3 ] = sColor.a;
+		
+		fields[ i ].eColor[ 0 ] = eColor.r;
+		fields[ i ].eColor[ 1 ] = eColor.g;
+		fields[ i ].eColor[ 2 ] = eColor.b;
+		fields[ i ].eColor[ 3 ] = eColor.a;
+	}
 }
 
 //////////////////////////////////////////////
@@ -175,22 +252,32 @@ void testApp :: draw()
 	
 	tileSaver.begin();
 	
+	glPushMatrix();
+	glTranslatef( renderArea.x, renderArea.y, 0 );
+
 //	drawSquareNoise( &fields[ 0 ] );
 //	drawTraingleStatic();
 //	drawTriangleNoise( &fields[ 0 ] );
-
+	
 	for( int i=0; i<fieldsTotal; i++ )
 		drawTriangleNoise( &fields[ i ] );
 	
+	glPopMatrix();
+	
 	tileSaver.end();
+
+	if( tileSaver.bGoTiling )
+		return;
 	
 	if( screenGrabUtil.isRecording() )
 	{
 		screenGrabUtil.save();
 	}
 	
-	glBlendFunc( GL_ONE, GL_ZERO );
+//	glBlendFunc( GL_ONE, GL_ZERO );
 
+	gui.draw();
+	
 	if( showDebug )
 		drawDebug();
 }
@@ -199,8 +286,8 @@ void testApp :: drawSquareNoise ( TriangleField *field )
 {
 	float size = 10.0 * field->scale;
 	
-	int cy = ceil( screenHeight / size );
-	int cx = ceil( screenWidth / size );
+	int cy = ceil( renderArea.height / size );
+	int cx = ceil( renderArea.width / size );
 	
 	field->noiseXInit = frameCount * field->noiseXVel;
 	field->noiseYInit = frameCount * field->noiseYVel;
@@ -243,8 +330,8 @@ void testApp :: drawTraingleStatic ()
 {
 	float size = 40.0;
 	
-	int cy = ceil( screenHeight / size );
-	int cx = ceil( screenWidth / size );
+	int cy = ceil( renderArea.height / size );
+	int cx = ceil( renderArea.width / size );
 	
 	int c;
 	
@@ -298,8 +385,8 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 {
 	float size = 10.0 * field->scale;
 	
-	int cy = ceil( screenHeight / size );
-	int cx = ceil( screenWidth / size );
+	int cy = ceil( renderArea.height / size );
+	int cx = ceil( renderArea.width / size );
 	
 	field->noiseXInit = frameCount * field->noiseXVel;
 	field->noiseYInit = frameCount * field->noiseYVel;
@@ -469,9 +556,36 @@ void testApp :: drawDebug()
 		"cutoff     :: press y to change   :: " + ofToString( fields[ fieldIndex ].cutoff, 5 ) + "\n\n" +
 		"\n\n" +
 		"dbInc      :: press -/+ to change :: " + ofToString( dbInc, 5 ) + "\n\n",
-		20,
+		400,
 		20
 	);
+}
+
+//////////////////////////////////////////////
+//	UPDATE.
+//////////////////////////////////////////////
+
+void testApp :: toggleFullScreen()
+{
+	ofToggleFullscreen();
+	
+	if( ofGetWindowMode() == OF_WINDOW )
+	{
+		renderArea.x		= renderAreaWindow.x;
+		renderArea.y		= renderAreaWindow.y;
+		renderArea.width	= renderAreaWindow.width;
+		renderArea.height	= renderAreaWindow.height;
+	}
+	
+	if( ofGetWindowMode() == OF_FULLSCREEN )
+	{
+		renderArea.x		= renderAreaFullScreen.x;
+		renderArea.y		= renderAreaFullScreen.y;
+		renderArea.width	= renderAreaFullScreen.width;
+		renderArea.height	= renderAreaFullScreen.height;
+	}
+	
+	screenGrabUtil.setArea( &renderArea );
 }
 
 //////////////////////////////////////////////
@@ -546,12 +660,24 @@ void testApp :: keyReleased( int key )
 		}
 		else
 		{
-			screenGrabUtil.start( "movie/trigfield" );
+			screenGrabUtil.start();
 		}
 	}
 	
 	if( key == 'd' )
+	{
 		showDebug = !showDebug;
+		
+		for( int i=0; i<fieldsTotal * 2; i++ )
+		{
+			colorPickers[ i ].setVisible( showDebug );
+		}
+		
+		gui.toggleDraw();
+	}
+	
+	if( key == 'f' )
+		toggleFullScreen();
 }
 
 void testApp :: mouseMoved( int x, int y )

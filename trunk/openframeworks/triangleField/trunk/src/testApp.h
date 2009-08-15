@@ -6,6 +6,8 @@
 #include "ofxNoise.h"
 #include "ofxTileSaver.h"
 #include "ofxScreenGrabUtil.h"
+#include "ColorPicker.h"
+#include "ofxSimpleGuiToo.h"
 
 class TriangleField
 {
@@ -48,16 +50,22 @@ public:
 	void update();
 	void draw();
 
+	void initRenderArea();
 	void initColor();
 	void initFields();
 	void initDebug();
+	void initGui();
 	
 	void addColor( int r, int g, int b, int a );
+	
+	void updateFieldColors();
 	
 	void drawSquareNoise( TriangleField *field );
 	void drawTraingleStatic();
 	void drawTriangleNoise( TriangleField *field );
 	void drawDebug();
+	
+	void toggleFullScreen();
 
 	void keyPressed  (int key);
 	void keyReleased(int key);
@@ -67,8 +75,12 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 
-	int					screenWidth;
-	int					screenHeight;
+	ofRectangle			renderArea;
+	ofRectangle			renderAreaWindow;
+	ofRectangle			renderAreaFullScreen;
+	
+	ColorPicker			*colorPickers;
+	ofxSimpleGuiToo		gui;
 	
 	int					dbInc;
 	int					frameCount;
