@@ -17,21 +17,18 @@ void testApp :: setup()
 	int px = 30;
 	int sx = 30;
 	
-	colorPicker0.init( colorWheelWidth, colorWheelHeight );
-	colorPicker0.setPos( px, py );
+	colorPicker0.init( px, py, colorWheelWidth, colorWheelHeight );
 	colorPicker0.setMode( COLOR_PICKER_MODE_MOUSE);
 	
 	px += colorWheelWidth + sx;
 	
-	colorPicker1.init( colorWheelWidth, colorWheelHeight );
-	colorPicker1.setPos( px, py );
+	colorPicker1.init( px, py, colorWheelWidth, colorWheelHeight );
 	colorPicker1.setMode( COLOR_PICKER_MODE_CIRLCE_ROTATION );
 	colorPicker1.setCircularLowerBounds( 0.3 );
 	
 	px += colorWheelWidth + sx;
 	
-	colorPicker2.init( colorWheelWidth, colorWheelHeight );
-	colorPicker2.setPos( px, py );
+	colorPicker2.init( px, py, colorWheelWidth, colorWheelHeight );
 	colorPicker2.setMode( COLOR_PICKER_MODE_RANDOM_WALK );
 }
 
