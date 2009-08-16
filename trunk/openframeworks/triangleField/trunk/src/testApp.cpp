@@ -12,9 +12,6 @@ void testApp :: setup()
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
-	glEnable( GL_DEPTH_TEST );
-	glDepthFunc( GL_LEQUAL );
-	
 	initRenderArea();
 	initColor();
 	initFields();
@@ -198,6 +195,11 @@ void testApp :: initGui()
 		colorPickers[ i * 2 + 1 ].setMode( COLOR_PICKER_MODE_MOUSE);
 		
 		px += colorWheelWidth + sx + 20;
+		
+		gui.addSlider( "scale ",   &fields[ i ].scaleInc, 1.0, 4.0 );
+		gui.addSlider( "cut off ", &fields[ i ].cutoff,   0.0, 1.0 );
+
+		gui.addPage( "anther page" );
 	}
 }	
 
@@ -228,11 +230,23 @@ void testApp :: updateFieldColors()
 		fields[ i ].sColor[ 1 ] = sColor.g;
 		fields[ i ].sColor[ 2 ] = sColor.b;
 		fields[ i ].sColor[ 3 ] = sColor.a;
-		
+
 		fields[ i ].eColor[ 0 ] = eColor.r;
 		fields[ i ].eColor[ 1 ] = eColor.g;
 		fields[ i ].eColor[ 2 ] = eColor.b;
 		fields[ i ].eColor[ 3 ] = eColor.a;
+		
+		fields[ i ].bsColor[ 0 ] = sColor.r;		// broder.
+		fields[ i ].bsColor[ 1 ] = sColor.g;
+		fields[ i ].bsColor[ 2 ] = sColor.b;
+		fields[ i ].bsColor[ 3 ] = sColor.a;
+
+		fields[ i ].beColor[ 0 ] = eColor.r;
+		fields[ i ].beColor[ 1 ] = eColor.g;
+		fields[ i ].beColor[ 2 ] = eColor.b;
+		fields[ i ].beColor[ 3 ] = eColor.a;
+		
+		fields[ i ].scale = pow( 2, fields[ i ].scaleInc );
 	}
 }
 
@@ -245,7 +259,7 @@ void testApp :: draw()
 	ofBackground( 0, 0, 0 );
 	ofEnableAlphaBlending();
 	
-//	glBlendFunc( GL_ONE, GL_ONE );
+	glBlendFunc( GL_ONE, GL_ONE );
 //	glBlendFunc( GL_ONE, GL_ONE_MINUS_DST_ALPHA );
 //	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 //	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -270,11 +284,9 @@ void testApp :: draw()
 		return;
 	
 	if( screenGrabUtil.isRecording() )
-	{
 		screenGrabUtil.save();
-	}
 	
-//	glBlendFunc( GL_ONE, GL_ZERO );
+	glBlendFunc( GL_ONE, GL_ZERO );
 
 	gui.draw();
 	
