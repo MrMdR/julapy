@@ -126,6 +126,13 @@ void ColorPicker :: setColorScale( float s )
 	colorScale = s;
 }
 
+void ColorPicker :: setRandomColor()
+{
+	colorAngle  = ofRandom( 0, 360 );
+	colorRadius = ofRandom( 0, 1 );
+	colorScale  = ofRandom( 0, 1 );
+}
+
 void ColorPicker :: setColor( Color *c )
 {
 	//
