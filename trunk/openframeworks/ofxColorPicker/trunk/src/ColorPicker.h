@@ -41,6 +41,7 @@ public :
 	
 	void setMode( int m );
 	void setColorScale( float s );
+	void setRandomColor();
 	void setColor( Color *c );
 	void getColor( Color *c );
 	
