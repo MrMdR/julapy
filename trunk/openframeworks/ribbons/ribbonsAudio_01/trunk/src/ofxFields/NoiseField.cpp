@@ -57,9 +57,13 @@ ofxVec3f NoiseField :: getNormalisedForce( float x, float y, float z )
 	noiseY = noise->noise( x * noiseScale.x, z * noiseScale.z, noiseCount.y );
 	noiseZ = noise->noise( y * noiseScale.y, z * noiseScale.z, noiseCount.z );
 	
-	float normX = noiseNormX.getNormalisedValue( noiseX );
-	float normY = noiseNormY.getNormalisedValue( noiseY );
-	float normZ = noiseNormZ.getNormalisedValue( noiseZ );
+	noiseNormX.addValue( noiseX );
+	noiseNormY.addValue( noiseY );
+	noiseNormZ.addValue( noiseZ );
+	
+	float normX = noiseNormX.getNormalisedValue();
+	float normY = noiseNormY.getNormalisedValue();
+	float normZ = noiseNormZ.getNormalisedValue();
 	
 	rotX.rotate( normX * 360, ofxVec3f( 1, 0, 0 ) );
 	rotZ.rotate( normZ * 360, ofxVec3f( 0, 0, 1 ) );
