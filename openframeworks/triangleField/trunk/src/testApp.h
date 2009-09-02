@@ -8,6 +8,7 @@
 #include "ofxScreenGrabUtil.h"
 #include "ColorPicker.h"
 #include "ofxSimpleGuiToo.h"
+#include "AudioFileSpectrum.h"
 
 class TriangleField
 {
@@ -51,14 +52,16 @@ public:
 	void draw();
 
 	void initRenderArea();
-	void initColor();
 	void initFields();
 	void initDebug();
+	void initBlendModes();
 	void initGui();
-	
-	void addColor( int r, int g, int b, int a );
+	void initAudio();
+
+	void addBlendMode( GLuint srcBlend, GLuint dstBlend );
 	
 	void updateFieldColors();
+	void updateAudio();
 	
 	void drawSquareNoise( TriangleField *field );
 	void drawTraingleStatic();
@@ -82,13 +85,15 @@ public:
 	ColorPicker			*colorPickers;
 	ofxSimpleGuiToo		gui;
 	
+	bool				smoothing;
+	
+	int					blendModesTotal;
+	int					blendModeIndex;
+	GLuint				*blendModes;
+	
 	int					dbInc;
 	int					frameCount;
 	bool				showDebug;
-	
-	float				**colors;
-	int					colorsMax;
-	int					colorsTotal;
 	
 	TriangleField		*fields;
 	int					fieldsTotal;
@@ -98,6 +103,8 @@ public:
 	
 	ofxTileSaver		tileSaver;
 	ofxScreenGrabUtil	screenGrabUtil;
+	
+	AudioFileSpectrum	audio;
 };
 
 #endif

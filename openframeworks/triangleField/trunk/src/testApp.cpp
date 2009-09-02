@@ -8,15 +8,15 @@ void testApp :: setup()
 {
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
-	ofSetBackgroundAuto( true );
-	ofEnableSmoothing();
-	ofEnableAlphaBlending();
+	
+	smoothing = true;
 	
 	initRenderArea();
-	initColor();
 	initFields();
 	initDebug();
+	initBlendModes();
 	initGui();
+	initAudio();
 	
 	tileSaver.init( 10, 0, true );
 	screenGrabUtil.setup( "movie/trigfield", &renderArea );
@@ -48,41 +48,6 @@ void testApp :: initDebug()
 }
 
 //////////////////////////////////////////////
-//	COLORS.
-//////////////////////////////////////////////
-
-void testApp :: initColor()
-{
-	colorsMax   = 100;
-	colorsTotal = 0;
-	colors = new float *[ colorsMax ];
-	for( int i=0; i<colorsMax; i++ )
-	{
-		colors[ i ] = new float[ 4 ];
-	}
-	
-	addColor(   0,   0,   0, 255 );		// black alpha.
-	addColor(   0,   0,   0,   0 );		// black fill.
-	addColor(  25, 191,  71, 255 );		// becks green.
-	addColor(   7,  52,  16, 180 );		// dark green.
-	addColor( 210,   2, 169, 255 );		// fuschia.
-	addColor( 210,   2, 169,  50 );		// fuschia alpha.
-	addColor( 213, 213,   0, 255 );		// yellow.
-	addColor( 168, 255,   0, 255 );		// lime.
-	addColor( 255, 132,   9, 255 );		// orange.
-	addColor( 156,  56,  56, 255 );		// redish.
-}
-
-void testApp :: addColor( int r, int g, int b, int a )
-{
-	colors[ colorsTotal ][ 0 ] = r;
-	colors[ colorsTotal ][ 1 ] = g;
-	colors[ colorsTotal ][ 2 ] = b;
-	colors[ colorsTotal ][ 3 ] = a;
-	colorsTotal += 1;
-}
-
-//////////////////////////////////////////////
 //	FIELDS.
 //////////////////////////////////////////////
 
@@ -103,7 +68,7 @@ void testApp :: initFields()
 		fields[ i ].bsColor = new float[ 4 ];
 		fields[ i ].beColor = new float[ 4 ];
 		
-		fields[ i ].drawOutline = true;
+		fields[ i ].drawOutline = false;
 		
 		fields[ i ].noiseX = 0.0;
 		fields[ i ].noiseY = 0.0;
@@ -125,11 +90,12 @@ void testApp :: initFields()
 		fields[ i ].noiseYScl = 1.0;
 	}
 	
-	fields[ 0 ].scaleInc  = 4;
+	fields[ 0 ].scaleInc  = 3;
 	fields[ 0 ].scale     = pow( 2, fields[ 0 ].scaleInc );
 	fields[ 0 ].cutoff    = 0.0;
 	fields[ 0 ].noiseXVel = 0.0;
 	fields[ 0 ].noiseYVel = 0.01;
+	fields[ 0 ].drawOutline = true;
 
 	fields[ 1 ].scaleInc  = 3;
 	fields[ 1 ].scale     = pow( 2, fields[ 1 ].scaleInc );
@@ -142,16 +108,30 @@ void testApp :: initFields()
 	fields[ 2 ].cutoff    = 0.4;
 	fields[ 2 ].noiseXVel = 0.0;
 	fields[ 2 ].noiseYVel = 0.02;
+}
+
+//////////////////////////////////////////////
+//	BLEND MODES.
+//////////////////////////////////////////////
+
+void testApp :: initBlendModes()
+{
+	blendModesTotal	= 0;
+	blendModeIndex	= 1;
+	blendModes		= new GLuint[ 10 ];
 	
-//	fields[ 3 ].sColor    = &colors[ 5 ][ 0 ];
-//	fields[ 3 ].eColor    = &colors[ 4 ][ 0 ];
-//	fields[ 3 ].bsColor   = fields[ 3 ].sColor;
-//	fields[ 3 ].beColor   = fields[ 3 ].eColor;
-//	fields[ 3 ].scaleInc  = 1;
-//	fields[ 3 ].scale     = pow( 2, fields[ 3 ].scaleInc );
-//	fields[ 3 ].cutoff    = 0.6;
-//	fields[ 3 ].noiseXVel = 0.015;
-//	fields[ 3 ].noiseYVel = 0.015;
+	addBlendMode( GL_ONE, GL_ONE );
+	addBlendMode( GL_SRC_ALPHA, GL_ONE );
+	addBlendMode( GL_ONE, GL_ONE_MINUS_DST_ALPHA );
+	addBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+}
+
+void testApp :: addBlendMode( GLuint srcBlend, GLuint dstBlend )
+{
+	blendModes[ blendModesTotal * 2 + 0 ] = srcBlend;
+	blendModes[ blendModesTotal * 2 + 1 ] = dstBlend;
+
+	blendModesTotal += 1;
 }
 
 //////////////////////////////////////////////
@@ -160,48 +140,79 @@ void testApp :: initFields()
 
 void testApp :: initGui()
 {
-//	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5);
-//	gui.addSlider("fs.colorDiffusion", &fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5); 
-//	gui.addSlider("fs.fadeSpeed", &fluidSolver.fadeSpeed, 0.0, 0.1, 0.5); 
-//	gui.addSlider("fs.solverIterations", &fluidSolver.solverIterations, 1, 20); 
-//	gui.addSlider("fd.drawMode", &fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1); 
-//	gui.addToggle("fs.doRGB", &fluidSolver.doRGB); 
-//	gui.addToggle("fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement); 
-//	gui.addToggle("drawFluid", &drawFluid); 
-//	gui.addToggle("renderUsingVA", &renderUsingVA); 
-//	
-//	gui.addSlider("optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
-//	gui.addSlider("optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
-//	gui.addSlider("optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
-//	gui.addSlider("fluid color scale",	&fluidColorScale,				0.0, 2.0, 0.5 );
-	
 	colorPickers = new ColorPicker[ fieldsTotal * 2 ];
 	
 	int colorWheelWidth  = 100;
 	int colorWheelHeight = 100;
 	
-	int py = 430;
-	int px = 30;
+	int py = 86;
+	int px = 280;
 	int sx = 30;
 	
 	for( int i=0; i<fieldsTotal; i++ )
 	{
+		Color c1, c2;
+		
+		c1.r = 108;
+		c1.g = 83;
+		c1.b = 86;
+		
+		c2.r = 168;
+		c2.g = 196;
+		c2.b = 170;
+		
 		colorPickers[ i * 2 + 0 ].init( px, py, colorWheelWidth, colorWheelHeight );
 		colorPickers[ i * 2 + 0 ].setMode( COLOR_PICKER_MODE_MOUSE);
+		colorPickers[ i * 2 + 0 ].setColor( &c1 );
 		
 		px += colorWheelWidth + sx;
 		
 		colorPickers[ i * 2 + 1 ].init( px, py, colorWheelWidth, colorWheelHeight );
 		colorPickers[ i * 2 + 1 ].setMode( COLOR_PICKER_MODE_MOUSE);
+		colorPickers[ i * 2 + 1 ].setColor( &c2 );
 		
 		px += colorWheelWidth + sx + 20;
 		
-		gui.addSlider( "scale ",   &fields[ i ].scaleInc, 1.0, 4.0 );
-		gui.addSlider( "cut off ", &fields[ i ].cutoff,   0.0, 1.0 );
-
-		gui.addPage( "anther page" );
+		gui.addSlider( "scale     ", &fields[ i ].scaleInc,   1.0, 4.0 );
+		gui.addSlider( "cut off   ", &fields[ i ].cutoff,     0.0, 1.0 );
+		gui.addSlider( "noiseXRes ", &fields[ i ].noiseXRes, -0.1, 0.1 );
+		gui.addSlider( "noiseYRes ", &fields[ i ].noiseYRes, -0.1, 0.1 );
+		gui.addSlider( "noiseZRes ", &fields[ i ].noiseZRes, -0.1, 0.1 );
+		gui.addSlider( "noiseXVel ", &fields[ i ].noiseXVel, -0.1, 0.1 );
+		gui.addSlider( "noiseYVel ", &fields[ i ].noiseYVel, -0.1, 0.1 );
+		gui.addSlider( "noiseZVel ", &fields[ i ].noiseZVel, -0.1, 0.1 );
+		gui.addToggle( "outline   ", &fields[ i ].drawOutline );
+		
+		if( i < fieldsTotal - 1 )
+			gui.addPage( "Settings" );
 	}
+	
+	gui.addPage( "General" );
+	gui.addToggle( "smoothing  ", &smoothing );
+	gui.addSlider( "blend mode ", &blendModeIndex, 0, blendModesTotal - 1 );
+	
+	gui.setPage( 1 );
 }	
+
+//////////////////////////////////////////////
+//	AUDIO.
+//////////////////////////////////////////////
+
+void testApp :: initAudio()
+{
+	audio.init( "../../../../_audio/dj_krush_08_decks_athron.mp3" );
+//	audio.init( "../../../../_audio/dat_politics_12_nude_Noodle.mp3" );
+//	audio.init( "../../../../_audio/autechre_ep7_06_dropp.mp3" );
+//	audio.init( "../../../../_audio/radiohead_06_I_Am_Citizen_Insane.mp3" );
+//	audio.init( "../../../../_audio/aphex_twin_07_come_to_daddy_mummy_mix.mp3" );
+//	audio.init( "../../../../_audio/principles_of_geometry_01_arp_center.mp3" );
+//	audio.init( "../../../../_audio/massive_attack_05_exchange.mp3" );
+//	audio.init( "../../../../_audio/lukid_06_chord.mp3" );	
+//	audio.init( "../../../../_audio/gentle_force_5_into_6.mp3" );
+	audio.setPosition( 0.05 );
+//	audio.setNoOfBands( 100 );
+//	audio.setThreshold( 0.55 );
+}
 
 //////////////////////////////////////////////
 //	UPDATE.
@@ -213,6 +224,7 @@ void testApp :: update()
 		return;
 	
 	updateFieldColors();
+	updateAudio();
 
 	++frameCount;
 }
@@ -250,6 +262,33 @@ void testApp :: updateFieldColors()
 	}
 }
 
+void testApp :: updateAudio()
+{
+	audio.update();
+	
+	float c1, c2;
+	int i;
+
+	i = 0;
+	
+//	fields[ i ].scaleInc = (int)( 1 + 4 * audio.getAveragePeakNorm() );
+//	fields[ i ].scale = pow( 2, fields[ i ].scaleInc );
+	
+	i = 1;
+	
+	c1 = 0.3 + 0.5 * ( 1 - audio.getAveragePeakNorm() );
+	c2 = fields[ i ].cutoff;
+	
+	fields[ i ].cutoff += ( c1 - c2 ) * 0.5;
+	
+	i = 2;
+	
+	c1 = 0.3 + 0.5 * ( 1 - audio.getAveragePeakNorm() );
+	c2 = fields[ i ].cutoff;
+	
+	fields[ i ].cutoff += ( c1 - c2 ) * 0.5;
+}
+
 //////////////////////////////////////////////
 //	DRAW.
 //////////////////////////////////////////////
@@ -259,10 +298,12 @@ void testApp :: draw()
 	ofBackground( 0, 0, 0 );
 	ofEnableAlphaBlending();
 	
-	glBlendFunc( GL_ONE, GL_ONE );
-//	glBlendFunc( GL_ONE, GL_ONE_MINUS_DST_ALPHA );
-//	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
-//	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	if( smoothing )
+		ofEnableSmoothing();
+	else
+		ofDisableSmoothing();
+	
+	glBlendFunc( blendModes[ blendModeIndex * 2 + 0 ], blendModes[ blendModeIndex * 2 + 1 ] );
 	
 	tileSaver.begin();
 	
@@ -554,23 +595,20 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 
 void testApp :: drawDebug()
 {
-	ofSetColor( 0xFFFFFF );
+	ofSetColor( 0x000000 );
 	ofDrawBitmapString
 	(
-		"fps        ::                     :: " + ofToString( ofGetFrameRate(), 2 ) + "\n\n" +
-		"\n\n" +
-		"fieldIndex :: press 1 - 9         :: " + ofToString( fieldIndex, 0 ) + "\n\n" +
-		"noiseRes   :: press q to change   :: " + ofToString( fields[ fieldIndex ].noiseXRes, 5 ) + "\n\n" +
-		"noiseXVel  :: press w to change   :: " + ofToString( fields[ fieldIndex ].noiseXVel, 5 ) + "\n\n" +
-		"noiseYVel  :: press e to change   :: " + ofToString( fields[ fieldIndex ].noiseYVel, 5 ) + "\n\n" +
-		"noiseZVel  :: press r to change   :: " + ofToString( fields[ fieldIndex ].noiseZVel, 5 ) + "\n\n" +
-		"scale      :: press t to change   :: " + ofToString( fields[ fieldIndex ].scale, 5 ) + "\n\n" +
-		"cutoff     :: press y to change   :: " + ofToString( fields[ fieldIndex ].cutoff, 5 ) + "\n\n" +
-		"\n\n" +
-		"dbInc      :: press -/+ to change :: " + ofToString( dbInc, 5 ) + "\n\n",
-		400,
-		20
+		"audio position :: " + ofToString( audio.getPosition(), 2 ) + "\n\n"
+		,
+		800,
+		renderArea.height - 300
 	);
+	
+	ofSetColor( 0xFFFFFF );
+	glPushMatrix();
+	glTranslatef( 270, renderArea.height - 210, 0 );
+	audio.draw( 512, 200 );
+	glPopMatrix();
 }
 
 //////////////////////////////////////////////
@@ -651,7 +689,28 @@ void testApp :: keyPressed( int key )
 	
 	if( key == 'y' )
 		fields[ fieldIndex ].cutoff = MIN( 1, MAX( 0, fields[ fieldIndex ].cutoff += 0.01 * dbInc ) );
+	
+	if( key == 'c' )
+	{
+//		for( int i=0; i<fieldsTotal; i++ )
+//		{
+//			colorPickers[ i * 2 + 0 ].setRandomColor();
+//			colorPickers[ i * 2 + 1 ].setRandomColor();
+//		}
 
+		colorPickers[ 0 ].setRandomColor();
+		colorPickers[ 1 ].setRandomColor();
+		
+		Color c1, c2;
+		colorPickers[ 0 ].getColor( &c1 );
+		colorPickers[ 1 ].getColor( &c2 );
+		
+		colorPickers[ 2 ].setColor( &c1 );
+		colorPickers[ 3 ].setColor( &c2 );
+
+		colorPickers[ 4 ].setColor( &c1 );
+		colorPickers[ 5 ].setColor( &c2 );
+	}
 }
 
 void testApp :: keyReleased( int key )
@@ -669,10 +728,14 @@ void testApp :: keyReleased( int key )
 		if( screenGrabUtil.isRecording() )
 		{
 			screenGrabUtil.stop();
+			
+			audio.setFrameRateSync( false );
 		}
 		else
 		{
 			screenGrabUtil.start();
+			
+			audio.setFrameRateSync( true );
 		}
 	}
 	
