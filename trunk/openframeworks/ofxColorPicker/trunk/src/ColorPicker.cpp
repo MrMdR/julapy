@@ -131,11 +131,8 @@ void ColorPicker :: setRandomColor()
 	colorAngle  = ofRandom( 0, 360 );
 	colorRadius = ofRandom( 0, 1 );
 	colorScale  = ofRandom( 0, 1 );
-}
-
-void ColorPicker :: setColor( Color *c )
-{
-	//
+	
+	getCircularColor( colorAngle, colorRadius, colorScale, &color );
 }
 
 void ColorPicker :: getColor( Color *c )
@@ -434,6 +431,72 @@ void ColorPicker :: drawColorRect()
 //	COLOR MAPPING.
 //////////////////////////////////////////////
 
+void ColorPicker :: setColor( Color *c )
+{
+	float da;
+	
+	if( ( c->r == c->g ) && ( c->r == c->b ) )
+	{
+		colorScale	= c->r / 255.0;
+		colorRadius	= 0;
+		colorAngle	= 0;
+	}
+	
+	if( c->r > c->g && c->r > c->b )	// red.
+	{
+		colorScale = c->r / (float)255.0;
+		
+		if( c->g > c->b )	// between 0-60
+		{
+			colorRadius = 1 - c->b / (float)( 255.0 * colorScale );
+			da = ( c->g / (float)( 255 * colorScale ) - ( 1 - colorRadius ) ) / colorRadius;
+			colorAngle = da * 60; 
+		}
+		else				// between 300-360
+		{
+			colorRadius = 1 - c->g / (float)( 255.0 * colorScale );
+			da = ( c->b / (float)( 255 * colorScale ) - ( 1 - colorRadius ) ) / colorRadius;
+			colorAngle = 360 - da * 60;
+		}
+	}
+
+	if( c->g > c->r && c->g > c->b )	// green.
+	{
+		colorScale = c->g / (float)255.0;
+				  
+		if( c->r > c->b )	// between 60-120
+		{
+			colorRadius = 1 - c->b / (float)( 255.0 * colorScale );
+			da = ( c->r / (float)( 255 * colorScale ) - ( 1 - colorRadius ) ) / colorRadius;
+			colorAngle = 120 - da * 60;
+		}
+		else				// between 120-180
+		{
+			colorRadius = 1 - c->r / (float)( 255.0 * colorScale );
+			da = ( c->b / (float)( 255 * colorScale ) - ( 1 - colorRadius ) ) / colorRadius;
+			colorAngle = da * 60 + 120;
+		}
+	}
+				  
+	if( c->b > c->r && c->b > c->g )	// blue.
+	{
+		colorScale = c->b / (float)255.0;
+		
+		if( c->g > c->r )	// between 180-240
+		{
+			colorRadius = 1 - c->r / (float)( 255.0 * colorScale );
+			da = ( c->g / (float)( 255 * colorScale ) - ( 1 - colorRadius ) ) / colorRadius;
+			colorAngle = 240 - da * 60;
+		}
+		else				// between 240-300
+		{
+			colorRadius = 1 - c->g / (float)( 255.0 * colorScale );
+			da = ( c->r / (float)( 255 * colorScale ) - ( 1 - colorRadius ) ) / colorRadius;
+			colorAngle = da * 60 + 240;
+		}
+	}
+}
+
 void ColorPicker :: getCircularColor( float angle, float radius, float scale, Color *c )
 {
 	radius = MIN( 1.0, MAX( 0.0, radius ) );
@@ -471,9 +534,9 @@ void ColorPicker :: getCircularColor( float angle, float radius, float scale, Co
 	else if( angle < 240 )
 	{
 		da   = ( 240 - angle ) / 60;
-		c->r = (int)( 255 * ( 1 - radius ) * colorScale );
-		c->g = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * colorScale );
-		c->b = (int)( 255 * colorScale );
+		c->r = (int)( 255 * ( 1 - radius ) * scale );
+		c->g = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c->b = (int)( 255 * scale );
 		c->a = 255;
 	}
 	else if( angle < 300 )
