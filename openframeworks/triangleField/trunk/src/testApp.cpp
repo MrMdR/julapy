@@ -12,6 +12,7 @@ void testApp :: setup()
 	smoothing = true;
 	
 	initRenderArea();
+	initFieldConfig();
 	initFields();
 	initDebug();
 	initBlendModes();
@@ -51,63 +52,24 @@ void testApp :: initDebug()
 //	FIELDS.
 //////////////////////////////////////////////
 
+void testApp :: initFieldConfig()
+{
+	fieldConfigTotal	= 3;
+	fieldConfigIndex	= 0;
+	fieldConfigIndex2	= 0;
+	fieldConfig			= new TriangleFieldConfig *[ fieldConfigTotal ];
+	fieldConfig[ 0 ]	= new TriangleFieldConfig01();
+	fieldConfig[ 1 ]	= new TriangleFieldConfig02();
+	fieldConfig[ 2 ]	= new TriangleFieldConfig03();
+}
+
 void testApp :: initFields()
 {
 	fieldIndex  = 0;
 	fieldsTotal = 3;
 	fields = new TriangleField[ fieldsTotal ];
 	
-	for( int i=0; i<fieldsTotal; i++ )
-	{
-		fields[ i ].scale    = 1;
-		fields[ i ].scaleInc = 1;
-		fields[ i ].cutoff   = 1.0;
-		
-		fields[ i ].sColor  = new float[ 4 ];
-		fields[ i ].eColor  = new float[ 4 ];
-		fields[ i ].bsColor = new float[ 4 ];
-		fields[ i ].beColor = new float[ 4 ];
-		
-		fields[ i ].drawOutline = false;
-		
-		fields[ i ].noiseX = 0.0;
-		fields[ i ].noiseY = 0.0;
-		fields[ i ].noiseZ = 0.0;
-		
-		fields[ i ].noiseXInit = 0.0;
-		fields[ i ].noiseYInit = 0.0;
-		fields[ i ].noiseZInit = 0.0;
-		
-		fields[ i ].noiseXRes = 0.01;
-		fields[ i ].noiseYRes = 0.01;
-		fields[ i ].noiseZRes = 0.01;
-		
-		fields[ i ].noiseXVel = 0.0;
-		fields[ i ].noiseYVel = 0.0;
-		fields[ i ].noiseZVel = 0.005;
-		
-		fields[ i ].noiseXScl = renderArea.height / (float)renderArea.width;
-		fields[ i ].noiseYScl = 1.0;
-	}
-	
-	fields[ 0 ].scaleInc  = 3;
-	fields[ 0 ].scale     = pow( 2, fields[ 0 ].scaleInc );
-	fields[ 0 ].cutoff    = 0.0;
-	fields[ 0 ].noiseXVel = 0.0;
-	fields[ 0 ].noiseYVel = 0.01;
-	fields[ 0 ].drawOutline = true;
-
-	fields[ 1 ].scaleInc  = 3;
-	fields[ 1 ].scale     = pow( 2, fields[ 1 ].scaleInc );
-	fields[ 1 ].cutoff    = 0.6;
-	fields[ 1 ].noiseXVel = 0.0;
-	fields[ 1 ].noiseYVel = -0.01;
-
-	fields[ 2 ].scaleInc  = 2;
-	fields[ 2 ].scale     = pow( 2, fields[ 2 ].scaleInc );
-	fields[ 2 ].cutoff    = 0.4;
-	fields[ 2 ].noiseXVel = 0.0;
-	fields[ 2 ].noiseYVel = 0.02;
+	fieldConfig[ fieldConfigIndex ]->copyTo( fields, fieldsTotal );
 }
 
 //////////////////////////////////////////////
@@ -153,13 +115,13 @@ void testApp :: initGui()
 	{
 		Color c1, c2;
 		
-		c1.r = 108;
-		c1.g = 83;
-		c1.b = 86;
+		c1.r = fields[ i ].sColor[ 0 ];
+		c1.g = fields[ i ].sColor[ 1 ];
+		c1.b = fields[ i ].sColor[ 2 ];
 		
-		c2.r = 168;
-		c2.g = 196;
-		c2.b = 170;
+		c2.r = fields[ i ].eColor[ 0 ];
+		c2.g = fields[ i ].eColor[ 1 ];
+		c2.b = fields[ i ].eColor[ 2 ];
 		
 		colorPickers[ i * 2 + 0 ].init( px, py, colorWheelWidth, colorWheelHeight );
 		colorPickers[ i * 2 + 0 ].setMode( COLOR_PICKER_MODE_MOUSE);
@@ -190,6 +152,7 @@ void testApp :: initGui()
 	gui.addPage( "General" );
 	gui.addToggle( "smoothing  ", &smoothing );
 	gui.addSlider( "blend mode ", &blendModeIndex, 0, blendModesTotal - 1 );
+	gui.addSlider( "field config ", &fieldConfigIndex, 0, fieldConfigTotal - 1 );
 	
 	gui.setPage( 1 );
 }	
@@ -222,15 +185,45 @@ void testApp :: update()
 {
 	if( tileSaver.bGoTiling )
 		return;
+
+	audio.update();
 	
-	updateFieldColors();
-	updateAudio();
+	fieldConfig[ fieldConfigIndex ]->setAudioNorm( audio.getAveragePeakNorm() );
+	fieldConfig[ fieldConfigIndex ]->update();
+	fieldConfig[ fieldConfigIndex ]->copyChangesTo( fields, fieldsTotal );
+	
+	updateFields();
 
 	++frameCount;
 }
 
-void testApp :: updateFieldColors()
+void testApp :: updateFields()
 {
+	if( fieldConfigIndex2 != fieldConfigIndex )
+	{
+		fieldConfigIndex2 = fieldConfigIndex;
+		
+		fieldConfig[ fieldConfigIndex ]->copyTo( fields, fieldsTotal );
+		
+		for( int i=0; i<fieldsTotal; i++ )
+		{
+			Color c1, c2;
+			
+			c1.r = fields[ i ].sColor[ 0 ];
+			c1.g = fields[ i ].sColor[ 1 ];
+			c1.b = fields[ i ].sColor[ 2 ];
+			c1.a = fields[ i ].sColor[ 3 ];
+			
+			c2.r = fields[ i ].eColor[ 0 ];
+			c2.g = fields[ i ].eColor[ 1 ];
+			c2.b = fields[ i ].eColor[ 2 ];
+			c2.a = fields[ i ].eColor[ 3 ];
+			
+			colorPickers[ i * 2 + 0 ].setColor( &c1 );
+			colorPickers[ i * 2 + 1 ].setColor( &c2 );
+		}
+	}
+	
 	for( int i=0; i<fieldsTotal; i++ )
 	{
 		Color sColor;
@@ -238,7 +231,7 @@ void testApp :: updateFieldColors()
 		colorPickers[ i * 2 + 0 ].getColor( &sColor );
 		colorPickers[ i * 2 + 1 ].getColor( &eColor );
 		
-		fields[ i ].sColor[ 0 ] = sColor.r;
+		fields[ i ].sColor[ 0 ] = sColor.r;			// fill.
 		fields[ i ].sColor[ 1 ] = sColor.g;
 		fields[ i ].sColor[ 2 ] = sColor.b;
 		fields[ i ].sColor[ 3 ] = sColor.a;
@@ -260,33 +253,6 @@ void testApp :: updateFieldColors()
 		
 		fields[ i ].scale = pow( 2, fields[ i ].scaleInc );
 	}
-}
-
-void testApp :: updateAudio()
-{
-	audio.update();
-	
-	float c1, c2;
-	int i;
-
-	i = 0;
-	
-//	fields[ i ].scaleInc = (int)( 1 + 4 * audio.getAveragePeakNorm() );
-//	fields[ i ].scale = pow( 2, fields[ i ].scaleInc );
-	
-	i = 1;
-	
-	c1 = 0.3 + 0.5 * ( 1 - audio.getAveragePeakNorm() );
-	c2 = fields[ i ].cutoff;
-	
-	fields[ i ].cutoff += ( c1 - c2 ) * 0.5;
-	
-	i = 2;
-	
-	c1 = 0.3 + 0.5 * ( 1 - audio.getAveragePeakNorm() );
-	c2 = fields[ i ].cutoff;
-	
-	fields[ i ].cutoff += ( c1 - c2 ) * 0.5;
 }
 
 //////////////////////////////////////////////
