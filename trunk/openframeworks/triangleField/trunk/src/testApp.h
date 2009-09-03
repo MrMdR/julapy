@@ -10,39 +10,11 @@
 #include "ofxSimpleGuiToo.h"
 #include "AudioFileSpectrum.h"
 
-class TriangleField
-{
-public :
-	float				*sColor;
-	float				*eColor;
-	float				*bsColor;
-	float				*beColor;
-
-	float				scale;
-	int					scaleInc;
-	float				cutoff;
-	
-	bool				drawOutline;
-	
-	float				noiseX;
-	float				noiseY;
-	float				noiseZ;
-	
-	float				noiseXInit;
-	float				noiseYInit;
-	float				noiseZInit;
-	
-	float				noiseXRes;
-	float				noiseYRes;
-	float				noiseZRes;
-	
-	float				noiseXVel;
-	float				noiseYVel;
-	float				noiseZVel;
-	
-	float				noiseXScl;
-	float				noiseYScl;
-};
+#include "TriangleField.h"
+#include "TriangleFieldConfig.h"
+#include "TriangleFieldConfig01.h"
+#include "TriangleFieldConfig02.h"
+#include "TriangleFieldConfig03.h"
 
 class testApp : public ofBaseApp{
 
@@ -52,6 +24,7 @@ public:
 	void draw();
 
 	void initRenderArea();
+	void initFieldConfig();
 	void initFields();
 	void initDebug();
 	void initBlendModes();
@@ -60,8 +33,8 @@ public:
 
 	void addBlendMode( GLuint srcBlend, GLuint dstBlend );
 	
-	void updateFieldColors();
-	void updateAudio();
+	void updateFields();
+	void checkFieldConfigIndexChanged();
 	
 	void drawSquareNoise( TriangleField *field );
 	void drawTraingleStatic();
@@ -98,6 +71,11 @@ public:
 	TriangleField		*fields;
 	int					fieldsTotal;
 	int					fieldIndex;
+	
+	TriangleFieldConfig	**fieldConfig;
+	int					fieldConfigTotal;
+	int					fieldConfigIndex;
+	int					fieldConfigIndex2;
 	
 	ofxPerlin			noise;
 	
