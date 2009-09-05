@@ -18,7 +18,7 @@ public :
 	TriangleField();
 	~TriangleField();
 	
-	void copyTo( TriangleField *tf );
+	void copyTo( TriangleField *tf, bool copyColor = false );
 	void copyColor( float *c1, float *c2 );
 	
 	float		sColor[ 4 ];

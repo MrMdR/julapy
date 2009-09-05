@@ -19,16 +19,19 @@ TriangleField :: ~TriangleField()
 
 }
 
-void TriangleField :: copyTo( TriangleField *tf )
+void TriangleField :: copyTo( TriangleField *tf, bool bCopyColor )
 {
 	tf->scale		= scale;
 	tf->scaleInc	= scaleInc;
 	tf->cutoff		= cutoff;
 	
-	copyColor( &tf->sColor[ 0 ], &sColor[ 0 ] );
-	copyColor( &tf->eColor[ 0 ], &eColor[ 0 ] );
-	copyColor( &tf->bsColor[ 0 ], &bsColor[ 0 ] );
-	copyColor( &tf->beColor[ 0 ], &beColor[ 0 ] );
+	if( bCopyColor )
+	{
+		copyColor( &tf->sColor[ 0 ], &sColor[ 0 ] );
+		copyColor( &tf->eColor[ 0 ], &eColor[ 0 ] );
+		copyColor( &tf->bsColor[ 0 ], &bsColor[ 0 ] );
+		copyColor( &tf->beColor[ 0 ], &beColor[ 0 ] );
+	}
 	
 	tf->drawOutline	= drawOutline;
 	

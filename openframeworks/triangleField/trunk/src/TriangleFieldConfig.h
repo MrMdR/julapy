@@ -24,7 +24,7 @@ public :
 	virtual void update();
 	virtual void setSize( int value0, int value1 );
 	virtual void setAudioNorm( float value );
-	virtual void copyTo( TriangleField *tfs, int tfTotal );
+	virtual void copyTo( TriangleField *tfs, int tfTotal, bool copyColor=false );
 	virtual void copyChangesTo( TriangleField *tfs, int tfTotal );
 	
 	TriangleField		*fields;

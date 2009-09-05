@@ -80,7 +80,7 @@ void TriangleFieldConfig01 :: init()
 		
 		fields[ i ].noiseXVel = 0.0;
 		fields[ i ].noiseYVel = 0.0;
-		fields[ i ].noiseZVel = 0.005;
+		fields[ i ].noiseZVel = 0.01;
 		
 		fields[ i ].noiseXScl = 1.0;
 		fields[ i ].noiseYScl = 1.0;
@@ -91,6 +91,7 @@ void TriangleFieldConfig01 :: init()
 	fields[ 0 ].cutoff    = 0.0;
 	fields[ 0 ].noiseXVel = 0.0;
 	fields[ 0 ].noiseYVel = 0.01;
+	fields[ 0 ].noiseZVel = 0.01;
 	fields[ 0 ].drawOutline = true;
 	
 	fields[ 1 ].scaleInc  = 3;
@@ -122,28 +123,44 @@ void TriangleFieldConfig01 :: update()
 	TriangleFieldConfig :: update();
 	
 	float c1, c2;
-	int i = 1;
+	int i;
 	
-	c1 = 0.3 + 0.5 * ( 1 - audioNorm );
+	i = 0;
+	
+	i = 1;
+	
+	c1 = 0.2 + 0.4 * ( 1 - audioNorm );
 	c2 = fields[ i ].cutoff;
 	
 	fields[ i ].cutoff += ( c1 - c2 ) * 0.5;
 	
 	i = 2;
 	
-	c1 = 0.3 + 0.5 * ( 1 - audioNorm );
+	c1 = 0.2 + 0.4 * ( 1 - audioNorm );
 	c2 = fields[ i ].cutoff;
 	
-	fields[ i ].cutoff += ( c1 - c2 ) * 0.5;
+	fields[ i ].cutoff		+= ( c1 - c2 ) * 0.5;
+	fields[ i ].scaleInc	= (int)( 1 + audioNorm * 3 );
+	fields[ i ].scale		= pow( 2, fields[ i ].scaleInc );
+	fields[ i ].noiseYVel	= 0.05 * audioNorm;
+	fields[ i ].noiseZVel	= 0.03 * audioNorm;
 }
 
 void TriangleFieldConfig01 :: copyChangesTo( TriangleField *tfs, int tfTotal )
 {
-	int i = 1;
+	int i;
+	
+	i = 0;
+	
+	i = 1;
 	
 	tfs[ i ].cutoff = fields[ i ].cutoff;
 	
 	i = 2;
 	
-	tfs[ i ].cutoff = fields[ i ].cutoff;
+	tfs[ i ].cutoff		= fields[ i ].cutoff;
+	tfs[ i ].scaleInc	= fields[ i ].scaleInc;
+	tfs[ i ].scale		= fields[ i ].scale;
+	tfs[ i ].noiseYVel	= fields[ i ].noiseYVel;
+	tfs[ i ].noiseZVel	= fields[ i ].noiseZVel;
 }
