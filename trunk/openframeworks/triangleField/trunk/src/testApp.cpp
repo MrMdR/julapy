@@ -9,7 +9,7 @@ void testApp :: setup()
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	
-	smoothing = true;
+	smoothing = false;
 	
 	initRenderArea();
 	initFieldConfig();
@@ -18,6 +18,7 @@ void testApp :: setup()
 	initBlendModes();
 	initGui();
 	initAudio();
+	initMidi();
 	
 	tileSaver.init( 10, 0, true );
 	screenGrabUtil.setup( "movie/trigfield", &renderArea );
@@ -55,8 +56,7 @@ void testApp :: initDebug()
 void testApp :: initFieldConfig()
 {
 	fieldConfigTotal	= 3;
-	fieldConfigIndex	= 0;
-	fieldConfigIndex2	= 0;
+	fieldConfigIndex	= fieldConfigIndex2 = 2;
 	fieldConfig			= new TriangleFieldConfig *[ fieldConfigTotal ];
 	fieldConfig[ 0 ]	= new TriangleFieldConfig01();
 	fieldConfig[ 1 ]	= new TriangleFieldConfig02();
@@ -69,7 +69,7 @@ void testApp :: initFields()
 	fieldsTotal = 3;
 	fields = new TriangleField[ fieldsTotal ];
 	
-	fieldConfig[ fieldConfigIndex ]->copyTo( fields, fieldsTotal );
+	fieldConfig[ fieldConfigIndex ]->copyTo( fields, fieldsTotal, true );
 }
 
 //////////////////////////////////////////////
@@ -149,12 +149,18 @@ void testApp :: initGui()
 			gui.addPage( "Settings" );
 	}
 	
+	colorPickers[ 1 ].setMode( COLOR_PICKER_MODE_CIRLCE_ROTATION );
+	colorPickers[ 1 ].setCircularSpeed( 0.5 );
+	colorPickers[ 1 ].setCircularLowerBounds( 0.2 );
+	colorPickers[ 1 ].setCircularUpperBounds( 0.2 );
+//	colorPickers[ 1 ].set
+	
 	gui.addPage( "General" );
 	gui.addToggle( "smoothing  ", &smoothing );
 	gui.addSlider( "blend mode ", &blendModeIndex, 0, blendModesTotal - 1 );
 	gui.addSlider( "field config ", &fieldConfigIndex, 0, fieldConfigTotal - 1 );
 	
-	gui.setPage( 1 );
+	gui.setPage( 4 );
 }	
 
 //////////////////////////////////////////////
@@ -163,18 +169,23 @@ void testApp :: initGui()
 
 void testApp :: initAudio()
 {
-	audio.init( "../../../../_audio/dj_krush_08_decks_athron.mp3" );
+//	audio.init( "../../../../_audio/dj_krush_08_decks_athron.mp3" );
 //	audio.init( "../../../../_audio/dat_politics_12_nude_Noodle.mp3" );
 //	audio.init( "../../../../_audio/autechre_ep7_06_dropp.mp3" );
 //	audio.init( "../../../../_audio/radiohead_06_I_Am_Citizen_Insane.mp3" );
 //	audio.init( "../../../../_audio/aphex_twin_07_come_to_daddy_mummy_mix.mp3" );
 //	audio.init( "../../../../_audio/principles_of_geometry_01_arp_center.mp3" );
 //	audio.init( "../../../../_audio/massive_attack_05_exchange.mp3" );
-//	audio.init( "../../../../_audio/lukid_06_chord.mp3" );	
+	audio.init( "../../../../_audio/lukid_06_chord.mp3" );
 //	audio.init( "../../../../_audio/gentle_force_5_into_6.mp3" );
 	audio.setPosition( 0.05 );
 //	audio.setNoOfBands( 100 );
 //	audio.setThreshold( 0.55 );
+}
+
+void testApp :: initMidi()
+{
+//	midi.
 }
 
 //////////////////////////////////////////////
@@ -407,9 +418,13 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 	int cy = ceil( renderArea.height / size );
 	int cx = ceil( renderArea.width / size );
 	
-	field->noiseXInit = frameCount * field->noiseXVel;
-	field->noiseYInit = frameCount * field->noiseYVel;
-	field->noiseZInit = frameCount * field->noiseZVel;
+//	field->noiseXInit = frameCount * field->noiseXVel;
+//	field->noiseYInit = frameCount * field->noiseYVel;
+//	field->noiseZInit = frameCount * field->noiseZVel;
+
+	field->noiseXInit += field->noiseXVel;
+	field->noiseYInit += field->noiseYVel;
+	field->noiseZInit += field->noiseZVel;
 	
 	field->noiseZ = field->noiseZInit + field->noiseZRes;
 	
@@ -610,51 +625,14 @@ void testApp :: toggleFullScreen()
 
 void testApp :: keyPressed( int key )
 {
-	if( key == '-' )
-		dbInc = -1;
-	
-	if( key == '=' )
-		dbInc = 1;
-	
-	if( key == '0' )
-		fieldIndex = 0;
-	
 	if( key == '1' )
-		fieldIndex = 1;
-	
+		fieldConfigIndex = 0;
+
 	if( key == '2' )
-		fieldIndex = 2;
-
+		fieldConfigIndex = 1;
+	
 	if( key == '3' )
-		fieldIndex = 3;
-	
-	if( key == '4' )
-		fieldIndex = 4;
-	
-	if( key == 'q' )
-	{
-		fields[ fieldIndex ].noiseXRes += 0.001 * dbInc;
-		fields[ fieldIndex ].noiseYRes += 0.001 * dbInc;
-		fields[ fieldIndex ].noiseZRes += 0.001 * dbInc;
-	}
-	
-	if( key == 'w' )
-		fields[ fieldIndex ].noiseXVel += 0.01 * dbInc;
-	
-	if( key == 'e' )
-		fields[ fieldIndex ].noiseYVel += 0.01 * dbInc;
-	
-	if( key == 'r' )
-		fields[ fieldIndex ].noiseZVel += 0.01 * dbInc;
-
-	if( key == 't' )
-	{
-		fields[ fieldIndex ].scaleInc = MIN( 10, MAX( 0, fields[ fieldIndex ].scaleInc + dbInc ) );
-		fields[ fieldIndex ].scale    = pow( 2, fields[ fieldIndex ].scaleInc );
-	}
-	
-	if( key == 'y' )
-		fields[ fieldIndex ].cutoff = MIN( 1, MAX( 0, fields[ fieldIndex ].cutoff += 0.01 * dbInc ) );
+		fieldConfigIndex = 2;
 	
 	if( key == 'c' )
 	{

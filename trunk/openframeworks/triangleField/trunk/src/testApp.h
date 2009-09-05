@@ -30,6 +30,7 @@ public:
 	void initBlendModes();
 	void initGui();
 	void initAudio();
+	void initMidi();
 
 	void addBlendMode( GLuint srcBlend, GLuint dstBlend );
 	

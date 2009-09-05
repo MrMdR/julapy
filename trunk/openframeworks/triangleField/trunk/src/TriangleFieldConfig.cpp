@@ -42,7 +42,7 @@ void TriangleFieldConfig :: setAudioNorm( float value )
 	audioNorm = value;
 }
 
-void TriangleFieldConfig :: copyTo( TriangleField *tfs, int tfTotal )
+void TriangleFieldConfig :: copyTo( TriangleField *tfs, int tfTotal, bool copyColor )
 {
 	int total;
 	
@@ -53,7 +53,7 @@ void TriangleFieldConfig :: copyTo( TriangleField *tfs, int tfTotal )
 	
 	for( int i=0; i<total; i++ )
 	{
-		fields[ i ].copyTo( &tfs[ i ] );
+		fields[ i ].copyTo( &tfs[ i ], copyColor );
 	}
 }
 
