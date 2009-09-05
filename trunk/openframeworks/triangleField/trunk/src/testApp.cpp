@@ -18,7 +18,7 @@ void testApp :: setup()
 	initBlendModes();
 	initGui();
 	initAudio();
-	initMidi();
+	initTriggers();
 	
 	tileSaver.init( 10, 0, true );
 	screenGrabUtil.setup( "movie/trigfield", &renderArea );
@@ -56,7 +56,7 @@ void testApp :: initDebug()
 void testApp :: initFieldConfig()
 {
 	fieldConfigTotal	= 3;
-	fieldConfigIndex	= fieldConfigIndex2 = 2;
+	fieldConfigIndex	= fieldConfigIndex2 = 1;
 	fieldConfig			= new TriangleFieldConfig *[ fieldConfigTotal ];
 	fieldConfig[ 0 ]	= new TriangleFieldConfig01();
 	fieldConfig[ 1 ]	= new TriangleFieldConfig02();
@@ -151,9 +151,8 @@ void testApp :: initGui()
 	
 	colorPickers[ 1 ].setMode( COLOR_PICKER_MODE_CIRLCE_ROTATION );
 	colorPickers[ 1 ].setCircularSpeed( 0.5 );
-	colorPickers[ 1 ].setCircularLowerBounds( 0.2 );
-	colorPickers[ 1 ].setCircularUpperBounds( 0.2 );
-//	colorPickers[ 1 ].set
+	colorPickers[ 1 ].setCircularLowerBounds( 0.4 );
+	colorPickers[ 1 ].setCircularUpperBounds( 0.4 );
 	
 	gui.addPage( "General" );
 	gui.addToggle( "smoothing  ", &smoothing );
@@ -178,14 +177,52 @@ void testApp :: initAudio()
 //	audio.init( "../../../../_audio/massive_attack_05_exchange.mp3" );
 	audio.init( "../../../../_audio/lukid_06_chord.mp3" );
 //	audio.init( "../../../../_audio/gentle_force_5_into_6.mp3" );
-	audio.setPosition( 0.05 );
+	audio.setPosition( 0.15 );
+//	audio.setVolume( 0 );
 //	audio.setNoOfBands( 100 );
 //	audio.setThreshold( 0.55 );
 }
 
-void testApp :: initMidi()
+void testApp :: initTriggers()
 {
-//	midi.
+	trigger.addTrigger( 0.15606,		&fieldConfigIndex, 0 );
+	
+	trigger.addTrigger( 0.196034029,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.196135268,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.196506515,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.196709007,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.197080255,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.197181493,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.197653994,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.198328972,	&fieldConfigIndex, 0 );
+	
+	trigger.addTrigger( 0.200826421,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.201028913,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.201501414,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.201602653,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.202007651,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.202176392,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.202581391,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.202851385,	&fieldConfigIndex, 0 );
+		
+	trigger.addTrigger( 0.206023812,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.206125066,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.206496298,	&fieldConfigIndex, 2 );	
+	trigger.addTrigger( 0.206800044,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.20700255,		&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.207272545,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.207576275,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.207778782,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.208150014,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.209196255,	&fieldConfigIndex, 0 );
+	
+	trigger.addTrigger( 0.211052462,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.211322457,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.211592451,	&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.211794943,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.21216619,		&fieldConfigIndex, 2 );
+	trigger.addTrigger( 0.212267429,	&fieldConfigIndex, 1 );
+	trigger.addTrigger( 0.212942421,	&fieldConfigIndex, 0 );
 }
 
 //////////////////////////////////////////////
@@ -198,6 +235,8 @@ void testApp :: update()
 		return;
 
 	audio.update();
+	
+	trigger.update( audio.getPosition() );
 	
 	fieldConfig[ fieldConfigIndex ]->setAudioNorm( audio.getAveragePeakNorm() );
 	fieldConfig[ fieldConfigIndex ]->update();
@@ -272,7 +311,7 @@ void testApp :: updateFields()
 
 void testApp :: draw()
 {
-	ofBackground( 0, 0, 0 );
+	ofBackground( 20, 20, 20 );
 	ofEnableAlphaBlending();
 	
 	if( smoothing )
@@ -579,7 +618,7 @@ void testApp :: drawDebug()
 	ofSetColor( 0x000000 );
 	ofDrawBitmapString
 	(
-		"audio position :: " + ofToString( audio.getPosition(), 2 ) + "\n\n"
+		"audio position :: " + ofToString( audio.getPosition(), 5 ) + "\n\n"
 		,
 		800,
 		renderArea.height - 300
@@ -626,13 +665,22 @@ void testApp :: toggleFullScreen()
 void testApp :: keyPressed( int key )
 {
 	if( key == '1' )
+	{
 		fieldConfigIndex = 0;
+		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex );
+	}
 
 	if( key == '2' )
+	{
 		fieldConfigIndex = 1;
+		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex );
+	}
 	
 	if( key == '3' )
+	{
 		fieldConfigIndex = 2;
+		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex );
+	}
 	
 	if( key == 'c' )
 	{

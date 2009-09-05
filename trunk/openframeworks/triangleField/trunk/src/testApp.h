@@ -9,6 +9,7 @@
 #include "ColorPicker.h"
 #include "ofxSimpleGuiToo.h"
 #include "AudioFileSpectrum.h"
+#include "ofxTrigger.h"
 
 #include "TriangleField.h"
 #include "TriangleFieldConfig.h"
@@ -30,7 +31,7 @@ public:
 	void initBlendModes();
 	void initGui();
 	void initAudio();
-	void initMidi();
+	void initTriggers();
 
 	void addBlendMode( GLuint srcBlend, GLuint dstBlend );
 	
@@ -84,6 +85,8 @@ public:
 	ofxScreenGrabUtil	screenGrabUtil;
 	
 	AudioFileSpectrum	audio;
+	
+	ofxTrigger			trigger;
 };
 
 #endif
