@@ -58,6 +58,7 @@ public:
 	ofRectangle			renderAreaFullScreen;
 	
 	ColorPicker			*colorPickers;
+	ColorPicker			cpTest;
 	ofxSimpleGuiToo		gui;
 	
 	bool				smoothing;
