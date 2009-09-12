@@ -6,29 +6,20 @@
 
 void testApp :: setup()
 {
-	ofEnableSmoothing();
-	ofSetVerticalSync( true );
-	ofSetBackgroundAuto( false );
+	ofSetFrameRate( 30 );
 
-	colorWheelWidth  = 300;
-	colorWheelHeight = 300;
-
-	int py = 30;
-	int px = 30;
-	int sx = 30;
+	Color c;
+	c.r = (int)ofRandom( 0, 255 );
+	c.g = (int)ofRandom( 0, 255 );
+	c.b = (int)ofRandom( 0, 255 );
+	c.a = 255;
 	
-	colorPicker0.init( px, py, colorWheelWidth, colorWheelHeight );
 	colorPicker0.setMode( COLOR_PICKER_MODE_MOUSE);
+	colorPicker0.setColor( &c );
 	
-	px += colorWheelWidth + sx;
-	
-	colorPicker1.init( px, py, colorWheelWidth, colorWheelHeight );
 	colorPicker1.setMode( COLOR_PICKER_MODE_CIRLCE_ROTATION );
 	colorPicker1.setCircularLowerBounds( 0.3 );
 	
-	px += colorWheelWidth + sx;
-	
-	colorPicker2.init( px, py, colorWheelWidth, colorWheelHeight );
 	colorPicker2.setMode( COLOR_PICKER_MODE_RANDOM_WALK );
 }
 
@@ -48,6 +39,19 @@ void testApp :: update()
 void testApp :: draw()
 {
 	ofBackground( 200, 200, 200 );
+	
+	drawColorPickers();
+}
+
+void testApp :: drawColorPickers()
+{
+	int py = 30;
+	int px = 30;
+	int sx = 10;
+
+	colorPicker0.draw( px, py, 150, 150 );
+	colorPicker1.draw( px += colorPicker0.getWidth() + sx, py, 200, 200 );
+	colorPicker2.draw( px += colorPicker1.getWidth() + sx, py );
 }
 
 //////////////////////////////////////////////

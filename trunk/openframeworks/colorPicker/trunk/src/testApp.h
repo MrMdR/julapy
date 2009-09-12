@@ -12,6 +12,8 @@ public:
 	void setup();
 	void update();
 	void draw();
+	
+	void drawColorPickers();
 
 	void keyPressed  (int key);
 	void keyReleased(int key);
@@ -24,9 +26,6 @@ public:
 	ColorPicker colorPicker0;
 	ColorPicker colorPicker1;
 	ColorPicker colorPicker2;
-	
-	int colorWheelWidth;
-	int colorWheelHeight;
 };
 
 #endif
