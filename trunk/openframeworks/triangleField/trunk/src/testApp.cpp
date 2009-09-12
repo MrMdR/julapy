@@ -123,13 +123,13 @@ void testApp :: initGui()
 		c2.g = fields[ i ].eColor[ 1 ];
 		c2.b = fields[ i ].eColor[ 2 ];
 		
-		colorPickers[ i * 2 + 0 ].init( px, py, colorWheelWidth, colorWheelHeight );
+		colorPickers[ i * 2 + 0 ].setSize( px, py, colorWheelWidth, colorWheelHeight );
 		colorPickers[ i * 2 + 0 ].setMode( COLOR_PICKER_MODE_MOUSE);
 		colorPickers[ i * 2 + 0 ].setColor( &c1 );
 		
 		px += colorWheelWidth + sx;
 		
-		colorPickers[ i * 2 + 1 ].init( px, py, colorWheelWidth, colorWheelHeight );
+		colorPickers[ i * 2 + 1 ].setSize( px, py, colorWheelWidth, colorWheelHeight );
 		colorPickers[ i * 2 + 1 ].setMode( COLOR_PICKER_MODE_MOUSE);
 		colorPickers[ i * 2 + 1 ].setColor( &c2 );
 		
@@ -175,9 +175,13 @@ void testApp :: initAudio()
 //	audio.init( "../../../../_audio/aphex_twin_07_come_to_daddy_mummy_mix.mp3" );
 //	audio.init( "../../../../_audio/principles_of_geometry_01_arp_center.mp3" );
 //	audio.init( "../../../../_audio/massive_attack_05_exchange.mp3" );
-	audio.init( "../../../../_audio/lukid_06_chord.mp3" );
+//	audio.init( "../../../../_audio/lukid_06_chord.mp3" );
 //	audio.init( "../../../../_audio/gentle_force_5_into_6.mp3" );
-	audio.setPosition( 0.15 );
+//	audio.init( "../../../../_audio/gentle_force_hohner.wav" );
+	audio.init( "../../../../_audio/gentle_force_learning_to_forgive.wav" );
+//	audio.init( "../../../../_audio/gentle_force_majestic.wav" );
+//	audio.init( "../../../../_audio/gentle_force_ode_to_moritz.wav" );
+	audio.setPosition( 0.0 );
 //	audio.setVolume( 0 );
 //	audio.setNoOfBands( 100 );
 //	audio.setThreshold( 0.55 );
@@ -185,6 +189,8 @@ void testApp :: initAudio()
 
 void testApp :: initTriggers()
 {
+	trigger.setWriteFormat( "trigger" );
+	
 	trigger.addTrigger( 0.15606,		&fieldConfigIndex, 0 );
 	
 	trigger.addTrigger( 0.196034029,	&fieldConfigIndex, 2 );
@@ -624,6 +630,14 @@ void testApp :: drawDebug()
 		renderArea.height - 300
 	);
 	
+	for( int i=0; i<fieldsTotal; i++ )
+	{
+		Color sColor;
+		Color eColor;
+		colorPickers[ i * 2 + 0 ].draw();
+		colorPickers[ i * 2 + 1 ].draw();
+	}		
+	
 	ofSetColor( 0xFFFFFF );
 	glPushMatrix();
 	glTranslatef( 270, renderArea.height - 210, 0 );
@@ -667,19 +681,19 @@ void testApp :: keyPressed( int key )
 	if( key == '1' )
 	{
 		fieldConfigIndex = 0;
-		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex );
+		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
 	}
 
 	if( key == '2' )
 	{
 		fieldConfigIndex = 1;
-		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex );
+		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
 	}
 	
 	if( key == '3' )
 	{
 		fieldConfigIndex = 2;
-		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex );
+		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
 	}
 	
 	if( key == 'c' )
@@ -745,6 +759,9 @@ void testApp :: keyReleased( int key )
 	
 	if( key == 'f' )
 		toggleFullScreen();
+	
+	if( key == 't' )
+		trigger.writeToFile( "trigger_data.txt" );
 }
 
 void testApp :: mouseMoved( int x, int y )
