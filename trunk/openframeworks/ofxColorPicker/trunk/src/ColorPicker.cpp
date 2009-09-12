@@ -11,7 +11,7 @@
 
 ColorPicker :: ColorPicker()
 {
-
+	init();
 }
 
 ColorPicker :: ~ColorPicker()
@@ -20,7 +20,131 @@ ColorPicker :: ~ColorPicker()
 }
 
 //////////////////////////////////////////////
-//	PUBLIC.
+//	RENDER RELATED METHODS.
+//////////////////////////////////////////////
+
+void ColorPicker :: draw()
+{
+	glPushMatrix();
+	glTranslatef( dimensions.x, dimensions.y, 0 );
+	
+	drawBackground( colorWheelWidth, colorWheelHeight );
+	drawColorWheel( colorWheelWidth, colorWheelHeight );
+	drawColorPoint( colorWheelWidth, colorWheelHeight );
+	drawColorScaleBar( colorWheelWidth, colorWheelHeight );
+	drawColorRect( colorWheelWidth, colorWheelHeight );
+	
+	glPopMatrix();
+}
+
+void ColorPicker :: draw( float x, float y )
+{
+	setPos( x, y );
+	draw();
+}
+
+void ColorPicker :: draw( float x, float y, float w, float h ) 
+{
+	setSize( x, y, w, h );
+	draw();
+}
+
+void ColorPicker :: setPos( float x, float y )
+{
+	if( checkPos( x, y ) )
+	{
+		colorWheel.setPos( dimensions.x, dimensions.y );
+		colorScaleBar.setPos( dimensions.x, dimensions.y + colorWheelHeight + 20 );
+	}
+}
+
+void ColorPicker :: setSize( float x, float y, float w, float h )
+{
+	if( checkPos( x, y ) || checkSize( w, h ) )
+	{
+		colorWheel.setPos( dimensions.x, dimensions.y );
+		colorWheel.setSize( colorWheelWidth, colorWheelHeight );
+		
+		colorScaleBar.setPos( dimensions.x, dimensions.y + colorWheelHeight + 20 );
+		colorScaleBar.setSize( colorWheelWidth, 20 );
+	}
+}
+
+bool ColorPicker :: checkPos( int x, int y )
+{
+	bool posChange = false;
+	
+	if( dimensions.x != x )
+	{
+		dimensions.x = x;
+		posChange	 = true;
+	}
+	
+	if( dimensions.y != y )
+	{
+		dimensions.y = y;
+		posChange	 = true;
+	}
+	
+	return posChange;
+}
+
+bool ColorPicker :: checkSize( int w, int h )
+{
+	bool sizeChange = false;
+
+	if( colorWheelWidth	!= w )
+	{
+		colorWheelWidth  = w;
+		sizeChange		 = true;
+	}
+	
+	if( colorWheelHeight != h )
+	{
+		colorWheelHeight = h;
+		sizeChange		 = true;
+	}
+	
+	return sizeChange;
+}
+
+float ColorPicker :: getWidth() 
+{
+	return colorWheelWidth + 30;
+}
+
+float ColorPicker :: getHeight()
+{ 
+	return colorWheelHeight + 190; 
+}
+
+//////////////////////////////////////////////
+//	EVENT HANDLERS.
+//////////////////////////////////////////////
+
+void ColorPicker :: update( ofEventArgs &e )
+{
+	if( colorMode == COLOR_PICKER_MODE_CIRLCE_ROTATION )
+		updateCircularInterpolation();
+	
+	if( colorMode == COLOR_PICKER_MODE_RANDOM_WALK )
+		updateRandomWalkInterpolation();
+	
+	if( colorMode == COLOR_PICKER_MODE_MOUSE )
+		updateMouseInterpolation();
+	
+	updateColorScale();
+	
+	getCircularColor( colorAngle, colorRadius, colorScale, &color );
+}
+
+void ColorPicker :: exit( ofEventArgs &e )
+{
+	//
+}
+
+//////////////////////////////////////////////
+//	COLOR PICKER SETUP.
 //////////////////////////////////////////////
 
 void ColorPicker :: init( int x, int y, int width, int height )
@@ -29,7 +153,7 @@ void ColorPicker :: init( int x, int y, int width, int height )
 	dimensions.y	 = y;
 	colorWheelWidth  = width;
 	colorWheelHeight = height;
-
+	
 	colorScale			= 1.0;
 	colorRadius			= 0;
 	colorAngle			= 0;
@@ -57,46 +181,7 @@ void ColorPicker :: init( int x, int y, int width, int height )
 	colorScaleBar.enableMouseEvents();
 	
 	ofAddListener( ofEvents.update, this, &ColorPicker :: update );
-	ofAddListener( ofEvents.draw,   this, &ColorPicker :: draw );
 	ofAddListener( ofEvents.exit,   this, &ColorPicker :: exit );
-}
-
-void ColorPicker :: update( ofEventArgs &e )
-{
-	if( colorMode == COLOR_PICKER_MODE_CIRLCE_ROTATION )
-		updateCircularInterpolation();
-	
-	if( colorMode == COLOR_PICKER_MODE_RANDOM_WALK )
-		updateRandomWalkInterpolation();
-	
-	if( colorMode == COLOR_PICKER_MODE_MOUSE )
-		updateMouseInterpolation();
-	
-	updateColorScale();
-	
-	getCircularColor( colorAngle, colorRadius, colorScale, &color );
-}
-
-void ColorPicker :: draw( ofEventArgs &e )
-{
-	if( !visible )
-		return;
-	
-	glPushMatrix();
-	glTranslatef( dimensions.x, dimensions.y, 0 );
-	
-	drawBackground();
-	drawColorWheel();
-	drawColorPoint();
-	drawColorScaleBar();
-	drawColorRect();
-	
-	glPopMatrix();
-}
-
-void ColorPicker :: exit( ofEventArgs &e )
-{
-	//
 }
 
 void ColorPicker :: setMode( int m )
@@ -268,26 +353,26 @@ void ColorPicker :: updateMouseInterpolation()
 //	DISPLAY.
 //////////////////////////////////////////////
 
-void ColorPicker :: drawBackground()
+void ColorPicker :: drawBackground( int w, int h )
 {
 	int bx, by;
 	
 	bx = by = 10;
 	ofFill();
 	ofSetColor( 113, 113, 113 );
-	ofRect( -bx, -by, colorWheelWidth + bx * 2, colorWheelHeight + 160 + bx * 2 );
+	ofRect( -bx, -by, w + bx * 2, h + 160 + bx * 2 );
 	
 	bx = by = 9;
 	ofSetColor( 232, 232, 232 );
-	ofRect( -bx, -by, colorWheelWidth + bx * 2, colorWheelHeight + 160 + bx * 2 );	
+	ofRect( -bx, -by, w + bx * 2, h + 160 + bx * 2 );	
 }
 
-void ColorPicker :: drawColorWheel()
+void ColorPicker :: drawColorWheel( int w, int h )
 {
 	int res				= 200;
 	float angle			= 0.0f;
 	float angleAdder	= M_TWO_PI / (float)res;
-	float radius		= colorWheelWidth * 0.5;
+	float radius		= w * 0.5;
 	int k				= 0;
 	
 	float *circlePts	= new float[ ( res + 1 ) * 2 ];
@@ -303,7 +388,7 @@ void ColorPicker :: drawColorWheel()
 	}
 	
 	glPushMatrix();
-	glTranslatef( colorWheelWidth * 0.5, colorWheelHeight * 0.5, 0 );
+	glTranslatef( w * 0.5, h * 0.5, 0 );
 	
 	Color c;
 	
@@ -334,14 +419,14 @@ void ColorPicker :: drawColorWheel()
 	delete[] circleAngs;
 }
 
-void ColorPicker :: drawColorPoint()
+void ColorPicker :: drawColorPoint( int w, int h )
 {
 	getPoint( colorAngle, colorRadius, &colorPoint );
 	
-	if( colorPoint.x < 0 || colorPoint.x > colorWheelWidth )
+	if( colorPoint.x < 0 || colorPoint.x > w )
 		return;
 	
-	if( colorPoint.y < 0 || colorPoint.y > colorWheelHeight )
+	if( colorPoint.y < 0 || colorPoint.y > h )
 		return;
 	
 	ofFill();
@@ -357,7 +442,7 @@ void ColorPicker :: drawColorPoint()
 	ofCircle( colorPoint.x, colorPoint.y, 2 );
 }
 
-void ColorPicker :: drawColorScaleBar()
+void ColorPicker :: drawColorScaleBar( int w, int h )
 {
 	ofFill();
 	
@@ -365,11 +450,11 @@ void ColorPicker :: drawColorScaleBar()
 	
 	bx = by = 2;
 	ofSetColor( 149, 149, 149 );
-	ofRect( -bx, colorWheelHeight + 20 - bx, colorWheelWidth + bx * 2, 20 + bx * 2 );
+	ofRect( -bx, h + 20 - bx, w + bx * 2, 20 + bx * 2 );
 	
 	bx = by = 1;
 	ofSetColor( 255, 255, 255 );
-	ofRect( -bx, colorWheelHeight + 20 - bx, colorWheelWidth + bx * 2, 20 + bx * 2 );
+	ofRect( -bx, h + 20 - bx, w + bx * 2, 20 + bx * 2 );
 	
 	bx = by = 0;
 	
@@ -378,8 +463,8 @@ void ColorPicker :: drawColorScaleBar()
 	
 	int rx, ry, rw, rh;
 	rx = -bx;
-	ry = colorWheelHeight + 20 - bx;
-	rw = colorWheelWidth + bx * 2;
+	ry = h + 20 - bx;
+	rw = w + bx * 2;
 	rh = 20 + bx * 2;
 	
 	glEnable( GL_SMOOTH );
@@ -392,23 +477,23 @@ void ColorPicker :: drawColorScaleBar()
 		glVertex2f( rx + rw, ry );
 	glEnd();
 	
-	int cx = colorScale * colorWheelWidth;
+	int cx = colorScale * w;
 	int cw = 3;
 	
 	bx = 2;
 	by = 4;
 	ofSetColor( 149, 149, 149 );
 	ofFill();
-	ofRect( cx - bx, colorWheelHeight + 20 - by, cw + bx * 2, 20 + by * 2 );
+	ofRect( cx - bx, h + 20 - by, cw + bx * 2, 20 + by * 2 );
 
 	bx = 1;
 	by = 3;
 	ofSetColor( 255, 255, 255 );
 	ofFill();
-	ofRect( cx - bx, colorWheelHeight + 20 - by, cw + bx * 2, 20 + by * 2 );
+	ofRect( cx - bx, w + 20 - by, cw + bx * 2, 20 + by * 2 );
 }
 
-void ColorPicker :: drawColorRect()
+void ColorPicker :: drawColorRect( int w, int h )
 {
 	ofFill();
 	
@@ -416,15 +501,15 @@ void ColorPicker :: drawColorRect()
 
 	bx = by = 2;
 	ofSetColor( 149, 149, 149 );
-	ofRect( -bx, colorWheelHeight + 60 - bx, colorWheelWidth + bx * 2, 100 + bx * 2 );
+	ofRect( -bx, h + 60 - bx, w + bx * 2, 100 + bx * 2 );
 
 	bx = by = 1;
 	ofSetColor( 255, 255, 255 );
-	ofRect( -bx, colorWheelHeight + 60 - bx, colorWheelWidth + bx * 2, 100 + bx * 2 );
+	ofRect( -bx, h + 60 - bx, w + bx * 2, 100 + bx * 2 );
 	
 	bx = by = 0;
 	ofSetColor( color.r, color.g, color.b, color.a );
-	ofRect( -bx, colorWheelHeight + 60 - bx, colorWheelWidth + bx * 2, 100 + bx * 2 );
+	ofRect( -bx, h + 60 - bx, w + bx * 2, 100 + bx * 2 );
 }
 
 //////////////////////////////////////////////
