@@ -13,6 +13,9 @@
 #include "ofMain.h"
 #include "ofxMSAInteractiveObject.h"
 
+#define		COLOR_PICKER_DEFAULT_WIDTH				100
+#define		COLOR_PICKER_DEFAULT_HEIGHT				100
+
 #define		COLOR_PICKER_MODE_CIRLCE_ROTATION		0
 #define		COLOR_PICKER_MODE_RANDOM_WALK			1
 #define		COLOR_PICKER_MODE_MOUSE					2
@@ -23,58 +26,71 @@ public :
 	int r, g, b, a;
 };
 
-class ColorPicker
+class ColorPicker : public ofBaseDraws
 {
 
 public :
 	
 	ColorPicker();
 	~ColorPicker();
+
+	void  update( ofEventArgs &e );
+	void  exit( ofEventArgs &e );
+
+	void  setPos( float x, float y );
+	void  setSize( float x, float y, float w, float h );
 	
-	void init( int x, int y, int width, int height );
-	void update( ofEventArgs &e );
-	void draw( ofEventArgs &e );
-	void exit( ofEventArgs &e );
+	void  draw();
+	void  draw( float x, float y );
+	void  draw( float x, float y, float w, float h );
+
+	float getWidth();
+	float getHeight();
 	
-	void setVisible( bool b );
-	bool isVisible();
+	void  setVisible( bool b );
+	bool  isVisible();
 	
-	void setMode( int m );
-	void setColorScale( float s );
-	void setRandomColor();
-	void setColor( Color *c );
-	void getColor( Color *c );
+	void  setMode( int m );
+	void  setColorScale( float s );
+	void  setRandomColor();
+	void  setColor( Color *c );
+	void  getColor( Color *c );
 	
-	void setCircularUpperBounds( float value );
-	void setCircularLowerBounds( float value );
-	void setCircularSpeed( float value );
-	void setCircularOscillationSpeed( float value );
+	void  setCircularUpperBounds( float value );
+	void  setCircularLowerBounds( float value );
+	void  setCircularSpeed( float value );
+	void  setCircularOscillationSpeed( float value );
 	
-	void setRandomWalkVelocityMax( float value );
-	void setRandomWalkVelocityEase( float value );
+	void  setRandomWalkVelocityMax( float value );
+	void  setRandomWalkVelocityEase( float value );
 	
 private :
 
-	void updateColorScale();
+	void  init( int x=0, int y=0, int width=COLOR_PICKER_DEFAULT_WIDTH, int height=COLOR_PICKER_DEFAULT_HEIGHT );
 	
-	void initCircularInterpolation();
-	void updateCircularInterpolation();
+	bool  checkPos( int x, int y );
+	bool  checkSize( int w, int h );
 	
-	void initRandomWalkInterpolation();
-	void updateRandomWalkInterpolation();
+	void  updateColorScale();
 	
-	void initMouseInterpolation();
-	void updateMouseInterpolation();
+	void  initCircularInterpolation();
+	void  updateCircularInterpolation();
 	
-	void drawBackground();
-	void drawColorWheel();
-	void drawColorPoint();
-	void drawColorScaleBar();
-	void drawColorRect();
+	void  initRandomWalkInterpolation();
+	void  updateRandomWalkInterpolation();
+	
+	void  initMouseInterpolation();
+	void  updateMouseInterpolation();
+	
+	void  drawBackground( int w, int h );
+	void  drawColorWheel( int w, int h );
+	void  drawColorPoint( int w, int h );
+	void  drawColorScaleBar( int w, int h );
+	void  drawColorRect( int w, int h );
 
-	void getCircularColor( float angle, float radius, float scale, Color *c );
-	void getPoint( float a, float r, ofPoint *p );
-	void getAngleCoordinates( float x, float y, float *a, float *r );
+	void  getCircularColor( float angle, float radius, float scale, Color *c );
+	void  getPoint( float a, float r, ofPoint *p );
+	void  getAngleCoordinates( float x, float y, float *a, float *r );
 
 	ofxMSAInteractiveObject colorWheel;
 	ofxMSAInteractiveObject colorScaleBar;
