@@ -13,7 +13,7 @@ ofxTrigger :: ofxTrigger()
 {
 	triggerIndex	= 0;
 	triggerTotal	= 0;
-	triggerMax		= 100;
+	triggerMax		= 1000;
 	triggers		= new ofxTriggerItem[ triggerMax ];
 	
 	setWriteFormat( "trigger" );
