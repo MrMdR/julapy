@@ -14,6 +14,7 @@ void testApp :: setup()
 	initRenderArea();
 	initFieldConfig();
 	initFields();
+	initVideo();
 	initDebug();
 	initBlendModes();
 	initGui();
@@ -70,6 +71,12 @@ void testApp :: initFields()
 	fields = new TriangleField[ fieldsTotal ];
 	
 	fieldConfig[ fieldConfigIndex ]->copyTo( fields, fieldsTotal, true );
+}
+
+void testApp :: initVideo()
+{
+	tfVideo.loadMovie( "../../../../_video/ERASERHEAD_09_cheeseface.mov" );
+	tfVideo.setSize( renderArea.width, renderArea.height );
 }
 
 //////////////////////////////////////////////
@@ -338,6 +345,8 @@ void testApp :: draw()
 	
 	for( int i=0; i<fieldsTotal; i++ )
 		drawTriangleNoise( &fields[ i ] );
+	
+	tfVideo.draw();
 	
 	glPopMatrix();
 	
@@ -670,6 +679,8 @@ void testApp :: toggleFullScreen()
 	}
 	
 	screenGrabUtil.setArea( &renderArea );
+	
+	tfVideo.setSize( renderArea.width, renderArea.height );
 }
 
 //////////////////////////////////////////////

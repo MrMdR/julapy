@@ -16,6 +16,7 @@
 #include "TriangleFieldConfig01.h"
 #include "TriangleFieldConfig02.h"
 #include "TriangleFieldConfig03.h"
+#include "TriangleFieldVideo.h"
 
 class testApp : public ofBaseApp{
 
@@ -27,6 +28,7 @@ public:
 	void initRenderArea();
 	void initFieldConfig();
 	void initFields();
+	void initVideo();
 	void initDebug();
 	void initBlendModes();
 	void initGui();
@@ -79,6 +81,8 @@ public:
 	int					fieldConfigTotal;
 	int					fieldConfigIndex;
 	int					fieldConfigIndex2;
+	
+	TriangleFieldVideo	tfVideo;
 	
 	ofxPerlin			noise;
 	
