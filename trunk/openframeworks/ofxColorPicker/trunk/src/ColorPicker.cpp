@@ -158,7 +158,7 @@ void ColorPicker :: init( int x, int y, int width, int height )
 	colorRadius			= 0;
 	colorAngle			= 0;
 	
-	oscillationAngle	= 0;
+	oscillationAngle	= 0; 
 	
 	setVisible( true );
 	
