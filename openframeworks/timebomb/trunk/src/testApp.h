@@ -3,11 +3,8 @@
 
 #define USE_POINT_GREY_CAMERA
 
-//#define USE_VIDEO_INPUT			// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
-#define USE_CAMERA_INPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
-
-#define USE_VIDEO_OUTPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
-//#define USE_CAMERA_OUTPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
+//#define USE_VIDEO_INPUT			// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
+#define USE_CAMERA_INPUT		// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 
 #define SHOW_DEBUG
 
@@ -30,12 +27,9 @@ public:
 	void initOpticalFieldForCameraInput();
 	void initOpticalFieldForVideoInput();
 	void initVideoOutput();
-	void initCameraOutput();
 	void initTimeDistortionForVideo();
-	void initTimeDistortionForCamera();
 	void initFluid();
 	void initFluidForVideo();
-	void initFluidForCamera();
 	void initGui();
 	
 	void updateVideoGrabber();
@@ -44,20 +38,14 @@ public:
 	void updateOpticalFieldFromVideoInput();
 	void updateFluid();
 	void updateVideo();
-	void updateCamera();
 	void updateTimeDistortionForVideo();
-	void updateTimeDistortionForCamera();
 	
 	void drawFluidFullScreen();
 	void drawFluidToVideoDimensions();
-	void drawFluidToCameraDimensions();
 	void drawVideoSource();
-	void drawCameraSource();
 	void drawCameraSourceForOpticalField();
 	void drawTimeDistortionFromVideoSource();
 	void drawTimeDistortionFromVideoSourceFullScreen();
-	void drawTimeDistortionFromCameraSource();
-	void drawTimeDistortionFromCameraSourceFullScreen();
 	void drawDebugInfo();
 	
 	void keyPressed( int key );
@@ -104,19 +92,12 @@ public:
 #endif
 	
 	bool				isVideoGrabberNewFrame;
-	ofxCvColorImage		videoGrabberImage;
 	int					camWidth;
 	int					camHeight;
 	int					camWidthHalf;
 	int					camHeightHalf;
 	
-#ifdef USE_TUIO
-	
-	myTuioClient tuioClient;
-	
-#endif	
-	
-	ofxSimpleGuiToo	gui;
+	ofxSimpleGuiToo		gui;
 
 	OpticalField		opticalField;
 	float				interactionScale;
@@ -130,8 +111,6 @@ public:
 	
 #endif
 	
-#ifdef USE_VIDEO_OUTPUT
-	
 	ofVideoPlayer		videoPlayer;
 	ofTexture			videoPlayerTexture;
 	unsigned char		*videoPlayerTexturePixels;
@@ -142,23 +121,6 @@ public:
 	unsigned char		*frameBuffer;
 	int					frameBufferTotal;
 	int					frameBufferPlayIndex;
-	
-#endif
-	
-#ifdef USE_CAMERA_OUTPUT
-	
-	ofTexture			videoGrabberTexture;
-	unsigned char		*videoGrabberTexturePixels;
-	int					videoGrabberWidth;
-	int					videoGrabberHeight;
-	int					videoGrabberPixelsPerFrame;
-	
-	unsigned char		*frameBuffer;
-	int					frameBufferLimit;
-	int					frameBufferCount;
-	int					frameBufferIndex;
-	
-#endif
 	
 	ofTexture			timeDistTexture;
 	unsigned char		*timeDistPixels;
