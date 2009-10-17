@@ -1,8 +1,4 @@
 #include "testApp.h"
-#include "msaColor.h"
-
-#define FLUID_WIDTH			150
-
 
 void testApp :: fadeToColor(float r, float g, float b, float speed) 
 {
