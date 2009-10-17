@@ -4,18 +4,16 @@
 #define FLUID_WIDTH			150
 
 
-#pragma mark Custom methods
-
-
-void fadeToColor(float r, float g, float b, float speed) {
+void testApp :: fadeToColor(float r, float g, float b, float speed) 
+{
 	glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glColor4f(r, g, b, speed);
     glBegin(GL_QUADS);
     glVertex2f(0, 0);
-    glVertex2f(myApp->window.width, 0);
-    glVertex2f(myApp->window.width, myApp->window.height);
-    glVertex2f(0, myApp->window.height);
+    glVertex2f( renderArea.width, 0);
+    glVertex2f( renderArea.width, renderArea.height );
+    glVertex2f( 0, renderArea.height);
     glEnd();
 }
 
@@ -58,20 +56,19 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 }
 
 
-#pragma mark App callbacks
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void testApp::setup() 
 {	 
-	ofBackground(0, 0, 0);
-	ofSetVerticalSync(true);
+	ofBackground( 0, 0, 0 );
+	ofSetVerticalSync( true );
 	ofSetFrameRate( 30 );
 	
 	windowResized( ofGetWidth(), ofGetHeight() );		// initialize stuff according to current window size
 	
+	initRenderArea();
 	initVideoGrabber();
 
 #ifdef USE_VIDEO_INPUT
@@ -108,13 +105,34 @@ void testApp::setup()
 	initFluidForCamera();
 #endif
 	
-#ifdef USE_GUI 
 	initGui();
-#endif
 	
 #ifdef USE_VIDEO_SAVER
 	initVideoSaver();
 #endif
+}
+
+void testApp :: initRenderArea()
+{
+	renderAreaWindow.x      = 0;
+	renderAreaWindow.y      = 0;
+	renderAreaWindow.width  = 1280;
+	renderAreaWindow.height = 720;
+	
+	renderAreaFullScreen.x      = 0;
+	renderAreaFullScreen.y      = 0;
+	renderAreaFullScreen.width  = 1440;
+	renderAreaFullScreen.height = 900;
+	
+	renderAreaRightMonitor.x		= 1440;
+	renderAreaRightMonitor.y		= 0;
+	renderAreaRightMonitor.width	= 800;
+	renderAreaRightMonitor.height	= 600;
+	
+	renderArea.x		= renderAreaWindow.x;
+	renderArea.y		= renderAreaWindow.y;
+	renderArea.width	= renderAreaWindow.width;
+	renderArea.height	= renderAreaWindow.height;
 }
 
 void testApp :: initVideoGrabber ()
@@ -125,10 +143,24 @@ void testApp :: initVideoGrabber ()
 	camWidthHalf	= 320;
 	camHeightHalf	= 240;
 	
-	videoGrabber.setVerbose( true );
-	videoGrabber.initGrabber( camWidth, camHeight );
+#ifdef USE_POINT_GREY_CAMERA
+	bool result = videoGrabber.initGrabber( camWidth, camHeight, VID_FORMAT_GREYSCALE, VID_FORMAT_GREYSCALE, 30, true, new Libdc1394Grabber );
 	
+	if( result )
+	{
+		ofLog(OF_LOG_NOTICE,"Camera succesfully initialized.");
+	} 
+	else
+	{
+		ofLog(OF_LOG_FATAL_ERROR,"Camera failed to initialize.");
+	}
+#else
+	videoGrabber.initGrabber( camWidth, camHeight );
+#endif
+	
+#ifdef USE_CAMERA_OUTPUT	
 	videoGrabberImage.allocate( camWidth, camHeight );
+#endif
 	
 	isVideoGrabberNewFrame = false;
 }
@@ -148,8 +180,15 @@ void testApp :: initVideoInput()
 void testApp :: initOpticalFieldForCameraInput ()
 {
 	opticalField.init( camWidth, camHeight );
+	opticalField.setMirror( false, false );
 	opticalField.showDifferenceImage	= true;
 	opticalField.opticalFlowScale		= 0.001f;
+
+#ifdef USE_POINT_GREY_CAMERA
+	opticalField.setImageType( GL_LUMINANCE );
+#else
+	opticalField.setImageType( GL_RGB );
+#endif
 }
 
 void testApp :: initOpticalFieldForVideoInput()
@@ -296,8 +335,6 @@ void testApp :: initFluidForCamera ()
 
 void testApp :: initGui ()
 {
-#ifdef USE_GUI 
-	
 	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5);
 	gui.addSlider("fs.colorDiffusion", &fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5); 
 	gui.addSlider("fs.fadeSpeed", &fluidSolver.fadeSpeed, 0.0, 0.1, 0.5); 
@@ -312,8 +349,6 @@ void testApp :: initGui ()
 	gui.addSlider("optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
 	gui.addSlider("optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
 	gui.addSlider("fluid color scale",	&fluidColorScale,				0.0, 2.0, 0.5 );
-	
-#endif
 }
 
 void testApp :: initVideoSaver()
@@ -378,15 +413,21 @@ void testApp::update()
 
 void testApp :: updateVideoGrabber ()
 {
+#ifdef USE_POINT_GREY_CAMERA
+	videoGrabber.update();
+#else
 	videoGrabber.grabFrame();
+#endif
 	
 	isVideoGrabberNewFrame = videoGrabber.isFrameNew();
 	
+#ifdef USE_CAMERA_OUTPUT
 	if( isVideoGrabberNewFrame )
 	{
 		videoGrabberImage.setFromPixels( videoGrabber.getPixels(), camWidth, camHeight );
 		videoGrabberImage.mirror( false, true );
 	}
+#endif
 }
 
 void testApp :: updateVideoInput()
@@ -626,9 +667,7 @@ void testApp::draw()
 		drawFluidToCameraDimensions();
 	#endif
 	
-	#ifdef USE_GUI 
-		gui.draw();
-	#endif
+	gui.draw();
 
 	#ifdef USE_VIDEO_OUTPUT
 		drawVideoSource();
@@ -773,15 +812,16 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 #ifdef USE_VIDEO_OUTPUT	
 	
 	float wRatio, hRatio, scale;
-	float scaleX;
+	float scaleX, scaleY;
 	
 	bool scaleVideo				= false;
 	bool scaleToFitFullScreen	= false;
 	
-	wRatio = ofGetWidth() / (float)videoPlayerWidth;
-	hRatio = ofGetHeight() / (float)videoPlayerHeight;
+	wRatio = renderArea.width  / (float)videoPlayerWidth;
+	hRatio = renderArea.height / (float)videoPlayerHeight;
 	
-	scaleX = 0.05;
+	scaleX = 0.00;		// stretch image if need be.
+	scaleY = 0.00;
 	
 	if( scaleVideo )
 	{
@@ -799,11 +839,11 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 	glPushMatrix();
 	glTranslatef
 	( 
-		(int)( ( ofGetWidth() - ( videoPlayerWidth * ( scale + scaleX ) ) ) * 0.5f ),
-		(int)( ( ofGetHeight() - ( videoPlayerHeight * scale ) ) * 0.5f ),
+		(int)( ( renderArea.width  - ( videoPlayerWidth  * ( scale + scaleX ) ) ) * 0.5f ) + renderArea.x,
+		(int)( ( renderArea.height - ( videoPlayerHeight * ( scale + scaleY ) ) ) * 0.5f ) + renderArea.y,
 		0
 	);
-	glScalef( scale + scaleX, scale, 0 );
+	glScalef( scale + scaleX, scale + scaleY, 0 );
 	timeDistTexture.draw( 0, 0 );
 	glPopMatrix();
 	
@@ -831,8 +871,8 @@ void testApp :: drawTimeDistortionFromCameraSourceFullScreen ()
 	
 	bool scaleToFitFullScreen = true;
 	
-	wRatio = ofGetWidth() / (float)videoGrabberWidth;
-	hRatio = ofGetHeight() / (float)videoGrabberHeight;
+	wRatio = renderArea.width  / (float)videoGrabberWidth;
+	hRatio = renderArea.height / (float)videoGrabberHeight;
 	
 	if( scaleToFitFullScreen )
 		scale = MIN( wRatio, hRatio );
@@ -843,8 +883,8 @@ void testApp :: drawTimeDistortionFromCameraSourceFullScreen ()
 	glPushMatrix();
 	glTranslatef
 	( 
-		(int)( ( ofGetWidth() - ( videoGrabberWidth * scale ) ) * 0.5f ),
-		(int)( ( ofGetHeight() - ( videoGrabberHeight * scale ) ) * 0.5f ),
+		(int)( ( renderArea.width  - ( videoGrabberWidth  * scale ) ) * 0.5f ) + renderArea.x,
+		(int)( ( renderArea.height - ( videoGrabberHeight * scale ) ) * 0.5f ) + renderArea.y,
 		0
 	);
 	glScalef( scale, scale, 0 );
@@ -884,6 +924,38 @@ void testApp :: drawDebugInfo()
 }
 
 ////////////////////////////////////////////////////////
+// TOGGLE FULL SCREEN.
+////////////////////////////////////////////////////////
+
+void testApp :: toggleFullScreen()
+{
+	ofToggleFullscreen();
+	
+	if( ofGetWindowMode() == OF_WINDOW )
+	{
+		renderArea.x		= renderAreaWindow.x;
+		renderArea.y		= renderAreaWindow.y;
+		renderArea.width	= renderAreaWindow.width;
+		renderArea.height	= renderAreaWindow.height;
+	}
+	
+	if( ofGetWindowMode() == OF_FULLSCREEN )
+	{
+//		renderArea.x		= renderAreaFullScreen.x;
+//		renderArea.y		= renderAreaFullScreen.y;
+//		renderArea.width	= renderAreaFullScreen.width;
+//		renderArea.height	= renderAreaFullScreen.height;
+		
+		renderArea.x		= renderAreaRightMonitor.x;
+		renderArea.y		= renderAreaRightMonitor.y;
+		renderArea.width	= renderAreaRightMonitor.width;
+		renderArea.height	= renderAreaRightMonitor.height;
+	}
+	
+//	screenGrabUtil.setArea( &renderArea );
+}
+
+////////////////////////////////////////////////////////
 // RESIZE.
 ////////////////////////////////////////////////////////
 
@@ -908,31 +980,11 @@ void testApp::windowResized(int w, int h)
 
 void testApp::keyPressed  (int key)
 {
-    switch(key)
-	{
-		case ' ' :
-			videoGrabber.videoSettings();
-			break;
-
-#ifdef USE_GUI
-		case 'g':
-			gui.toggleDraw();	
-			glClear(GL_COLOR_BUFFER_BIT);
-			break; 
-#endif			
-		case 'f':
-			ofToggleFullscreen();
-			break;
-		case 's':
-			static char fileNameStr[255];
-			sprintf(fileNameStr, "output_%0.4i.png", ofGetFrameNum());
-			static ofImage imgScreen;
-			imgScreen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-			printf("Saving file: %s\n", fileNameStr);
-			imgScreen.saveImage(fileNameStr);
-			break;
-			
-    }
+	if( key == ' ' )
+		videoGrabber.videoSettings();
+	
+	if( key == 'f' )
+		toggleFullScreen();
 	
 #ifdef USE_VIDEO_SAVER
 	if( key == 'r' )
