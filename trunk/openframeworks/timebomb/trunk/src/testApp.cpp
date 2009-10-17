@@ -106,10 +106,8 @@ void testApp::setup()
 #endif
 	
 	initGui();
-	
-#ifdef USE_VIDEO_SAVER
-	initVideoSaver();
-#endif
+
+	screenGrabUtil.setup( "movie/timebomb", &renderArea );
 }
 
 void testApp :: initRenderArea()
@@ -349,28 +347,6 @@ void testApp :: initGui ()
 	gui.addSlider("optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
 	gui.addSlider("optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
 	gui.addSlider("fluid color scale",	&fluidColorScale,				0.0, 2.0, 0.5 );
-}
-
-void testApp :: initVideoSaver()
-{
-#ifdef USE_VIDEO_SAVER
-	videoSaverWidth		= ofGetWidth();
-	videoSaverHeight	= ofGetHeight();
-	
-	char str[255];
-	sprintf( str, "tb_%02d%02d%02d_%02d%02d%02d_%dx%d", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds(), videoSaverWidth, videoSaverHeight );
-
-	videoSaverPath = str;
-	
-	videoSaverImage.allocate( videoSaverWidth, videoSaverHeight, GL_RGB );
-	
-	videoSaver.listCodecs();
-	videoSaver.setCodecType( 2 );
-	videoSaver.setCodecQualityLevel( OF_QT_SAVER_CODEC_QUALITY_LOSSLESS );
-	videoSaver.setup( videoSaverWidth, videoSaverHeight, videoSaverPath );
-	
-	videoSaverRecording = false;
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -699,9 +675,8 @@ void testApp::draw()
 	
 #endif
 	
-#ifdef USE_VIDEO_SAVER
-	drawToVideoSaver();
-#endif
+	if( screenGrabUtil.isRecording() )
+		screenGrabUtil.save();
 	
 	drawDebugInfo();
 }
@@ -894,30 +869,12 @@ void testApp :: drawTimeDistortionFromCameraSourceFullScreen ()
 #endif
 }
 
-void testApp :: drawToVideoSaver()
-{
-#ifdef USE_VIDEO_SAVER
-	if( videoSaverRecording )
-	{
-		videoSaverImage.grabScreen( 0, 0, videoSaverWidth, videoSaverHeight );
-		videoSaver.addFrame( videoSaverImage.getPixels(), 1.0f / 30.0f ); 
-	}
-#endif
-}
-
 void testApp :: drawDebugInfo()
 {
 	ofSetColor( 0xFFFFFF );
 	ofDrawBitmapString
 	(
-		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n"
-#ifdef USE_VIDEO_SAVER	 
-		+ "videoSaverRecording :: " + ofToString( videoSaverRecording ) + "\n\n"
-#endif
-#ifdef USE_VIDEO_INPUT
-		+ "videoInputPosition :: " + ofToString( videoInputPosition ) + "\n\n"
-#endif
-		,
+		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
 		20,
 		20
 	);
@@ -952,7 +909,7 @@ void testApp :: toggleFullScreen()
 		renderArea.height	= renderAreaRightMonitor.height;
 	}
 	
-//	screenGrabUtil.setArea( &renderArea );
+	screenGrabUtil.setArea( &renderArea );
 }
 
 ////////////////////////////////////////////////////////
@@ -986,19 +943,14 @@ void testApp::keyPressed  (int key)
 	if( key == 'f' )
 		toggleFullScreen();
 	
-#ifdef USE_VIDEO_SAVER
-	if( key == 'r' )
+	if( key == 'm' )
 	{
-		videoSaverRecording = !videoSaverRecording;
-		
-		if( !videoSaverRecording )
-		{
-			videoSaver.finishMovie();
-		}
+		if( screenGrabUtil.isRecording() )
+			screenGrabUtil.stop();
+		else
+			screenGrabUtil.start();
 	}
-#endif
 }
-
 
 ////////////////////////////////////////////////////////
 // MOUSE HANDLER.
