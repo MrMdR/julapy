@@ -30,7 +30,6 @@ public:
 	void initOpticalFieldForVideoInput();
 	void initVideoOutput();
 	void initTimeDistortionForVideo();
-	void initFluid();
 	void initFluidForVideo();
 	void initGui();
 	
@@ -42,7 +41,6 @@ public:
 	void updateVideo();
 	void updateTimeDistortionForVideo();
 	
-	void drawFluidFullScreen();
 	void drawFluidToVideoDimensions();
 	void drawVideoSource();
 	void drawCameraSourceForOpticalField();
@@ -53,8 +51,6 @@ public:
 	void keyPressed( int key );
 	void mouseMoved( int x, int y );
 	void mouseDragged( int x, int y, int button );
-
-	void windowResized( int w, int h );
 
 	void fadeToColor(float r, float g, float b, float speed);
 	void addToFluid(float x, float y, float dx, float dy, bool addColor = true, bool addForce = true);
@@ -76,16 +72,6 @@ public:
 	float				fluidColorScale;
 	
 	int					pmouseX, pmouseY;
-	
-	// cache these for slightly better performance
-	struct {
-		int				width;
-		int				height;
-		float			invWidth;
-		float			invHeight;
-		float			aspectRatio;
-		float			aspectRatio2;
-	} window;
 	
 #ifdef USE_POINT_GREY_CAMERA
 	ofxVideoGrabber 	videoGrabber;

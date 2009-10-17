@@ -16,7 +16,6 @@ void testApp :: fadeToColor(float r, float g, float b, float speed)
 
 void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bool addForce)
 {
-//	float speed = dx * dx  + dy * dy * window.aspectRatio2;    // balance the x and y components of speed with the screen aspect ratio
 	float speed = dx * dx  + dy * dy;
 	
 	if(speed > 0)
@@ -61,8 +60,6 @@ void testApp::setup()
 	ofBackground( 0, 0, 0 );
 	ofSetVerticalSync( true );
 	ofSetFrameRate( 30 );
-	
-	windowResized( ofGetWidth(), ofGetHeight() );		// initialize stuff according to current window size
 	
 	initRenderArea();
 	initVideoGrabber();
@@ -214,21 +211,9 @@ void testApp :: initTimeDistortionForVideo ()
 	timeDistPixels	= new unsigned char[ videoPlayerPixelsPerFrame ];
 }
 
-void testApp :: initFluid()
-{
-	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
-	fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
-	fluidDrawer.setup(&fluidSolver);
-	
-	fluidColorScale		= 1.0f;
-	
-	drawFluid			= true;
-	renderUsingVA		= true;
-}
-
 void testApp :: initFluidForVideo ()
 {
-	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
+	fluidSolver.setup( FLUID_WIDTH, FLUID_WIDTH );		// square so it matches the timebomb source movie.
     fluidSolver.enableRGB( false ).setFadeSpeed( 0.005 ).setDeltaT( 0.5 ).setVisc( 0.00007 ).setColorDiffusion( 0.00002 );
 	fluidSolver.doVorticityConfinement	= true;
 	fluidSolver.solverIterations		= 5;
@@ -465,11 +450,6 @@ void testApp::draw()
 	drawDebugInfo();
 }
 
-void testApp :: drawFluidFullScreen ()
-{
-	fluidDrawer.draw( 0, 0, window.width, window.height );
-}
-
 void testApp :: drawFluidToVideoDimensions ()
 {
 	if( drawFluid )
@@ -608,25 +588,6 @@ void testApp :: toggleFullScreen()
 }
 
 ////////////////////////////////////////////////////////
-// RESIZE.
-////////////////////////////////////////////////////////
-
-void testApp::windowResized(int w, int h)
-{
-	printf("TEST windowResized(%i, %i)\n", w, h);
-	window.width		= w;
-	window.height		= h;
-	
-	window.invWidth		= 1.0f/window.width;
-	window.invHeight	= 1.0f/window.height;
-	window.aspectRatio	= window.width * window.invHeight;
-	window.aspectRatio2 = window.aspectRatio * window.aspectRatio;
-}
-
-
-#pragma mark Input callbacks
-
-////////////////////////////////////////////////////////
 // KEY HANDLER.
 ////////////////////////////////////////////////////////
 
@@ -653,21 +614,11 @@ void testApp::keyPressed  (int key)
 
 void testApp::mouseMoved(int x, int y )
 {
-	float mouseNormX = x * window.invWidth;
-    float mouseNormY = y * window.invHeight;
-    float mouseVelX = (x - pmouseX) * window.invWidth;
-    float mouseVelY = (y - pmouseY) * window.invHeight;
-
-    addToFluid(mouseNormX, mouseNormY, mouseVelX, mouseVelY, true);
+	//
 }
 
 void testApp::mouseDragged(int x, int y, int button)
 {
-	float mouseNormX = x * window.invWidth;
-    float mouseNormY = y * window.invHeight;
-    float mouseVelX = (x - pmouseX) * window.invWidth;
-    float mouseVelY = (y - pmouseY) * window.invHeight;
-	
-	addToFluid(mouseNormX, mouseNormY, mouseVelX, mouseVelY, false);
+	//
 }
 
