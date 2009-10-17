@@ -15,6 +15,7 @@
 #include "OpticalField.h"
 #include "ofxSimpleGuiToo.h"
 #include "ofxScreenGrabUtil.h"
+#include "ofxCvWarper.h"
 
 class testApp : public ofSimpleApp
 {
@@ -68,22 +69,25 @@ public:
 	
 	bool				bDebug;
 	bool				bRightMonitor;
-	
-	ofxMSAFluidSolver	fluidSolver;
-	ofxMSAFluidDrawer	fluidDrawer;
-	float				fluidColorScale;
-	
+
 #ifdef USE_POINT_GREY_CAMERA
 	ofxVideoGrabber 	videoGrabber;
 #else
 	ofVideoGrabber		videoGrabber;
 #endif
 	
+	ofxCvGrayscaleImage	videoGrabberSrcImage;
+	ofxCvGrayscaleImage videoGrabberDstImage;
+	
 	bool				isVideoGrabberNewFrame;
 	int					camWidth;
 	int					camHeight;
 	int					camWidthHalf;
 	int					camHeightHalf;
+	
+	ofxMSAFluidSolver	fluidSolver;
+	ofxMSAFluidDrawer	fluidDrawer;
+	float				fluidColorScale;
 	
 	ofxSimpleGuiToo		gui;
 
