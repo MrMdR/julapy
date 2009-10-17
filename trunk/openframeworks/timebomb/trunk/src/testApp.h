@@ -1,6 +1,7 @@
-#pragma once
+#ifndef _TEST_APP
+#define _TEST_APP
 
-//#define USE_GUI
+#define USE_POINT_GREY_CAMERA
 
 //#define USE_VIDEO_INPUT			// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
 #define USE_CAMERA_INPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
@@ -12,12 +13,10 @@
 #define SHOW_DEBUG
 
 #include "ofMain.h"
+#include "ofxVideoGrabber.h"
 #include "ofxMSAFluid.h"
 #include "OpticalField.h"
-
-#ifdef USE_GUI 
-	#include "ofxSimpleGuiToo.h"
-#endif
+#include "ofxSimpleGuiToo.h"
 
 #ifdef USE_VIDEO_SAVER
 	#include "ofQtVideoSaver.h"
@@ -29,6 +28,7 @@ public:
 	void update();
 	void draw();
 	
+	void initRenderArea();
 	void initVideoGrabber();
 	void initVideoInput();
 	void initOpticalFieldForCameraInput();
@@ -72,8 +72,16 @@ public:
 
 	void windowResized( int w, int h );
 
+	void fadeToColor(float r, float g, float b, float speed);
 	void addToFluid(float x, float y, float dx, float dy, bool addColor = true, bool addForce = true);
 
+	void toggleFullScreen();
+	
+	ofRectangle		renderArea;
+	ofRectangle		renderAreaWindow;
+	ofRectangle		renderAreaFullScreen;
+	ofRectangle		renderAreaRightMonitor;
+	
 	bool				drawFluid;
 	bool				renderUsingVA;
 	
@@ -93,7 +101,12 @@ public:
 		float			aspectRatio2;
 	} window;
 	
+#ifdef USE_POINT_GREY_CAMERA
+	ofxVideoGrabber 	videoGrabber;
+#else
 	ofVideoGrabber		videoGrabber;
+#endif
+	
 	bool				isVideoGrabberNewFrame;
 	ofxCvColorImage		videoGrabberImage;
 	int					camWidth;
@@ -118,12 +131,8 @@ public:
 	
 #endif	
 	
-#ifdef USE_GUI 
-	
 	ofxSimpleGuiToo	gui;
-	
-#endif
-	
+
 	OpticalField		opticalField;
 	float				interactionScale;
 	
@@ -171,7 +180,4 @@ public:
 	
 };
 
-extern testApp *myApp;
-
-
-
+#endif
