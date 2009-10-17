@@ -8,6 +8,8 @@
 
 #define SHOW_DEBUG
 
+#define FLUID_WIDTH		150
+
 #include "ofMain.h"
 #include "ofxVideoGrabber.h"
 #include "ofxMSAFluid.h"
