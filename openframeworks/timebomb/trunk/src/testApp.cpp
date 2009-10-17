@@ -126,6 +126,9 @@ void testApp :: initVideoGrabber ()
 	videoGrabber.initGrabber( camWidth, camHeight );
 #endif
 	
+	videoGrabberSrcImage.allocate( 320, 240 );
+	videoGrabberDstImage.allocate( 320, 320 );
+	
 	isVideoGrabberNewFrame = false;
 }
 
@@ -170,8 +173,8 @@ void testApp :: initVideoOutput ()
 	int j;
 	unsigned char * videoPlayerPixels;
 	
-//	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
-	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
+	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
+//	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_720x720.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_1200x1200.mov");
 
@@ -242,7 +245,6 @@ void testApp :: initGui ()
 
 void testApp::update()
 {
-
 	updateVideoGrabber();
 	
 #ifdef USE_VIDEO_INPUT
@@ -415,16 +417,20 @@ void testApp :: updateTimeDistortionForVideo ()
 
 void testApp::draw()
 {
-	ofBackground( 0, 0, 0 );
+	ofBackground( 20, 20, 20 );
 	
 	if( bDebug )
 	{
 		gui.draw();
 		
-		drawFluidToVideoDimensions();
-		drawVideoSource();
-		drawCameraSourceForOpticalField();
+		glPushMatrix();
+		glTranslatef( 270, 74, 0 );
+		
 		drawTimeDistortionFromVideoSource();
+		drawFluidToVideoDimensions();
+		drawCameraSourceForOpticalField();
+		
+		glPopMatrix();
 	}	
 	else
 	{
@@ -439,15 +445,6 @@ void testApp::draw()
 	drawDebugInfo();
 }
 
-void testApp :: drawFluidToVideoDimensions ()
-{
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef( 270, 74 + 320 + 10, 0 );
-	fluidDrawer.draw( 0, 0, 320, 320 );
-	glPopMatrix();
-}
-
 void testApp :: drawVideoSource ()
 {
 	glColor3f( 1, 1, 1 );
@@ -457,23 +454,32 @@ void testApp :: drawVideoSource ()
 	glPopMatrix();
 }
 
+void testApp :: drawFluidToVideoDimensions ()
+{
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( 330 + 10, 0, 0 );
+	fluidDrawer.draw( 0, 0, 320, 320 );
+	glPopMatrix();
+}
+
 void testApp :: drawCameraSourceForOpticalField()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + 320 + 320 + 20, 74 + 320 - 240, 0 );
+	glTranslatef( 0, 330 + 10, 0 );
 	opticalField.drawCurrentColorImage();
 	glPopMatrix();
 
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + 320 + 320 + 20, 74 + 320 + 10, 0 );
+	glTranslatef( 330 + 10, 330 + 10, 0 );
 	opticalField.drawDifference();
 	glPopMatrix();
 
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + 320, 74 + 320 + 10, 0 );
+	glTranslatef( ( 330 + 10 ) * 2, 330 + 10, 0 );
 	opticalField.drawOpticalFlow();
 	glPopMatrix();
 }
@@ -482,7 +488,7 @@ void testApp :: drawTimeDistortionFromVideoSource ()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270, 74, 0 );
+	glTranslatef( 0, 0, 0 );
 	timeDistTexture.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
@@ -511,7 +517,7 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 	else
 	{
 		scale = 1;
-	}
+	}	
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
