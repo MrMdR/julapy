@@ -217,24 +217,34 @@ void ofxMSAFluidDrawer::draw(float x, float y) {
 
 
 void ofxMSAFluidDrawer::draw(float x, float y, float renderWidth, float renderHeight) {
-	switch(drawMode) {
-		case FLUID_DRAW_COLOR:
-			drawColor(x, y, renderWidth, renderHeight);
-			break;
-			
-		case FLUID_DRAW_MOTION:
-			drawMotion(x, y, renderWidth, renderHeight);
-			break;
-			
-		case FLUID_DRAW_SPEED:
-			drawSpeed(x, y, renderWidth, renderHeight);
-			break;
-			
-		case FLUID_DRAW_VECTORS:
-			drawVectors(x, y, renderWidth, renderHeight);
-			break;
-			
+
+	if( useLargeImageAsTexture )
+	{
+		colorImageLarge.draw( x, y, renderWidth, renderHeight );
 	}
+	else
+	{
+		colorImage.draw( x, y, renderWidth, renderHeight );
+	}
+	
+//	switch(drawMode) {
+//		case FLUID_DRAW_COLOR:
+//			drawColor(x, y, renderWidth, renderHeight);
+//			break;
+//			
+//		case FLUID_DRAW_MOTION:
+//			drawMotion(x, y, renderWidth, renderHeight);
+//			break;
+//			
+//		case FLUID_DRAW_SPEED:
+//			drawSpeed(x, y, renderWidth, renderHeight);
+//			break;
+//			
+//		case FLUID_DRAW_VECTORS:
+//			drawVectors(x, y, renderWidth, renderHeight);
+//			break;
+//			
+//	}
 }
 
 

@@ -53,8 +53,8 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 void testApp::setup() 
 {	 
 	ofBackground( 0, 0, 0 );
-	ofSetVerticalSync( true );
-	ofSetFrameRate( 30 );
+//	ofSetVerticalSync( true );
+	ofSetFrameRate( 25 );
 	
 	initRenderArea();
 	initVideoGrabber();
@@ -170,9 +170,9 @@ void testApp :: initVideoOutput ()
 	int j;
 	unsigned char * videoPlayerPixels;
 	
-	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
+//	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
+	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_720x720.mov");
-//	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_1200x1200.mov");
 
 	videoPlayer.setPaused( true );
@@ -217,25 +217,23 @@ void testApp :: initFluidForVideo ()
 	fluidDrawer.setup(&fluidSolver);
 	
 	fluidColorScale		= 0.2f;
-	
-	renderUsingVA		= true;
 }
 
 void testApp :: initGui ()
 {
-	gui.addSlider("fs.viscocity", &fluidSolver.viscocity, 0.0, 0.0002, 0.5);
-	gui.addSlider("fs.colorDiffusion", &fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5); 
-	gui.addSlider("fs.fadeSpeed", &fluidSolver.fadeSpeed, 0.0, 0.1, 0.5); 
-	gui.addSlider("fs.solverIterations", &fluidSolver.solverIterations, 1, 20); 
-	gui.addSlider("fd.drawMode", &fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1); 
-	gui.addToggle("fs.doRGB", &fluidSolver.doRGB); 
-	gui.addToggle("fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement); 
-	gui.addToggle("renderUsingVA", &renderUsingVA); 
+	gui.addSlider( "fs.viscocity",				&fluidSolver.viscocity,			0.0, 0.0002, 0.5 );
+	gui.addSlider( "fs.colorDiffusion",			&fluidSolver.colorDiffusion,	0.0, 0.0003, 0.5 ); 
+	gui.addSlider( "fs.fadeSpeed",				&fluidSolver.fadeSpeed,			0.0, 0.1000, 0.5 ); 
+	gui.addSlider( "fs.solverIterations",		&fluidSolver.solverIterations,	1, 20 ); 
+	gui.addToggle( "fs.doRGB",					&fluidSolver.doRGB );
+	gui.addToggle( "fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement );
+	gui.addSlider( "fluid color scale",			&fluidColorScale,				0.0, 2.0, 0.5 );
 
-	gui.addSlider("optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
-	gui.addSlider("optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
-	gui.addSlider("optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
-	gui.addSlider("fluid color scale",	&fluidColorScale,				0.0, 2.0, 0.5 );
+	gui.addPage( "optical flow" );
+	
+	gui.addSlider( "optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
+	gui.addSlider( "optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
+	gui.addSlider( "optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -417,22 +415,26 @@ void testApp :: updateTimeDistortionForVideo ()
 
 void testApp::draw()
 {
-
-if( bDebug )
-{
-	gui.draw();
-	drawFluidToVideoDimensions();
-	drawVideoSource();
-	drawCameraSourceForOpticalField();
-	drawTimeDistortionFromVideoSource();
-}	
-else
-{
-	drawTimeDistortionFromVideoSourceFullScreen();
-}
+	ofBackground( 0, 0, 0 );
+	
+	if( bDebug )
+	{
+		gui.draw();
+		
+		drawFluidToVideoDimensions();
+		drawVideoSource();
+		drawCameraSourceForOpticalField();
+		drawTimeDistortionFromVideoSource();
+	}	
+	else
+	{
+		drawTimeDistortionFromVideoSourceFullScreen();
+	}
 	
 	if( screenGrabUtil.isRecording() )
 		screenGrabUtil.save();
+	
+	glBlendFunc( GL_ONE, GL_ZERO );
 	
 	drawDebugInfo();
 }
@@ -441,8 +443,8 @@ void testApp :: drawFluidToVideoDimensions ()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270, 74 + videoPlayerHeight + 10, 0 );
-	fluidDrawer.draw( 0, 0, videoPlayerWidth, videoPlayerHeight );
+	glTranslatef( 270, 74 + 320 + 10, 0 );
+	fluidDrawer.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
 
@@ -451,7 +453,7 @@ void testApp :: drawVideoSource ()
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 270 + camWidthHalf + 10, 74, 0 );
-	videoPlayerTexture.draw( 0, 0 );
+	videoPlayerTexture.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
 
@@ -459,19 +461,19 @@ void testApp :: drawCameraSourceForOpticalField()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + videoPlayerWidth + 320 + 20, 74 + videoPlayerHeight - 240, 0 );
+	glTranslatef( 270 + 320 + 320 + 20, 74 + 320 - 240, 0 );
 	opticalField.drawCurrentColorImage();
 	glPopMatrix();
 
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + videoPlayerWidth + 320 + 20, 74 + videoPlayerHeight + 10, 0 );
+	glTranslatef( 270 + 320 + 320 + 20, 74 + 320 + 10, 0 );
 	opticalField.drawDifference();
 	glPopMatrix();
 
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + videoPlayerWidth, 74 + videoPlayerHeight + 10, 0 );
+	glTranslatef( 270 + 320, 74 + 320 + 10, 0 );
 	opticalField.drawOpticalFlow();
 	glPopMatrix();
 }
@@ -481,7 +483,7 @@ void testApp :: drawTimeDistortionFromVideoSource ()
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 270, 74, 0 );
-	timeDistTexture.draw( 0, 0 );
+	timeDistTexture.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
 
@@ -526,10 +528,11 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 
 void testApp :: drawDebugInfo()
 {
-	ofSetColor( 0xFFFFFF );
+	glColor3f( 1, 1, 1 );
 	ofDrawBitmapString
 	(
-		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
+//		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
+		"",
 		20,
 		20
 	);

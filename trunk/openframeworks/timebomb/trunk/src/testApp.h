@@ -6,7 +6,8 @@
 //#define USE_VIDEO_INPUT			// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 #define USE_CAMERA_INPUT		// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 
-#define FLUID_WIDTH		150
+//#define FLUID_WIDTH		120
+#define FLUID_WIDTH		20
 
 #include "ofMain.h"
 #include "ofxVideoGrabber.h"
@@ -15,8 +16,11 @@
 #include "ofxSimpleGuiToo.h"
 #include "ofxScreenGrabUtil.h"
 
-class testApp : public ofSimpleApp{
+class testApp : public ofSimpleApp
+{
+
 public:
+	
 	void setup();
 	void update();
 	void draw();
@@ -64,7 +68,6 @@ public:
 	
 	bool				bDebug;
 	bool				bRightMonitor;
-	bool				renderUsingVA;
 	
 	ofxMSAFluidSolver	fluidSolver;
 	ofxMSAFluidDrawer	fluidDrawer;
