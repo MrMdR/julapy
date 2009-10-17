@@ -9,7 +9,6 @@
 #define USE_VIDEO_OUTPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
 //#define USE_CAMERA_OUTPUT		// USE ONLY VIDEO OR CAMERA ONE AT A TIME.
 
-//#define USE_VIDEO_SAVER
 #define SHOW_DEBUG
 
 #include "ofMain.h"
@@ -17,10 +16,7 @@
 #include "ofxMSAFluid.h"
 #include "OpticalField.h"
 #include "ofxSimpleGuiToo.h"
-
-#ifdef USE_VIDEO_SAVER
-	#include "ofQtVideoSaver.h"
-#endif
+#include "ofxScreenGrabUtil.h"
 
 class testApp : public ofSimpleApp{
 public:
@@ -41,7 +37,6 @@ public:
 	void initFluidForVideo();
 	void initFluidForCamera();
 	void initGui();
-	void initVideoSaver();
 	
 	void updateVideoGrabber();
 	void updateVideoInput();
@@ -63,7 +58,6 @@ public:
 	void drawTimeDistortionFromVideoSourceFullScreen();
 	void drawTimeDistortionFromCameraSource();
 	void drawTimeDistortionFromCameraSourceFullScreen();
-	void drawToVideoSaver();
 	void drawDebugInfo();
 	
 	void keyPressed( int key );
@@ -81,6 +75,8 @@ public:
 	ofRectangle		renderAreaWindow;
 	ofRectangle		renderAreaFullScreen;
 	ofRectangle		renderAreaRightMonitor;
+	
+	ofxScreenGrabUtil	screenGrabUtil;
 	
 	bool				drawFluid;
 	bool				renderUsingVA;
@@ -113,17 +109,6 @@ public:
 	int					camHeight;
 	int					camWidthHalf;
 	int					camHeightHalf;
-	
-#ifdef USE_VIDEO_SAVER
-	
-	ofQtVideoSaver		videoSaver;
-	ofImage				videoSaverImage;
-	int					videoSaverWidth;
-	int					videoSaverHeight;
-	bool				videoSaverRecording;
-	string				videoSaverPath;
-
-#endif
 	
 #ifdef USE_TUIO
 	
