@@ -81,30 +81,9 @@ void testApp::setup()
 	initOpticalFieldForCameraInput();
 #endif
 	
-#ifdef USE_VIDEO_OUTPUT
 	initVideoOutput();
-#endif
-	
-#ifdef USE_CAMERA_OUTPUT
-	initCameraOutput();
-#endif
-	
-#ifdef USE_VIDEO_OUTPUT
 	initTimeDistortionForVideo();
-#endif
-
-#ifdef USE_CAMERA_OUTPUT
-	initTimeDistortionForCamera();
-#endif
-	
-#ifdef USE_VIDEO_OUTPUT	
 	initFluidForVideo();
-#endif
-	
-#ifdef USE_CAMERA_OUTPUT
-	initFluidForCamera();
-#endif
-	
 	initGui();
 
 	screenGrabUtil.setup( "movie/timebomb", &renderArea );
@@ -156,10 +135,6 @@ void testApp :: initVideoGrabber ()
 	videoGrabber.initGrabber( camWidth, camHeight );
 #endif
 	
-#ifdef USE_CAMERA_OUTPUT	
-	videoGrabberImage.allocate( camWidth, camHeight );
-#endif
-	
 	isVideoGrabberNewFrame = false;
 }
 
@@ -200,8 +175,6 @@ void testApp :: initOpticalFieldForVideoInput()
 
 void testApp :: initVideoOutput ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	int i;
 	int j;
 	unsigned char * videoPlayerPixels;
@@ -237,49 +210,12 @@ void testApp :: initVideoOutput ()
 	}
 	
 	videoPlayerTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
-	
-#endif
-}
-
-void testApp :: initCameraOutput ()
-{
-#ifdef USE_CAMERA_OUTPUT
-	
-	videoGrabberWidth	= 640;
-	videoGrabberHeight	= 480;
-
-	videoGrabberPixelsPerFrame = videoGrabberWidth * videoGrabberHeight * 3;
-	
-	frameBufferLimit	= 255;
-	frameBufferIndex	= 0;
-	frameBufferCount	= 0;
-	
-	videoGrabberTexture.allocate( videoGrabberWidth, videoGrabberHeight, GL_RGB );
-	
-	videoGrabberTexturePixels 	= new unsigned char[ videoGrabberPixelsPerFrame ];
-	frameBuffer					= new unsigned char[ videoGrabberPixelsPerFrame * frameBufferLimit ];
-	
-#endif
 }
 
 void testApp :: initTimeDistortionForVideo ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	timeDistTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
 	timeDistPixels	= new unsigned char[ videoPlayerPixelsPerFrame ];
-	
-#endif
-}
-
-void testApp :: initTimeDistortionForCamera ()
-{
-#ifdef USE_CAMERA_OUTPUT
-	
-	timeDistTexture.allocate( videoGrabberWidth, videoGrabberHeight, GL_RGB );
-	timeDistPixels	= new unsigned char[ videoGrabberPixelsPerFrame ];
-	
-#endif
 }
 
 void testApp :: initFluid()
@@ -296,8 +232,6 @@ void testApp :: initFluid()
 
 void testApp :: initFluidForVideo ()
 {
-#ifdef USE_VIDEO_OUTPUT
-
 	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
     fluidSolver.enableRGB( false ).setFadeSpeed( 0.005 ).setDeltaT( 0.5 ).setVisc( 0.00007 ).setColorDiffusion( 0.00002 );
 	fluidSolver.doVorticityConfinement	= true;
@@ -310,25 +244,6 @@ void testApp :: initFluidForVideo ()
 	
 	drawFluid			= true;
 	renderUsingVA		= true;
-	
-#endif
-}
-
-void testApp :: initFluidForCamera ()
-{
-#ifdef USE_CAMERA_OUTPUT	
-	
-	fluidSolver.setup(FLUID_WIDTH, FLUID_WIDTH / window.aspectRatio);
-    fluidSolver.enableRGB( false ).setFadeSpeed(0.015).setDeltaT(0.5).setVisc(0.00015).setColorDiffusion(0);
-	fluidDrawer.setRenderDimensions( videoGrabberWidth, videoGrabberHeight );
-	fluidDrawer.setup(&fluidSolver);
-	
-	fluidColorScale		= 1.0f;	
-	
-	drawFluid			= true;
-	renderUsingVA		= true;
-	
-#endif
 }
 
 void testApp :: initGui ()
@@ -369,22 +284,8 @@ void testApp::update()
 #endif
 	
 	updateFluid();
-
-#ifdef USE_VIDEO_OUTPUT
 	updateVideo();
-#endif
-	
-#ifdef USE_CAMERA_OUTPUT
-	updateCamera();
-#endif
-	
-#ifdef USE_VIDEO_OUTPUT	
 	updateTimeDistortionForVideo();
-#endif
-#ifdef USE_CAMERA_OUTPUT
-	updateTimeDistortionForCamera();
-#endif
-
 }
 
 void testApp :: updateVideoGrabber ()
@@ -396,14 +297,6 @@ void testApp :: updateVideoGrabber ()
 #endif
 	
 	isVideoGrabberNewFrame = videoGrabber.isFrameNew();
-	
-#ifdef USE_CAMERA_OUTPUT
-	if( isVideoGrabberNewFrame )
-	{
-		videoGrabberImage.setFromPixels( videoGrabber.getPixels(), camWidth, camHeight );
-		videoGrabberImage.mirror( false, true );
-	}
-#endif
 }
 
 void testApp :: updateVideoInput()
@@ -514,8 +407,6 @@ void testApp :: updateFluid ()
 
 void testApp :: updateVideo ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	for( int i=0; i<videoPlayerPixelsPerFrame; i++ )
 	{
 		videoPlayerTexturePixels[ i ] = frameBuffer[ frameBufferPlayIndex * videoPlayerPixelsPerFrame + i ];
@@ -529,57 +420,10 @@ void testApp :: updateVideo ()
 	{
 		frameBufferPlayIndex = 0;
 	}
-	
-#endif
-}
-
-void testApp :: updateCamera ()
-{
-#ifdef USE_CAMERA_OUTPUT
-	
-	if( isVideoGrabberNewFrame )
-	{
-		unsigned char *vidPixels = videoGrabberImage.getPixels();
-		
-		if( frameBufferCount < frameBufferLimit - 1 )	// add frames to frameBuffer until the buffer is full.
-		{
-			++frameBufferCount;
-			++frameBufferIndex;
-			
-			for( int i=0; i<videoGrabberPixelsPerFrame; i++ ) 
-			{
-				frameBuffer[ ( frameBufferIndex * videoGrabberPixelsPerFrame ) + i ] = vidPixels[ i ];
-				
-				videoGrabberTexturePixels[ i ] = vidPixels[ i ];
-			}
-			
-			videoGrabberTexture.loadData( videoGrabberTexturePixels, videoGrabberWidth, videoGrabberHeight, GL_RGB );			
-		}
-		else
-		{
-			if( ++frameBufferIndex > frameBufferLimit - 1 )
-			{
-				frameBufferIndex = 0;
-			}
-			
-			for( int i=0; i<videoGrabberPixelsPerFrame; i++ )	// add new frame to buffer at frame buffer index.
-			{
-				frameBuffer[ ( frameBufferIndex * videoGrabberPixelsPerFrame ) + i ] = vidPixels[ i ];
-				
-				videoGrabberTexturePixels[ i ] = vidPixels[ i ];
-			}
-			
-			videoGrabberTexture.loadData( videoGrabberTexturePixels, videoGrabberWidth, videoGrabberHeight, GL_RGB );
-		}
-	}
-	
-#endif
 }
 
 void testApp :: updateTimeDistortionForVideo ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	unsigned char *fluidPixels = fluidDrawer.getFluidPixels();
 	
 	for( int i=0; i<videoPlayerPixelsPerFrame; i+=3 )
@@ -594,34 +438,6 @@ void testApp :: updateTimeDistortionForVideo ()
 	}
 	
 	timeDistTexture.loadData( timeDistPixels, videoPlayerWidth, videoPlayerHeight, GL_RGB );
-	
-#endif
-}
-
-void testApp :: updateTimeDistortionForCamera ()
-{
-#ifdef USE_CAMERA_OUTPUT
-	
-	unsigned char *fluidPixels = fluidDrawer.getFluidPixels();
-	
-	for( int i=0; i<videoGrabberPixelsPerFrame; i+=3 )
-	{
-		float p = fluidPixels[ i ] / 255.0f;
-		int j	= (int)( p * frameBufferCount );
-		int k	= frameBufferIndex - j;
-		if( k < 0 )
-		{
-			k += frameBufferLimit - 1;
-		}
-		
-		timeDistPixels[ i + 0 ] = frameBuffer[ k * videoGrabberPixelsPerFrame + i + 0 ];
-		timeDistPixels[ i + 1 ] = frameBuffer[ k * videoGrabberPixelsPerFrame + i + 1 ];
-		timeDistPixels[ i + 2 ] = frameBuffer[ k * videoGrabberPixelsPerFrame + i + 2 ];
-	}
-	
-	timeDistTexture.loadData( timeDistPixels, videoGrabberWidth, videoGrabberHeight, GL_RGB );
-	
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -633,45 +449,17 @@ void testApp::draw()
 
 #ifdef SHOW_DEBUG
 	
-	ofSetBackgroundAuto(drawFluid);
-	
-	#ifdef USE_VIDEO_OUTPUT
-		drawFluidToVideoDimensions();
-	#endif
-	
-	#ifdef USE_CAMERA_OUTPUT
-		drawFluidToCameraDimensions();
-	#endif
+	ofSetBackgroundAuto( drawFluid );
 	
 	gui.draw();
-
-	#ifdef USE_VIDEO_OUTPUT
-		drawVideoSource();
-	#endif
-	
-	#ifdef USE_CAMERA_OUTPUT
-		drawCameraSource();
-	#endif
-	
+	drawFluidToVideoDimensions();
+	drawVideoSource();
 	drawCameraSourceForOpticalField();
-	
-	#ifdef USE_VIDEO_OUTPUT	
-		drawTimeDistortionFromVideoSource();
-	#endif
-	
-	#ifdef USE_CAMERA_OUTPUT
-		drawTimeDistortionFromCameraSource();
-	#endif
+	drawTimeDistortionFromVideoSource();
 	
 #else
 	
-	#ifdef USE_VIDEO_OUTPUT
-		drawTimeDistortionFromVideoSourceFullScreen();
-	#endif
-	
-	#ifdef USE_CAMERA_OUTPUT
-		drawTimeDistortionFromCameraSourceFullScreen();
-	#endif
+	drawTimeDistortionFromVideoSourceFullScreen();
 	
 #endif
 	
@@ -688,8 +476,6 @@ void testApp :: drawFluidFullScreen ()
 
 void testApp :: drawFluidToVideoDimensions ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	if( drawFluid )
 	{
 		glColor3f( 1, 1, 1 );
@@ -698,50 +484,15 @@ void testApp :: drawFluidToVideoDimensions ()
 		fluidDrawer.draw( 0, 0, videoPlayerWidth, videoPlayerHeight );
 		glPopMatrix();
 	}
-	
-#endif
-}
-
-void testApp :: drawFluidToCameraDimensions ()
-{
-#ifdef USE_CAMERA_OUTPUT	
-	
-	if( drawFluid )
-	{
-		glColor3f( 1, 1, 1 );
-		glPushMatrix();
-		glTranslatef( 270, 74 + videoGrabberHeight + 10, 0 );
-		fluidDrawer.draw( 0, 0, videoGrabberWidth, videoGrabberHeight );
-		glPopMatrix();
-	}
-	
-#endif
 }
 
 void testApp :: drawVideoSource ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 270 + camWidthHalf + 10, 74, 0 );
 	videoPlayerTexture.draw( 0, 0 );
 	glPopMatrix();
-	
-#endif
-}
-
-void testApp :: drawCameraSource ()
-{
-#ifdef USE_CAMERA_OUTPUT	
-	
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef( 270 + videoGrabberWidth + 10, 74, 0 );
-	videoGrabberTexture.draw( 0, 0 );
-	glPopMatrix();
-	
-#endif
 }
 
 void testApp :: drawCameraSourceForOpticalField()
@@ -771,21 +522,15 @@ void testApp :: drawCameraSourceForOpticalField()
 
 void testApp :: drawTimeDistortionFromVideoSource ()
 {
-#ifdef USE_VIDEO_OUTPUT
-	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 270, 74, 0 );
 	timeDistTexture.draw( 0, 0 );
 	glPopMatrix();
-	
-#endif
 }
 
 void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 {
-#ifdef USE_VIDEO_OUTPUT	
-	
 	float wRatio, hRatio, scale;
 	float scaleX, scaleY;
 	
@@ -821,52 +566,6 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 	glScalef( scale + scaleX, scale + scaleY, 0 );
 	timeDistTexture.draw( 0, 0 );
 	glPopMatrix();
-	
-#endif
-}
-
-void testApp :: drawTimeDistortionFromCameraSource ()
-{
-#ifdef USE_CAMERA_OUTPUT		
-	
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef( 270, 74, 0 );
-	timeDistTexture.draw( 0, 0 );
-	glPopMatrix();
-	
-#endif
-}
-
-void testApp :: drawTimeDistortionFromCameraSourceFullScreen ()
-{
-#ifdef USE_CAMERA_OUTPUT	
-	
-	float wRatio, hRatio, scale;
-	
-	bool scaleToFitFullScreen = true;
-	
-	wRatio = renderArea.width  / (float)videoGrabberWidth;
-	hRatio = renderArea.height / (float)videoGrabberHeight;
-	
-	if( scaleToFitFullScreen )
-		scale = MIN( wRatio, hRatio );
-	else
-		scale = MAX( wRatio, hRatio );
-	
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef
-	( 
-		(int)( ( renderArea.width  - ( videoGrabberWidth  * scale ) ) * 0.5f ) + renderArea.x,
-		(int)( ( renderArea.height - ( videoGrabberHeight * scale ) ) * 0.5f ) + renderArea.y,
-		0
-	);
-	glScalef( scale, scale, 0 );
-	timeDistTexture.draw( 0, 0 );
-	glPopMatrix();
-	
-#endif
 }
 
 void testApp :: drawDebugInfo()
