@@ -80,6 +80,9 @@ void testApp::setup()
 	initGui();
 
 	screenGrabUtil.setup( "movie/timebomb", &renderArea );
+	
+	bDebug			= true;
+	bRightMonitor	= false;
 }
 
 void testApp :: initRenderArea()
@@ -172,14 +175,11 @@ void testApp :: initVideoOutput ()
 	int j;
 	unsigned char * videoPlayerPixels;
 	
-#ifdef SHOW_DEBUG
 	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
-#else
-//	videoPlayer.loadMovie("movies/decompose.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_720x720.mov");
-	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
+//	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_1200x1200.mov");
-#endif
+
 	videoPlayer.setPaused( true );
 	
 	videoPlayerWidth			= videoPlayer.getWidth();
@@ -428,21 +428,18 @@ void testApp :: updateTimeDistortionForVideo ()
 void testApp::draw()
 {
 
-#ifdef SHOW_DEBUG
-	
-	ofSetBackgroundAuto( drawFluid );
-	
+if( bDebug )
+{
 	gui.draw();
 	drawFluidToVideoDimensions();
 	drawVideoSource();
 	drawCameraSourceForOpticalField();
 	drawTimeDistortionFromVideoSource();
-	
-#else
-	
+}	
+else
+{
 	drawTimeDistortionFromVideoSourceFullScreen();
-	
-#endif
+}
 	
 	if( screenGrabUtil.isRecording() )
 		screenGrabUtil.save();
@@ -473,8 +470,6 @@ void testApp :: drawVideoSource ()
 
 void testApp :: drawCameraSourceForOpticalField()
 {
-#ifdef SHOW_DEBUG
-	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 270 + videoPlayerWidth + 320 + 20, 74 + videoPlayerHeight - 240, 0 );
@@ -492,8 +487,6 @@ void testApp :: drawCameraSourceForOpticalField()
 	glTranslatef( 270 + videoPlayerWidth, 74 + videoPlayerHeight + 10, 0 );
 	opticalField.drawOpticalFlow();
 	glPopMatrix();
-	
-#endif
 }
 
 void testApp :: drawTimeDistortionFromVideoSource ()
@@ -559,10 +552,8 @@ void testApp :: drawDebugInfo()
 // TOGGLE FULL SCREEN.
 ////////////////////////////////////////////////////////
 
-void testApp :: toggleFullScreen()
+void testApp :: updateRenderArea()
 {
-	ofToggleFullscreen();
-	
 	if( ofGetWindowMode() == OF_WINDOW )
 	{
 		renderArea.x		= renderAreaWindow.x;
@@ -573,15 +564,20 @@ void testApp :: toggleFullScreen()
 	
 	if( ofGetWindowMode() == OF_FULLSCREEN )
 	{
-//		renderArea.x		= renderAreaFullScreen.x;
-//		renderArea.y		= renderAreaFullScreen.y;
-//		renderArea.width	= renderAreaFullScreen.width;
-//		renderArea.height	= renderAreaFullScreen.height;
-		
-		renderArea.x		= renderAreaRightMonitor.x;
-		renderArea.y		= renderAreaRightMonitor.y;
-		renderArea.width	= renderAreaRightMonitor.width;
-		renderArea.height	= renderAreaRightMonitor.height;
+		if( bRightMonitor )
+		{
+			renderArea.x		= renderAreaRightMonitor.x;
+			renderArea.y		= renderAreaRightMonitor.y;
+			renderArea.width	= renderAreaRightMonitor.width;
+			renderArea.height	= renderAreaRightMonitor.height;
+		}
+		else
+		{
+			renderArea.x		= renderAreaFullScreen.x;
+			renderArea.y		= renderAreaFullScreen.y;
+			renderArea.width	= renderAreaFullScreen.width;
+			renderArea.height	= renderAreaFullScreen.height;
+		}
 	}
 	
 	screenGrabUtil.setArea( &renderArea );
@@ -597,7 +593,10 @@ void testApp::keyPressed  (int key)
 		videoGrabber.videoSettings();
 	
 	if( key == 'f' )
-		toggleFullScreen();
+	{
+		ofToggleFullscreen();
+		updateRenderArea();
+	}
 	
 	if( key == 'm' )
 	{
@@ -605,6 +604,18 @@ void testApp::keyPressed  (int key)
 			screenGrabUtil.stop();
 		else
 			screenGrabUtil.start();
+	}
+	
+	if( key == 'd' )
+	{
+		bDebug = !bDebug;
+	}
+	
+	if( key == 'r' )
+	{
+		bRightMonitor = !bRightMonitor;
+		
+		updateRenderArea();
 	}
 }
 

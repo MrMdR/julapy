@@ -6,8 +6,6 @@
 //#define USE_VIDEO_INPUT			// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 #define USE_CAMERA_INPUT		// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 
-#define SHOW_DEBUG
-
 #define FLUID_WIDTH		150
 
 #include "ofMain.h"
@@ -55,7 +53,7 @@ public:
 	void fadeToColor(float r, float g, float b, float speed);
 	void addToFluid(float x, float y, float dx, float dy, bool addColor = true, bool addForce = true);
 
-	void toggleFullScreen();
+	void updateRenderArea();
 	
 	ofRectangle		renderArea;
 	ofRectangle		renderAreaWindow;
@@ -64,6 +62,8 @@ public:
 	
 	ofxScreenGrabUtil	screenGrabUtil;
 	
+	bool				bDebug;
+	bool				bRightMonitor;
 	bool				drawFluid;
 	bool				renderUsingVA;
 	
