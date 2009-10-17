@@ -42,11 +42,6 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 			fluidSolver.u[ index ] += dx * velocityMult;
 			fluidSolver.v[ index ] += dy * velocityMult;
 		}
-		
-		if( !drawFluid && ofGetFrameNum() % 5 == 0 ) 
-		{
-			fadeToColor(0, 0, 0, 0.1);
-		}
     }
 }
 
@@ -223,7 +218,6 @@ void testApp :: initFluidForVideo ()
 	
 	fluidColorScale		= 0.2f;
 	
-	drawFluid			= true;
 	renderUsingVA		= true;
 }
 
@@ -236,7 +230,6 @@ void testApp :: initGui ()
 	gui.addSlider("fd.drawMode", &fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1); 
 	gui.addToggle("fs.doRGB", &fluidSolver.doRGB); 
 	gui.addToggle("fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement); 
-	gui.addToggle("drawFluid", &drawFluid); 
 	gui.addToggle("renderUsingVA", &renderUsingVA); 
 
 	gui.addSlider("optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
@@ -381,9 +374,6 @@ void testApp :: updateFluid ()
 {
 	fluidSolver.update();
 	fluidDrawer.update();
-	
-	pmouseX = mouseX;
-	pmouseY = mouseY;
 }
 
 void testApp :: updateVideo ()
@@ -449,14 +439,11 @@ else
 
 void testApp :: drawFluidToVideoDimensions ()
 {
-	if( drawFluid )
-	{
-		glColor3f( 1, 1, 1 );
-		glPushMatrix();
-		glTranslatef( 270, 74 + videoPlayerHeight + 10, 0 );
-		fluidDrawer.draw( 0, 0, videoPlayerWidth, videoPlayerHeight );
-		glPopMatrix();
-	}
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( 270, 74 + videoPlayerHeight + 10, 0 );
+	fluidDrawer.draw( 0, 0, videoPlayerWidth, videoPlayerHeight );
+	glPopMatrix();
 }
 
 void testApp :: drawVideoSource ()

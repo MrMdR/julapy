@@ -45,6 +45,8 @@ public:
 	void drawTimeDistortionFromVideoSource();
 	void drawTimeDistortionFromVideoSourceFullScreen();
 	void drawDebugInfo();
+
+	void updateRenderArea();
 	
 	void keyPressed( int key );
 	void mouseMoved( int x, int y );
@@ -53,25 +55,20 @@ public:
 	void fadeToColor(float r, float g, float b, float speed);
 	void addToFluid(float x, float y, float dx, float dy, bool addColor = true, bool addForce = true);
 
-	void updateRenderArea();
-	
-	ofRectangle		renderArea;
-	ofRectangle		renderAreaWindow;
-	ofRectangle		renderAreaFullScreen;
-	ofRectangle		renderAreaRightMonitor;
+	ofRectangle			renderArea;
+	ofRectangle			renderAreaWindow;
+	ofRectangle			renderAreaFullScreen;
+	ofRectangle			renderAreaRightMonitor;
 	
 	ofxScreenGrabUtil	screenGrabUtil;
 	
 	bool				bDebug;
 	bool				bRightMonitor;
-	bool				drawFluid;
 	bool				renderUsingVA;
 	
 	ofxMSAFluidSolver	fluidSolver;
 	ofxMSAFluidDrawer	fluidDrawer;
 	float				fluidColorScale;
-	
-	int					pmouseX, pmouseY;
 	
 #ifdef USE_POINT_GREY_CAMERA
 	ofxVideoGrabber 	videoGrabber;
