@@ -54,7 +54,7 @@ void testApp::setup()
 {	 
 	ofBackground( 0, 0, 0 );
 //	ofSetVerticalSync( true );
-	ofSetFrameRate( 25 );
+	ofSetFrameRate( 30 );
 	
 	initRenderArea();
 	initVideoGrabber();
@@ -105,6 +105,18 @@ void testApp :: initRenderArea()
 
 void testApp :: initVideoGrabber ()
 {
+	videoGrabberLrgRect.width  = 640;
+	videoGrabberLrgRect.height = 480;
+	
+	videoGrabberSmlRect.width  = 320;
+	videoGrabberSmlRect.height = 240;
+
+	videoGrabberSrcRect.width  = 320;
+	videoGrabberSrcRect.height = 240;
+	
+	videoGrabberDstRect.width  = 240;
+	videoGrabberDstRect.height = 240;
+	
 	camWidth		= 640;
 	camHeight		= 480;
 	
@@ -126,8 +138,10 @@ void testApp :: initVideoGrabber ()
 	videoGrabber.initGrabber( camWidth, camHeight );
 #endif
 	
-	videoGrabberSrcImage.allocate( 320, 240 );
-	videoGrabberDstImage.allocate( 320, 320 );
+	videoGrabberLrgImage.allocate( videoGrabberLrgRect.width, videoGrabberLrgRect.height );
+	videoGrabberSmlImage.allocate( videoGrabberSmlRect.width, videoGrabberSmlRect.height );
+	videoGrabberSrcImage.allocate( videoGrabberSrcRect.width, videoGrabberSrcRect.height );
+	videoGrabberDstImage.allocate( videoGrabberDstRect.width, videoGrabberDstRect.height );
 	
 	isVideoGrabberNewFrame = false;
 }
@@ -146,16 +160,11 @@ void testApp :: initVideoInput()
 
 void testApp :: initOpticalFieldForCameraInput ()
 {
-	opticalField.init( camWidth, camHeight );
+	opticalField.init( videoGrabberSrcRect, videoGrabberDstRect );
 	opticalField.setMirror( false, false );
+	opticalField.setImageType( GL_LUMINANCE );
 	opticalField.showDifferenceImage	= true;
 	opticalField.opticalFlowScale		= 0.001f;
-
-#ifdef USE_POINT_GREY_CAMERA
-	opticalField.setImageType( GL_LUMINANCE );
-#else
-	opticalField.setImageType( GL_RGB );
-#endif
 }
 
 void testApp :: initOpticalFieldForVideoInput()
@@ -271,6 +280,20 @@ void testApp :: updateVideoGrabber ()
 #endif
 	
 	isVideoGrabberNewFrame = videoGrabber.isFrameNew();
+	
+	if( isVideoGrabberNewFrame )
+	{
+		videoGrabberLrgImage.setFromPixels( videoGrabber.getPixels(), camWidth, camHeight );
+		
+#ifdef USE_POINT_GREY_CAMERA
+		videoGrabberSrcImage.scaleIntoMe( videoGrabberLrgImage );
+#else
+		videoGrabberSmlImage.scaleIntoMe( videoGrabberLrgImage );
+		videoGrabberSrcImage.setFromColorImage( videoGrabberSmlImage );
+#endif
+		
+		videoGrabberDstImage = videoGrabberSrcImage;
+	}
 }
 
 void testApp :: updateVideoInput()
@@ -291,7 +314,7 @@ void testApp :: updateOpticalFieldFromCameraInput ()
 {
 	if( isVideoGrabberNewFrame )
 	{
-		opticalField.update( videoGrabber.getPixels() );
+		opticalField.update( videoGrabberSrcImage.getPixels() );
 		
 		opticalField.getInteractionScale( &interactionScale );
 		
@@ -417,7 +440,7 @@ void testApp :: updateTimeDistortionForVideo ()
 
 void testApp::draw()
 {
-	ofBackground( 20, 20, 20 );
+	ofBackground( 0, 0, 0 );
 	
 	if( bDebug )
 	{
@@ -426,9 +449,9 @@ void testApp::draw()
 		glPushMatrix();
 		glTranslatef( 270, 74, 0 );
 		
-		drawTimeDistortionFromVideoSource();
-		drawFluidToVideoDimensions();
 		drawCameraSourceForOpticalField();
+		drawFluidToVideoDimensions();
+		drawTimeDistortionFromVideoSource();
 		
 		glPopMatrix();
 	}	
@@ -445,12 +468,30 @@ void testApp::draw()
 	drawDebugInfo();
 }
 
-void testApp :: drawVideoSource ()
+void testApp :: drawCameraSourceForOpticalField()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + camWidthHalf + 10, 74, 0 );
-	videoPlayerTexture.draw( 0, 0, 320, 320 );
+	glTranslatef( 0, 0, 0 );
+	videoGrabberSrcImage.draw( 0, 0 );
+	glPopMatrix();
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( videoGrabberSrcRect.width + 10, 0, 0 );
+	videoGrabberDstImage.draw( 0, 0 );
+	glPopMatrix();
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( videoGrabberSrcRect.width + videoGrabberDstRect.width + 20, 0, 0 );
+	opticalField.drawDifference();
+	glPopMatrix();
+	
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( videoGrabberSrcRect.width + videoGrabberDstRect.width * 2 + 30, 0, 0 );
+	opticalField.drawOpticalFlow();
 	glPopMatrix();
 }
 
@@ -458,29 +499,8 @@ void testApp :: drawFluidToVideoDimensions ()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 330 + 10, 0, 0 );
+	glTranslatef( 0, videoGrabberSrcRect.height + 10, 0 );
 	fluidDrawer.draw( 0, 0, 320, 320 );
-	glPopMatrix();
-}
-
-void testApp :: drawCameraSourceForOpticalField()
-{
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef( 0, 330 + 10, 0 );
-	opticalField.drawCurrentColorImage();
-	glPopMatrix();
-
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef( 330 + 10, 330 + 10, 0 );
-	opticalField.drawDifference();
-	glPopMatrix();
-
-	glColor3f( 1, 1, 1 );
-	glPushMatrix();
-	glTranslatef( ( 330 + 10 ) * 2, 330 + 10, 0 );
-	opticalField.drawOpticalFlow();
 	glPopMatrix();
 }
 
@@ -488,8 +508,17 @@ void testApp :: drawTimeDistortionFromVideoSource ()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 0, 0, 0 );
+	glTranslatef( videoGrabberSrcRect.width + 10, videoGrabberSrcRect.height + 10, 0 );
 	timeDistTexture.draw( 0, 0, 320, 320 );
+	glPopMatrix();
+}
+
+void testApp :: drawVideoSource ()
+{
+	glColor3f( 1, 1, 1 );
+	glPushMatrix();
+	glTranslatef( 270 + camWidthHalf + 10, 74, 0 );
+	videoPlayerTexture.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
 
