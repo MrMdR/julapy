@@ -1,7 +1,7 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
-#define USE_POINT_GREY_CAMERA
+//#define USE_POINT_GREY_CAMERA
 
 //#define USE_VIDEO_INPUT			// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 #define USE_CAMERA_INPUT		// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
@@ -76,6 +76,18 @@ public:
 	ofVideoGrabber		videoGrabber;
 #endif
 	
+	ofRectangle			videoGrabberLrgRect;
+	ofRectangle			videoGrabberSmlRect;
+	ofRectangle			videoGrabberSrcRect;
+	ofRectangle			videoGrabberDstRect;
+
+#ifdef USE_POINT_GREY_CAMERA
+	ofxCvGrayscaleImage	videoGrabberLrgImage;
+	ofxCvGrayscaleImage	videoGrabberSmlImage;
+#else
+	ofxCvColorImage		videoGrabberLrgImage;
+	ofxCvColorImage		videoGrabberSmlImage;
+#endif
 	ofxCvGrayscaleImage	videoGrabberSrcImage;
 	ofxCvGrayscaleImage videoGrabberDstImage;
 	
