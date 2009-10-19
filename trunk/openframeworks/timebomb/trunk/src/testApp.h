@@ -44,11 +44,12 @@ public:
 	void updateVideo();
 	void updateTimeDistortionForVideo();
 	
-	void drawFluidToVideoDimensions();
-	void drawVideoSource();
 	void drawCameraSourceForOpticalField();
+	void drawVideoGrabberWarper();
+	void drawFluidToVideoDimensions();
 	void drawTimeDistortionFromVideoSource();
 	void drawTimeDistortionFromVideoSourceFullScreen();
+	void drawVideoSource();
 	void drawDebugInfo();
 
 	void updateRenderArea();
@@ -90,6 +91,8 @@ public:
 #endif
 	ofxCvGrayscaleImage	videoGrabberSrcImage;
 	ofxCvGrayscaleImage videoGrabberDstImage;
+	
+	ofxCvWarper			videoGrabberWarper;
 	
 	bool				isVideoGrabberNewFrame;
 	int					camWidth;
