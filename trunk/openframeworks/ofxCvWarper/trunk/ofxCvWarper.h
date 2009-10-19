@@ -10,6 +10,11 @@
 #ifndef _OFX_CV_WARPER_
 #define _OFX_CV_WARPER_
 
+#include "ofMain.h"
+#include "ofxOpenCv.h"
+#include "ofxResizeUtil.h"
+#include "ofxMSAInteractiveObject.h"
+
 class ofxCvWarper
 {
 
@@ -18,6 +23,26 @@ public :
 	ofxCvWarper();
 	~ofxCvWarper();
 	
+	void setup( ofxCvImage *_srcImage, ofxCvImage *_dstImage );
+	void setPosition( float x, float y );
+	void warp();
+	void draw();
+	void reset();
+	void onMouseDragged( ofMouseEventArgs &mouseArgs );
+	
+	ofxCvImage	*srcImage;
+	ofxCvImage	*dstImage;
+	
+	ofRectangle	srcRect;
+	ofRectangle dstRect;
+	
+	ofPoint		srcPoints[ 4 ];
+	ofPoint		dstPoints[ 4 ];
+	
+	ofPoint		pos;
+	
+	ofxMSAInteractiveObject		anchors[ 4 ];
+	int							anchorSize;
 };
 
 #endif
