@@ -18,7 +18,7 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 {
 	float speed = dx * dx  + dy * dy;
 	
-	if(speed > 0)
+	if( speed > 0 )
 	{
 		if(x<0) x = 0; 
 		else if(x>1) x = 1;
@@ -28,7 +28,7 @@ void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bo
 		float velocityMult = 30;
 //		float velocityMult = ( 1 - interactionScale ) * 1000 + 1;
 		
-        int index = fluidSolver.getIndexForNormalizedPosition(x, y);
+		int index = fluidSolver.getIndexForNormalizedPosition( x, y );
 		
 		if( addColor )
 		{
@@ -207,10 +207,12 @@ void testApp :: initVideoOutput ()
 		videoPlayer.setPosition( (float)i / (float)( frameBufferTotal - 1 ) );
 		videoPlayerPixels = videoPlayer.getPixels();
 		
-		for( j=0; j<videoPlayerPixelsPerFrame; j++ )
-		{
-			frameBuffer[ i * videoPlayerPixelsPerFrame + j ] = videoPlayerPixels[ j ];
-		}
+		memcpy
+		(
+			frameBuffer + i * videoPlayerPixelsPerFrame,			// destination
+			videoPlayerPixels,										// source
+			videoPlayerPixelsPerFrame * sizeof( unsigned char )		// num of bytes to copy.
+		);
 	}
 	
 	videoPlayerTexture.allocate( videoPlayerWidth, videoPlayerHeight, GL_RGB );
@@ -335,9 +337,9 @@ void testApp :: updateOpticalFieldFromCameraInput ()
 		int ow = opticalField.getWidth();
 		int oh = opticalField.getHeight();
 		
-		for(int j=1; j < fh-1; j++) 
+		for( int j=1; j<( fh - 1 ); j++ ) 
 		{
-			for(int i=1; i < fw-1; i++) 
+			for( int i=1; i<( fw - 1 ); i++ ) 
 			{
 				if( i % res == 0 && j % res == 0 )
 				{
@@ -430,9 +432,12 @@ void testApp :: updateTimeDistortionForVideo ()
 		float p = 1.0f - fluidPixels[ i ] / 255.0f;
 		int j	= (int)( p * ( frameBufferTotal - 1 ) );
 		
-		timeDistPixels[ i + 0 ] = frameBuffer[ j * videoPlayerPixelsPerFrame + i + 0 ];
-		timeDistPixels[ i + 1 ] = frameBuffer[ j * videoPlayerPixelsPerFrame + i + 1 ];
-		timeDistPixels[ i + 2 ] = frameBuffer[ j * videoPlayerPixelsPerFrame + i + 2 ];
+		memcpy
+		(
+			timeDistPixels + i,									// destination
+			frameBuffer + j * videoPlayerPixelsPerFrame + i,	// source
+			3 * sizeof( unsigned char )							// num of bytes to copy.
+		);
 	}
 	
 	timeDistTexture.loadData( timeDistPixels, videoPlayerWidth, videoPlayerHeight, GL_RGB );
