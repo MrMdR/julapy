@@ -475,27 +475,34 @@ void testApp::draw()
 
 void testApp :: drawCameraSourceForOpticalField()
 {
+	ofFill();
+	ofSetColor( 150, 150, 150 );
+	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 0, 0, 0 );
+	ofRect( -1, -1, videoGrabberSrcImage.width + 2, videoGrabberSrcImage.height + 2 );
 	videoGrabberSrcImage.draw( 0, 0 );
 	glPopMatrix();
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( videoGrabberSrcRect.width + 10, 0, 0 );
+	ofRect( -1, -1, videoGrabberDstImage.width + 2, videoGrabberDstImage.height + 2 );
 	videoGrabberDstImage.draw( 0, 0 );
 	glPopMatrix();
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( videoGrabberSrcRect.width + videoGrabberDstRect.width + 20, 0, 0 );
+	ofRect( -1, -1, videoGrabberDstImage.width + 2, videoGrabberDstImage.height + 2 );
 	opticalField.drawDifference();
 	glPopMatrix();
 	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( videoGrabberSrcRect.width + videoGrabberDstRect.width * 2 + 30, 0, 0 );
+	ofRect( -1, -1, videoGrabberDstImage.width + 2, videoGrabberDstImage.height + 2 );
 	opticalField.drawOpticalFlow();
 	glPopMatrix();
 }
@@ -507,18 +514,26 @@ void testApp :: drawVideoGrabberWarper()
 
 void testApp :: drawFluidToVideoDimensions ()
 {
+	ofFill();
+	ofSetColor( 150, 150, 150 );
+	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( 0, videoGrabberSrcRect.height + 10, 0 );
+	ofRect( -1, -1, 320 + 2, 320 + 2 );
 	fluidDrawer.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
 
 void testApp :: drawTimeDistortionFromVideoSource ()
 {
+	ofFill();
+	ofSetColor( 150, 150, 150 );
+	
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
 	glTranslatef( videoGrabberSrcRect.width + 10, videoGrabberSrcRect.height + 10, 0 );
+	ofRect( -1, -1, 320 + 2, 320 + 2 );
 	timeDistTexture.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
@@ -651,6 +666,11 @@ void testApp::keyPressed  (int key)
 		bRightMonitor = !bRightMonitor;
 		
 		updateRenderArea();
+	}
+	
+	if( key == 'w' )
+	{
+		videoGrabberWarper.reset();
 	}
 }
 
