@@ -145,6 +145,7 @@ void testApp :: initVideoGrabber ()
 	
 	videoGrabberWarper.setup( &videoGrabberSrcImage, &videoGrabberDstImage );
 	videoGrabberWarper.setPosition( 270, 74 );
+	videoGrabberWarper.load( "video_warper_data.txt" );
 	
 	isVideoGrabberNewFrame = false;
 }
@@ -185,8 +186,8 @@ void testApp :: initVideoOutput ()
 	int j;
 	unsigned char * videoPlayerPixels;
 	
-	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
-//	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
+//	videoPlayer.loadMovie("movies/timebomb_final_320x320.mov");
+	videoPlayer.loadMovie("movies/timebomb_final_600x600.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_720x720.mov");
 //	videoPlayer.loadMovie("movies/timebomb_final_1200x1200.mov");
 
@@ -671,6 +672,16 @@ void testApp::keyPressed  (int key)
 	if( key == 'w' )
 	{
 		videoGrabberWarper.reset();
+	}
+	
+	if( key == 's' )
+	{
+		videoGrabberWarper.save( "video_warper_data.txt" );
+	}
+	
+	if( key == 'l' )
+	{
+		videoGrabberWarper.load( "video_warper_data.txt" );
 	}
 }
 
