@@ -15,6 +15,11 @@
 #include "ofxResizeUtil.h"
 #include "ofxMSAInteractiveObject.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
 class ofxCvWarper
 {
 
@@ -29,6 +34,9 @@ public :
 	void draw();
 	void reset();
 	void onMouseDragged( ofMouseEventArgs &mouseArgs );
+	
+	void save( string fileName );
+	void load( string fileName );
 	
 	ofxCvImage	*srcImage;
 	ofxCvImage	*dstImage;

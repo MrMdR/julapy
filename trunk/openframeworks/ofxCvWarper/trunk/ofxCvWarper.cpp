@@ -117,3 +117,50 @@ void ofxCvWarper :: onMouseDragged( ofMouseEventArgs& mouseArgs )
 		}
 	}
 }
+
+///////////////////////////////////////////////////
+//	SAVE / LOAD
+///////////////////////////////////////////////////
+
+void ofxCvWarper :: save( string fileName )
+{
+	ofstream myFile;
+	myFile.open( ofToDataPath( fileName ).c_str() );
+	if( myFile.is_open() )
+	{
+		for( int i=0; i<4; i++ )
+		{
+			myFile << srcPoints[ i ].x << endl;
+			myFile << srcPoints[ i ].y << endl;
+		}
+	}
+	myFile.close();
+}
+
+void ofxCvWarper :: load( string fileName )
+{
+	ifstream myFile;
+	string line;
+	myFile.open( ofToDataPath( fileName ).c_str() );
+	if( myFile.is_open() )
+	{
+		int pointIndex	= 0;
+		int lineIndex	= 0;
+		while( !myFile.eof() )
+		{
+			getline( myFile, line );
+			if( lineIndex % 2 == 0)
+			{
+				srcPoints[ pointIndex ].x = atof( line.c_str() );
+			}
+			else
+			{
+				srcPoints[ pointIndex ].y = atof( line.c_str() );
+			}
+			lineIndex++;
+			pointIndex = (int)( lineIndex * 0.5f );
+		}
+	}
+	myFile.close();
+}
+
