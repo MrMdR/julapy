@@ -31,9 +31,5 @@
 
 #pragma once
 
-#define OF_ADDON_USING_OFXMSAFLUID
-
 #include "ofxMSAFluidSolver.h"
 #include "ofxMSAFluidDrawer.h"
-
-#include "ofxMSAFluidParticleUpdater.h"

@@ -1,55 +1,5 @@
 #include "testApp.h"
 
-void testApp :: fadeToColor(float r, float g, float b, float speed) 
-{
-	glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glColor4f(r, g, b, speed);
-    glBegin(GL_QUADS);
-    glVertex2f(0, 0);
-    glVertex2f( renderArea.width, 0);
-    glVertex2f( renderArea.width, renderArea.height );
-    glVertex2f( 0, renderArea.height);
-    glEnd();
-}
-
-
-void testApp::addToFluid(float x, float y, float dx, float dy, bool addColor, bool addForce)
-{
-	float speed = dx * dx  + dy * dy;
-	
-	if( speed > 0 )
-	{
-		if(x<0) x = 0; 
-		else if(x>1) x = 1;
-		if(y<0) y = 0; 
-		else if(y>1) y = 1;
-		
-		float velocityMult = 30;
-//		float velocityMult = ( 1 - interactionScale ) * 1000 + 1;
-		
-		int index = fluidSolver.getIndexForNormalizedPosition( x, y );
-		
-		if( addColor )
-		{
-			fluidSolver.r[ index ] += fluidColorScale;
-			fluidSolver.g[ index ] += fluidColorScale;
-			fluidSolver.b[ index ] += fluidColorScale;
-		}
-		
-		if( addForce )
-		{
-			fluidSolver.u[ index ] += dx * velocityMult;
-			fluidSolver.v[ index ] += dy * velocityMult;
-		}
-    }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// SETUP.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void testApp::setup() 
 {	 
 	ofBackground( 0, 0, 0 );
@@ -233,7 +183,7 @@ void testApp :: initFluidForVideo ()
 
 	fluidDrawer.setup( &fluidSolver, videoPlayerWidth, videoPlayerHeight );
 	
-	fluidColorScale		= 0.2f;
+	fluidColorScale	= 0.2f;
 }
 
 void testApp :: initGui ()
@@ -441,6 +391,37 @@ void testApp :: updateTimeDistortionForVideo ()
 	}
 	
 	timeDistTexture.loadData( timeDistPixels, videoPlayerWidth, videoPlayerHeight, GL_RGB );
+}
+
+void testApp :: addToFluid( float x, float y, float dx, float dy, bool addColor, bool addForce )
+{
+	float speed = dx * dx  + dy * dy;
+	
+	if( speed > 0 )
+	{
+		if(x<0) x = 0; 
+		else if(x>1) x = 1;
+		if(y<0) y = 0; 
+		else if(y>1) y = 1;
+		
+		float velocityMult = 30;
+		//		float velocityMult = ( 1 - interactionScale ) * 1000 + 1;
+		
+		int index = fluidSolver.getIndexForNormalizedPosition( x, y );
+		
+		if( addColor )
+		{
+			fluidSolver.r[ index ] += fluidColorScale;
+			fluidSolver.g[ index ] += fluidColorScale;
+			fluidSolver.b[ index ] += fluidColorScale;
+		}
+		
+		if( addForce )
+		{
+			fluidSolver.u[ index ] += dx * velocityMult;
+			fluidSolver.v[ index ] += dy * velocityMult;
+		}
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
