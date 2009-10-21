@@ -70,22 +70,20 @@ ofxMSAFluidSolver* ofxMSAFluidDrawer :: getFluidSolver()
 }
 
 
-void ofxMSAFluidDrawer::update() 
+void ofxMSAFluidDrawer::update()
 {
 	int fw = _fluidSolver->getWidth();
 	int fh = _fluidSolver->getHeight();
 	
 	ofPoint vel;
 	ofPoint color;
+	
 	int index = 0;
 	for( int j=1; j < fh-1; j++ )
 	{
 		for( int i=1; i < fw-1; i++ )
 		{
 			_fluidSolver->getInfoAtCell( i, j, &vel, &color );
-			
-			float speed2	= fabs( vel.x ) * fw + fabs( vel.y ) * fh;
-			int speed		= MIN( speed2 * 255, 255 );
 			
 			imagePixels[ index++ ] = MIN( color.x * 255, 255 );
 			
@@ -96,7 +94,6 @@ void ofxMSAFluidDrawer::update()
 	}  
 	
 	imageSml.setFromPixels( imagePixels, imageSmlWidth, imageSmlHeight );
-	
 	imageLrg.scaleIntoMe( imageSml, CV_INTER_CUBIC );
 //	imageLrg.blurGaussian( 5 );
 }
