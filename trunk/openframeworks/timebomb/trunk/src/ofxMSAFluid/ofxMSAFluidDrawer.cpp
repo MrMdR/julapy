@@ -36,95 +36,39 @@
 
 #include "ofxMSAFluidDrawer.h"
 
-ofxMSAFluidDrawer::ofxMSAFluidDrawer() {
-	//	printf("ofxMSAFluidDrawer::ofxMSAFluidDrawer()\n");	
-	_pixels				= NULL;
-	_byteCount			= 0;
-	_fluidSolver		= NULL;
-	_didICreateTheFluid	= false;
-	alpha				= 1;
-	setDrawMode(FLUID_DRAW_COLOR);
-}
-
-ofxMSAFluidDrawer::~ofxMSAFluidDrawer() {
-	//	printf("ofxMSAFluidDrawer::~ofxMSAFluidDrawer()\n");		
-	deleteFluidSolver();
-}
-
-
-
-ofxMSAFluidSolver* ofxMSAFluidDrawer::setup(int NX, int NY)
+ofxMSAFluidDrawer :: ofxMSAFluidDrawer()
 {
-	deleteFluidSolver();
-	_fluidSolver = new ofxMSAFluidSolver;
-	_fluidSolver->setup(NX, NY);
-	
-	useLargeImageAsTexture = false;
-	
-	createTexture();
-	
-	return _fluidSolver;
+	_fluidSolver = NULL;
 }
 
-void ofxMSAFluidDrawer :: setRenderDimensions( int renderWidth, int renderHeight )
+ofxMSAFluidDrawer :: ~ofxMSAFluidDrawer()
 {
-	colorImageLargeWidth	= renderWidth;
-	colorImageLargeHeight	= renderHeight;
-	
-	useLargeImageAsTexture	= true;
+	//
 }
 
-ofxMSAFluidSolver* ofxMSAFluidDrawer::setup(ofxMSAFluidSolver* f) {
-	deleteFluidSolver();
+ofxMSAFluidSolver* ofxMSAFluidDrawer :: setup( ofxMSAFluidSolver* f, int renderWidth, int renderHeight )
+{
 	_fluidSolver = f;
-	createTexture();
+
+	imageLrgWidth	= renderWidth;
+	imageLrgHeight	= renderHeight;
+	
+	imageSmlWidth	= _fluidSolver->getWidth()  - 2;
+	imageSmlHeight	= _fluidSolver->getHeight() - 2;
+	
+	imagePixels		= new unsigned char[ imageSmlWidth * imageSmlHeight ];
+	
+	imageSml.allocate( imageSmlWidth, imageSmlHeight );
+	imageLrg.allocate( imageLrgWidth, imageLrgHeight );
 	
 	return _fluidSolver;
 }
 
-ofxMSAFluidSolver* ofxMSAFluidDrawer::getFluidSolver() {
-	return _fluidSolver;
-}
-
-void ofxMSAFluidDrawer::createTexture()
+ofxMSAFluidSolver* ofxMSAFluidDrawer :: getFluidSolver()
 {
-	if(_pixels) delete []_pixels;
-	int texWidth = _fluidSolver->getWidth()-2;
-	int texHeight =_fluidSolver->getHeight()-2;
-	
-	_pixels = new unsigned char[texWidth * texHeight * 4];
-	
-#ifdef FLUID_TEXTURE
-	
-	tex.allocate(texWidth, texHeight, GL_RGBA);	
-	
-#endif
-	
-#ifdef USE_OPEN_CV_TEXTURE
-	
-	colorImageWidth		= texWidth;
-	colorImageHeight	= texHeight;
-	
-	colorRgbPixels		= new unsigned char[ texWidth * texHeight * 3 ];
-	
-	colorImage.allocate( colorImageWidth, colorImageHeight );
-	
-	if( useLargeImageAsTexture )
-	{
-		colorImageLarge.allocate( colorImageLargeWidth, colorImageLargeHeight );
-	}
-	
-#endif
+	return _fluidSolver;
 }
 
-
-void ofxMSAFluidDrawer::reset() {
-	if(!isFluidReady()) {
-		printf("ofxMSAFluidDrawer::reset() - Fluid not ready\n");
-		return;
-	}
-	_fluidSolver->reset();
-}
 
 void ofxMSAFluidDrawer::update() 
 {
@@ -134,271 +78,35 @@ void ofxMSAFluidDrawer::update()
 	ofPoint vel;
 	ofPoint color;
 	int index = 0;
-	for(int j=1; j < fh-1; j++) {
-		for(int i=1; i < fw-1; i++) {
-			_fluidSolver->getInfoAtCell(i, j, &vel, &color);
-			float speed2 = fabs(vel.x) * fw + fabs(vel.y) * fh;
-			int speed = MIN(speed2 * 255 * alpha, 255);
+	for( int j=1; j < fh-1; j++ )
+	{
+		for( int i=1; i < fw-1; i++ )
+		{
+			_fluidSolver->getInfoAtCell( i, j, &vel, &color );
 			
-#ifdef USE_OPEN_CV_TEXTURE
+			float speed2	= fabs( vel.x ) * fw + fabs( vel.y ) * fh;
+			int speed		= MIN( speed2 * 255, 255 );
 			
-			int r = colorRgbPixels[index++] = MIN(color.x * 255 * alpha, 255);
-			int g = colorRgbPixels[index++] = MIN(color.y * 255 * alpha, 255);		
-			int b = colorRgbPixels[index++] = MIN(color.z * 255 * alpha, 255);	
+			imagePixels[ index++ ] = MIN( color.x * 255, 255 );
 			
-#else
-			
-			int r = _pixels[index++] = MIN(color.x * 255 * alpha, 255);
-			int g = _pixels[index++] = MIN(color.y * 255 * alpha, 255);		
-			int b = _pixels[index++] = MIN(color.z * 255 * alpha, 255);	
-			int a = _pixels[index++] = withAlpha ? MAX(b, MAX(r, g)) : 255;
-			
-#endif			
+//			int r = colorRgbPixels[index++] = MIN(color.x * 255 * alpha, 255);
+//			int g = colorRgbPixels[index++] = MIN(color.y * 255 * alpha, 255);		
+//			int b = colorRgbPixels[index++] = MIN(color.z * 255 * alpha, 255);	
 		}
 	}  
 	
-#ifdef USE_OPEN_CV_TEXTURE
+	imageSml.setFromPixels( imagePixels, imageSmlWidth, imageSmlHeight );
 	
-	colorImage.setFromPixels( colorRgbPixels, colorImageWidth, colorImageHeight );
-	
-	if( useLargeImageAsTexture )
-	{
-		colorImageLarge.scaleIntoMe( colorImage, CV_INTER_CUBIC );
-//		colorImageLarge.blurGaussian( 5 );
-	}
-	
-#endif
-
+	imageLrg.scaleIntoMe( imageSml, CV_INTER_CUBIC );
+//	imageLrg.blurGaussian( 5 );
 }
 
-unsigned char* ofxMSAFluidDrawer :: getFluidPixels ()
+unsigned char* ofxMSAFluidDrawer :: getFluidPixels()
 {
-	return colorImageLarge.getPixels();
+	return imageLrg.getPixels();
 }
 
-void ofxMSAFluidDrawer::setDrawMode(int newDrawMode) {
-	drawMode = newDrawMode;
-	if(drawMode < 0) drawMode = FLUID_DRAW_MODE_COUNT-1;
-	else if(drawMode >= FLUID_DRAW_MODE_COUNT) drawMode = 0;
-}
-
-void ofxMSAFluidDrawer::incDrawMode() {
-	setDrawMode(drawMode + 1);
-}
-
-void ofxMSAFluidDrawer::decDrawMode() {
-	setDrawMode(drawMode - 1);
-}
-
-int ofxMSAFluidDrawer::getDrawMode() {
-	return drawMode;
-}
-
-const char* ofxMSAFluidDrawer::getDrawModeName() {
-	switch(drawMode) {
-		case 0:
-			return "FLUID_DRAW_COLOR";
-		case 1:
-			return "FLUID_DRAW_MOTION";
-		case 2:
-			return "FLUID_DRAW_SPEED";
-		case 3:
-			return "FLUID_DRAW_VECTORS";
-		default:
-			return "FLUID DRAW MODE NOT FOUND";
-	}
-}
-
-
-
-void ofxMSAFluidDrawer::draw(float x, float y) {
-	draw(x, y, ofGetWidth(), ofGetHeight());
-}
-
-
-void ofxMSAFluidDrawer::draw(float x, float y, float renderWidth, float renderHeight) {
-
-	if( useLargeImageAsTexture )
-	{
-		colorImageLarge.draw( x, y, renderWidth, renderHeight );
-	}
-	else
-	{
-		colorImage.draw( x, y, renderWidth, renderHeight );
-	}
-	
-//	switch(drawMode) {
-//		case FLUID_DRAW_COLOR:
-//			drawColor(x, y, renderWidth, renderHeight);
-//			break;
-//			
-//		case FLUID_DRAW_MOTION:
-//			drawMotion(x, y, renderWidth, renderHeight);
-//			break;
-//			
-//		case FLUID_DRAW_SPEED:
-//			drawSpeed(x, y, renderWidth, renderHeight);
-//			break;
-//			
-//		case FLUID_DRAW_VECTORS:
-//			drawVectors(x, y, renderWidth, renderHeight);
-//			break;
-//			
-//	}
-}
-
-
-void ofxMSAFluidDrawer::drawColor(float x, float y, float renderWidth, float renderHeight, bool withAlpha)
+void ofxMSAFluidDrawer :: draw( float x, float y, float renderWidth, float renderHeight )
 {
-
-#ifdef FLUID_TEXTURE
-	
-	tex.loadData(_pixels, tex.getWidth(), tex.getHeight(), GL_RGBA);
-	tex.draw(x, y, renderWidth, renderHeight);
-	
-#endif
-	
-#ifdef USE_OPEN_CV_TEXTURE
-	
-	if( useLargeImageAsTexture )
-	{
-		colorImageLarge.draw( x, y, colorImageLargeWidth, colorImageLargeHeight );
-	}
-	else
-	{
-		colorImage.draw( x, y, renderWidth, renderHeight );
-	}
-	
-#endif
-	
+	imageLrg.draw( x, y, renderWidth, renderHeight );
 }
-
-
-
-void ofxMSAFluidDrawer::drawMotion(float x, float y, float renderWidth, float renderHeight, bool withAlpha) {
-	int fw = _fluidSolver->getWidth();
-	int fh = _fluidSolver->getHeight();
-	
-	ofPoint vel;
-	int index = 0;
-	for(int j=1; j < fh-1; j++) {
-		for(int i=1; i < fw-1; i++) {
-			_fluidSolver->getInfoAtCell(i, j, &vel, NULL);
-			float speed2 = fabs(vel.x) * fw + fabs(vel.y) * fh;
-			int speed = MIN(speed2 * 255 * alpha, 255);
-			int r = _pixels[index++] = MIN(fabs(vel.x) * fw * 255 * alpha, 255);
-			int g = _pixels[index++] = MIN(fabs(vel.y) * fh * 255 * alpha, 255);		
-			int b = _pixels[index++] = 0;
-			int a = _pixels[index++] = withAlpha ? speed : 255;
-			
-		}
-	}  
-	
-#ifdef FLUID_TEXTURE
-	tex.loadData(_pixels, tex.getWidth(), tex.getHeight(), GL_RGBA);
-	tex.draw(x, y, renderWidth, renderHeight);
-#endif
-}
-
-
-void ofxMSAFluidDrawer::drawSpeed(float x, float y, float renderWidth, float renderHeight, bool withAlpha) {
-	int fw = _fluidSolver->getWidth();
-	int fh = _fluidSolver->getHeight();
-	
-	ofPoint vel;
-	int index = 0;
-	for(int j=1; j < fh-1; j++) {
-		for(int i=1; i < fw-1; i++) {
-			_fluidSolver->getInfoAtCell(i, j, &vel, NULL);
-			float speed2 = fabs(vel.x) * fw + fabs(vel.y) * fh;
-			int speed = MIN(speed2 * 255 * alpha, 255);
-			int r = _pixels[index++] = speed;
-			int g = _pixels[index++] = speed;
-			int b = _pixels[index++] = speed;
-			int a = _pixels[index++] = withAlpha ? speed : 255;
-		}
-	}  
-	
-#ifdef FLUID_TEXTURE
-	tex.loadData(_pixels, tex.getWidth(), tex.getHeight(), GL_RGBA);
-	tex.draw(x, y, renderWidth, renderHeight);
-#endif
-}
-
-
-void ofxMSAFluidDrawer::drawVectors(float x, float y, float renderWidth, float renderHeight) {
-	int fw = _fluidSolver->getWidth();
-	int fh = _fluidSolver->getHeight();
-	
-//	int xStep = renderWidth / 10;		// every 10 pixels
-//	int yStep = renderHeight / 10;		// every 10 pixels
-
-	glPushMatrix();
-	glTranslatef(x, y, 0);
-	glScalef(renderWidth/(fw-2), renderHeight/(fh-2), 1.0);
-	
-	float velMult = 50000;
-	float maxVel = 5./20000;
-	
-	ofPoint vel;
-	glEnable(GL_LINE_SMOOTH);
-	glLineWidth(1);
-	for (int j=0; j<fh-2; j++ ){
-		for (int i=0; i<fw-2; i++ ){
-			_fluidSolver->getInfoAtCell(i+1, j+1, &vel, NULL);
-			float d2 = vel.x * vel.x + vel.y * vel.y;
-			if(d2 > maxVel * maxVel) {
-				float mult = maxVel * maxVel/ d2;
-//				float mult = (d2 - maxVel * maxVel) / d2;
-				vel.x *= mult;
-				vel.y *= mult;
-			}
-			vel *= velMult;
-			
-//			if(dx*dx+dy*dy > velThreshold) {
-//				float speed2 = fabs(vel.x) * fw + fabs(vel.y) * fh;
-#ifndef TARGET_OPENGLES
-				glBegin(GL_LINES);
-				glColor3f(0, 0, 0); glVertex2f(i, j);
-				glColor3f(1, 1, 1); glVertex2f(i + vel.x, j + vel.y);
-				glEnd();
-#endif			
-//			printf("%.8f, %.8f\n", vel.x, vel.y);
-//			}
-		}
-	}
-	glPopMatrix();
-	
-}
-
-
-
-void ofxMSAFluidDrawer::deleteFluidSolver() {
-	//	printf("ofxMSAFluidDrawer::deleteFluidSolver()\n");	
-	if(_fluidSolver && _didICreateTheFluid) {
-		delete _fluidSolver;
-		_fluidSolver = NULL;
-		
-		if(_pixels) delete []_pixels;
-		_pixels = NULL;
-		
-#ifdef FLUID_TEXTURE		
-		tex.clear();
-#endif		
-	}	
-}
-
-bool ofxMSAFluidDrawer::isFluidReady() {
-	if(!_fluidSolver) {
-		printf("ofxMSAFluidDrawer::isFluidReady() - No fluid solver\n");
-		return false;
-	}
-	
-	if(!_fluidSolver->isInited()) {
-		printf("ofxMSAFluidDrawer::isFluidReady() - Fluid solver not initialized yet, call init()\n");
-		return false;
-	}
-	
-	return true;
-}
-

@@ -38,90 +38,34 @@
 
 
 #include "ofMain.h"
-#include "ofxMSAFluidSolver.h"
 #include "ofxCvMain.h"
+#include "ofxMSAFluidSolver.h"
 
-#define FLUID_DRAW_COLOR		0
-#define FLUID_DRAW_MOTION		1
-#define FLUID_DRAW_SPEED		2
-#define FLUID_DRAW_VECTORS		3
-#define FLUID_DRAW_MODE_COUNT	4
+class ofxMSAFluidDrawer
+{
 
-//#define		FLUID_TEXTURE
-#define		USE_OPEN_CV_TEXTURE
-
-class ofxMSAFluidDrawer : public ofBaseDraws {
 public:
-	float alpha;
 	
 	ofxMSAFluidDrawer();
-	virtual ~ofxMSAFluidDrawer();
+	~ofxMSAFluidDrawer();
 	
-	ofxMSAFluidSolver* setup(int NX = FLUID_DEFAULT_NX, int NY = FLUID_DEFAULT_NY );
-	ofxMSAFluidSolver* setup(int NX = FLUID_DEFAULT_NX, int NY = FLUID_DEFAULT_NY, int renderWidth, int renderHeight );
-	ofxMSAFluidSolver* setup(ofxMSAFluidSolver* f);
+	ofxMSAFluidSolver* setup( ofxMSAFluidSolver* f, int renderWidth, int renderHeight );
 	ofxMSAFluidSolver* getFluidSolver();
 	
-	void setRenderDimensions( int renderWidth, int renderHeight );
-	
 	void update();
+	void draw( float x, float y, float renderWidth, float renderHeight );
 	unsigned char * getFluidPixels();
 	
-	virtual void draw(float x = 0, float y = 0);
-	virtual void draw(float x, float y, float renderWidth, float renderHeight);				// this one does chooses one of the below based on drawmode
-	void drawColor(float x, float y, float renderWidth, float renderHeight, bool withAlpha = false);
-	void drawMotion(float x, float y, float renderWidth, float renderHeight, bool withAlpha = false);
-	void drawSpeed(float x, float y, float renderWidth, float renderHeight, bool withAlpha = false);
-	void drawVectors(float x, float y, float renderWidth, float renderHeight);
-	void reset();
-	
-	float getWidth() {
-#ifdef FLUID_TEXTURE
-		return tex.getWidth();
-#endif
-	}
-	
-	float getHeight() {
-#ifdef FLUID_TEXTURE
-		return tex.getHeight();
-#endif
-	}
-	
-	void setDrawMode(int newDrawMode);
-	void incDrawMode();
-	void decDrawMode();
-	int getDrawMode();
-	const char* getDrawModeName();
-
-	
-	int					drawMode;
-	
-#ifdef USE_OPEN_CV_TEXTURE
-	
-	ofxCvColorImage		colorImage;
-	ofxCvColorImage		colorImageLarge;
-	unsigned char		*colorRgbPixels;
-	int					colorImageWidth;
-	int					colorImageHeight;
-	int					colorImageLargeWidth;
-	int					colorImageLargeHeight;
-	bool				useLargeImageAsTexture;
-	
-#endif
+	ofxCvGrayscaleImage	imageSml;
+	ofxCvGrayscaleImage	imageLrg;
+	unsigned char		*imagePixels;
+	int					imageSmlWidth;
+	int					imageSmlHeight;
+	int					imageLrgWidth;
+	int					imageLrgHeight;
 
 protected:	
-	unsigned char		*_pixels;						// pixels array to be drawn
-	int					_byteCount;						// number of byes in the pixel array (size * 3)
-#ifdef FLUID_TEXTURE
-	ofTexture			tex;
-#endif	
 	
 	ofxMSAFluidSolver	*_fluidSolver;
-	bool				_didICreateTheFluid;
-	
-	virtual void		createTexture();
-	
-	void deleteFluidSolver();
-	bool isFluidReady();
 	
 };

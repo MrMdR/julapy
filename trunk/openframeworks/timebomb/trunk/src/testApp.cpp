@@ -231,8 +231,7 @@ void testApp :: initFluidForVideo ()
 	fluidSolver.doVorticityConfinement	= true;
 	fluidSolver.solverIterations		= 5;
 
-	fluidDrawer.setRenderDimensions( videoPlayerWidth, videoPlayerHeight );
-	fluidDrawer.setup(&fluidSolver);
+	fluidDrawer.setup( &fluidSolver, videoPlayerWidth, videoPlayerHeight );
 	
 	fluidColorScale		= 0.2f;
 }
@@ -426,7 +425,8 @@ void testApp :: updateTimeDistortionForVideo ()
 {
 	unsigned char *fluidPixels = fluidDrawer.getFluidPixels();
 	
-	for( int i=0; i<videoPlayerPixelsPerFrame; i+=3 )
+	int t = videoPlayerWidth * videoPlayerHeight;
+	for( int i=0; i<t; i++ )
 	{
 //		float p = fluidPixels[ i ] / 255.0f;
 		float p = 1.0f - fluidPixels[ i ] / 255.0f;
@@ -434,9 +434,9 @@ void testApp :: updateTimeDistortionForVideo ()
 		
 		memcpy
 		(
-			timeDistPixels + i,									// destination
-			frameBuffer + j * videoPlayerPixelsPerFrame + i,	// source
-			3 * sizeof( unsigned char )							// num of bytes to copy.
+			timeDistPixels + i * 3,									// destination
+			frameBuffer + j * videoPlayerPixelsPerFrame + i * 3,	// source
+			3 * sizeof( unsigned char )								// num of bytes to copy.
 		);
 	}
 	
