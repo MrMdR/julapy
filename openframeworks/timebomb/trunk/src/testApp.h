@@ -7,7 +7,8 @@
 #define USE_CAMERA_INPUT		// EITHER SELECT CAMERA OR VIDEO INPUT, NOT BOTH.
 
 //#define FLUID_WIDTH		120
-#define FLUID_WIDTH		20
+#define FLUID_WIDTH		60
+//#define FLUID_WIDTH		20
 
 #include "ofMain.h"
 #include "ofxVideoGrabber.h"
@@ -44,6 +45,8 @@ public:
 	void updateVideo();
 	void updateTimeDistortionForVideo();
 	
+	void addToFluid( float x, float y, float dx, float dy, bool addColor = true, bool addForce = true );
+	
 	void drawCameraSourceForOpticalField();
 	void drawVideoGrabberWarper();
 	void drawFluidToVideoDimensions();
@@ -57,9 +60,6 @@ public:
 	void keyPressed( int key );
 	void mouseMoved( int x, int y );
 	void mouseDragged( int x, int y, int button );
-
-	void fadeToColor(float r, float g, float b, float speed);
-	void addToFluid(float x, float y, float dx, float dy, bool addColor = true, bool addForce = true);
 
 	ofRectangle			renderArea;
 	ofRectangle			renderAreaWindow;
@@ -110,12 +110,10 @@ public:
 	float				interactionScale;
 	
 #ifdef USE_VIDEO_INPUT
-	
 	ofVideoPlayer		videoInput;
 	int					videoInputWidth;
 	int					videoInputHeight;
 	float				videoInputPosition;
-	
 #endif
 	
 	ofVideoPlayer		videoPlayer;
