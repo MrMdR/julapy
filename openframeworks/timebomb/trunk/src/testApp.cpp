@@ -405,15 +405,15 @@ void testApp :: addToFluid( float x, float y, float dx, float dy, bool addColor,
 		else if(y>1) y = 1;
 		
 		float velocityMult = 30;
-		//		float velocityMult = ( 1 - interactionScale ) * 1000 + 1;
+//		float velocityMult = ( 1 - interactionScale ) * 1000 + 1;
 		
 		int index = fluidSolver.getIndexForNormalizedPosition( x, y );
 		
 		if( addColor )
 		{
 			fluidSolver.r[ index ] += fluidColorScale;
-			fluidSolver.g[ index ] += fluidColorScale;
-			fluidSolver.b[ index ] += fluidColorScale;
+//			fluidSolver.g[ index ] += fluidColorScale;
+//			fluidSolver.b[ index ] += fluidColorScale;
 		}
 		
 		if( addForce )
