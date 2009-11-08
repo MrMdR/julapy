@@ -7,8 +7,8 @@ void testApp::setup()
 	ofEnableSmoothing();
 	ofSetCircleResolution( 100 );
 	ofSetVerticalSync( true );
-	ofSoundStreamSetup( 0, 2, this, 44100, 512, 4 );
 	
+	initRenderArea();
 	initAudioIn();
 	initOpScope();
 	initOpCheckers();
@@ -17,16 +17,46 @@ void testApp::setup()
 	initOpRain();
 	initVideos();
 	initOsc();
-	initVideoSaver();
+	initGui();
+	
+	screenGrabUtil.setup( "movie/lightchasm", &renderArea );
+	
+	bDebug			= true;
+	bRightMonitor	= false;
 }
 
 ///////////////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////////////
 
+void testApp :: initRenderArea()
+{
+	renderAreaWindow.x      = 0;
+	renderAreaWindow.y      = 0;
+	renderAreaWindow.width  = 1280;
+	renderAreaWindow.height = 720;
+	
+	renderAreaFullScreen.x      = 0;
+	renderAreaFullScreen.y      = 0;
+	renderAreaFullScreen.width  = 1440;
+	renderAreaFullScreen.height = 900;
+	
+	renderAreaRightMonitor.x		= 1440;
+	renderAreaRightMonitor.y		= 0;
+	renderAreaRightMonitor.width	= 640;
+	renderAreaRightMonitor.height	= 480;
+	
+	renderArea.x		= renderAreaWindow.x;
+	renderArea.y		= renderAreaWindow.y;
+	renderArea.width	= renderAreaWindow.width;
+	renderArea.height	= renderAreaWindow.height;
+}
+
 void testApp :: initAudioIn ()
 {
-	audioIn.init();
+	audio = new AudioLiveSpectrum();
+	audio->init( "" );
+	
 	audioInAvgPower.init();
 }
 
@@ -71,7 +101,7 @@ void testApp :: initOpBars ()
 	opBarsAudioAvgMinScale	= 0.5f;
 	
 	opBars.init( 640, 480 );
-	opBars.setNumberOfBars( audioIn.averagesTotal );
+	opBars.setNumberOfBars( audio->fftAveragePower );
 	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
 }
 
@@ -125,26 +155,11 @@ void testApp :: initOsc ()
 	oscRcvr.addInput( "/1/toggle4", &videoPositionOverride );
 }
 
-void testApp :: initVideoSaver()
+void testApp :: initGui ()
 {
-#ifdef USE_VIDEO_SAVER
-	videoSaverWidth		= ofGetWidth();
-	videoSaverHeight	= ofGetHeight();
+	gui.addToggle( "bRightMonitor",	&bRightMonitor );
 	
-	char str[ 512 ];
-	sprintf( str, "lc_%02d%02d%02d_%02d%02d%02d_%dx%d", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds(), videoSaverWidth, videoSaverHeight );
-	
-	videoSaverPath = str;
-	
-	videoSaverImage.allocate( videoSaverWidth, videoSaverHeight, GL_RGB );
-	
-	videoSaver.listCodecs();
-	videoSaver.setCodecType( 2 );
-	videoSaver.setCodecQualityLevel( OF_QT_SAVER_CODEC_QUALITY_LOSSLESS );
-	videoSaver.setup( videoSaverWidth, videoSaverHeight, videoSaverPath );
-	
-	videoSaverRecording = true;
-#endif
+	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 }
 
 ///////////////////////////////////////////////////
@@ -153,16 +168,15 @@ void testApp :: initVideoSaver()
 
 void testApp::update()
 {
-	audioIn.update();
-	float avgPowerScaled =  audioInAvgPower.getNormalisedValue( audioIn.averagePower );
+	audio->update();
+	audioInAvgPower.addValue( audio->fftAveragePower );
+	float avgPowerScaled =  audioInAvgPower.getNormalisedValue();
 //	printf( "avgPowerScaled: %4.2f \n", avgPowerScaled );
 	
 	updateOsc();
 	
 	updateVideo();
 	
-//	opCirlceResScale = 0.5 + 0.5 * sin( ofGetElapsedTimef() / (float)500 * PI - PI * 0.5 );
-//	opCirlceRotScale = 0.5 + 0.5 * sin( ofGetElapsedTimef() * PI );
 	opCirlce.setRotation( opCirlceRot += opCirlceRotScale * 1.0 + 0.1 );
 	opCirlce.setAudioInValue( avgPowerScaled );
 	opCirlce.setRgbScale( opCirlceColor, opCirlceColor, opCirlceColor );
@@ -170,10 +184,9 @@ void testApp::update()
 	opCirlce.update();
 
 	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
-	opBars.setAudioInData( audioIn.averages );
+	opBars.setAudioInData( audio->fftData );
 	opBars.update();
 	
-//	opCheckersSizeScale = 0.5 + 0.5 * sin( ofGetElapsedTimef() / (float)500 * PI - PI * 0.5 );
 	opCheckers.setSize( MAX( 3, opCheckersSize * opCheckersSizeScale ) );
 	opCheckers.update();
 
@@ -234,9 +247,12 @@ void testApp::draw()
 {
 	opRain.drawToFBO();
 	opCirlce.drawToFBO();
-	
+
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR );
+	
+	glPushMatrix();
+	glTranslatef( renderArea.x, renderArea.y, 0 );
 	
 	drawVideos();
 	opCheckers.draw();
@@ -244,14 +260,25 @@ void testApp::draw()
 	opCirlce.drawFBOToScreen();
 	opRain.drawFBOToScreen();
 	
+	glPopMatrix();
+	
+	if( bDebug )
+	{
+		gui.draw();
+		
+		glPushMatrix();
+		glTranslatef( 10, renderArea.height - 210, 0 );
+		
+		audio->draw( 400, 200 );
+		
+		glPopMatrix();
+	}
+	
 	glDisable( GL_BLEND );
-
-//	audioIn.draw();
 	
 	if( screenGrabUtil.isRecording() )
 		screenGrabUtil.save();
 	
-	drawToVideoSaver();
 	drawDebug();
 }
 
@@ -267,57 +294,81 @@ void testApp :: drawVideos()
 	}
 }
 
-void testApp :: drawToVideoSaver()
-{
-#ifdef USE_VIDEO_SAVER
-	if( videoSaverRecording )
-	{
-		videoSaverImage.grabScreen( 0, 0, videoSaverWidth, videoSaverHeight );
-		videoSaver.addFrame( videoSaverImage.getPixels(), 1.0f / 30.0f ); 
-	}
-#endif
-}
-
 void testApp :: drawDebug()
 {
 	ofSetColor( 0xFF0000 );
 	ofDrawBitmapString
 	(
-		"fps :: " + ofToString(ofGetFrameRate(), 2) + "\n\n",
+		"",
 		20,
 		20
 	);
+}
+
+////////////////////////////////////////////////////////
+// TOGGLE FULL SCREEN.
+////////////////////////////////////////////////////////
+
+void testApp :: updateRenderArea()
+{
+	if( ofGetWindowMode() == OF_WINDOW )
+	{
+		renderArea.x		= renderAreaWindow.x;
+		renderArea.y		= renderAreaWindow.y;
+		renderArea.width	= renderAreaWindow.width;
+		renderArea.height	= renderAreaWindow.height;
+	}
+	
+	if( ofGetWindowMode() == OF_FULLSCREEN )
+	{
+		if( bRightMonitor )
+		{
+			renderArea.x		= renderAreaRightMonitor.x;
+			renderArea.y		= renderAreaRightMonitor.y;
+			renderArea.width	= renderAreaRightMonitor.width;
+			renderArea.height	= renderAreaRightMonitor.height;
+		}
+		else
+		{
+			renderArea.x		= renderAreaFullScreen.x;
+			renderArea.y		= renderAreaFullScreen.y;
+			renderArea.width	= renderAreaFullScreen.width;
+			renderArea.height	= renderAreaFullScreen.height;
+		}
+	}
+	
+	screenGrabUtil.setArea( &renderArea );
 }
 
 //--------------------------------------------------------------
 
 void testApp :: keyPressed(int key)
 {
+	if( key == 'f' )
+	{
+		ofToggleFullscreen();
+		updateRenderArea();
+	}
 	
 	if( key == 'm' )
 	{
 		if( screenGrabUtil.isRecording() )
-		{
 			screenGrabUtil.stop();
-		}
 		else
-		{
-			screenGrabUtil.start( "movie/type_ribbons" );
-		}
+			screenGrabUtil.start();
 	}
 	
-#ifdef USE_VIDEO_SAVER
+	if( key == 'd' )
+	{
+		bDebug = !bDebug;
+	}
+	
 	if( key == 'r' )
 	{
-		videoSaverRecording = !videoSaverRecording;
+		bRightMonitor = !bRightMonitor;
 		
-		if( !videoSaverRecording )
-		{
-			videoSaver.finishMovie();
-		}
+		updateRenderArea();
 	}
-#endif
-	
 }
 
 //--------------------------------------------------------------
@@ -349,14 +400,3 @@ void testApp::mouseReleased(int x, int y, int button){
 void testApp::windowResized(int w, int h){
 
 }
-
-
-void testApp :: audioReceived( float *input, int bufferSize, int nChannels )
-{
-	for( int i=0; i<bufferSize; i++)
-	{
-		audioIn.left[ i ]	= input[ i * 2 ];
-		audioIn.right[ i ]	= input[ i * 2 + 1 ];
-	}
-}
-
