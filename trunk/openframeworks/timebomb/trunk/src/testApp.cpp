@@ -26,8 +26,11 @@ void testApp::setup()
 
 	screenGrabUtil.setup( "movie/timebomb", &renderArea );
 	
-	bDebug			= true;
-	bRightMonitor	= false;
+	bDebug			= false;
+	bRightMonitor	= true;
+	
+	ofToggleFullscreen();
+	updateRenderArea();
 }
 
 void testApp :: initRenderArea()
@@ -115,7 +118,8 @@ void testApp :: initVideoInput()
 void testApp :: initOpticalFieldForCameraInput ()
 {
 	opticalField.init( videoGrabberDstRect, videoGrabberDstRect );
-	opticalField.setMirror( false, false );
+//	opticalField.setMirror( false, false );
+	opticalField.setMirror( false, true );
 	opticalField.setImageType( GL_LUMINANCE );
 	opticalField.showDifferenceImage	= true;
 	opticalField.opticalFlowScale		= 0.001f;
@@ -201,6 +205,8 @@ void testApp :: initGui ()
 	gui.addSlider( "optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
 	gui.addSlider( "optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
 	gui.addSlider( "optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
+	
+	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
