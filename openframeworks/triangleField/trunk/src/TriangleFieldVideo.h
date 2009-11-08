@@ -21,9 +21,10 @@ public :
 	TriangleFieldVideo();
 	~TriangleFieldVideo();
 	
-	void setSize( int w, int h );
-	void loadMovie( string fileName );
-	void draw();
+	void  setSize( int w, int h );
+	void  loadMovie( string fileName );
+	void  draw();
+	float getNormColorValue( int x, int y );
 	
 private :
 	

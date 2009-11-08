@@ -45,3 +45,22 @@ void TriangleFieldVideo :: draw()
 	ofSetColor( 255, 255, 255, 255 );
 	video.draw( videoRectFs.x, videoRectFs.y, videoRectFs.width, videoRectFs.height );
 }
+
+float TriangleFieldVideo :: getNormColorValue( int x, int y )
+{
+	float px, py;		// between 0 - 1.
+	float value;
+	
+	px = ( x - videoRectFs.x ) / (float)videoRectFs.width;
+	py = ( y - videoRectFs.y ) / (float)videoRectFs.height;
+	
+	unsigned char *pixels = video.getPixels();
+	
+	int w = (int)( ( videoRect.width  - 1 ) * px ) * 3;
+	int h = (int)( ( videoRect.height - 1 ) * py );
+	int i = h * videoRect.width * 3 + w;
+	
+	value = pixels[ i + 0 ] / 255.0;
+	
+	return value;
+}
