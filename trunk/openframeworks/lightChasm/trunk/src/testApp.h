@@ -1,11 +1,12 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
-//#define USE_VIDEO_SAVER
-
 #include "ofMain.h"
-#include "LiveAudioIn.h"
-#include "DataNormaliser.h"
+//#include "LiveAudioIn.h"
+
+#include "AudioAbstract.h"
+#include "AudioLiveSpectrum.h"
+#include "ofxDataNormaliser.h"
 
 #include "OpCirlce.h"
 #include "OpBars.h"
@@ -17,11 +18,7 @@
 #include "TouchOscLayout01.h"
 
 #include "ofxScreenGrabUtil.h"
-
-#ifdef USE_VIDEO_SAVER
-	#include "ofQtVideoSaver.h"
-#endif
-
+#include "ofxSimpleGuiToo.h"
 
 class VideoObj
 {
@@ -35,86 +32,89 @@ public :
 	bool			oscPlaying;
 };
 
-class testApp : public ofBaseApp{
+class testApp : public ofBaseApp
+{
 
-	public:
+public:
 
-		void setup();
-		void update();
-		void draw();
+	void setup();
+	void update();
+	void draw();
 	
-		void initAudioIn();
-		void initOsc();
-		void initOpScope();
-		void initOpCheckers();
-		void initOpCircle();
-		void initOpBars();
-		void initOpRain();
-		void initVideos();
-		void initVideoSaver();
-	
-		void updateOsc();
-		void updateVideo();
-	
-		void drawVideos();
-		void drawToVideoSaver();
-		void drawDebug();
-	
-		void keyPressed  (int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void windowResized(int w, int h);
-	
-		void audioReceived( float * input, int bufferSize, int nChannels );
+	void initRenderArea();
+	void initAudioIn();
+	void initOsc();
+	void initOpScope();
+	void initOpCheckers();
+	void initOpCircle();
+	void initOpBars();
+	void initOpRain();
+	void initVideos();
+	void initGui();
 
-		ofxOscReceiver	oscReceiver;
-		OscReceiver		oscRcvr;
+	void updateRenderArea();
+	void updateOsc();
+	void updateVideo();
 	
-		OpCirlce	opCirlce;
-		int			opCirlceWidth;
-		int			opCirlceHeight;
-		int			opCirlceRes;
-		float		opCirlceResScale;
-		float		opCirlceRot;
-		float		opCirlceRotScale;
-		float		opCirlceColor;
+	void drawVideos();
+	void drawDebug();
 	
-		OpBars		opBars;
-		float		opBarsAudioAvgMin;
-		float		opBarsAudioAvgMinScale;
+	void keyPressed  (int key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y );
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void windowResized(int w, int h);
+
+	ofRectangle			renderArea;
+	ofRectangle			renderAreaWindow;
+	ofRectangle			renderAreaFullScreen;
+	ofRectangle			renderAreaRightMonitor;
 	
-		OpCheckers	opCheckers;
-		float		opCheckersSize;
-		float		opCheckersSizeScale;
+	ofxScreenGrabUtil	screenGrabUtil;
 	
-		OpParticleRain opRain;
-		float		   opRainMakeRate;
-		float		   opRainMakeRateScale;
+	bool				bDebug;
+	bool				bRightMonitor;
 	
-		OpScope		opScope;
+	ofxOscReceiver	oscReceiver;
+	OscReceiver		oscRcvr;
 	
-		LiveAudioIn		audioIn;
-		DataNormaliser	audioInAvgPower;
+	OpCirlce	opCirlce;
+	int			opCirlceWidth;
+	int			opCirlceHeight;
+	int			opCirlceRes;
+	float		opCirlceResScale;
+	float		opCirlceRot;
+	float		opCirlceRotScale;
+	float		opCirlceColor;
 	
-		VideoObj	*videos;
-		int			videosTotal;
-		bool		videoPositionOverride;
-		float		videoPositionOsc;
-		float		videoPosition;
+	OpBars		opBars;
+	float		opBarsAudioAvgMin;
+	float		opBarsAudioAvgMinScale;
 	
-#ifdef USE_VIDEO_SAVER
-		ofQtVideoSaver		videoSaver;
-		ofImage				videoSaverImage;
-		int					videoSaverWidth;
-		int					videoSaverHeight;
-		bool				videoSaverRecording;
-		string				videoSaverPath;
-#endif
+	OpCheckers	opCheckers;
+	float		opCheckersSize;
+	float		opCheckersSizeScale;
 	
-		ofxScreenGrabUtil	screenGrabUtil;
+	OpParticleRain opRain;
+	float		   opRainMakeRate;
+	float		   opRainMakeRateScale;
+	
+	OpScope		opScope;
+	
+	
+//	LiveAudioIn			audioIn;
+	AudioAbstract		*audio;
+	ofxDataNormaliser	audioInAvgPower;
+	
+	VideoObj	*videos;
+	int			videosTotal;
+	bool		videoPositionOverride;
+	float		videoPositionOsc;
+	float		videoPosition;
+
+	ofxSimpleGuiToo		gui;
 };
 
 #endif
