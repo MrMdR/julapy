@@ -8,8 +8,11 @@
 #include "ofxScreenGrabUtil.h"
 #include "ColorPicker.h"
 #include "ofxSimpleGuiToo.h"
-#include "AudioFileSpectrum.h"
 #include "ofxTrigger.h"
+
+#include "AudioAbstract.h"
+#include "AudioFileSpectrum.h"
+#include "AudioLiveSpectrum.h"
 
 #include "TriangleField.h"
 #include "TriangleFieldConfig.h"
@@ -43,6 +46,7 @@ public:
 	void drawSquareNoise( TriangleField *field );
 	void drawTraingleStatic();
 	void drawTriangleNoise( TriangleField *field );
+	void drawTriangleVideo( TriangleField *field );
 	void drawDebug();
 	
 	void toggleFullScreen();
@@ -89,7 +93,7 @@ public:
 	ofxTileSaver		tileSaver;
 	ofxScreenGrabUtil	screenGrabUtil;
 	
-	AudioFileSpectrum	audio;
+	AudioAbstract		*audio;
 	
 	ofxTrigger			trigger;
 };

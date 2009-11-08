@@ -75,7 +75,10 @@ void testApp :: initFields()
 
 void testApp :: initVideo()
 {
-	tfVideo.loadMovie( "../../../../_video/ERASERHEAD_09_cheeseface.mov" );
+//	tfVideo.loadMovie( "../../../../_video/birds_flight.mov" );
+//	tfVideo.loadMovie( "../../../../_video/jellyfish.mov" );
+//	tfVideo.loadMovie( "../../../../_video/clouds.mov" );
+	tfVideo.loadMovie( "../../../../_video/baralina.mov" );
 	tfVideo.setSize( renderArea.width, renderArea.height );
 }
 
@@ -175,6 +178,9 @@ void testApp :: initGui()
 
 void testApp :: initAudio()
 {
+//	audio = new AudioFileSpectrum();
+	audio = new AudioLiveSpectrum();
+	
 //	audio.init( "../../../../_audio/dj_krush_08_decks_athron.mp3" );
 //	audio.init( "../../../../_audio/dat_politics_12_nude_Noodle.mp3" );
 //	audio.init( "../../../../_audio/autechre_ep7_06_dropp.mp3" );
@@ -185,10 +191,10 @@ void testApp :: initAudio()
 //	audio.init( "../../../../_audio/lukid_06_chord.mp3" );
 //	audio.init( "../../../../_audio/gentle_force_5_into_6.mp3" );
 //	audio.init( "../../../../_audio/gentle_force_hohner.wav" );
-	audio.init( "../../../../_audio/gentle_force_learning_to_forgive.wav" );
+	audio->init( "../../../../_audio/gentle_force_learning_to_forgive.wav" );
 //	audio.init( "../../../../_audio/gentle_force_majestic.wav" );
 //	audio.init( "../../../../_audio/gentle_force_ode_to_moritz.wav" );
-	audio.setPosition( 0.0 );
+	audio->setPosition( 0.0 );
 //	audio.setVolume( 0 );
 //	audio.setNoOfBands( 100 );
 //	audio.setThreshold( 0.55 );
@@ -247,11 +253,11 @@ void testApp :: update()
 	if( tileSaver.bGoTiling )
 		return;
 
-	audio.update();
+	audio->update();
 	
-	trigger.update( audio.getPosition() );
+	trigger.update( audio->getPosition() );
 	
-	fieldConfig[ fieldConfigIndex ]->setAudioNorm( audio.getAveragePeakNorm() );
+	fieldConfig[ fieldConfigIndex ]->setAudioNorm( audio->getAveragePeakNorm() );
 	fieldConfig[ fieldConfigIndex ]->update();
 	fieldConfig[ fieldConfigIndex ]->copyChangesTo( fields, fieldsTotal );
 	
@@ -346,7 +352,10 @@ void testApp :: draw()
 	for( int i=0; i<fieldsTotal; i++ )
 		drawTriangleNoise( &fields[ i ] );
 	
-	tfVideo.draw();
+//	for( int i=0; i<fieldsTotal; i++ )
+//		drawTriangleVideo( &fields[ i ] );
+	
+//	tfVideo.draw();
 	
 	glPopMatrix();
 	
@@ -472,10 +481,6 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 	int cy = ceil( renderArea.height / size );
 	int cx = ceil( renderArea.width / size );
 	
-//	field->noiseXInit = frameCount * field->noiseXVel;
-//	field->noiseYInit = frameCount * field->noiseYVel;
-//	field->noiseZInit = frameCount * field->noiseZVel;
-
 	field->noiseXInit += field->noiseXVel;
 	field->noiseYInit += field->noiseYVel;
 	field->noiseZInit += field->noiseZVel;
@@ -506,7 +511,7 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 				ny = field->noiseY +  0.75 * size * field->noiseYRes * field->noiseYScl;
 				n  = ( noise.noise( nx, ny, field->noiseZ ) + 1.0 ) * 0.5;
 				
-				if( n > field->cutoff )
+				if( n >= field->cutoff )
 				{
 					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
 					
@@ -536,7 +541,7 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 				ny = field->noiseY +  0.25 * size * field->noiseYRes * field->noiseYScl;
 				n  = ( noise.noise( nx, ny, field->noiseZ ) + 1.0 ) * 0.5;
 
-				if( n > field->cutoff )
+				if( n >= field->cutoff )
 				{
 					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
 					
@@ -568,7 +573,7 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 				ny = field->noiseY +  0.25 * size * field->noiseYRes * field->noiseYScl;
 				n  = ( noise.noise( nx, ny, field->noiseZ ) + 1.0 ) * 0.5;
 
-				if( n > field->cutoff )
+				if( n >= field->cutoff )
 				{
 					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
 					
@@ -598,7 +603,156 @@ void testApp :: drawTriangleNoise ( TriangleField *field )
 				ny = field->noiseY +  0.75 * size * field->noiseYRes * field->noiseYScl;
 				n  = ( noise.noise( nx, ny, field->noiseZ ) + 1.0 ) * 0.5;
 				
-				if( n > field->cutoff )
+				if( n >= field->cutoff )
+				{
+					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
+					
+					cr = (int)( n * ( field->eColor[ 0 ] - field->sColor[ 0 ] ) + field->sColor[ 0 ] );
+					cg = (int)( n * ( field->eColor[ 1 ] - field->sColor[ 1 ] ) + field->sColor[ 1 ] );
+					cb = (int)( n * ( field->eColor[ 2 ] - field->sColor[ 2 ] ) + field->sColor[ 2 ] );
+					ca = (int)( n * ( field->eColor[ 3 ] - field->sColor[ 3 ] ) + field->sColor[ 3 ] );
+					
+					ofSetColor( cr, cg, cb, ca );
+					ofFill();
+					ofTriangle( x * size, ( y + 1 ) * size, ( x + 1 ) * size, ( y + 1 ) * size, ( x + 1 ) * size, y * size );
+					
+					if( fields->drawOutline )
+					{
+						cr = (int)( n * ( field->beColor[ 0 ] - field->bsColor[ 0 ] ) + field->bsColor[ 0 ] );
+						cg = (int)( n * ( field->beColor[ 1 ] - field->bsColor[ 1 ] ) + field->bsColor[ 1 ] );
+						cb = (int)( n * ( field->beColor[ 2 ] - field->bsColor[ 2 ] ) + field->bsColor[ 2 ] );
+						ca = (int)( n * ( field->beColor[ 3 ] - field->bsColor[ 3 ] ) + field->bsColor[ 3 ] );
+						
+						ofSetColor( cr, cg, cb, ca );
+						ofNoFill();
+						ofTriangle( x * size, ( y + 1 ) * size, ( x + 1 ) * size, ( y + 1 ) * size, ( x + 1 ) * size, y * size );
+					}
+				}
+			}
+		}
+	}
+}
+
+void testApp :: drawTriangleVideo ( TriangleField *field )
+{
+	float size = 10.0 * field->scale;
+	
+	int cy = ceil( renderArea.height / size );
+	int cx = ceil( renderArea.width  / size );
+	
+	int cr, cg, cb, ca;
+	float n, nx, ny;
+	
+	for( int y=0; y<cy; y++ )
+	{
+		for( int x=0; x<cx; x++ )
+		{
+			int orientation = 1;
+			if( x % 2 == 1 )
+				orientation *= -1;
+			
+			if( y % 2 == 1 )
+				orientation *= -1;
+			
+			if( orientation == 1 )
+			{
+				nx = ( x + 0.25 ) * size;
+				ny = ( y + 0.75 ) * size;
+				n  = tfVideo.getNormColorValue( nx, ny );
+				
+				if( n >= field->cutoff )
+				{
+					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
+					
+					cr = (int)( n * ( field->eColor[ 0 ] - field->sColor[ 0 ] ) + field->sColor[ 0 ] );
+					cg = (int)( n * ( field->eColor[ 1 ] - field->sColor[ 1 ] ) + field->sColor[ 1 ] );
+					cb = (int)( n * ( field->eColor[ 2 ] - field->sColor[ 2 ] ) + field->sColor[ 2 ] );
+					ca = (int)( n * ( field->eColor[ 3 ] - field->sColor[ 3 ] ) + field->sColor[ 3 ] );
+					
+					ofSetColor( cr, cg, cb, ca );
+					ofFill();
+					ofTriangle( x * size, y * size, x * size, ( y + 1 ) * size, ( x + 1 ) * size, ( y + 1 ) * size );
+					
+					if( fields->drawOutline )
+					{
+						cr = (int)( n * ( field->beColor[ 0 ] - field->bsColor[ 0 ] ) + field->bsColor[ 0 ] );
+						cg = (int)( n * ( field->beColor[ 1 ] - field->bsColor[ 1 ] ) + field->bsColor[ 1 ] );
+						cb = (int)( n * ( field->beColor[ 2 ] - field->bsColor[ 2 ] ) + field->bsColor[ 2 ] );
+						ca = (int)( n * ( field->beColor[ 3 ] - field->bsColor[ 3 ] ) + field->bsColor[ 3 ] );
+						
+						ofSetColor( cr, cg, cb, ca );
+						ofNoFill();
+						ofTriangle( x * size, y * size, x * size, ( y + 1 ) * size, ( x + 1 ) * size, ( y + 1 ) * size );
+					}
+				}
+				
+				nx = ( x + 0.75 ) * size;
+				ny = ( y + 0.25 ) * size;
+				n  = tfVideo.getNormColorValue( nx, ny );
+				
+				if( n >= field->cutoff )
+				{
+					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
+					
+					cr = (int)( n * ( field->eColor[ 0 ] - field->sColor[ 0 ] ) + field->sColor[ 0 ] );
+					cg = (int)( n * ( field->eColor[ 1 ] - field->sColor[ 1 ] ) + field->sColor[ 1 ] );
+					cb = (int)( n * ( field->eColor[ 2 ] - field->sColor[ 2 ] ) + field->sColor[ 2 ] );
+					ca = (int)( n * ( field->eColor[ 3 ] - field->sColor[ 3 ] ) + field->sColor[ 3 ] );
+					
+					ofSetColor( cr, cg, cb, ca );
+					ofFill();
+					ofTriangle( x * size, y * size, ( x + 1 ) * size, y * size, ( x + 1 ) * size, ( y + 1 ) * size );
+					
+					if( fields->drawOutline )
+					{
+						cr = (int)( n * ( field->beColor[ 0 ] - field->bsColor[ 0 ] ) + field->bsColor[ 0 ] );
+						cg = (int)( n * ( field->beColor[ 1 ] - field->bsColor[ 1 ] ) + field->bsColor[ 1 ] );
+						cb = (int)( n * ( field->beColor[ 2 ] - field->bsColor[ 2 ] ) + field->bsColor[ 2 ] );
+						ca = (int)( n * ( field->beColor[ 3 ] - field->bsColor[ 3 ] ) + field->bsColor[ 3 ] );
+						
+						ofSetColor( cr, cg, cb, ca );
+						ofNoFill();
+						ofTriangle( x * size, y * size, ( x + 1 ) * size, y * size, ( x + 1 ) * size, ( y + 1 ) * size );
+					}
+				}
+			}
+			else
+			{
+				nx = ( x + 0.25 ) * size;
+				ny = ( y + 0.25 ) * size;
+				n  = tfVideo.getNormColorValue( nx, ny );
+				
+				if( n >= field->cutoff )
+				{
+					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
+					
+					cr = (int)( n * ( field->eColor[ 0 ] - field->sColor[ 0 ] ) + field->sColor[ 0 ] );
+					cg = (int)( n * ( field->eColor[ 1 ] - field->sColor[ 1 ] ) + field->sColor[ 1 ] );
+					cb = (int)( n * ( field->eColor[ 2 ] - field->sColor[ 2 ] ) + field->sColor[ 2 ] );
+					ca = (int)( n * ( field->eColor[ 3 ] - field->sColor[ 3 ] ) + field->sColor[ 3 ] );
+					
+					ofSetColor( cr, cg, cb, ca );
+					ofFill();
+					ofTriangle( x * size, y * size, ( x + 1 ) * size, y * size, x * size, ( y + 1 ) * size );
+					
+					if( fields->drawOutline )
+					{
+						cr = (int)( n * ( field->beColor[ 0 ] - field->bsColor[ 0 ] ) + field->bsColor[ 0 ] );
+						cg = (int)( n * ( field->beColor[ 1 ] - field->bsColor[ 1 ] ) + field->bsColor[ 1 ] );
+						cb = (int)( n * ( field->beColor[ 2 ] - field->bsColor[ 2 ] ) + field->bsColor[ 2 ] );
+						ca = (int)( n * ( field->beColor[ 3 ] - field->bsColor[ 3 ] ) + field->bsColor[ 3 ] );
+						
+						ofSetColor( cr, cg, cb, ca );
+						ofNoFill();
+						ofTriangle( x * size, y * size, ( x + 1 ) * size, y * size, x * size, ( y + 1 ) * size );
+					}
+				}
+				
+				nx = ( x + 0.75 ) * size;
+				ny = ( y + 0.75 ) * size;
+				n  = tfVideo.getNormColorValue( nx, ny );
+				
+				if( n >= field->cutoff )
 				{
 					n  = ( n - field->cutoff ) / (float)( 1 - field->cutoff );
 					
@@ -633,7 +787,7 @@ void testApp :: drawDebug()
 	ofSetColor( 0x000000 );
 	ofDrawBitmapString
 	(
-		"audio position :: " + ofToString( audio.getPosition(), 5 ) + "\n\n"
+		"audio position :: " + ofToString( audio->getPosition(), 5 ) + "\n\n"
 		,
 		800,
 		renderArea.height - 300
@@ -650,7 +804,7 @@ void testApp :: drawDebug()
 	ofSetColor( 0xFFFFFF );
 	glPushMatrix();
 	glTranslatef( 270, renderArea.height - 210, 0 );
-	audio.draw( 512, 200 );
+	audio->draw( 512, 200 );
 	glPopMatrix();
 }
 
@@ -692,19 +846,19 @@ void testApp :: keyPressed( int key )
 	if( key == '1' )
 	{
 		fieldConfigIndex = 0;
-		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
+		trigger.addTrigger( audio->getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
 	}
 
 	if( key == '2' )
 	{
 		fieldConfigIndex = 1;
-		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
+		trigger.addTrigger( audio->getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
 	}
 	
 	if( key == '3' )
 	{
 		fieldConfigIndex = 2;
-		trigger.addTrigger( audio.getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
+		trigger.addTrigger( audio->getPosition(), &fieldConfigIndex, fieldConfigIndex, true, "fieldConfigIndex" );
 	}
 	
 	if( key == 'c' )
@@ -746,13 +900,13 @@ void testApp :: keyReleased( int key )
 		{
 			screenGrabUtil.stop();
 			
-			audio.setFrameRateSync( false );
+			audio->setFrameRateSync( false );
 		}
 		else
 		{
 			screenGrabUtil.start();
 			
-			audio.setFrameRateSync( true );
+			audio->setFrameRateSync( true );
 		}
 	}
 	
