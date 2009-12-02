@@ -141,8 +141,8 @@ void Blobs01 :: initOpticalField ()
 
 void Blobs01 :: update()
 {
-//	updateVideoGrabber();
-//	updateOpticalField();
+	updateVideoGrabber();
+	updateOpticalField();
 	updateBox2d();
 }
 
