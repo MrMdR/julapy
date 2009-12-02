@@ -35,7 +35,7 @@ void testApp :: initRenderArea()
 	renderAreaFullScreen.x      = 1440;
 	renderAreaFullScreen.y      = 0;
 	renderAreaFullScreen.width  = 800;
-	renderAreaFullScreen.height = 480;
+	renderAreaFullScreen.height = 600;
 	
 	renderArea.x		= renderAreaWindow.x;
 	renderArea.y		= renderAreaWindow.y;
