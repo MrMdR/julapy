@@ -3,9 +3,9 @@
 void testApp::setup()
 {
 	ofSetFrameRate( 30 );
-	ofBackground( 255, 255, 255 );
-	ofEnableSmoothing();
-	ofSetCircleResolution( 100 );
+	ofBackground( 0, 0, 0 );
+//	ofEnableSmoothing();
+	ofSetCircleResolution( 30 );
 	ofSetVerticalSync( true );
 	
 	initRenderArea();
@@ -18,11 +18,19 @@ void testApp::setup()
 	initVideos();
 	initOsc();
 	initGui();
+	initMaskImage();
 	
 	screenGrabUtil.setup( "movie/lightchasm", &renderArea );
 	
 	bDebug			= true;
 	bRightMonitor	= false;
+	
+	fadeBlack		= 0.0;
+	
+	autoOverride		= true;
+	autoMode			= 0;
+	autoModesTotal		= 3;
+	autoModeStartTime	= 0;
 }
 
 ///////////////////////////////////////////////////
@@ -38,10 +46,13 @@ void testApp :: initRenderArea()
 	
 	renderAreaFullScreen.x      = 0;
 	renderAreaFullScreen.y      = 0;
-	renderAreaFullScreen.width  = 1440;
-	renderAreaFullScreen.height = 900;
-	
-	renderAreaRightMonitor.x		= 1440;
+//	renderAreaFullScreen.width  = 1440;
+//	renderAreaFullScreen.height = 900;
+	renderAreaFullScreen.width  = 1280;			// 13" macbook.
+	renderAreaFullScreen.height = 800;
+
+	renderAreaRightMonitor.x		= 1280;		// 13" macbook.
+//	renderAreaRightMonitor.x		= 1440;
 	renderAreaRightMonitor.y		= 0;
 	renderAreaRightMonitor.width	= 640;
 	renderAreaRightMonitor.height	= 480;
@@ -97,12 +108,17 @@ void testApp :: initOpCircle ()
 
 void testApp :: initOpBars ()
 {
-	opBarsAudioAvgMin		= 60;
+	opBarsAudioAvgMin		= 1.0;
 	opBarsAudioAvgMinScale	= 0.5f;
 	
+	int opBarsTotal;
+	opBarsTotal = 10;
+	
+	opBarsAudioData = new float[ opBarsTotal ];
+	
 	opBars.init( 640, 480 );
-	opBars.setNumberOfBars( audio->fftAveragePower );
-	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
+	opBars.setNumberOfBars( opBarsTotal );
+	opBars.setAudioAvgMin( opBarsAudioAvgMin * ( 1 - opBarsAudioAvgMinScale ) );
 }
 
 void testApp :: initOpRain()
@@ -121,9 +137,9 @@ void testApp :: initVideos ()
 	videoPositionOverride	= false;
 	
 	videos = new VideoObj[ videosTotal ];
-	videos[ 0 ].video.loadMovie( "flight_01_inv.mov" );
-	videos[ 1 ].video.loadMovie( "nionr_02.mov" );
-	videos[ 2 ].video.loadMovie( "flight_02.mov" );
+	videos[ 0 ].video.loadMovie( "video_01.mov" );
+	videos[ 1 ].video.loadMovie( "video_02.mov" );
+	videos[ 2 ].video.loadMovie( "video_03.mov" );
 	
 	for( int i=0; i<videosTotal; i++ )
 	{
@@ -162,18 +178,27 @@ void testApp :: initGui ()
 	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 }
 
+void testApp :: initMaskImage()
+{
+//	maskImage.loadImage( "mask.jpg" );
+	maskImage.loadImage( "mask.png" );
+}
+
 ///////////////////////////////////////////////////
 //	UPDATE.
 ///////////////////////////////////////////////////
 
-void testApp::update()
+void testApp :: update()
 {
 	audio->update();
+	audio->getFftPeakData( opBarsAudioData, opBars.getNumberOfBars() );
 	audioInAvgPower.addValue( audio->fftAveragePower );
 	float avgPowerScaled =  audioInAvgPower.getNormalisedValue();
-//	printf( "avgPowerScaled: %4.2f \n", avgPowerScaled );
 	
-	updateOsc();
+	if( autoOverride )
+		updateAutoMode();
+	else
+		updateOsc();
 	
 	updateVideo();
 	
@@ -183,8 +208,8 @@ void testApp::update()
 	opCirlce.setCirlceResolution( opCirlceRes = (int)( opCirlceResScale * ( ( MAX_CIRCLE_PTS - 1 ) * 0.5 ) ) * 2 );
 	opCirlce.update();
 
-	opBars.setAudioAvgMin( opBarsAudioAvgMin * opBarsAudioAvgMinScale );
-	opBars.setAudioInData( audio->fftData );
+	opBars.setAudioAvgMin( opBarsAudioAvgMin * ( 1 - opBarsAudioAvgMinScale ) );
+	opBars.setAudioInData( opBarsAudioData );
 	opBars.update();
 	
 	opCheckers.setSize( MAX( 3, opCheckersSize * opCheckersSizeScale ) );
@@ -198,6 +223,59 @@ void testApp::update()
 void testApp :: updateOsc ()
 {
 	oscRcvr.ping();
+}
+
+void testApp :: updateAutoMode ()
+{
+	autoModeElapsedTime = ofGetElapsedTimeMillis() - autoModeStartTime;
+	
+	if( autoMode == 0 )
+	{
+		opCirlceResScale		= 0.1;
+		opCirlceRotScale		= cos( autoModeElapsedTime * 0.0005            ) * 0.5 + 0.5;
+		opCheckersSizeScale		= cos( autoModeElapsedTime * 0.00002           ) * 0.5 + 0.5;
+		opBarsAudioAvgMinScale	= 0.0;
+		opRainMakeRateScale		= sin( autoModeElapsedTime * 0.0005  - HALF_PI ) * 0.5 + 0.5;
+		videos[ 0 ].oscPlaying	= false;
+		videos[ 1 ].oscPlaying	= false;
+		videos[ 2 ].oscPlaying	= false;
+	}
+
+	if( autoMode == 1 )
+	{
+		opCirlceResScale		= cos( autoModeElapsedTime * 0.00002           ) * 0.5 + 0.5;
+		opCirlceRotScale		= sin( autoModeElapsedTime * 0.001   - HALF_PI ) * 0.5 + 0.5;
+		opCheckersSizeScale		= sin( autoModeElapsedTime * 0.00002 - HALF_PI ) * 0.5 + 0.5;
+		opBarsAudioAvgMinScale	= 0.0;
+		opRainMakeRateScale		= sin( autoModeElapsedTime * 0.00002 - HALF_PI ) * 0.5 + 0.5;
+		videos[ 0 ].oscPlaying	= false;
+		videos[ 1 ].oscPlaying	= false;
+		videos[ 2 ].oscPlaying	= false;
+	}
+
+	if( autoMode == 2 )
+	{
+		opCirlceResScale		= 0.0;
+		opCirlceRotScale		= 0.0;
+		opCheckersSizeScale		= sin( autoModeElapsedTime * 0.00002 - HALF_PI ) * 0.5 + 0.5;
+		opBarsAudioAvgMinScale	= 1.0;
+		opRainMakeRateScale		= 0.0;
+		videos[ 0 ].oscPlaying	= true;
+		videos[ 1 ].oscPlaying	= false;
+		videos[ 2 ].oscPlaying	= false;
+	}
+
+	if( autoMode == 3 )
+	{
+		opCirlceResScale		= sin( autoModeElapsedTime * 0.00002 - HALF_PI ) * 0.5 + 0.5;
+		opCirlceRotScale		= 0.0;
+		opCheckersSizeScale		= cos( autoModeElapsedTime * 0.00002           ) * 0.5 + 0.5;
+		opBarsAudioAvgMinScale	= 1.0;
+		opRainMakeRateScale		= 0.0;
+		videos[ 0 ].oscPlaying	= false;
+		videos[ 1 ].oscPlaying	= true;
+		videos[ 2 ].oscPlaying	= false;
+	}
 }
 
 void testApp :: updateVideo ()
@@ -245,6 +323,7 @@ void testApp :: updateVideo ()
 
 void testApp::draw()
 {
+	opCheckers.drawToFBO();
 	opRain.drawToFBO();
 	opCirlce.drawToFBO();
 
@@ -255,12 +334,19 @@ void testApp::draw()
 	glTranslatef( renderArea.x, renderArea.y, 0 );
 	
 	drawVideos();
-	opCheckers.draw();
+	opCheckers.drawFBOToScreen();
 	opBars.draw();
 	opCirlce.drawFBOToScreen();
 	opRain.drawFBOToScreen();
 	
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );		// alpha blend
+	maskImage.draw( 0, 0 );
+	
+	drawBlack();
+	
 	glPopMatrix();
+	
+	glBlendFunc( GL_ONE, GL_ZERO );
 	
 	if( bDebug )
 	{
@@ -273,8 +359,6 @@ void testApp::draw()
 		
 		glPopMatrix();
 	}
-	
-	glDisable( GL_BLEND );
 	
 	if( screenGrabUtil.isRecording() )
 		screenGrabUtil.save();
@@ -292,6 +376,16 @@ void testApp :: drawVideos()
 			opScope.draw();
 		}
 	}
+}
+
+void testApp :: drawBlack ()
+{
+	ofEnableAlphaBlending();
+	
+	ofSetColor( 0, 0, 0, (int)( 255 * fadeBlack ) );
+	ofRect( 0, 0, renderArea.width, renderArea.height );
+	
+	ofDisableAlphaBlending();
 }
 
 void testApp :: drawDebug()
@@ -368,6 +462,61 @@ void testApp :: keyPressed(int key)
 		bRightMonitor = !bRightMonitor;
 		
 		updateRenderArea();
+	}
+	
+	if( key == '-' )
+		fadeBlack = MIN( 1, MAX( 0, fadeBlack + 0.01 ) );
+	
+	if( key == '=' )
+		fadeBlack = MIN( 1, MAX( 0, fadeBlack - 0.01 ) );
+	
+	if( key == '1' || key == '2' || key == '3' || key == '4' || key == '5' ||
+		key == '6' || key == '7' || key == '8' || key == '9' || key == '0' )
+	{
+		autoModeStartTime = ofGetElapsedTimeMillis();
+		
+		switch ( key )
+		{
+			case '1':
+				autoMode = 0;
+				break;
+				
+			case '2':
+				autoMode = 1;
+				break;
+				
+			case '3':
+				autoMode = 2;
+				break;
+				
+			case '4':
+				autoMode = 3;
+				break;
+				
+			case '5':
+				return;
+				break;
+				
+			case '6':
+				return;
+				break;
+				
+			case '7':
+				return;
+				break;
+				
+			case '8':
+				return;
+				break;
+				
+			case '9':
+				return;
+				break;
+				
+			case '0':
+				return;
+				break;
+		}
 	}
 }
 

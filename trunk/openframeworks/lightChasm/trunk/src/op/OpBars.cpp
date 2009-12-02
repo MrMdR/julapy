@@ -55,6 +55,11 @@ void OpBars :: setNumberOfBars( int value )
 	}
 }
 
+int OpBars :: getNumberOfBars()
+{
+	return barsTotal;
+}
+
 void OpBars :: setAudioInData ( float *data )
 {
 	for( int i=0; i<bars.size(); i++ )
@@ -70,7 +75,7 @@ void OpBars :: setAudioInData ( float *data )
 		
 		if( audioPeak[ i ] < audioAverage[ i ] )
 		{
-			audioPeak[ i ] = audioAverage[ i ] * 3;
+			audioPeak[ i ] = audioAverage[ i ] * 50;
 		}
 		
 		float aup = audioPeak[ i ] * 5;

@@ -26,6 +26,8 @@ void OpCheckers :: init( int w, int h )
 	
 	setSize( 10.0f );
 	setSizeEase( 0.5f );
+	
+	fbo.allocate( 640, 480, true );
 }
 
 void OpCheckers :: update()
@@ -33,14 +35,31 @@ void OpCheckers :: update()
 
 }
 
+void OpCheckers :: drawToFBO()
+{
+	fbo.swapIn();
+	fbo.setupScreenForMe();
+	
+	draw();
+	
+	fbo.swapOut();
+	fbo.setupScreenForThem();
+}
+
+void OpCheckers :: drawFBOToScreen()
+{
+	ofSetColor( 255, 255, 255 );
+	fbo.draw( 0, 0 );
+}
+
 void OpCheckers :: draw()
 {
 	ofFill();
 	
-	int cx = ceil( width * 0.5 / size );
+	int cx = ceil( width  * 0.5 / size );
 	int cy = ceil( height * 0.5 / size );
 	
-	float dx = width * 0.5 - cx * size;
+	float dx = width  * 0.5 - cx * size;
 	float dy = height * 0.5 - cy * size;
 	
 	int ix = 0;
