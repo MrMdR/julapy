@@ -62,9 +62,7 @@ void OpScope :: update( unsigned char * pixels )
 				j = ( ( width - px ) * 3 ) + ( ( height - py ) * width * 3 );
 			}
 			
-			videoPixels[ i + 0 ] = pixels[ j + 0 ];
-			videoPixels[ i + 1 ] = pixels[ j + 1 ];
-			videoPixels[ i + 2 ] = pixels[ j + 2 ];
+			memcpy( videoPixels + i, pixels + j, 3 * sizeof( unsigned char ) );
 		}
 	}
 			

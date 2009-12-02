@@ -51,12 +51,15 @@ public:
 	void initOpRain();
 	void initVideos();
 	void initGui();
+	void initMaskImage();
 
 	void updateRenderArea();
 	void updateOsc();
+	void updateAutoMode();
 	void updateVideo();
 	
 	void drawVideos();
+	void drawBlack();
 	void drawDebug();
 	
 	void keyPressed  (int key);
@@ -90,6 +93,7 @@ public:
 	float		opCirlceColor;
 	
 	OpBars		opBars;
+	float		*opBarsAudioData;
 	float		opBarsAudioAvgMin;
 	float		opBarsAudioAvgMinScale;
 	
@@ -103,8 +107,6 @@ public:
 	
 	OpScope		opScope;
 	
-	
-//	LiveAudioIn			audioIn;
 	AudioAbstract		*audio;
 	ofxDataNormaliser	audioInAvgPower;
 	
@@ -115,6 +117,16 @@ public:
 	float		videoPosition;
 
 	ofxSimpleGuiToo		gui;
+	
+	ofImage		maskImage;
+	
+	float		fadeBlack;
+	
+	bool		autoOverride;
+	int			autoMode;
+	int			autoModesTotal;
+	int			autoModeStartTime;
+	int			autoModeElapsedTime;
 };
 
 #endif

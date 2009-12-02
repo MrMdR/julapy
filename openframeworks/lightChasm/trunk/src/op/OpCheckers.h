@@ -8,6 +8,7 @@
  */
 
 #include "ofMain.h"
+#include "ofFBOTexture.h"
 
 class OpCheckers
 {
@@ -19,12 +20,17 @@ public :
 
 	void init( int w, int h );
 	void update();
+	
+	void drawToFBO();
+	void drawFBOToScreen();
 	void draw();
 	
 	void setSize( float value );
 	void setSizeEase( float value );
 	
 private :
+	
+	ofFBOTexture fbo;
 
 	int width;
 	int height;

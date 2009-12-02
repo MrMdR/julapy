@@ -26,6 +26,7 @@
 		15B679B610285067000386DF /* ofFBOTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B679B410285067000386DF /* ofFBOTexture.cpp */; };
 		15B679D410285093000386DF /* libOsc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15B679CE10285093000386DF /* libOsc.a */; };
 		15BD69451015DE7D00E93583 /* OscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BD69441015DE7D00E93583 /* OscReceiver.cpp */; };
+		15D67F3510C50F64006764CF /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */; };
 		15E5CCE110A1969B00EDB90A /* ofxColorMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15E5CCD710A1969B00EDB90A /* ofxColorMap.cpp */; };
 		15E5CCE210A1969B00EDB90A /* ofxDataNormaliser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15E5CCD910A1969B00EDB90A /* ofxDataNormaliser.cpp */; };
 		15E5CCE310A1969B00EDB90A /* ofxResizeUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15E5CCDB10A1969B00EDB90A /* ofxResizeUtil.cpp */; };
@@ -79,7 +80,6 @@
 		E45BEEA30E8CC911009D7055 /* libPocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BEE790E8CC911009D7055 /* libPocoUtil.a */; };
 		E45BEEA40E8CC911009D7055 /* libPocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BEE7A0E8CC911009D7055 /* libPocoXML.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
-		E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */; };
 		E4B6FCAE0C3E899E008CF71C /* openFrameworks-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -1226,7 +1226,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
-				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
 				E446644B0F5B1CFD005D0BF0 /* ofAppGlutWindow.cpp in Sources */,
 				E446644C0F5B1CFD005D0BF0 /* ofAppRunner.cpp in Sources */,
 				E446644D0F5B1CFD005D0BF0 /* ofArduino.cpp in Sources */,
@@ -1277,6 +1276,7 @@
 				15014F1D10A6E4AA006EF6E6 /* fft.cpp in Sources */,
 				15014F2510A6E52E006EF6E6 /* CircularBufferUtil.cpp in Sources */,
 				15014F2610A6E52E006EF6E6 /* DataNormaliser.cpp in Sources */,
+				15D67F3510C50F64006764CF /* testApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

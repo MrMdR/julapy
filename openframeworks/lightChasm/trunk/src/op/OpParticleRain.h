@@ -51,6 +51,7 @@ private :
 	
 	int width;
 	int height;
+	
 	ofFBOTexture fbo;
 
 	vector <OpParticleRainDrop> particles;
