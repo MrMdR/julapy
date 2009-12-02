@@ -16,21 +16,13 @@
 #include "ofxOpenCv.h"
 #include "ofxCvWarper.h"
 #include "OpticalField.h"
+#include "ofxVectorMath.h"
+#include "ofxSimpleGuiToo.h"
 
 #include "AudioAbstract.h"
 #include "AudioLiveSpectrum.h"
 
-#ifndef _BLOB_H_
-#define _BLOB_H_
-
-class Blob
-{
-public :
-	vector <ofxBox2dCircle>		nodes;
-	vector <ofxBox2dJoint>		nodeJoints;
-};
-
-#endif
+#include "Blobs.h"
 
 class Blobs02 : public ofxJulapyApp
 {
@@ -46,13 +38,17 @@ public :
 		
 	void initBox2d();
 	void initAudioIn();
+	void initGui();
 		
 	void addBlob( float bx, float by, float radius, int nodesTotal );
+	void addBall( float bx, float by, float radius );
 		
 	void updateBox2d();
 	void updateAudio();
 		
 	void drawBox2d();
+	void drawBlobs();
+	void drawBalls();
 	void drawAudio();
 		
 	void keyReleased( int key );
@@ -61,10 +57,17 @@ public :
 	bool bDrawJoints;
 	bool bDrawCurves;
 		
+	ofxSimpleGuiToo		gui;
+	
 	ofxBox2d			box2d;			  //	the box2d world
 	vector <Blob>		blobs;
+	vector <Ball>		balls;
 	
-	AudioAbstract		*audio;
+	AudioLiveSpectrum	audio;
+	
+	float				blobScale;
+	float				blobNodeDaming;
+	float				blobNodeEase;
 };
 
 #endif

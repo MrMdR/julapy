@@ -17,17 +17,7 @@
 #include "ofxCvWarper.h"
 #include "OpticalField.h"
 
-#ifndef _BLOB_H_
-#define _BLOB_H_
-
-class Blob
-{
-public :
-	vector <ofxBox2dCircle>		nodes;
-	vector <ofxBox2dJoint>		nodeJoints;
-};
-
-#endif
+#include "Blobs.h"
 
 class Blobs01 : public ofxJulapyApp
 {
