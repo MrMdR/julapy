@@ -35,6 +35,13 @@ public :
 	virtual float getThreshold();
 	virtual float getAveragePeak();
 	virtual float getAveragePeakNorm();
+	virtual void  setPeakDecay ( float value );
+	virtual float getPeakDecay ();
+	virtual void  setMaxDecay ( float value );
+	virtual float getMaxDecay ();
+	
+	virtual void  getFftData ( float *data, int length );
+	virtual void  getFftPeakData ( float *data, int length );
 	virtual void  getGlitchData( int *data, int length );
 	
 	virtual	void  setPosition( float value );
@@ -61,7 +68,8 @@ public :
 	int		*fftDataSwitch;
 	
 	float	fftAveragePower;
-	
+	float	fftDataPeakDecay;
+	float	fftDataMaxDecay;
 	float	fftAveragePeak;
 	DataNormaliser fftAveragePeakNorm;
 	

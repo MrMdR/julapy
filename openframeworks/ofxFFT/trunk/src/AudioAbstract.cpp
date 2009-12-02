@@ -17,6 +17,8 @@ void  AudioAbstract :: init( string fileName )
 	setNoOfBands( 128 );
 	setFrameRateSync( false );
 	setThreshold( 0.5 );
+	setPeakDecay( 0.96 );
+	setMaxDecay( 1.0 );
 	
 	linearEQIntercept	= 0.9;
 	linearEQSlope		= 1.0;
@@ -41,26 +43,51 @@ void  AudioAbstract :: update()
 		float p = i / (float)( audioNoOfBands - 1 );
 		int j	= audioNoOfBands - 1;
 		
-		fftData[ i ] = fftData[ j - i ]  = fftMagnitude[ i ];
-		fftData[ i ] = fftData[ j - i ] *= linearEQIntercept + p * linearEQSlope;
+		float fftDataVal;
+		fftDataVal = fftMagnitude[ i ];								// use magnitude for fft data.
+		fftDataVal *= linearEQIntercept + p * linearEQSlope;		// scale value.
 		
-		if( fftDataMax[ i ] < fftData[ i ] )
+		float fftDataMaxVal;
+		fftDataMaxVal = fftDataMax[ i ];
+
+		if( fftDataMaxVal < fftDataVal )
 		{
-			fftDataMax[ i ] = fftDataMax[ j - i ] = fftData[ i ];
+			fftDataMaxVal = fftDataVal;
 		}
 		
-		fftData[ i ] = fftData[ j - i ] = fftData[ i ] / fftDataMax[ i ];
+		float fftDataNormVal;
+		fftDataNormVal = 0;
+		if( fftDataMaxVal > 0 )
+			fftDataNormVal = fftDataVal / fftDataMaxVal;			// normalise data between 0 and 1.
 		
-		fftDataPeak[ i ] = fftDataPeak[ j - i ] *= 0.96;
-		if( fftDataPeak[ i ] < fftData[ i ] )
-			fftDataPeak[ i ] = fftDataPeak[ j - i ] = fftData[ i ];
+		fftDataMaxVal *= fftDataMaxDecay;							// decay the max value.
 		
-		if( fftDataPeak[ i ] < threshold )
-			fftDataSwitch[ i ] = fftDataSwitch[ j - i ] = 1;
+		fftData[ i ]			= fftDataNormVal;
+		fftData[ j - i ]		= fftDataNormVal;					// mirror arrays.
+		
+		fftDataMax[ i ]			= fftDataMaxVal;
+		fftDataMax[ j - i ]		= fftDataMaxVal;					// mirror arrays.
+		
+		float fftDataPeakVal;
+		fftDataPeakVal = fftDataPeak[ i ];
+		fftDataPeakVal *= fftDataPeakDecay;							// decay peak value.
+		
+		if( fftDataPeakVal < fftDataNormVal )						// check if new peak.
+			fftDataPeakVal = fftDataNormVal;
+		
+		fftDataPeak[ i ]		= fftDataPeakVal;
+		fftDataPeak[ j - i ]	= fftDataPeakVal;
+		
+		fftAveragePeak			+= fftDataPeakVal;					// sum of all peaks.
+		
+		int fftDataSwitchVal;										// switch data (on/off).
+		if( fftDataPeakVal < threshold )
+			fftDataSwitchVal = 1;
 		else
-			fftDataSwitch[ i ] = fftDataSwitch[ j - i ] = 0;
+			fftDataSwitchVal = 0;
 		
-		fftAveragePeak += fftDataPeak[ i ];
+		fftDataSwitch[ i ]		= fftDataSwitchVal;
+		fftDataSwitch[ j - i ]	= fftDataSwitchVal;
 	}
 	
 	fftAveragePeak /= audioNoOfBandsHalf;
@@ -194,14 +221,65 @@ float AudioAbstract :: getAveragePeakNorm()
 	return fftAveragePeakNorm.getNormalisedValue();
 }
 
+void AudioAbstract :: setPeakDecay ( float value )
+{
+	value = MIN( 1, MAX( 0, value ) );
+	
+	fftDataPeakDecay = value;
+}
+
+float AudioAbstract :: getPeakDecay ()
+{
+	return fftDataPeakDecay;
+}
+
+void AudioAbstract :: setMaxDecay ( float value )
+{
+	fftDataMaxDecay = value;
+}
+
+float AudioAbstract :: getMaxDecay ()
+{
+	return fftDataMaxDecay;
+}
+
+//////////////////////////////////////////////////////
+//	GET VARIOUS DATA SAMPLES.
+//////////////////////////////////////////////////////
+
+void AudioAbstract :: getFftData ( float *data, int length )
+{
+	for( int i=0; i<length; i++ )
+	{
+		int j		= (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
+		float v		= fftData[ j ];
+		data[ i ]	= v;
+	}
+}
+
+void AudioAbstract :: getFftPeakData ( float *data, int length )
+{
+	for( int i=0; i<length; i++ )
+	{
+		int j		= (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
+		float v		= fftDataPeak[ j ];
+		data[ i ]	= v;
+	}
+}
+
 void AudioAbstract :: getGlitchData( int *data, int length )
 {
 	for( int i=0; i<length; i++ )
 	{
-		int j = (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
-		data[ i ] = fftDataSwitch[ j ];
+		int j		= (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
+		float v		= fftDataSwitch[ j ];
+		data[ i ]	= v;
 	}
 }
+
+//////////////////////////////////////////////////////
+//	
+//////////////////////////////////////////////////////
 
 void  AudioAbstract :: setPosition( float value ) {};
 float AudioAbstract :: getPosition() { return 0; };
