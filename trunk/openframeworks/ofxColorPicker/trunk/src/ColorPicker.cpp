@@ -122,6 +122,12 @@ float ColorPicker :: getHeight()
 //	EVENT HANDLERS.
 //////////////////////////////////////////////
 
+void ColorPicker :: update()		// HACK - so update can be called manually when it needs to be.
+{
+	ofEventArgs e;
+	update( e );
+}
+
 void ColorPicker :: update( ofEventArgs &e )
 {
 	if( colorMode == COLOR_PICKER_MODE_CIRLCE_ROTATION )
