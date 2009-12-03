@@ -35,6 +35,7 @@ public :
 	~ColorPicker();
 
 	void  update( ofEventArgs &e );
+	void  update();
 	void  exit( ofEventArgs &e );
 
 	void  setPos( float x, float y );
