@@ -327,7 +327,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>15D67FED10C5276D006764CF</string>
+										<string>15C4267F10C68D9F00988979</string>
 										<key>history</key>
 										<array>
 											<string>15AE8D100FDE131800648607</string>
@@ -363,7 +363,7 @@
 											<string>15D67FD610C524AE006764CF</string>
 											<string>15D67FD710C524AE006764CF</string>
 											<string>15D67FD810C524AE006764CF</string>
-											<string>15D67FD010C52381006764CF</string>
+											<string>15D67FED10C5276D006764CF</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -401,46 +401,6 @@
 											<string>15E5CDC910A1A42400EDB90A</string>
 											<string>15014F9F10A6E989006EF6E6</string>
 											<string>150021E410A98692009ACA73</string>
-											<string>15D67F4710C51550006764CF</string>
-											<string>15D67F4810C51550006764CF</string>
-											<string>15D67F4910C51550006764CF</string>
-											<string>15D67F4A10C51550006764CF</string>
-											<string>15D67F4B10C51550006764CF</string>
-											<string>15D67F4C10C51550006764CF</string>
-											<string>15D67F4D10C51550006764CF</string>
-											<string>15D67F4E10C51550006764CF</string>
-											<string>15D67F4F10C51550006764CF</string>
-											<string>15D67F5010C51550006764CF</string>
-											<string>15D67F5110C51550006764CF</string>
-											<string>15D67F5210C51550006764CF</string>
-											<string>15D67F5310C51550006764CF</string>
-											<string>15D67F5410C51550006764CF</string>
-											<string>15D67F5510C51550006764CF</string>
-											<string>15D67F5610C51550006764CF</string>
-											<string>15D67F5710C51550006764CF</string>
-											<string>15D67F5810C51550006764CF</string>
-											<string>15D67F5910C51550006764CF</string>
-											<string>15D67F5A10C51550006764CF</string>
-											<string>15D67F5B10C51550006764CF</string>
-											<string>15D67F5C10C51550006764CF</string>
-											<string>15D67F5D10C51550006764CF</string>
-											<string>15D67F5E10C51550006764CF</string>
-											<string>15D67F5F10C51550006764CF</string>
-											<string>15D67F6010C51550006764CF</string>
-											<string>15D67F6110C51550006764CF</string>
-											<string>15D67F6210C51550006764CF</string>
-											<string>15D67F6310C51550006764CF</string>
-											<string>15D67F6410C51550006764CF</string>
-											<string>15D67F6510C51550006764CF</string>
-											<string>15D67F6610C51550006764CF</string>
-											<string>15D67F7910C51679006764CF</string>
-											<string>15D67F7A10C51679006764CF</string>
-											<string>15D67FD210C52381006764CF</string>
-											<string>15D67FD910C524AE006764CF</string>
-											<string>15D67FDA10C524AE006764CF</string>
-											<string>15D67FDB10C524AE006764CF</string>
-											<string>15D67FDC10C524AE006764CF</string>
-											<string>15D67FDD10C524AE006764CF</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -498,9 +458,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>15D67F2710C50BF6006764CF</string>
+				<string>15C4268010C68D9F00988979</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>15D67F2810C50BF6006764CF</string>
+				<string>15C4268110C68D9F00988979</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -634,11 +594,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>15D67F7010C51550006764CF</string>
-		<string>15D67F7110C51550006764CF</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1525A9E10FDD25BE0074886C</string>
 		<string>/Applications/OF_006/apps/_julapy/julapy_lightChasm/openFrameworks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
