@@ -16,7 +16,8 @@ class ofxJulapyApp : public ofBaseApp
 {
 
 public :
-	
+
+	virtual void drawDebug();
 	virtual void setRenderArea( int x, int y, int w, int h );
 	virtual void setRenderArea( const ofRectangle& rect );
 

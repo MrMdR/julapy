@@ -24,3 +24,8 @@ void ofxJulapyApp :: setRenderArea( const ofRectangle& rect )
 	renderArea.width	= rect.width;
 	renderArea.height	= rect.height;
 }
+
+void ofxJulapyApp :: drawDebug()
+{
+	//
+}
