@@ -8,10 +8,6 @@
 
 #include "ofxOsc.h"
 
-//#define HOST "localhost"
-#define HOST "169.254.115.116"
-#define PORT 12345
-
 class testApp : public ofSimpleApp, public ofxMultiTouchListener, public ofxLocationListener  {
 	
 public:
@@ -37,24 +33,27 @@ public:
 	void locationChange ( ofxLocationCustomLocationData *data );
 	void headingChange  ( ofxLocationCustomHeadingData  *data );
 	
-	ofRectangle renderArea;
+	ofxiPhoneKeyboard		*keyboard;
+	ofxiPhoneCoreLocation	*coreLocation;
+
+	ofRectangle		renderArea;
 	
 	ofTrueTypeFont	verdana;
 	
-	ofxiPhoneCoreLocation *coreLocation;
+	bool	hasGPS;
 	
-	bool hasGPS;
-	
-	ofxOscSender sender;
-
 	int		resX;
 	float	bandSize;
 	int		bandMult;
 	
 	int		elapsedTime;
 	
+	string	oscHost;
+	int		oscPort;
 	int		oscTime;
 	int		oscTimeout;
+	
+	ofxOscSender osc;
 	
 	float	speedValue;
 	float	speedValueMax;

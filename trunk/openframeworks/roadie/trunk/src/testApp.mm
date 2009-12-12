@@ -13,21 +13,25 @@ void testApp::setup()
 	ofSetFrameRate(60);
 	
 	ofxAccelerometer.setup();
-	ofxMultiTouch.addListener(this);
+	ofxMultiTouch.addListener( this );
 	ofxLocation.addListener( this );
+	
+	keyboard = new ofxiPhoneKeyboard(0,32,300,32);
+	keyboard->setVisible(true);
+	keyboard->setBgColor(0, 0, 0, 255);
+	keyboard->setFontColor(255,255,255,255);
+	keyboard->setFontSize(26);
 	
 	renderArea.x      = 0;
 	renderArea.y	  = 0;
 	renderArea.width  = ofGetScreenWidth();
 	renderArea.height = ofGetScreenHeight();
 
-	verdana.loadFont(ofToDataPath("verdana.ttf"),8, false, true);
-	verdana.setLineHeight(20.0f);
+	verdana.loadFont(ofToDataPath( "verdana.ttf" ), 8, false, true );
+	verdana.setLineHeight( 20.0f );
 	
 	coreLocation	= new ofxiPhoneCoreLocation();
 	hasGPS			= coreLocation->startLocation();
-	
-	sender.setup( HOST, PORT );
 	
 	resX = 20;
 	bandSize = 0.1;
@@ -35,6 +39,12 @@ void testApp::setup()
 	
 	oscTime			= 0;
 	oscTimeout		= 1000;
+	
+//	oscHost			= "localhost";
+	oscHost			= "169.254.115.116";
+	oscPort			= 12345;
+	
+	osc.setup( oscHost, oscPort );
 	
 	speedValue		= 0;
 	speedValueMax	= 0;
@@ -120,7 +130,7 @@ void testApp :: sendOscMessage ()
 	m.addFloatArg( tiltY.back() );
 	m.addFloatArg( speed.back() );
 	m.addFloatArg( audio.back() );
-	sender.sendMessage( m );
+	osc.sendMessage( m );
 }
 
 ///////////////////////////////////////////////////////////
@@ -265,7 +275,10 @@ void testApp::touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *da
 
 void testApp::touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data)
 {
-	ofToggleFullscreen();
+	if(!keyboard->isKeyboardShowing())
+		keyboard->openKeyboard();
+	
+//	ofToggleFullscreen();
 }
 
 ///////////////////////////////////////////////////////////
