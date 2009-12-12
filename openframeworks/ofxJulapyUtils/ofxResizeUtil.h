@@ -17,8 +17,8 @@ class ofxResizeUtil
 
 public :
 	
-	static ofRectangle cropToSize( const ofRectangle& srcRect, const ofRectangle& dstRect );
-	static ofRectangle fitToSize( const ofRectangle& srcRect, const ofRectangle& dstRect );
+	static ofRectangle cropToSize ( const ofRectangle& srcRect, const ofRectangle& dstRect );
+	static ofRectangle fitToSize  ( const ofRectangle& srcRect, const ofRectangle& dstRect );
 
 };
 
