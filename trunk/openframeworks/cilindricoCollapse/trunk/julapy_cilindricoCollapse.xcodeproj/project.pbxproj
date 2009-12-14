@@ -87,12 +87,12 @@
 		156D2CBA10D6646E0063F09F /* trackball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trackball.h; path = ../../../addons/ofxTrackball/src/trackball.h; sourceTree = SOURCE_ROOT; };
 		156D2CBD10D665460063F09F /* ofxTrackball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTrackball.h; sourceTree = "<group>"; };
 		156D2CBE10D665460063F09F /* ofxTrackball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTrackball.cpp; sourceTree = "<group>"; };
+		156D2DB110D6760D0063F09F /* ofxTileSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTileSaver.h; path = ../../../addons/ofxTileSaver/ofxTileSaver.h; sourceTree = SOURCE_ROOT; };
+		156D2DB210D6760D0063F09F /* ofxTileSaverImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTileSaverImage.h; path = ../../../addons/ofxTileSaver/ofxTileSaverImage.h; sourceTree = SOURCE_ROOT; };
 		15AB683110D237E1001928FF /* CilindricoCollapse_01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CilindricoCollapse_01.h; sourceTree = "<group>"; };
 		15AB683210D237E1001928FF /* CilindricoCollapse_01.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CilindricoCollapse_01.cpp; sourceTree = "<group>"; };
 		15AB685810D2412A001928FF /* ofxTrigLUT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTrigLUT.h; sourceTree = "<group>"; };
 		15AB685910D2412A001928FF /* ofxTrigLUT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTrigLUT.cpp; sourceTree = "<group>"; };
-		15CB382E10469D2100A575F8 /* ofxTileSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTileSaver.h; path = ../../../addons/ofxTileSaver/ofxTileSaver.h; sourceTree = SOURCE_ROOT; };
-		15CB382F10469D2100A575F8 /* ofxTileSaverImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTileSaverImage.h; path = ../../../addons/ofxTileSaver/ofxTileSaverImage.h; sourceTree = SOURCE_ROOT; };
 		15CB385410469F7F00A575F8 /* ofxMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMatrix3x3.cpp; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp; sourceTree = SOURCE_ROOT; };
 		15CB385510469F7F00A575F8 /* ofxMatrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMatrix3x3.h; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.h; sourceTree = SOURCE_ROOT; };
 		15CB385610469F7F00A575F8 /* ofxPoint2f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxPoint2f.cpp; path = ../../../addons/ofxVectorMath/src/ofxPoint2f.cpp; sourceTree = SOURCE_ROOT; };
@@ -353,6 +353,16 @@
 			path = ../../../addons/ofxTrackball/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		156D2DB010D6760D0063F09F /* ofxTileSaver */ = {
+			isa = PBXGroup;
+			children = (
+				156D2DB110D6760D0063F09F /* ofxTileSaver.h */,
+				156D2DB210D6760D0063F09F /* ofxTileSaverImage.h */,
+			);
+			name = ofxTileSaver;
+			path = ../../../addons/ofxTileSaver;
+			sourceTree = SOURCE_ROOT;
+		};
 		15AB683010D237B1001928FF /* julapps */ = {
 			isa = PBXGroup;
 			children = (
@@ -363,16 +373,6 @@
 			);
 			name = julapps;
 			path = src/julapps;
-			sourceTree = SOURCE_ROOT;
-		};
-		15CB382D10469D2100A575F8 /* ofxTileSaver */ = {
-			isa = PBXGroup;
-			children = (
-				15CB382E10469D2100A575F8 /* ofxTileSaver.h */,
-				15CB382F10469D2100A575F8 /* ofxTileSaverImage.h */,
-			);
-			name = ofxTileSaver;
-			path = ../../../addons/ofxTileSaver;
 			sourceTree = SOURCE_ROOT;
 		};
 		15CB385310469F7F00A575F8 /* ofxVectorMath */ = {
@@ -510,8 +510,8 @@
 			isa = PBXGroup;
 			children = (
 				15CB385310469F7F00A575F8 /* ofxVectorMath */,
-				15CB382D10469D2100A575F8 /* ofxTileSaver */,
 				1552672B10B94F4C00040958 /* ofxJulapyUtils */,
+				156D2DB010D6760D0063F09F /* ofxTileSaver */,
 				156D2CB710D6646E0063F09F /* ofxTrackball */,
 			);
 			name = addons;
