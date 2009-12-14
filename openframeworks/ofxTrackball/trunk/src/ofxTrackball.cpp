@@ -12,11 +12,38 @@
 ofxTrackball :: ofxTrackball()
 {
 	reset();
+	enableMouseEvents();
+	enableAppEvents();
 }
 
 ofxTrackball :: ~ofxTrackball()
 {
+	disableMouseEvents();
+	disableAppEvents();
+}
 
+void ofxTrackball :: enableMouseEvents ()
+{
+	ofAddListener( ofEvents.mousePressed,  this, &ofxTrackball :: mouseDown );
+	ofAddListener( ofEvents.mouseDragged,  this, &ofxTrackball :: mouseMoved );
+	ofAddListener( ofEvents.mouseReleased, this, &ofxTrackball :: mouseUp );
+}
+
+void ofxTrackball :: disableMouseEvents ()
+{
+	ofRemoveListener( ofEvents.mousePressed,  this, &ofxTrackball :: mouseDown );
+	ofRemoveListener( ofEvents.mouseDragged,  this, &ofxTrackball :: mouseMoved );
+	ofRemoveListener( ofEvents.mouseReleased, this, &ofxTrackball :: mouseUp );
+}
+
+void ofxTrackball :: enableAppEvents ()
+{
+	ofAddListener( ofEvents.update, this, &ofxTrackball :: update );
+}
+
+void ofxTrackball :: disableAppEvents()
+{
+	ofRemoveListener( ofEvents.update, this, &ofxTrackball :: update );
 }
 
 void ofxTrackball :: setCenter ( int x, int y )
@@ -25,26 +52,26 @@ void ofxTrackball :: setCenter ( int x, int y )
 	center.y = y;
 }
 
-void ofxTrackball :: mouseDown ( int x, int y )
+void ofxTrackball :: mouseDown ( ofMouseEventArgs &e )
 {
 	isMouseDown = true;
 	
-	mouseCurr.x = x;
-	mouseCurr.y = y;
+	mouseCurr.x = e.x;
+	mouseCurr.y = e.y;
 }
 
-void ofxTrackball :: mouseUp ( int x, int y )
+void ofxTrackball :: mouseUp ( ofMouseEventArgs &e )
 {
 	isMouseDown = false;
 }
 
-void ofxTrackball :: mouseMoved ( int x, int y )
+void ofxTrackball :: mouseMoved ( ofMouseEventArgs &e )
 {
 	mousePrev.x = mouseCurr.x;
 	mousePrev.y = mouseCurr.y;
 	
-	mouseCurr.x = x;
-	mouseCurr.y = y;
+	mouseCurr.x = e.x;
+	mouseCurr.y = e.y;
 	
 	float mp[ 2 ];
 	float mc[ 2 ];
@@ -67,7 +94,7 @@ void ofxTrackball :: mouseMoved ( int x, int y )
 	}
 }
 
-void ofxTrackball :: update ()
+void ofxTrackball :: update ( ofEventArgs &e )
 {
 	float mp[ 2 ];
 	float mc[ 2 ];

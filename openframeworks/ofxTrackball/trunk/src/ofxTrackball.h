@@ -10,6 +10,7 @@
 #ifndef _OFX_TRACKBALL_H_
 #define _OFX_TRACKBALL_H_
 
+#include "ofMain.h"
 #include "trackball.h"
 #include "ofxVec2f.h"
 
@@ -21,11 +22,16 @@ public :
 	ofxTrackball();
 	~ofxTrackball();
 	
+	void enableMouseEvents	();
+	void disableMouseEvents ();
+	void enableAppEvents	();
+	void disableAppEvents	();
+	
 	void setCenter	( int x, int y );
-	void mouseDown	( int x, int y );
-	void mouseUp	( int x, int y );
-	void mouseMoved	( int x, int y );
-	void update		();
+	void mouseDown	( ofMouseEventArgs &e );
+	void mouseUp	( ofMouseEventArgs &e );
+	void mouseMoved	( ofMouseEventArgs &e );
+	void update		( ofEventArgs &e );
 	void rotate		();
 	void reset		();
 
