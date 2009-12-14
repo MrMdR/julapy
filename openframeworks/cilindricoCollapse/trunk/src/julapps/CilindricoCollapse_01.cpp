@@ -77,8 +77,6 @@ void CilindricoCollapse_01 :: reset()
 
 void CilindricoCollapse_01 :: update()
 {
-	trackball.update();
-	
 	for( int i=0; i<arcBars.size(); i++ )
 	{
 		arcBars.at( i ).update();
@@ -128,22 +126,17 @@ void CilindricoCollapse_01 :: keyPressed( int key )
 	}
 }
 
-void CilindricoCollapse_01 :: mouseMoved ( int x, int y )
-{
-//	trackball.mouseDown( x, y );
-}
-
 void CilindricoCollapse_01 :: mouseDragged ( int x, int y, int button )
 {
-	trackball.mouseMoved( x, y );
+	//
 }
 
 void CilindricoCollapse_01 :: mousePressed ( int x, int y, int button )
 {
-	trackball.mouseDown( x, y );
+	//
 }
 
 void CilindricoCollapse_01 :: mouseReleased ( int x, int y, int button )
 {
-	trackball.mouseUp( x, y );
+	//
 }
