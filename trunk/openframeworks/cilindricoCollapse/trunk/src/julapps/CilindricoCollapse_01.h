@@ -9,6 +9,7 @@
 
 #include "ofMain.h"
 #include "ofxJulapyApp.h"
+#include "ofxTrackball.h"
 #include "ofxTrigLUT.h"
 
 #include "ArcBar.h"
@@ -28,6 +29,13 @@ public :
 	void drawDebug();
 	
 	void keyPressed( int key );
-
-	vector<ArcBar> arcBars;
+	
+	void mouseMoved		( int x, int y );
+	void mouseDragged	( int x, int y, int button );
+	void mousePressed	( int x, int y, int button );
+	void mouseReleased	( int x, int y, int button );
+	
+	ofxTrackball	trackball;
+	
+	vector<ArcBar>	arcBars;
 };
