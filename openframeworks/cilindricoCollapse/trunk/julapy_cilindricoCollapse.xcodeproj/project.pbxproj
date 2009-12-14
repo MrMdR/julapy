@@ -14,6 +14,8 @@
 		1552673B10B94F4C00040958 /* ofxResizeUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1552673210B94F4C00040958 /* ofxResizeUtil.cpp */; };
 		1552673C10B94F4C00040958 /* ofxScreenGrabUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1552673410B94F4C00040958 /* ofxScreenGrabUtil.cpp */; };
 		1552673D10B94F4C00040958 /* ofxTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1552673610B94F4C00040958 /* ofxTrigger.cpp */; };
+		156D2CBB10D6646E0063F09F /* trackball.c in Sources */ = {isa = PBXBuildFile; fileRef = 156D2CB910D6646E0063F09F /* trackball.c */; };
+		156D2CBF10D665460063F09F /* ofxTrackball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156D2CBE10D665460063F09F /* ofxTrackball.cpp */; };
 		15AB683310D237E1001928FF /* CilindricoCollapse_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15AB683210D237E1001928FF /* CilindricoCollapse_01.cpp */; };
 		15AB685A10D2412A001928FF /* ofxTrigLUT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15AB685910D2412A001928FF /* ofxTrigLUT.cpp */; };
 		15CB386310469F7F00A575F8 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CB385410469F7F00A575F8 /* ofxMatrix3x3.cpp */; };
@@ -81,6 +83,10 @@
 		1552673510B94F4C00040958 /* ofxScreenGrabUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxScreenGrabUtil.h; path = ../../../addons/ofxJulapyUtils/ofxScreenGrabUtil.h; sourceTree = SOURCE_ROOT; };
 		1552673610B94F4C00040958 /* ofxTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTrigger.cpp; path = ../../../addons/ofxJulapyUtils/ofxTrigger.cpp; sourceTree = SOURCE_ROOT; };
 		1552673710B94F4C00040958 /* ofxTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTrigger.h; path = ../../../addons/ofxJulapyUtils/ofxTrigger.h; sourceTree = SOURCE_ROOT; };
+		156D2CB910D6646E0063F09F /* trackball.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = trackball.c; path = ../../../addons/ofxTrackball/src/trackball.c; sourceTree = SOURCE_ROOT; };
+		156D2CBA10D6646E0063F09F /* trackball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trackball.h; path = ../../../addons/ofxTrackball/src/trackball.h; sourceTree = SOURCE_ROOT; };
+		156D2CBD10D665460063F09F /* ofxTrackball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTrackball.h; sourceTree = "<group>"; };
+		156D2CBE10D665460063F09F /* ofxTrackball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTrackball.cpp; sourceTree = "<group>"; };
 		15AB683110D237E1001928FF /* CilindricoCollapse_01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CilindricoCollapse_01.h; sourceTree = "<group>"; };
 		15AB683210D237E1001928FF /* CilindricoCollapse_01.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CilindricoCollapse_01.cpp; sourceTree = "<group>"; };
 		15AB685810D2412A001928FF /* ofxTrigLUT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTrigLUT.h; sourceTree = "<group>"; };
@@ -326,6 +332,27 @@
 			path = ../../../addons/ofxJulapyUtils;
 			sourceTree = SOURCE_ROOT;
 		};
+		156D2CB710D6646E0063F09F /* ofxTrackball */ = {
+			isa = PBXGroup;
+			children = (
+				156D2CB810D6646E0063F09F /* src */,
+			);
+			name = ofxTrackball;
+			path = ../../../addons/ofxTrackball;
+			sourceTree = SOURCE_ROOT;
+		};
+		156D2CB810D6646E0063F09F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				156D2CB910D6646E0063F09F /* trackball.c */,
+				156D2CBA10D6646E0063F09F /* trackball.h */,
+				156D2CBD10D665460063F09F /* ofxTrackball.h */,
+				156D2CBE10D665460063F09F /* ofxTrackball.cpp */,
+			);
+			name = src;
+			path = ../../../addons/ofxTrackball/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		15AB683010D237B1001928FF /* julapps */ = {
 			isa = PBXGroup;
 			children = (
@@ -485,6 +512,7 @@
 				15CB385310469F7F00A575F8 /* ofxVectorMath */,
 				15CB382D10469D2100A575F8 /* ofxTileSaver */,
 				1552672B10B94F4C00040958 /* ofxJulapyUtils */,
+				156D2CB710D6646E0063F09F /* ofxTrackball */,
 			);
 			name = addons;
 			path = ../../../addons;
@@ -970,6 +998,8 @@
 				15AB683310D237E1001928FF /* CilindricoCollapse_01.cpp in Sources */,
 				15AB685A10D2412A001928FF /* ofxTrigLUT.cpp in Sources */,
 				1501603B10D30C71005D6E52 /* ArcBar.cpp in Sources */,
+				156D2CBB10D6646E0063F09F /* trackball.c in Sources */,
+				156D2CBF10D665460063F09F /* ofxTrackball.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
