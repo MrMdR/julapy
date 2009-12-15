@@ -11,8 +11,6 @@
 #define _OFX_TRACKBALL_H_
 
 #include "ofMain.h"
-#include "trackball.h"
-#include "ofxVec2f.h"
 
 class ofxTrackball 
 {
@@ -21,27 +19,41 @@ public :
 	
 	ofxTrackball();
 	~ofxTrackball();
+
+	void setCenter	( int x, int y );
+	void setRadius	( float radius );
+	void setDamping	( float damping );
+	
+	void rotate		();
+	void reset		();
+	
+private :
 	
 	void enableMouseEvents	();
 	void disableMouseEvents ();
 	void enableAppEvents	();
 	void disableAppEvents	();
 	
-	void setCenter	( int x, int y );
 	void mouseDown	( ofMouseEventArgs &e );
 	void mouseUp	( ofMouseEventArgs &e );
 	void mouseMoved	( ofMouseEventArgs &e );
 	void update		( ofEventArgs &e );
-	void rotate		();
-	void reset		();
 
-	GLfloat		trackRot[ 4 ];
-	GLfloat		worldRot[ 4 ];
+	void rollToTrackball		( );
+	void addToRotationTrackball ( float *dA, float *A );
+	void rotation2Quat			( float *A,  float *q );
 	
-	ofxVec2f	center;
-	ofxVec2f	mouseCurr;
-	ofxVec2f	mousePrev;
-	ofxVec2f	mouseVel;
+	GLfloat		rotation[ 4 ];
+	
+	float		tolerance;
+	float		radius;
+	float		damping;
+	
+	ofPoint		center;
+	ofPoint		mouseCurr;
+	ofPoint		mousePrev;
+	ofPoint		mouseVel;
+	ofPoint		mouseNew;
 	bool		isMouseDown;
 	
 };
