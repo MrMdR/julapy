@@ -65,7 +65,14 @@ void CilindricoCollapse_01 :: setup ()
 		arcLocZ += ( arcHeight + arcLocZInc );
 	}
 	
-	trackball.setCenter( (int)( renderArea.width * 0.5 ), (int)( renderArea.height * 0.5 ) );
+	//-- trackball.
+	
+	int cx, cy;
+	cx = (int)( renderArea.width  * 0.5 );
+	cy = (int)( renderArea.height * 0.5 );
+	
+	trackball.setCenter( cx, cy );
+	trackball.setRadius( MAX( cx, cy ) );
 }
 
 void CilindricoCollapse_01 :: reset()
