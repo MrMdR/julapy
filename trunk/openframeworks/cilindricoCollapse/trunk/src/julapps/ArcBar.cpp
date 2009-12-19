@@ -17,6 +17,7 @@ ArcBar :: ArcBar()
 	
 	float c;
 	c = ofRandom( 0, 1 );
+	c = 1;
 	
 	colour[ 0 ] = c;
 	colour[ 1 ] = c;
@@ -42,11 +43,53 @@ ArcBar :: ArcBar()
 	drawQuads		= true;
 	drawNormals		= false;
 	drawAngles		= false;
+	
+	perlinStep			= NULL;
+	perlinSampleLegth	= angleStep;
+	perlinResolution	= 0.3;
+	perlinBanding		= 0.129;
+	perlinLowerBounds	= 0.288;
+	perlinUpperBounds	= 0.717;
 }
 
 ArcBar :: ~ArcBar()
 {
-	//
+	delete perlinStep;
+}
+
+void ArcBar :: setup ()
+{
+	init();
+	
+	perlinStep = new PerlinStep();
+	perlinStep->setup();
+	perlinStep->setSampleLength( perlinSampleLegth );
+	perlinStep->setResolution( perlinResolution );
+	perlinStep->setBanding( perlinBanding );
+	perlinStep->setBounds( perlinLowerBounds, perlinUpperBounds );
+	perlinStep->update();
+}
+
+void ArcBar :: setup ( PerlinStep *ps )
+{
+	init();
+	
+	if( perlinStep != NULL )
+		delete perlinStep;
+	
+	perlinStep = ps;
+	perlinStep->setup();
+	perlinStep->setSampleLength( perlinSampleLegth );
+	perlinStep->setResolution( perlinResolution );
+	perlinStep->setBanding( perlinBanding );
+	perlinStep->setBounds( perlinLowerBounds, perlinUpperBounds );
+	perlinStep->update();
+}
+
+void ArcBar :: init ()
+{
+	angleStep = (int)( angle / ofxTrigLUT :: precision );
+	perlinSampleLegth = angleStep;
 }
 
 void ArcBar :: createSolidModel ()
@@ -185,66 +228,35 @@ void ArcBar :: createSolidModel ()
 void ArcBar :: createWireframe ()
 {
 	float x1, y1, x2, y2, x3, y3, x4, y4;
-	float fx1, fy1, fx2, fy2;
 	float ps1, ps2;
 	int i, j;
 	
 	x1 = y1 = x2 = y2 = x3 = y3 = x4 = y4 = 0;
-	fx1 = fy1 = fx2 = fy2 = 0;
 	ps1 = 0;
 	ps2 = 0;
 	
 	glNewList( id + 1, GL_COMPILE );
 	glNormal3f( 0, 0, 0 );
 	
-	for( i = 0; i<angleStep; i++ ) 
+	for( i=0; i<angleStep; i++ )
 	{
 		j = ( i < angleStep - 1 ) ? ( i + 1 ) : 0;
 		
-//		ps1 = ps.perlinSteps[ i ];
-//		ps2 = ps.perlinSteps[ j ];
+		ps1 = perlinStep->at( i );
+		ps2 = perlinStep->at( j );
 
-		ps1 = 1.0;
-		ps2 = 1.0;
-		
-		x1	= ofxTrigLUT :: cosLUT[ j ] * ( radius - wireframePad );
-		y1	= ofxTrigLUT :: sinLUT[ j ] * ( radius - wireframePad );
-		x2	= ofxTrigLUT :: cosLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
-		y2	= ofxTrigLUT :: sinLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
-		
-		x3	= ofxTrigLUT :: cosLUT[ i ] * ( radius - wireframePad );
-		y3	= ofxTrigLUT :: sinLUT[ i ] * ( radius - wireframePad );
-		x4	= ofxTrigLUT :: cosLUT[ i ] * ( radius + wireframePad + ( width * ps1 ) );
-		y4	= ofxTrigLUT :: sinLUT[ i ] * ( radius + wireframePad + ( width * ps1 ) );
-		
-//				if( ps1 != ps2 )
-//				{
-//					if( ps1 == 0 )
-//					{
-//						fx1	= cosLUT[ j ] * ( radius - wireframePad );
-//						fy1	= sinLUT[ j ] * ( radius - wireframePad );
-//						fx2	= cosLUT[ j ] * ( radius + wireframePad + ( width * ps2 ) );
-//						fy2	= sinLUT[ j ] * ( radius + wireframePad + ( width * ps2 ) );
-//					}
-//					else if( ps2 == 0 )
-//					{
-//						fx1	= cosLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
-//						fy1	= sinLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
-//						fx2	= cosLUT[ j ] * ( radius - wireframePad );
-//						fy2	= sinLUT[ j ] * ( radius - wireframePad );
-//					}
-//					
-//					gl.glBegin( GL.GL_LINE_STRIP );		// draw side faces.
-//						gl.glVertex3f( fx1, fy1, 0 - wireframePad );
-//						gl.glVertex3f( fx1, fy1, height + wireframePad );
-//						gl.glVertex3f( fx2, fy2, height + wireframePad );
-//						gl.glVertex3f( fx2, fy2, 0 - wireframePad );
-//						gl.glVertex3f( fx1, fy1, 0 - wireframePad );
-//					gl.glEnd();
-//				}
-		
 		if( ( ps1 > 0 ) || ( ( ps2 > 0 ) && ( ps1 > 0 ) ) )
 		{
+			x1	= ofxTrigLUT :: cosLUT[ j ] * ( radius - wireframePad );
+			y1	= ofxTrigLUT :: sinLUT[ j ] * ( radius - wireframePad );
+			x2	= ofxTrigLUT :: cosLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
+			y2	= ofxTrigLUT :: sinLUT[ j ] * ( radius + wireframePad + ( width * ps1 ) );
+			
+			x3	= ofxTrigLUT :: cosLUT[ i ] * ( radius - wireframePad );
+			y3	= ofxTrigLUT :: sinLUT[ i ] * ( radius - wireframePad );
+			x4	= ofxTrigLUT :: cosLUT[ i ] * ( radius + wireframePad + ( width * ps1 ) );
+			y4	= ofxTrigLUT :: sinLUT[ i ] * ( radius + wireframePad + ( width * ps1 ) );
+			
 			glBegin( GL_LINE_STRIP );		// draw inner faces.
 			glVertex3f( x1, y1, 0 - wireframePad );
 			glVertex3f( x3, y3, 0 - wireframePad );

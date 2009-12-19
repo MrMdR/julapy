@@ -7,6 +7,7 @@
 #include "ofxJulapyApp.h"
 
 #include "CilindricoCollapse_01.h"
+#include "PerlinStepExample.h"	
 
 class testApp : public ofSimpleApp
 {

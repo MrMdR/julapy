@@ -12,6 +12,7 @@
 
 #include "ofxVectorMath.h"
 #include "ofxTrigLUT.h"
+#include "PerlinStep.h"
 
 class ArcBar
 {
@@ -21,6 +22,9 @@ public :
 	ArcBar();
 	~ArcBar();
 	
+	void setup	();
+	void setup	( PerlinStep *perlinStep );
+	
 	void createSolidModel ();
 	void createWireframe  ();
 	
@@ -29,6 +33,13 @@ public :
 	void renderSolidModel ();
 	void renderWireframe  ();
 	void render			  ();
+	
+	PerlinStep	*perlinStep;
+	int			perlinSampleLegth;
+	float		perlinResolution;
+	float		perlinBanding;
+	float		perlinLowerBounds;
+	float		perlinUpperBounds;
 	
 	ofxVec3f loc;		// location.
 	ofxVec3f vel;		// velocity.
@@ -54,6 +65,10 @@ public :
 	bool drawQuads;
 	bool drawNormals;
 	bool drawAngles;
+	
+private :
+	
+	void init ();
 	
 };
 
