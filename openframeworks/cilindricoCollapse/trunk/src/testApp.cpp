@@ -48,7 +48,7 @@ void testApp :: setJulApp ( int appID )
 			break;
 			
 		case 2 :
-			return;
+			julApp = new PerlinStepExample();
 			break;
 			
 		case 3 :
@@ -84,8 +84,11 @@ void testApp :: setJulApp ( int appID )
 			break;
 	}
 	
-	julApp->setRenderArea( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
-	julApp->setup();
+	if( julApp != NULL )
+	{
+		julApp->setRenderArea( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
+		julApp->setup();
+	}
 }
 
 

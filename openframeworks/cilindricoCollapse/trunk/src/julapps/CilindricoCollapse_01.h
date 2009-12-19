@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef _CILINDRICO_COLLAPSE_01_H_
+#define _CILINDRICO_COLLAPSE_01_H_
+
 #include "ofMain.h"
 #include "ofxJulapyApp.h"
 #include "ofxTrackball.h"
@@ -38,3 +41,5 @@ public :
 	
 	vector<ArcBar>	arcBars;
 };
+
+#endif

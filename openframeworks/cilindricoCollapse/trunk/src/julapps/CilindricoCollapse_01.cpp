@@ -24,10 +24,11 @@ CilindricoCollapse_01 :: ~CilindricoCollapse_01()
 
 void CilindricoCollapse_01 :: setup ()
 {
-	int   arcsTotal		= 20;
+	int   arcsTotal		= 1;
 	float arcHeight		= 6;
 	float arcLocZInc	= 50;
-	float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.5f );
+//	float arcLocZ 		= -(int)( ( arcsTotal * ( arcHeight + arcLocZInc ) ) * 0.5f );
+	float arcLocZ 		= 500;
 	float arcAngleMin	= 100;
 	float arcAngleMax	= 270;
 	
@@ -44,14 +45,16 @@ void CilindricoCollapse_01 :: setup ()
 	{
 		arcBars.push_back( ArcBar() );
 		
-		arcCosMult		= -cos( ( i / (float)( arcsTotal - 1 ) ) * PI + PI * 0.5 );
+//		arcCosMult		= -cos( ( i / (float)( arcsTotal - 1 ) ) * PI + PI * 0.5 );
+		arcCosMult		= 1.0;
 		
 		arcBars.back().id			= i * 2 + 1;
 		arcBars.back().loc.z 		= arcLocZ;
 		arcBars.back().height		= arcHeight;
 		arcBars.back().radius		= ofRandom( arcRadiusMin, arcRadiusMax ) * arcCosMult;
 		arcBars.back().width		= ofRandom( arcWidthMin, arcWidthMax ) * arcCosMult;
-		arcBars.back().angle		= ofRandom( arcAngleMin, arcAngleMax ) * ( 1 - arcCosMult );
+//		arcBars.back().angle		= ofRandom( arcAngleMin, arcAngleMax ) * ( 1 - arcCosMult );
+		arcBars.back().angle		= ofRandom( arcAngleMin, arcAngleMax );
 		arcBars.back().rot.z		= ofRandom( 0, 1 ) * 360;
 		arcBars.back().rInc			= ofRandom( 0, 1 ) * 1.0 - 0.5;
 		arcBars.back().dis.x		= ofRandom( 0, 1 ) * arcDispRange - arcDispRange * 0.5;
@@ -59,6 +62,7 @@ void CilindricoCollapse_01 :: setup ()
 		arcBars.back().dis.z		= ofRandom( 0, 1 ) * arcDispRange - arcDispRange * 0.5;
 		arcBars.back().wireframePad	= ofRandom( 0, 1 ) * 20.0 + 10.0;
 		
+		arcBars.back().setup();
 //		arcBars.back().createSolidModel();
 		arcBars.back().createWireframe();
 		
@@ -112,7 +116,7 @@ void CilindricoCollapse_01 :: draw()
 	
 	for( int i=0; i<arcBars.size(); i++ )
 	{
-		arcBars.at( i ).renderSolidModel();
+//		arcBars.at( i ).renderSolidModel();
 		arcBars.at( i ).renderWireframe();
 	}
 
