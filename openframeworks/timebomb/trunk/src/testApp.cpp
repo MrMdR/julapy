@@ -192,19 +192,19 @@ void testApp :: initFluidForVideo ()
 
 void testApp :: initGui ()
 {
-	gui.addSlider( "fs.viscocity",				&fluidSolver.viscocity,			0.0, 0.0002, 0.5 );
-	gui.addSlider( "fs.colorDiffusion",			&fluidSolver.colorDiffusion,	0.0, 0.0003, 0.5 ); 
-	gui.addSlider( "fs.fadeSpeed",				&fluidSolver.fadeSpeed,			0.0, 0.1000, 0.5 ); 
-	gui.addSlider( "fs.solverIterations",		&fluidSolver.solverIterations,	1, 20 ); 
-	gui.addToggle( "fs.doRGB",					&fluidSolver.doRGB );
-	gui.addToggle( "fs.doVorticityConfinement", &fluidSolver.doVorticityConfinement );
-	gui.addSlider( "fluid color scale",			&fluidColorScale,				0.0, 2.0, 0.5 );
+	gui.addSlider( "fs.viscocity",				fluidSolver.viscocity,			0.0, 0.0002, 0.5 );
+	gui.addSlider( "fs.colorDiffusion",			fluidSolver.colorDiffusion,		0.0, 0.0003, 0.5 ); 
+	gui.addSlider( "fs.fadeSpeed",				fluidSolver.fadeSpeed,			0.0, 0.1000, 0.5 ); 
+	gui.addSlider( "fs.solverIterations",		fluidSolver.solverIterations,	1, 20 ); 
+	gui.addToggle( "fs.doRGB",					fluidSolver.doRGB );
+	gui.addToggle( "fs.doVorticityConfinement", fluidSolver.doVorticityConfinement );
+	gui.addSlider( "fluid color scale",			fluidColorScale,				0.0, 2.0, 0.5 );
 
 	gui.addPage( "optical flow" );
 	
-	gui.addSlider( "optical floor",		&opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
-	gui.addSlider( "optical ceil",		&opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
-	gui.addSlider( "optical scale",		&opticalField.opticalFlowScale, 0.0f, 0.001f, 0.1f );
+	gui.addSlider( "optical floor",		opticalField.opticalFlowMin,	0.0f, 10.0f, 0.1f );
+	gui.addSlider( "optical ceil",		opticalField.opticalFlowMax,	0.0f, 10.0f, 0.5f );
+	gui.addSlider( "optical scale",		opticalField.opticalFlowScale,  0.0f, 0.001f, 0.1f );
 	
 	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 }
