@@ -28,7 +28,7 @@ void testApp :: setup()
 	screenGrabUtil.setup( "movie/ar", &renderArea );
 	tileSaver.init( 10, 0, true );
 	
-	julApp = new Blobs02();
+	julApp = new Blobs01();
 	julApp->setRenderArea( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
 	julApp->setup();
 }
