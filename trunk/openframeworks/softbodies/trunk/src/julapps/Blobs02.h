@@ -35,6 +35,7 @@ public :
 	void setup();
 	void update();
 	void draw();
+	void drawDebug();
 		
 	void initBox2d();
 	void initAudioIn();

@@ -36,7 +36,6 @@ void Blobs02 :: initBox2d()
 {
 	box2d.init();
 	box2d.setGravity( 0, 0 );
-	box2d.createFloor();
 	box2d.checkBounds( true );
 	box2d.createBounds( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
 	box2d.setFPS( 30.0 );
@@ -181,12 +180,13 @@ void Blobs02 :: initAudioIn ()
 
 void Blobs02 :: initGui ()
 {
-	gui.addToggle( "bDrawNodes",		&bDrawNodes );
-	gui.addToggle( "bDrawJoints",		&bDrawJoints );
-	gui.addToggle( "bDrawCurves",		&bDrawCurves );
-	gui.addSlider( "blobScale",			&blobScale,			0.0, 300.0 );
-	gui.addSlider( "blobNodeDaming",	&blobNodeDaming,	0.0, 1.0 );
-	gui.addSlider( "blobNodeEase",		&blobNodeEase,		0.0, 1.0 );
+	gui.addToggle( "bDrawNodes",		bDrawNodes );
+	gui.addToggle( "bDrawJoints",		bDrawJoints );
+	gui.addToggle( "bDrawCurves",		bDrawCurves );
+	gui.addSlider( "blobScale",			blobScale,			0.0, 300.0 );
+	gui.addSlider( "blobNodeDaming",	blobNodeDaming,		0.0, 1.0 );
+	gui.addSlider( "blobNodeEase",		blobNodeEase,		0.0, 1.0 );
+	
 	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 }
 
@@ -256,6 +256,10 @@ void Blobs02 :: draw()
 	glPopMatrix();
 }
 
+void Blobs02 :: drawDebug ()
+{
+	//
+}
 
 void Blobs02 :: drawBox2d ()
 {

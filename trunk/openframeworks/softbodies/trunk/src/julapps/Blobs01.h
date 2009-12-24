@@ -30,6 +30,7 @@ public :
 	void setup();
 	void update();
 	void draw();
+	void drawDebug();
 	
 	void initBox2d();
 	void initVideoGrabber();
@@ -44,7 +45,6 @@ public :
 	void drawOpticalField();
 	void drawVideoGrabberWarper();
 	void drawBox2d();
-	void drawDebug();
 	
 	void keyReleased( int key );
 	

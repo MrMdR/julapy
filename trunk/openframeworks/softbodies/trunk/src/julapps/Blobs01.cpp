@@ -30,7 +30,6 @@ void Blobs01 :: initBox2d()
 {
 	box2d.init();
 	box2d.setGravity( 0, 2.5 );
-	box2d.createFloor();
 	box2d.checkBounds( true );
 	box2d.createBounds( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
 	box2d.setFPS( 30.0 );
@@ -235,6 +234,11 @@ void Blobs01 :: draw()
 	glTranslatef( renderArea.x, renderArea.y, 0 );
 		drawBox2d();
 	glPopMatrix();
+}
+
+void Blobs01 :: drawDebug ()
+{
+	//
 }
 
 void Blobs01 :: drawOpticalField()
