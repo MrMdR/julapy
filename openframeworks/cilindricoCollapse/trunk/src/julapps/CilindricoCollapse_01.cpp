@@ -125,7 +125,7 @@ void CilindricoCollapse_01 :: draw()
 
 void CilindricoCollapse_01 :: drawDebug ()
 {
-
+	//
 }
 
 void CilindricoCollapse_01 :: keyPressed( int key )
