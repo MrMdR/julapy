@@ -31,7 +31,7 @@ void testApp :: setup()
 	
 	julApp = NULL;
 	
-	setJulApp( 3 );
+	setJulApp( 4 );
 }
 
 void testApp :: setJulApp ( int appID )
@@ -57,7 +57,7 @@ void testApp :: setJulApp ( int appID )
 			break;
 			
 		case 4 :
-			return;
+			julApp = new Sydfest_04();
 			break;
 			
 		case 5 :

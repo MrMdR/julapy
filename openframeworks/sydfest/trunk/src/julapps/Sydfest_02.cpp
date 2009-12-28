@@ -27,8 +27,7 @@ void Sydfest_02 :: setup ()
 	circles = circlePacker.getCircles();
 	
 	box2d.init();
-	box2d.setGravity( 0, 10 );
-	box2d.checkBounds( true );
+	box2d.setGravity( 0, 20 );
 	box2d.createBounds( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
 	
 	for( int i=0; i<circles->size(); i++ )
@@ -38,14 +37,14 @@ void Sydfest_02 :: setup ()
 		ofxBox2dCircle *circle;
 		circle = &box2dCircles.back();
 		
-		float s;
-		s = circles->at( i ).radius / 100.0;
+		float m;
+		m = circles->at( i ).radius / 100.0;
 		
 		circle->setPhysics
 		(
-			s * 10,
-			s,
-			0.0
+			m,			// mass.
+			0.75,		// bounce.
+			0.01		// friction.
 		);
 		
 		circle->setup
