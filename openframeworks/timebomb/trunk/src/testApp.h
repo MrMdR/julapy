@@ -81,6 +81,8 @@ public:
 	ofRectangle			videoGrabberSmlRect;
 	ofRectangle			videoGrabberSrcRect;
 	ofRectangle			videoGrabberDstRect;
+	
+	bool				isVideoGrabberNewFrame;
 
 #ifdef USE_POINT_GREY_CAMERA
 	ofxCvGrayscaleImage	videoGrabberLrgImage;
@@ -93,12 +95,6 @@ public:
 	ofxCvGrayscaleImage videoGrabberDstImage;
 	
 	ofxCvWarper			videoGrabberWarper;
-	
-	bool				isVideoGrabberNewFrame;
-	int					camWidth;
-	int					camHeight;
-	int					camWidthHalf;
-	int					camHeightHalf;
 	
 	ofxMSAFluidSolver	fluidSolver;
 	ofxMSAFluidDrawer	fluidDrawer;

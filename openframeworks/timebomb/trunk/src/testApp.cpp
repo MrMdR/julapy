@@ -70,14 +70,8 @@ void testApp :: initVideoGrabber ()
 	videoGrabberDstRect.width  = 240;
 	videoGrabberDstRect.height = 240;
 	
-	camWidth		= 640;
-	camHeight		= 480;
-	
-	camWidthHalf	= 320;
-	camHeightHalf	= 240;
-	
 #ifdef USE_POINT_GREY_CAMERA
-	bool result = videoGrabber.initGrabber( camWidth, camHeight, VID_FORMAT_GREYSCALE, VID_FORMAT_GREYSCALE, 30, true, new Libdc1394Grabber );
+	bool result = videoGrabber.initGrabber( videoGrabberLrgRect.width, videoGrabberLrgRect.height, VID_FORMAT_GREYSCALE, VID_FORMAT_GREYSCALE, 30, true, new Libdc1394Grabber );
 	
 	if( result )
 	{
@@ -88,7 +82,7 @@ void testApp :: initVideoGrabber ()
 		ofLog(OF_LOG_FATAL_ERROR,"Camera failed to initialize.");
 	}
 #else
-	videoGrabber.initGrabber( camWidth, camHeight );
+	videoGrabber.initGrabber( videoGrabberLrgRect.width, videoGrabberLrgRect.height );
 #endif
 	
 	videoGrabberLrgImage.allocate( videoGrabberLrgRect.width, videoGrabberLrgRect.height );
@@ -244,7 +238,7 @@ void testApp :: updateVideoGrabber ()
 	
 	if( isVideoGrabberNewFrame )
 	{
-		videoGrabberLrgImage.setFromPixels( videoGrabber.getPixels(), camWidth, camHeight );
+		videoGrabberLrgImage.setFromPixels( videoGrabber.getPixels(), videoGrabberLrgRect.width, videoGrabberLrgRect.height );
 		
 #ifdef USE_POINT_GREY_CAMERA
 		videoGrabberSrcImage.scaleIntoMe( videoGrabberLrgImage );
@@ -535,7 +529,7 @@ void testApp :: drawVideoSource ()
 {
 	glColor3f( 1, 1, 1 );
 	glPushMatrix();
-	glTranslatef( 270 + camWidthHalf + 10, 74, 0 );
+	glTranslatef( 270 + videoGrabberSmlRect.width + 10, 74, 0 );
 	videoPlayerTexture.draw( 0, 0, 320, 320 );
 	glPopMatrix();
 }
