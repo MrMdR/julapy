@@ -39,12 +39,21 @@ public :
 	float			circleRadiusMin;
 	float			circleRadiusMax;
 	float			circleGap;
+	float			circleDeathGap;
 	int				circleAddedPerFrame;
 	bool			circleColorBounds;
 	
-	ofImage			image;
-	ofRectangle		imageRect;
-	bool			bImage;
+	ofImage			imageMap;
+	ofRectangle		imageMapRect;
+	int				imageMapAlpha;
+	bool			imageMapShow;
+
+	ofImage			imageBounds;
+	ofRectangle		imageBoundsRect;
+	int				imageBoundsAlpha;
+	bool			imageBoundsShow;
+	
+	int				bgColor;
 	
 	ofxSimpleGuiToo	gui;
 	

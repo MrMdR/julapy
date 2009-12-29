@@ -10,6 +10,7 @@
 #include "Sydfest_02.h"
 #include "Sydfest_03.h"
 #include "Sydfest_04.h"
+#include "Sydfest_05.h"
 
 class testApp : public ofSimpleApp
 {

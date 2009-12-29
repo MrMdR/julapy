@@ -32,10 +32,12 @@ public :
 	 ofxCirclePacker ();
 	~ofxCirclePacker ();
 	
-	void setImage				( ofImage *image, ofRectangle *imageRect );
+	void setColorBoundsImage	( ofImage *image, ofRectangle *imageRect );
+	void setColorMapImage		( ofImage *image, ofRectangle *imageRect );
 	void setCircleRadiusMin		( float radiusMin );
 	void setCircleRadiusMax		( float radiusMax );
 	void setCircleGap			( float gap );
+	void setCircleDeathGap		( float gap );
 	void setCircleDeathColor	( int color );
 	void setCircleColorBounds	( bool useColorBounds );
 	void togglePause			();
@@ -53,23 +55,31 @@ public :
 private :
 
 	vector<Circle>	circles;
-	ofImage			*circleImage;
-	unsigned char	*circleImagePixels;
-	ofRectangle		circleImageRect;
+	
+	ofImage			*circleColorBoundsImage;
+	unsigned char	*circleColorBoundsImagePixels;
+	ofRectangle		circleColorBoundsImageRect;
+	bool			useCircleColorBoundsImage;
+	
+	ofImage			*circleColorMapImage;
+	unsigned char	*circleColorMapImagePixels;
+	ofRectangle		circleColorMapImageRect;
+	bool			useCircleColorMapImage;
+	
 	float			circleRadiusMin;
 	float			circleRadiusMax;
 	float			circleGap;
+	float			circleDeathGap;
 	int				circleDeathColor;
 	bool			circleColorBounds;
 	
-	bool			bUseImage;
 	bool			bPaused;
 	
 	void  checkCircleCollision	();
 	void  checkCircleImage		();
 	void  removeInvalidCircles	();
 	
-	int	  getImageColor			( int x, int y );
+	int	  getImageColor			( int x, int y, unsigned char *pixels, ofRectangle *rect );
 	
 	float distance				( float x1, float y1, float x2, float y2 );
 	float fastDistance			( float x1, float y1, float x2, float y2 );
