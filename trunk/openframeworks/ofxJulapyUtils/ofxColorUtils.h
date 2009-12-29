@@ -10,6 +10,15 @@
 #ifndef _OFX_COLOR_UTILS_H_
 #define _OFX_COLOR_UTILS_H_
 
-int ofRgbToHex ( int r, int g, int b );
+struct RgbColor
+{
+	int r;
+	int g;
+	int b;
+};
+
+
+int			ofRgbToHex ( int r, int g, int b );
+RgbColor	ofHexToRgb ( int hex );
 
 #endif

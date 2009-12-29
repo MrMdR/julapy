@@ -20,3 +20,14 @@ int ofRgbToHex ( int r, int g, int b )
 	
 	return hex;
 }
+
+RgbColor ofHexToRgb ( int hex )
+{
+	RgbColor rgb;
+	
+	rgb.r = ( hex >> 16 ) & 0xff;
+	rgb.g = ( hex >> 8  ) & 0xff;
+	rgb.b = ( hex >> 0  ) & 0xff;
+	
+	return rgb;
+}
