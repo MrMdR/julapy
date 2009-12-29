@@ -31,7 +31,7 @@ void testApp :: setup()
 	
 	julApp = NULL;
 	
-	setJulApp( 4 );
+	setJulApp( 1 );
 }
 
 void testApp :: setJulApp ( int appID )
@@ -61,7 +61,7 @@ void testApp :: setJulApp ( int appID )
 			break;
 			
 		case 5 :
-			return;
+			julApp = new Sydfest_05();
 			break;
 			
 		case 6 :
@@ -117,12 +117,12 @@ void testApp :: draw()
 		julApp->draw();
 	
 	tileSaver.end();
+
+	if( screenGrabUtil.isRecording() )
+		screenGrabUtil.save();
 	
 	if( julApp != NULL )
 		julApp->drawDebug();
-	
-	if( screenGrabUtil.isRecording() )
-		screenGrabUtil.save();
 }
 
 //////////////////////////////////////////////
@@ -210,11 +210,11 @@ void testApp :: keyReleased( int key )
 				break;
 				
 			case '4':
-				return;
+				setJulApp( 4 );
 				break;
 				
 			case '5':
-				return;
+				setJulApp( 5 );
 				break;
 				
 			case '6':

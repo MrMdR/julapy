@@ -16,6 +16,9 @@
 #include "ofxBox2d.h"
 #include "ofxSimpleGuiToo.h"
 
+#ifndef _CIRCLE_ANIM_
+#define _CIRCLE_ANIM_
+
 struct CircleAnim
 {
 	ofPoint		loc;
@@ -26,6 +29,8 @@ struct CircleAnim
 	float		frameDelay;
 	bool		playing;
 };
+
+#endif
 
 class Sydfest_03 : public ofxJulapyApp
 {

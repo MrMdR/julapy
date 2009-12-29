@@ -14,11 +14,13 @@ ofxCirclePacker :: ofxCirclePacker()
 	setCircleRadiusMin( 2.0 );
 	setCircleRadiusMax( 400.0 );
 	setCircleGap( 2.0 );
+	setCircleDeathGap ( 0.0 );
 	setCircleDeathColor( 0x000000 );
 	setCircleColorBounds( false );
 	
-	bUseImage	= false;
-	bPaused		= false;
+	useCircleColorMapImage		= false;
+	useCircleColorBoundsImage	= false;
+	bPaused						= false;
 }
 
 ofxCirclePacker :: ~ofxCirclePacker()
@@ -36,27 +38,30 @@ void ofxCirclePacker :: addCircle( int color )
 	Circle *circle;
 	circle = &circles.back();
 	
-	circle->loc.x		= ofRandom( circleImageRect.x, circleImageRect.x + circleImageRect.width  );
-	circle->loc.y		= ofRandom( circleImageRect.y, circleImageRect.y + circleImageRect.height );
+	circle->loc.x		= ofRandom( circleColorBoundsImageRect.x, circleColorBoundsImageRect.x + circleColorBoundsImageRect.width  );
+	circle->loc.y		= ofRandom( circleColorBoundsImageRect.y, circleColorBoundsImageRect.y + circleColorBoundsImageRect.height );
 	circle->radius		= circleRadiusMin;
 	circle->alive		= true;
 	circle->growth		= ofRandom( 0.1, 0.5 );
 	circle->lifeCount	= 0;
 	
-	if( bUseImage )
-		circle->color	= getImageColor( (int)circle->loc.x, (int)circle->loc.y );
+	if( useCircleColorMapImage )
+		circle->color	= getImageColor( (int)circle->loc.x, (int)circle->loc.y, circleColorMapImagePixels, &circleColorMapImageRect );
 	else
 		circle->color	= color;
 }
 
 void ofxCirclePacker :: update()
 {
+	if( circles.size() == 0 )
+		return;
+	
 	if( bPaused )
 		return;
 	
 	checkCircleCollision();
 	
-	if( bUseImage )
+	if( useCircleColorBoundsImage )
 		checkCircleImage();
 	
 	removeInvalidCircles();
@@ -150,39 +155,13 @@ void ofxCirclePacker :: loadFromFile ( string filename )
 			Circle *circle;
 			circle = &circles.back();
 			
-			for( int i=0; i<circleData.size(); i++ )
-			{
-				switch ( i )
-				{
-					case 0 :
-						circle->loc.x		= atof( circleData[ i ].c_str() );
-						break;
-						
-					case 1 :
-						circle->loc.y		= atof( circleData[ i ].c_str() );
-						break;
-
-					case 2 :
-						circle->color		= atoi( circleData[ i ].c_str() );
-						break;
-
-					case 3 :
-						circle->growth		= atof( circleData[ i ].c_str() );
-						break;
-
-					case 4 :
-						circle->alive		= atoi( circleData[ i ].c_str() );
-						break;
-
-					case 5 :
-						circle->lifeCount	= atoi( circleData[ i ].c_str() );
-						break;
-
-					case 6 :
-						circle->radius		= atof( circleData[ i ].c_str() );
-						break;
-				}
-			}
+			circle->loc.x		= atof( circleData[ 0 ].c_str() );
+			circle->loc.y		= atof( circleData[ 1 ].c_str() );
+			circle->color		= atoi( circleData[ 2 ].c_str() );
+			circle->growth		= atof( circleData[ 3 ].c_str() );
+			circle->alive		= atoi( circleData[ 4 ].c_str() );
+			circle->lifeCount	= atoi( circleData[ 5 ].c_str() );
+			circle->radius		= atof( circleData[ 6 ].c_str() );
 		}
 	}
 	
@@ -231,7 +210,7 @@ void ofxCirclePacker :: checkCircleCollision ()
 
 void ofxCirclePacker :: checkCircleImage()
 {
-	circleImagePixels = circleImage->getPixels();
+	circleColorBoundsImagePixels = circleColorBoundsImage->getPixels();
 	
 	for( int i=0; i<circles.size(); i++)
 	{
@@ -242,11 +221,11 @@ void ofxCirclePacker :: checkCircleImage()
 		
 		if
 			(
-			 circles[ i ].loc.x - circles[ i ].radius < circleImageRect.x							||
-			 circles[ i ].loc.x + circles[ i ].radius > circleImageRect.x + circleImageRect.width	||
-			 circles[ i ].loc.y - circles[ i ].radius < circleImageRect.y							||
-			 circles[ i ].loc.y + circles[ i ].radius > circleImageRect.y + circleImageRect.height
-			 )
+			 circles[ i ].loc.x - ( circles[ i ].radius + circleDeathGap ) < circleColorBoundsImageRect.x										||
+			 circles[ i ].loc.x + ( circles[ i ].radius + circleDeathGap ) > circleColorBoundsImageRect.x + circleColorBoundsImageRect.width	||
+			 circles[ i ].loc.y - ( circles[ i ].radius + circleDeathGap ) < circleColorBoundsImageRect.y										||
+			 circles[ i ].loc.y + ( circles[ i ].radius + circleDeathGap ) > circleColorBoundsImageRect.y + circleColorBoundsImageRect.height
+			)
 		{
 			circles[ i ].alive = false;
 			
@@ -255,17 +234,17 @@ void ofxCirclePacker :: checkCircleImage()
 		
 		//-- CHECK CIRCLE IS WITHIN IMAGE SHAPE.
 		
-		int cx = (int)( circles[ i ].loc.x - circles[ i ].radius );
-		int cy = (int)( circles[ i ].loc.y - circles[ i ].radius );
-		int cw = (int)( circles[ i ].radius * 2 );
-		int ch = (int)( circles[ i ].radius * 2 );
+		int cx = (int)( circles[ i ].loc.x - ( circles[ i ].radius + circleDeathGap ) );
+		int cy = (int)( circles[ i ].loc.y - ( circles[ i ].radius + circleDeathGap ) );
+		int cw = (int)( ( circles[ i ].radius + circleDeathGap ) * 2 );
+		int ch = (int)( ( circles[ i ].radius + circleDeathGap ) * 2 );
 		bool inBounds = true;
 		
 		for( int x=cx; x<=cx+cw; x++ )
 		{
 			for( int y=cy; y<=cy+ch; y++ )
 			{
-				int c = getImageColor( x, y );
+				int c = getImageColor( x, y, circleColorBoundsImagePixels, &circleColorBoundsImageRect );
 				
 				if( circleColorBounds )
 				{
@@ -310,17 +289,30 @@ void ofxCirclePacker :: removeInvalidCircles ()
 //	SETTERS.
 //////////////////////////////////////////
 
-void ofxCirclePacker :: setImage ( ofImage *image, ofRectangle *imageRect )
+void ofxCirclePacker :: setColorBoundsImage ( ofImage *image, ofRectangle *imageRect )
 {
-	circleImage				= image;
-	circleImagePixels		= circleImage->getPixels();
+	circleColorBoundsImage				= image;
+	circleColorBoundsImagePixels		= circleColorBoundsImage->getPixels();
 	
-	circleImageRect.x		= imageRect->x;
-	circleImageRect.y		= imageRect->y;
-	circleImageRect.width	= imageRect->width;
-	circleImageRect.height	= imageRect->height;
+	circleColorBoundsImageRect.x		= imageRect->x;
+	circleColorBoundsImageRect.y		= imageRect->y;
+	circleColorBoundsImageRect.width	= imageRect->width;
+	circleColorBoundsImageRect.height	= imageRect->height;
 	
-	bUseImage = true;
+	useCircleColorBoundsImage = true;
+}
+
+void ofxCirclePacker :: setColorMapImage ( ofImage *image, ofRectangle *imageRect )
+{
+	circleColorMapImage				= image;
+	circleColorMapImagePixels		= circleColorMapImage->getPixels();
+	
+	circleColorMapImageRect.x		= imageRect->x;
+	circleColorMapImageRect.y		= imageRect->y;
+	circleColorMapImageRect.width	= imageRect->width;
+	circleColorMapImageRect.height	= imageRect->height;
+	
+	useCircleColorMapImage = true;
 }
 
 void ofxCirclePacker :: setCircleRadiusMin	( float radiusMin )
@@ -336,6 +328,11 @@ void ofxCirclePacker :: setCircleRadiusMax	( float radiusMax )
 void ofxCirclePacker :: setCircleGap ( float gap )
 {
 	circleGap = gap;
+}
+
+void ofxCirclePacker :: setCircleDeathGap ( float gap )
+{
+	circleDeathGap = gap;
 }
 
 void ofxCirclePacker :: setCircleDeathColor	( int color )
@@ -357,13 +354,13 @@ void ofxCirclePacker :: togglePause ()
 //	UTIL.
 //////////////////////////////////////////
 
-int ofxCirclePacker :: getImageColor ( int x, int y )
+int ofxCirclePacker :: getImageColor ( int x, int y, unsigned char *pixels, ofRectangle *imageRect )
 {
-	int p = ( ( x - circleImageRect.x ) * 3 ) + ( ( y - circleImageRect.y ) * circleImageRect.width * 3 );
+	int p = ( ( x - imageRect->x ) * 3 ) + ( ( y - imageRect->y ) * imageRect->width * 3 );
 
-	unsigned char r = circleImagePixels[ p + 0 ];
-	unsigned char g = circleImagePixels[ p + 1 ];
-	unsigned char b = circleImagePixels[ p + 2 ];
+	unsigned char r = pixels[ p + 0 ];
+	unsigned char g = pixels[ p + 1 ];
+	unsigned char b = pixels[ p + 2 ];
 	
 	return ofRgbToHex( r, g, b );
 }
