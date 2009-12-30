@@ -11,6 +11,7 @@
 #include "Sydfest_03.h"
 #include "Sydfest_04.h"
 #include "Sydfest_05.h"
+#include "Sydfest_06.h"
 
 class testApp : public ofSimpleApp
 {

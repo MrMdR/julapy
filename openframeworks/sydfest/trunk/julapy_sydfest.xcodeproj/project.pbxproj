@@ -24,6 +24,8 @@
 		1552673B10B94F4C00040958 /* ofxResizeUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1552673210B94F4C00040958 /* ofxResizeUtil.cpp */; };
 		1552673C10B94F4C00040958 /* ofxScreenGrabUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1552673410B94F4C00040958 /* ofxScreenGrabUtil.cpp */; };
 		1552673D10B94F4C00040958 /* ofxTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1552673610B94F4C00040958 /* ofxTrigger.cpp */; };
+		156AFB4C10EAB93F00F0F8B3 /* Sydfest_06.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156AFB4B10EAB93F00F0F8B3 /* Sydfest_06.cpp */; };
+		156AFB5110EAB98300F0F8B3 /* ofxShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156AFB4F10EAB98300F0F8B3 /* ofxShapes.cpp */; };
 		15B22F1E10E210F700A2A129 /* ofxColorUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B22F1D10E210F700A2A129 /* ofxColorUtils.cpp */; };
 		15B22F3010E214C600A2A129 /* Sydfest_02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B22F2F10E214C600A2A129 /* Sydfest_02.cpp */; };
 		15B2305B10E236FA00A2A129 /* Sydfest_03.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B2305A10E236FA00A2A129 /* Sydfest_03.cpp */; };
@@ -194,6 +196,10 @@
 		1552673510B94F4C00040958 /* ofxScreenGrabUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxScreenGrabUtil.h; path = ../../../addons/ofxJulapyUtils/ofxScreenGrabUtil.h; sourceTree = SOURCE_ROOT; };
 		1552673610B94F4C00040958 /* ofxTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTrigger.cpp; path = ../../../addons/ofxJulapyUtils/ofxTrigger.cpp; sourceTree = SOURCE_ROOT; };
 		1552673710B94F4C00040958 /* ofxTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTrigger.h; path = ../../../addons/ofxJulapyUtils/ofxTrigger.h; sourceTree = SOURCE_ROOT; };
+		156AFB4A10EAB93F00F0F8B3 /* Sydfest_06.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sydfest_06.h; sourceTree = "<group>"; };
+		156AFB4B10EAB93F00F0F8B3 /* Sydfest_06.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sydfest_06.cpp; sourceTree = "<group>"; };
+		156AFB4F10EAB98300F0F8B3 /* ofxShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxShapes.cpp; path = ../../../addons/ofxShapes/src/ofxShapes.cpp; sourceTree = SOURCE_ROOT; };
+		156AFB5010EAB98300F0F8B3 /* ofxShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxShapes.h; path = ../../../addons/ofxShapes/src/ofxShapes.h; sourceTree = SOURCE_ROOT; };
 		15B22CF910E1B8D700A2A129 /* ofxColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColor.cpp; path = ../../../addons/ofxColor/ofxColor.cpp; sourceTree = SOURCE_ROOT; };
 		15B22CFA10E1B8D700A2A129 /* ofxColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColor.h; path = ../../../addons/ofxColor/ofxColor.h; sourceTree = SOURCE_ROOT; };
 		15B22F1C10E210F700A2A129 /* ofxColorUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxColorUtils.h; sourceTree = "<group>"; };
@@ -564,6 +570,8 @@
 				151FC1A210E8B93E004B0F50 /* Sydfest_04.cpp */,
 				15C20BD110E9FFAA00302902 /* Sydfest_05.h */,
 				15C20BD210E9FFAA00302902 /* Sydfest_05.cpp */,
+				156AFB4A10EAB93F00F0F8B3 /* Sydfest_06.h */,
+				156AFB4B10EAB93F00F0F8B3 /* Sydfest_06.cpp */,
 			);
 			name = julapps;
 			path = src/julapps;
@@ -741,6 +749,25 @@
 			);
 			name = ofxJulapyUtils;
 			path = ../../../addons/ofxJulapyUtils;
+			sourceTree = SOURCE_ROOT;
+		};
+		156AFB4D10EAB98300F0F8B3 /* ofxShapes */ = {
+			isa = PBXGroup;
+			children = (
+				156AFB4E10EAB98300F0F8B3 /* src */,
+			);
+			name = ofxShapes;
+			path = ../../../addons/ofxShapes;
+			sourceTree = SOURCE_ROOT;
+		};
+		156AFB4E10EAB98300F0F8B3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				156AFB4F10EAB98300F0F8B3 /* ofxShapes.cpp */,
+				156AFB5010EAB98300F0F8B3 /* ofxShapes.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxShapes/src;
 			sourceTree = SOURCE_ROOT;
 		};
 		15B22CE110E1B8BA00A2A129 /* ref */ = {
@@ -1234,6 +1261,7 @@
 				151FC41310E8F745004B0F50 /* ofxContourAnalysis */,
 				151FC1B610E8BA26004B0F50 /* ofxOpenCv */,
 				151FC24D10E8BE0F004B0F50 /* ofxCvWarper */,
+				156AFB4D10EAB98300F0F8B3 /* ofxShapes */,
 			);
 			name = addons;
 			path = ../../../addons;
@@ -1785,6 +1813,8 @@
 				151FC25010E8BE0F004B0F50 /* ofxCvWarper.cpp in Sources */,
 				151FC41F10E8F745004B0F50 /* del_impl.cpp in Sources */,
 				15C20BD310E9FFAA00302902 /* Sydfest_05.cpp in Sources */,
+				156AFB4C10EAB93F00F0F8B3 /* Sydfest_06.cpp in Sources */,
+				156AFB5110EAB98300F0F8B3 /* ofxShapes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
