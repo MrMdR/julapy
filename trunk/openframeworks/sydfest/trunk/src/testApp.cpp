@@ -26,12 +26,12 @@ void testApp :: setup()
 	renderArea.height	= renderAreaWindow.height;
 	
 	screenGrabUtil.setup( "movie/frame", &renderArea );
-//	screenGrabUtil.start();
+	screenGrabUtil.start();
 	tileSaver.init( 10, 0, true );
 	
 	julApp = NULL;
 	
-	setJulApp( 1 );
+	setJulApp( 6 );
 }
 
 void testApp :: setJulApp ( int appID )
@@ -65,7 +65,7 @@ void testApp :: setJulApp ( int appID )
 			break;
 			
 		case 6 :
-			return;
+			julApp = new Sydfest_06();
 			break;
 			
 		case 7 :

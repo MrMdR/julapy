@@ -35,7 +35,6 @@ public :
 	void keyReleased	( int key );
 	void mousePressed	( int x, int y, int button );
 
-	
 	void initVideoGrabber		();
 	void updateVideoGrabber		();
 	void drawVideoGrabber		();
