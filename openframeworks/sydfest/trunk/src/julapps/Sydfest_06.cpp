@@ -25,11 +25,23 @@ void Sydfest_06 :: setup ()
 	ofEnableSmoothing();
 	
 	bDrawDebug		= true;
-	bExternalData	= false;
-	startFrame		= 0;
 	circleAddRate	= 1;
 	
+	cMass			= 0.0001;
+	cBounce			= 0.1;
+	cFriction		= 0.01;
+	
+#if MODE == 0
+	
 	shapes.loadFromFile();
+	
+#endif
+	
+#if MODE == 1 || MODE == 2 || MODE == 3
+	
+	shapes.loadFromFile( "shapes_data_01" );
+	
+#endif
 	
 //	image.loadImage( "barracks1.jpg" );
 //	image.loadImage( "barracks2.jpg" );
@@ -38,7 +50,8 @@ void Sydfest_06 :: setup ()
 	imageRect.width		= image.width;
 	imageRect.height	= image.height;
 	
-	imageColor.loadImage( "balloon.jpg" );
+//	imageColor.loadImage( "balloon.jpg" );
+	imageColor.loadImage( "grandmasterflash.jpg" );
 	
 	imageAlpha			= 255;
 	imageColorAlpha		= 255;
@@ -94,84 +107,105 @@ void Sydfest_06 :: setup ()
 
 //	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 	
+#if MODE == 2
+	
 	loadFromFile();
-	runFromExternalData();
+	
+#endif
+	
+#if MODE == 3
+
+	loadFromFile();
+	createCirclesFromData();
+	createDynamicContour();
+	
+#endif
 }
 
 void Sydfest_06 :: update ()
 {
+#if MODE == 0	
+	
 	shapes.update();
 	
+#endif
+
+#if MODE == 1
+	
 	int frame;
+	frame = ofGetFrameNum();
 	
-	float cMass		= 0.0001;
-	float cBounce	= 0.1;
-	float cFriction	= 0.01;
-	
-	if( bExternalData )
+	for( int i=0; i<circleAddRate; i++ )
 	{
-		frame = ofGetFrameNum() - startFrame;
+		box2dCircles.push_back( ofxBox2dCircle() );
 		
-		for( int i=0; i<circles.size(); i++ )
-		{
-			Circle_06 *circle;
-			circle = &circles[ i ];
-			
-			if( circle->tick )
-				continue;
-			
-			if( circle->frame == frame )
-			{
-				box2dCircles.push_back( ofxBox2dCircle() );
-				
-				ofxBox2dCircle *box2dCircle;
-				box2dCircle = &box2dCircles.back();
-				box2dCircle->setPhysics( cMass, cBounce, cFriction );
-				box2dCircle->setup( box2d.getWorld(), circle->p.x, circle->p.y, circle->radius );
-				
-				circle->tick = true;
-			}
-		}
+		ofxBox2dCircle *circle;
+		circle = &box2dCircles.back();
+		
+		circle->setPhysics( cMass, cBounce, cFriction );
+		
+		int x = (int)( renderArea.width * 0.5 );
+		int y = (int)( 50 );
+		int r = (int)( ofRandom( 5, 10 ) );
+		
+		x += (int)( ofRandom( -4, 4 ) );
+		y += (int)( ofRandom( -4, 4 ) );
+		
+		circle->setup( box2d.getWorld(), x, y, r );
+		
+		//--
+		
+		circles.push_back( Circle_06() );
+		
+		Circle_06 *circ;
+		circ = &circles.back();
+		
+		circ->id		= box2dCircles.size() - 1;
+		circ->p1.x		= x;
+		circ->p1.y		= y;
+		circ->radius	= r;
+		circ->frame		= frame;
+		circ->color		= 0xFF00FF;
 	}
-	else
+	
+#endif
+	
+#if MODE == 2
+
+	int frame;
+	frame = ofGetFrameNum();
+	
+	for( int i=0; i<circles.size(); i++ )
 	{
-		frame = ofGetFrameNum();
+		Circle_06 *circle;
+		circle = &circles[ i ];
 		
-		for( int i=0; i<circleAddRate; i++ )
+		if( circle->tick )
+			continue;
+		
+		if( circle->frame == frame )
 		{
 			box2dCircles.push_back( ofxBox2dCircle() );
 			
-			ofxBox2dCircle *circle;
-			circle = &box2dCircles.back();
+			ofxBox2dCircle *box2dCircle;
+			box2dCircle = &box2dCircles.back();
+			box2dCircle->setPhysics( cMass, cBounce, cFriction );
+			box2dCircle->setup( box2d.getWorld(), circle->p1.x, circle->p1.y, circle->radius );
 			
-			circle->setPhysics( cMass, cBounce, cFriction );
-			
-			int x = (int)( renderArea.width * 0.5 );
-			int y = (int)( 50 );
-			int r = (int)( ofRandom( 5, 10 ) );
-			
-			x += (int)( ofRandom( -4, 4 ) );
-			y += (int)( ofRandom( -4, 4 ) );
-			
-			circle->setup( box2d.getWorld(), x, y, r );
-			
-			//--
-			
-			circles.push_back( Circle_06() );
-			
-			Circle_06 *circ;
-			circ = &circles.back();
-			
-			circ->id		= box2dCircles.size() - 1;
-			circ->p.x		= x;
-			circ->p.y		= y;
-			circ->radius	= r;
-			circ->frame		= frame;
-			circ->color		= 0xFF00FF;
+			circle->tick = true;
 		}
 	}
+
+#endif	
+
+#if MODE == 3
+	
+	updateDynamicContour();
+	
+#endif
 	
 	box2d.update();
+
 }
 
 void Sydfest_06 :: draw ()
@@ -183,6 +217,17 @@ void Sydfest_06 :: draw ()
 //	imageColor.draw( 0, 0 );
 	
 //	box2d.draw();
+	
+#if MODE == 0
+	
+	ofSetColor( 255, 255, 255 );
+	image.draw( 0, 0 );
+	
+	shapes.draw();
+	
+#endif
+	
+#if MODE == 1 || MODE == 2 || MODE == 3
 	
 	for( int i=0; i<box2dCircles.size(); i++ )
 	{
@@ -205,7 +250,20 @@ void Sydfest_06 :: draw ()
 		box2dLineStrips[ i ].draw();
 	}
 	
-//	shapes.draw();
+#endif
+	
+#if MODE == 3
+	
+//	ofNoFill();
+//	
+//	ofBeginShape();
+//	for( int i=0; i<dynContour.pointsTotal; i++ )
+//		ofVertex( dynContour.points[ i ].x, dynContour.points[ i ].y );
+//	ofEndShape( true );
+	
+	dynContourLine->draw();
+	
+#endif
 }
 
 void Sydfest_06 :: drawDebug ()
@@ -215,6 +273,10 @@ void Sydfest_06 :: drawDebug ()
 	
 	gui.draw();
 }
+
+//////////////////////////////////////////////////
+//	CIRCLES.
+//////////////////////////////////////////////////
 
 void Sydfest_06 :: clear ()
 {
@@ -229,13 +291,7 @@ void Sydfest_06 :: clear ()
 	box2dCircles.clear();
 }
 
-void Sydfest_06 :: runFromExternalData ()
-{
-	bExternalData	= true;
-	startFrame		= ofGetFrameNum();
-}
-
-void Sydfest_06 :: saveColors ()
+void Sydfest_06 :: saveCircleData ()
 {
 	unsigned char* pixels;
 	pixels = imageColor.getPixels();
@@ -257,8 +313,93 @@ void Sydfest_06 :: saveColors ()
 		unsigned char g = pixels[ p + 1 ];
 		unsigned char b = pixels[ p + 2 ];
 		
-		circle->color = ofRgbToHex( r, g, b );
+		circle->color	= ofRgbToHex( r, g, b );
+		
+		circle->p2.x	= box2dCircle->getPosition().x;
+		circle->p2.y	= box2dCircle->getPosition().y;
 	}
+}
+
+void Sydfest_06 :: createCirclesFromData ()
+{
+	for( int i=0; i<circles.size(); i++ )
+	{
+		Circle_06 *circle;
+		circle = &circles[ i ];
+		
+		box2dCircles.push_back( ofxBox2dCircle() );
+			
+		ofxBox2dCircle *box2dCircle;
+		box2dCircle = &box2dCircles.back();
+		box2dCircle->setPhysics( cMass, cBounce, cFriction );
+		box2dCircle->setup( box2d.getWorld(), circle->p2.x, circle->p2.y, circle->radius );
+	}
+}
+
+void Sydfest_06 :: createDynamicContour ()
+{
+	dynContour.pointsTotal = 20;
+	dynContour.points	= new ofPoint[ dynContour.pointsTotal ];
+	dynContour.offset	= 0;
+	dynContour.rotation	= TWO_PI * 0.01;
+	dynContour.radius	= 80;
+	
+	dynContourLine		= new ofxBox2dLine();
+}
+
+void Sydfest_06 :: updateDynamicContour ()
+{
+	dynContourLine->destroyShape();
+	delete dynContourLine;
+	dynContourLine = new ofxBox2dLine();
+	dynContourLine->setWorld( box2d.getWorld() );
+	dynContourLine->update();
+	
+	for( int i=0; i<dynContour.pointsTotal; i++ )
+	{
+		float p;
+		p = i / (float)dynContour.pointsTotal;
+		p = p * TWO_PI;
+		
+		float x;
+		float y;
+		float r;
+		
+		r = ( sin( ( p + dynContour.offset ) * 4 ) + 2 ) * 0.5;
+		x = dynContour.center.x + dynContour.radius * cos( p ) * r;
+		y = dynContour.center.y + dynContour.radius * sin( p ) * r;
+		
+		dynContour.points[ i ].x = x;
+		dynContour.points[ i ].y = y;
+	}
+	
+	dynContour.offset += TWO_PI * ( 1 / 128.0 );
+	
+	//--
+	
+	bool bReversePoints;
+	bReversePoints = true;
+	
+	int i;
+	
+	if( false )
+	{
+		for( i=dynContour.pointsTotal-1; i>0; i-- )
+			dynContourLine->addPoint( dynContour.points[ i ].x, dynContour.points[ i ].y );
+		
+		i = dynContour.pointsTotal - 1;
+		dynContourLine->addPoint( dynContour.points[ i ].x, dynContour.points[ i ].y );
+	}
+	else
+	{
+		for( i=0; i<dynContour.pointsTotal; i++ )
+			dynContourLine->addPoint( dynContour.points[ i ].x, dynContour.points[ i ].y );
+		
+		i = 0;
+		dynContourLine->addPoint( dynContour.points[ i ].x, dynContour.points[ i ].y );
+	}
+	
+	dynContourLine->createShape();
 }
 
 //////////////////////////////////////////////////
@@ -276,8 +417,10 @@ void Sydfest_06 :: writeToFile ( string filename )
 		
 		circleDataStr = 
 		ofToString( circles[ i ].id,		0 ) + " " +
-		ofToString( circles[ i ].p.x,		0 ) + " " +
-		ofToString( circles[ i ].p.y,		0 ) + " " +
+		ofToString( circles[ i ].p1.x,		0 ) + " " +
+		ofToString( circles[ i ].p1.y,		0 ) + " " +
+		ofToString( circles[ i ].p2.x,		0 ) + " " +
+		ofToString( circles[ i ].p2.y,		0 ) + " " +
 		ofToString( circles[ i ].color,		0 ) + " " +
 		ofToString( circles[ i ].frame,		0 ) + " " +
 		ofToString( circles[ i ].radius,	0 );
@@ -313,11 +456,13 @@ void Sydfest_06 :: loadFromFile ( string filename )
 			circle = &circles.back();
 			
 			circle->id			= atoi( circleData[ 0 ].c_str() );
-			circle->p.x			= atoi( circleData[ 1 ].c_str() );
-			circle->p.y			= atoi( circleData[ 2 ].c_str() );
-			circle->color		= atoi( circleData[ 3 ].c_str() );
-			circle->frame		= atoi( circleData[ 4 ].c_str() );
-			circle->radius		= atoi( circleData[ 5 ].c_str() );
+			circle->p1.x		= atoi( circleData[ 1 ].c_str() );
+			circle->p1.y		= atoi( circleData[ 2 ].c_str() );
+			circle->p2.x		= atoi( circleData[ 3 ].c_str() );
+			circle->p2.y		= atoi( circleData[ 4 ].c_str() );
+			circle->color		= atoi( circleData[ 5 ].c_str() );
+			circle->frame		= atoi( circleData[ 6 ].c_str() );
+			circle->radius		= atoi( circleData[ 7 ].c_str() );
 			circle->tick		= false;
 		}
 	}
@@ -333,15 +478,21 @@ void Sydfest_06 :: keyReleased ( int key )
 {
 	if( key == 'd' )
 		bDrawDebug = !bDrawDebug;
+
+#if MODE == 0
 	
-//	if( key == 'c' )
-//		shapes.clear();
-//	
-//	if( key == 'w' )
-//		shapes.writeToFile();
-//	
-//	if( key == 'l' )
-//		shapes.loadFromFile();
+	if( key == 'c' )
+		shapes.clear();
+	
+	if( key == 'w' )
+		shapes.writeToFile();
+	
+	if( key == 'l' )
+		shapes.loadFromFile();
+	
+#endif
+	
+#if MODE == 1 || MODE == 2
 
 	if( key == 'c' )
 		clear();
@@ -353,20 +504,28 @@ void Sydfest_06 :: keyReleased ( int key )
 		writeToFile();
 	}
 	
-	if( key == 'l' )
-	{
-		clear();
-		loadFromFile();
-		runFromExternalData();
-	}
-	
 	if( key == ' ' )
-		saveColors();
+		saveCircleData();
+	
+#endif
 }
 
 void Sydfest_06 :: mousePressed ( int x, int y, int button )
 {
-//	shapes.addVertex( x, y );
-//	return;
+#if MODE == 0
+	
+	shapes.addVertex( x, y );
+	
+#endif
+
 }
 
+void Sydfest_06 :: mouseMoved ( int x, int y )
+{
+#if MODE == 3
+	
+	dynContour.center.x = x;
+	dynContour.center.y = y;
+	
+#endif
+}
