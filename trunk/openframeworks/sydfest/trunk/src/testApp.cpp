@@ -26,7 +26,7 @@ void testApp :: setup()
 	renderArea.height	= renderAreaWindow.height;
 	
 	screenGrabUtil.setup( "movie/frame", &renderArea );
-	screenGrabUtil.start();
+//	screenGrabUtil.start();
 	tileSaver.init( 10, 0, true );
 	
 	julApp = NULL;
