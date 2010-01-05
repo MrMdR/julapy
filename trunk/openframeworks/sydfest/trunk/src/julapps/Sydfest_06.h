@@ -21,16 +21,22 @@
 #include "ofxBox2d.h"
 #include "ofxSimpleGuiToo.h"
 #include "ofxColorUtils.h"
+#include "ofxBounce.h"
 
 struct Circle_06
 {
-	int		id;
-	ofPoint p1;
-	ofPoint p2;
-	int		frame;
-	int		color;
-	float	radius;
-	bool	tick;
+	int			id;
+	ofPoint		p1;
+	ofPoint		p2;
+	int			frame;
+	int			color;
+	float		radius;
+	bool		tick;
+
+	ofxBounce	bounce;
+	bool		pop;
+	
+	ofPoint		vel;
 };
 
 struct DynamicContour
@@ -87,6 +93,8 @@ class Sydfest_06 : public ofxJulapyApp
 	vector<ofxBox2dCircle>	box2dCircles;
 	vector<ofxBox2dLine>	box2dLineStrips;
 	
+	ofPoint					gravity;
+	
 	vector<Circle_06>		circles;
 	
 	float cMass;
@@ -95,6 +103,7 @@ class Sydfest_06 : public ofxJulapyApp
 	
 	DynamicContour			dynContour;
 	ofxBox2dLine			*dynContourLine;
+	ofxBox2dCircle			*dynContourCircles;
 };
 
 #endif
