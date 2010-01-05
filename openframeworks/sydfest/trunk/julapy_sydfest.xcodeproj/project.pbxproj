@@ -200,6 +200,7 @@
 		156AFB4B10EAB93F00F0F8B3 /* Sydfest_06.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sydfest_06.cpp; sourceTree = "<group>"; };
 		156AFB4F10EAB98300F0F8B3 /* ofxShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxShapes.cpp; path = ../../../addons/ofxShapes/src/ofxShapes.cpp; sourceTree = SOURCE_ROOT; };
 		156AFB5010EAB98300F0F8B3 /* ofxShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxShapes.h; path = ../../../addons/ofxShapes/src/ofxShapes.h; sourceTree = SOURCE_ROOT; };
+		15785D6010F355F500AEE198 /* ofxBounce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBounce.h; sourceTree = "<group>"; };
 		15B22CF910E1B8D700A2A129 /* ofxColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColor.cpp; path = ../../../addons/ofxColor/ofxColor.cpp; sourceTree = SOURCE_ROOT; };
 		15B22CFA10E1B8D700A2A129 /* ofxColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColor.h; path = ../../../addons/ofxColor/ofxColor.h; sourceTree = SOURCE_ROOT; };
 		15B22F1C10E210F700A2A129 /* ofxColorUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxColorUtils.h; sourceTree = "<group>"; };
@@ -746,6 +747,7 @@
 				1552673710B94F4C00040958 /* ofxTrigger.h */,
 				15B22F1C10E210F700A2A129 /* ofxColorUtils.h */,
 				15B22F1D10E210F700A2A129 /* ofxColorUtils.cpp */,
+				15785D6010F355F500AEE198 /* ofxBounce.h */,
 			);
 			name = ofxJulapyUtils;
 			path = ../../../addons/ofxJulapyUtils;
