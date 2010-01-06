@@ -12,8 +12,8 @@
 
 //#define MODE		0			// draw outline of contours.
 //#define MODE		1			// run physics.
-//#define MODE		2			// run physics, create particles from file one frame at a time.
-#define MODE		3			// run physics, create particles all at once.
+#define MODE		2			// run physics, create particles from file one frame at a time.
+//#define MODE		3			// run physics, create particles all at once.
 
 #include "ofMain.h"
 #include "ofxJulapyApp.h"
@@ -34,9 +34,11 @@ struct Circle_06
 	bool		tick;
 
 	ofxBounce	bounce;
-	bool		pop;
-	
 	ofPoint		vel;
+	
+	bool		pop;
+	float		alpha;
+	float		decay;
 };
 
 struct DynamicContour
@@ -61,6 +63,9 @@ class Sydfest_06 : public ofxJulapyApp
 	void update		();
 	void draw		();
 	void drawDebug	();
+	
+	void popCircles		();
+	void inflateCircles	();
 	
 	void clear					();
 	void saveCircleData			();
@@ -88,6 +93,7 @@ class Sydfest_06 : public ofxJulapyApp
 	
 	bool					bDrawDebug;
 	int						circleAddRate;
+	int						circlePopRate;
 	
 	ofxBox2d				box2d;
 	vector<ofxBox2dCircle>	box2dCircles;

@@ -27,6 +27,7 @@ void Sydfest_06 :: setup ()
 	
 	bDrawDebug		= true;
 	circleAddRate	= 1;
+	circlePopRate	= 0;
 	
 	cMass			= 0.0001;
 	cBounce			= 0.1;
@@ -40,13 +41,16 @@ void Sydfest_06 :: setup ()
 	
 #if MODE == 1 || MODE == 2 || MODE == 3
 	
-	shapes.loadFromFile( "shapes_data_01" );
+//	shapes.loadFromFile( "shapes_data_01" );
+	shapes.loadFromFile( "shapes_data" );
+	
 	
 #endif
 	
 //	image.loadImage( "barracks1.jpg" );
 //	image.loadImage( "barracks2.jpg" );
-	image.loadImage( "barracks3.jpg" );
+//	image.loadImage( "barracks3.jpg" );
+	image.loadImage( "barracks4.jpg" );
 	
 	imageRect.width		= image.width;
 	imageRect.height	= image.height;
@@ -62,7 +66,7 @@ void Sydfest_06 :: setup ()
 	
 	box2d.init();
 	box2d.setGravity( gravity.x, gravity.y );
-	box2d.createBounds( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
+//	box2d.createBounds( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
 	box2d.setFPS( 30 );
 	
 	for( int i=0; i<shapes.getShapesNum(); i++ )
@@ -85,7 +89,7 @@ void Sydfest_06 :: setup ()
 		
 		if( bReversePoints )
 		{
-			for( int j=poly.size()-1; j>0; j-- )
+			for( int j=poly.size()-1; j>=0; j-- )
 			{
 				p.x = poly[ j ][ 0 ];
 				p.y = poly[ j ][ 1 ];
@@ -106,6 +110,7 @@ void Sydfest_06 :: setup ()
 	}
 	
 	gui.addSlider( "circleAddRate",		circleAddRate,		0, 10  );
+	gui.addSlider( "circlePopRate",		circlePopRate,		0, 10  );
 	gui.addSlider( "imageAlpha",		imageAlpha,			0, 255 );
 	gui.addSlider( "imageColorAlpha",	imageColorAlpha,	0, 255 );
 	gui.addSlider( "gravity.x",			gravity.x,		  -10, 10  );
@@ -152,7 +157,7 @@ void Sydfest_06 :: update ()
 		circle->setPhysics( cMass, cBounce, cFriction );
 		
 		int x = (int)( renderArea.width * 0.5 );
-		int y = (int)( 50 );
+		int y = (int)( 200 );
 		int r = (int)( ofRandom( 5, 10 ) );
 		
 		x += (int)( ofRandom( -4, 4 ) );
@@ -207,32 +212,12 @@ void Sydfest_06 :: update ()
 
 #if MODE == 3
 	
-	updateDynamicContour();
+//	updateDynamicContour();
+//	inflateCircles();
 	
 #endif
 	
-	for( int i=0; i<circles.size(); i++ )
-	{
-		ofxBox2dCircle *box2dCircle;
-		box2dCircle = &box2dCircles.at( i );
-		
-		Circle_06 *circle;
-		circle = &circles[ i ];
-		
-		if( circle->pop == false )
-			continue;
-		
-		circle->bounce.update();
-		circle->radius	= MAX( 0.1, circle->bounce.position() );
-		
-		circle->vel.x	= ofRandom( -0.1, 0.1 );
-		circle->vel.y	= MAX( -10, circle->vel.y - 0.1 );
-		
-		box2dCircle->setRadius( circle->radius );
-		box2dCircle->setVelocity( circle->vel.x, circle->vel.y );
-		box2dCircle->enableGravity( false );
-		box2dCircle->setPhysics( cMass, 0.5, cFriction );
-	}
+	popCircles();
 	
 	box2d.setGravity( gravity.x, gravity.y );
 	box2d.update();
@@ -259,15 +244,21 @@ void Sydfest_06 :: draw ()
 	
 #if MODE == 1 || MODE == 2 || MODE == 3
 	
+	ofEnableAlphaBlending();
+	
 	for( int i=0; i<box2dCircles.size(); i++ )
 	{
-		ofSetColor( circles[ i ].color );
+		ofxBox2dCircle *box2dCircle;
+		box2dCircle = &box2dCircles[ i ];
+
+		Circle_06 *circle;
+		circle = &circles[ i ];
 		
-		ofxBox2dCircle *circle;
-		circle = &box2dCircles[ i ];
+		RgbColor c = ofHexToRgb( circle->color );
+		ofSetColor( c.r, c.g, c.b, (int)( 255 * circle->alpha ) );
 		
-		ofPoint p = circle->getPosition();
-		float	r = circle->getRadius();
+		ofPoint p = box2dCircle->getPosition();
+		float	r = box2dCircle->getRadius();
 		
 		float	d = 1;
 		
@@ -276,6 +267,8 @@ void Sydfest_06 :: draw ()
 		ofNoFill();
 		ofCircle( p.x, p.y, r - d );
 	}
+	
+	ofDisableAlphaBlending();
 	
 	for( int i=0; i<box2dLineStrips.size(); i++ )
 	{
@@ -369,6 +362,7 @@ void Sydfest_06 :: createCirclesFromData ()
 		ofxBox2dCircle *box2dCircle;
 		box2dCircle = &box2dCircles.back();
 		box2dCircle->setPhysics( cMass, cBounce, cFriction );
+//		box2dCircle->setPhysics( 0, 0, 0 );
 		box2dCircle->setup( box2d.getWorld(), circle->p2.x, circle->p2.y, circle->radius );
 	}
 }
@@ -478,8 +472,8 @@ void Sydfest_06 :: writeToFile ( string filename )
 		ofToString( circles[ i ].id,		0 ) + " " +
 		ofToString( circles[ i ].p1.x,		0 ) + " " +
 		ofToString( circles[ i ].p1.y,		0 ) + " " +
-		ofToString( circles[ i ].p2.x,		0 ) + " " +
-		ofToString( circles[ i ].p2.y,		0 ) + " " +
+		ofToString( circles[ i ].p2.x,	   10 ) + " " +
+		ofToString( circles[ i ].p2.y,	   10 ) + " " +
 		ofToString( circles[ i ].color,		0 ) + " " +
 		ofToString( circles[ i ].frame,		0 ) + " " +
 		ofToString( circles[ i ].radius,	0 );
@@ -517,12 +511,16 @@ void Sydfest_06 :: loadFromFile ( string filename )
 			circle->id			= atoi( circleData[ 0 ].c_str() );
 			circle->p1.x		= atoi( circleData[ 1 ].c_str() );
 			circle->p1.y		= atoi( circleData[ 2 ].c_str() );
-			circle->p2.x		= atoi( circleData[ 3 ].c_str() );
-			circle->p2.y		= atoi( circleData[ 4 ].c_str() );
+			circle->p2.x		= atof( circleData[ 3 ].c_str() );
+			circle->p2.y		= atof( circleData[ 4 ].c_str() );
 			circle->color		= atoi( circleData[ 5 ].c_str() );
 			circle->frame		= atoi( circleData[ 6 ].c_str() );
 			circle->radius		= atoi( circleData[ 7 ].c_str() );
+			
 			circle->tick		= false;
+			circle->pop			= false;
+			circle->alpha		= 1.0;
+			circle->decay		= ofRandom( 0.9, 0.95 );
 		}
 	}
 	
@@ -567,6 +565,7 @@ void Sydfest_06 :: keyReleased ( int key )
 		saveCircleData();
 	
 #endif
+	
 }
 
 void Sydfest_06 :: mousePressed ( int x, int y, int button )
@@ -577,26 +576,30 @@ void Sydfest_06 :: mousePressed ( int x, int y, int button )
 	
 #endif
 
-	int r;
-	r = ofRandom( 0, circles.size() - 1 );
+#if MODE == 3	
 	
-	Circle_06 *circ;
-	circ = &circles.at( r );
+//	int r;
+//	r = ofRandom( 0, circles.size() - 1 );
+//	
+//	Circle_06 *circ;
+//	circ = &circles.at( r );
+//	
+//	circ->pop = true;
+//	circ->bounce.center( circ->radius + 20 );
+//	circ->bounce.position( circ->radius );
+//	
+//	//--
+//	
+//	ofxBox2dCircle *box2dCircle;
+//	box2dCircle = &box2dCircles.at( r );
+//	
+//	ofPoint center;
+//	center.x = renderArea.width  * 0.5;
+//	center.y = renderArea.height * 0.5;
+//	
+//	box2dCircle->setVelocity( center.x, center.y );
 	
-	circ->pop = true;
-	circ->bounce.center( circ->radius + 20 );
-	circ->bounce.position( circ->radius );
-	
-	//--
-	
-	ofxBox2dCircle *box2dCircle;
-	box2dCircle = &box2dCircles.at( r );
-	
-	ofPoint center;
-	center.x = renderArea.width  * 0.5;
-	center.y = renderArea.height * 0.5;
-	
-	box2dCircle->setVelocity( center.x, center.y );
+#endif
 }
 
 void Sydfest_06 :: mouseMoved ( int x, int y )

@@ -15,6 +15,7 @@
 #include "ofxCirclePacker.h"
 #include "ofxBox2d.h"
 #include "ofxSimpleGuiToo.h"
+#include "ofxShapes.h"
 
 class Sydfest_02 : public ofxJulapyApp
 {
@@ -34,6 +35,9 @@ public :
 	
 	ofxBox2d				box2d;
 	vector<ofxBox2dCircle>	box2dCircles;
+	vector<ofxBox2dLine>	box2dLineStrips;
+	
+	ofxShapes		shapes;
 
 };
 
