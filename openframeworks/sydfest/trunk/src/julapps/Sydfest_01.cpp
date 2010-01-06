@@ -40,7 +40,8 @@ void Sydfest_01 :: initImage ()
 //	imageMap.loadImage( "logo.jpg"  );
 //	imageMap.loadImage( "logo2.jpg" );
 //	imageMap.loadImage( "logo3.jpg" );
-	imageMap.loadImage( "meredith.jpg" );
+	imageMap.loadImage( "logo4.jpg" );
+//	imageMap.loadImage( "meredith.jpg" );
 	
 	imageMapRect.x		= (int)( ( renderArea.width  - imageMap.width  ) * 0.5 );
 	imageMapRect.y		= (int)( ( renderArea.height - imageMap.height ) * 0.5 );
@@ -52,7 +53,8 @@ void Sydfest_01 :: initImage ()
 
 	//-- image bounds.
 	
-	imageBounds.loadImage( "meredith.jpg" );
+//	imageBounds.loadImage( "meredith.jpg" );
+	imageBounds.loadImage( "logo4.jpg" );
 	
 	imageBoundsRect.x		= (int)( ( renderArea.width  - imageBounds.width  ) * 0.5 );
 	imageBoundsRect.y		= (int)( ( renderArea.height - imageBounds.height ) * 0.5 );
@@ -66,11 +68,11 @@ void Sydfest_01 :: initImage ()
 void Sydfest_01 :: initCirclePacker ()
 {
 	circleAddedPerFrame	= 0;
-	circleRadiusMin		= 50;
-	circleRadiusMax		= 100;
-	circleGap			= 5.0;
-	circleDeathGap		= 5.0;
-	circleColorBounds	= false;
+	circleRadiusMin		= 5;
+	circleRadiusMax		= 20;
+	circleGap			= 2.0;
+	circleDeathGap		= 2.0;
+	circleColorBounds	= true;
 	
 	circlePacker.setColorMapImage( &imageMap, &imageMapRect );
 	circlePacker.setColorBoundsImage( &imageBounds, &imageBoundsRect );
@@ -79,7 +81,7 @@ void Sydfest_01 :: initCirclePacker ()
 	circlePacker.setCircleGap( circleGap );
 	circlePacker.setCircleDeathGap( circleDeathGap );
 	circlePacker.setCircleColorBounds( circleColorBounds );
-	circlePacker.setCircleDeathColor( 0xFFFFFF );
+	circlePacker.setCircleDeathColor( 0x000000 );
 }
 
 void Sydfest_01 :: initGui ()

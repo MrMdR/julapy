@@ -15,6 +15,7 @@
 #include "ofxCirclePacker.h"
 #include "ofxBox2d.h"
 #include "ofxSimpleGuiToo.h"
+#include "ofxShapes.h"
 
 #ifndef _CIRCLE_ANIM_
 #define _CIRCLE_ANIM_
@@ -54,6 +55,11 @@ class Sydfest_03 : public ofxJulapyApp
 	vector<CircleAnim>	circleAnims;
 	
 	int					frameStart;
+	
+	ofxBox2d				box2d;
+	vector<ofxBox2dLine>	box2dLineStrips;
+	
+	ofxShapes			shapes;
 };
 
 #endif
