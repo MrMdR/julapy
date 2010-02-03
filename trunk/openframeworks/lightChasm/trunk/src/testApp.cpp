@@ -173,7 +173,7 @@ void testApp :: initOsc ()
 
 void testApp :: initGui ()
 {
-	gui.addToggle( "bRightMonitor",	&bRightMonitor );
+	gui.addToggle( "bRightMonitor",	bRightMonitor );
 	
 	gui.loadFromXML( "ofxSimpleGuiToo.xml" );
 }
