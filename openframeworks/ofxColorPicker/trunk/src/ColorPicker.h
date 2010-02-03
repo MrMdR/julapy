@@ -52,10 +52,13 @@ public :
 	bool  isVisible();
 	
 	void  setMode( int m );
-	void  setColorScale( float s );
 	void  setRandomColor();
 	void  setColor( Color *c );
 	void  getColor( Color *c );
+	
+	void  setColorScale( float s );
+	void  setColorRadius( float r );
+	void  setColorAngle( float a );
 	
 	void  setCircularUpperBounds( float value );
 	void  setCircularLowerBounds( float value );
