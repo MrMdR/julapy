@@ -212,11 +212,6 @@ void ColorPicker :: setMode( int m )
 		initMouseInterpolation();
 }
 
-void ColorPicker :: setColorScale( float s )
-{
-	colorScale = s;
-}
-
 void ColorPicker :: setRandomColor()
 {
 	colorAngle  = ofRandom( 0, 360 );
@@ -232,6 +227,21 @@ void ColorPicker :: getColor( Color *c )
 	c->g = color.g;
 	c->b = color.b;
 	c->a = color.a;
+}
+
+void ColorPicker :: setColorScale( float s )
+{
+	colorScale = s;
+}
+
+void ColorPicker :: setColorRadius ( float r )
+{
+	colorRadius = r;
+}
+
+void ColorPicker :: setColorAngle ( float a )
+{
+	colorAngle = a * 360;
 }
 
 //////////////////////////////////////////////
