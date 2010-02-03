@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef OFX_BOUNCE_H
+#define OFX_BOUNCE_H
+
 class ofxBounce
 {
 
@@ -54,3 +57,5 @@ private :
 	float v;		// velocity.
 	
 };
+
+#endif
