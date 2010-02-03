@@ -21,7 +21,7 @@ Sydfest_06 :: ~Sydfest_06()
 
 void Sydfest_06 :: setup ()
 {
-	ofBackground( 30, 30, 30 );
+	ofBackground( 0, 0, 0 );
 	ofSetCircleResolution( 100 );
 	ofEnableSmoothing();
 	
@@ -42,7 +42,8 @@ void Sydfest_06 :: setup ()
 #if MODE == 1 || MODE == 2 || MODE == 3
 	
 //	shapes.loadFromFile( "shapes_data_01" );
-	shapes.loadFromFile( "shapes_data" );
+	shapes.loadFromFile( "shapes_data_02a" );
+//	shapes.loadFromFile( "shapes_data" );
 	
 	
 #endif
@@ -50,12 +51,14 @@ void Sydfest_06 :: setup ()
 //	image.loadImage( "barracks1.jpg" );
 //	image.loadImage( "barracks2.jpg" );
 //	image.loadImage( "barracks3.jpg" );
-	image.loadImage( "barracks4.jpg" );
+//	image.loadImage( "barracks4.jpg" );
+	image.loadImage( "barracks5.jpg" );
 	
 	imageRect.width		= image.width;
 	imageRect.height	= image.height;
 	
-	imageColor.loadImage( "balloon.jpg" );
+	imageColor.loadImage( "swirl.jpg" );
+//	imageColor.loadImage( "balloon.jpg" );
 //	imageColor.loadImage( "grandmasterflash.jpg" );
 	
 	imageAlpha			= 255;
@@ -178,6 +181,8 @@ void Sydfest_06 :: update ()
 		circ->radius	= r;
 		circ->frame		= frame;
 		circ->color		= 0xFF00FF;
+		circ->alpha		= 1.0;
+		circ->pop		= false;
 	}
 	
 #endif

@@ -15,6 +15,7 @@
 #include "ofxCirclePacker.h"
 #include "ofxSimpleGuiToo.h"
 #include "ofxColorUtils.h"
+#include "ofxBounce.h"
 
 #ifndef _CIRCLE_ANIM_
 #define _CIRCLE_ANIM_
@@ -28,6 +29,7 @@ struct CircleAnim
 	float		radiusEase;
 	float		frameDelay;
 	bool		playing;
+	ofxBounce	bounce;
 };
 
 #endif

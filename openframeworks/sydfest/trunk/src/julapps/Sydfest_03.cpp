@@ -25,7 +25,7 @@ Sydfest_03 :: ~Sydfest_03()
 
 void Sydfest_03 :: setup ()
 {
-	circlePacker.loadFromFile( "circle_data_04_becks" );
+	circlePacker.loadFromFile( "circle_data_05_becks" );
 	circles = circlePacker.getCircles();
 	
 	for( int i=0; i<circles->size(); i++ )
@@ -106,7 +106,9 @@ void Sydfest_03 :: update ()
 
 		if( circleAnims[ i ].playing  )
 		{
-			circleAnims[ i ].radius += ( circleAnims[ i ].radiusMax - circleAnims[ i ].radius ) * circleAnims[ i ].radiusEase;
+			circleAnims[ i ].bounce.update();
+			circleAnims[ i ].radius = circleAnims[ i ].bounce.position();
+//			circleAnims[ i ].radius += ( circleAnims[ i ].radiusMax - circleAnims[ i ].radius ) * circleAnims[ i ].radiusEase;
 		}
 	}
 }
@@ -123,10 +125,10 @@ void Sydfest_03 :: draw ()
 		ofCircle( circleAnims[ i ].loc.x, circleAnims[ i ].loc.y, circleAnims[ i ].radius );
 	}
 	
-	for( int i=0; i<box2dLineStrips.size(); i++ )
-	{
-		box2dLineStrips[ i ].draw();
-	}
+//	for( int i=0; i<box2dLineStrips.size(); i++ )
+//	{
+//		box2dLineStrips[ i ].draw();
+//	}
 }
 
 void Sydfest_03 :: drawDebug ()
@@ -138,15 +140,28 @@ void Sydfest_03 :: reset ()
 {
 	frameStart = ofGetFrameNum();
 	
+	float radiusMax;
+	radiusMax = 0;
+
+	for( int i=0; i<circleAnims.size(); i++ )
+	{
+		if( circles->at( i ).radius > radiusMax )
+			radiusMax = circles->at( i ).radius;
+	}
+	
 	for( int i=0; i<circleAnims.size(); i++ )
 	{
 		float p;
-		p = circles->at( i ).radius / 35.0;
+		p = circles->at( i ).radius / radiusMax;
 		
-		circleAnims[ i ].radius		= 0;
-		circleAnims[ i ].radiusEase	= 0.05;
-		circleAnims[ i ].frameDelay	= (int)( ( 1 - p ) * ( 100 + ofRandom( 0, 300 ) ) );
-		circleAnims[ i ].playing	= false;
+		circleAnims[ i ].radius			= 0;
+		circleAnims[ i ].radiusEase		= 0.05;
+		circleAnims[ i ].frameDelay		= (int)( ( 1 - p ) * ( 100 + ofRandom( 0, 500 ) ) );
+		circleAnims[ i ].playing		= false;
+		circleAnims[ i ].bounce.center( circles->at( i ).radius );
+		circleAnims[ i ].bounce.position( 0 );
+		circleAnims[ i ].bounce.inertia( 0.85 );
+		circleAnims[ i ].bounce.springconst( 0.3 );
 	}
 }
 

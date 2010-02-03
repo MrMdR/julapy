@@ -38,6 +38,10 @@ public :
 	vector<ofxBox2dLine>	box2dLineStrips;
 	
 	ofxShapes		shapes;
+	
+	ofPoint			gravity;
+	float			gravityMult;
+	bool			gravityOn;
 
 };
 
