@@ -13,7 +13,7 @@
 #include "ofMain.h"
 #include "ofxJulapyApp.h"
 #include "ofxSimpleGuiToo.h"
-#include "PerlinStep.h"
+#include "ofxPerlinStep.h"
 
 
 class PerlinStepExample : public ofxJulapyApp
@@ -27,7 +27,7 @@ public :
 	void update();
 	void draw();
 
-	PerlinStep			ps;
+	ofxPerlinStep		ps;
 	ofxSimpleGuiToo		gui;
 	
 	float		perlinRes;
