@@ -30,7 +30,7 @@ void testApp :: setup()
 	
 	julApp = NULL;
 	
-	setJulApp( 1 );
+	setJulApp( 2 );
 }
 
 void testApp :: setJulApp ( int appID )

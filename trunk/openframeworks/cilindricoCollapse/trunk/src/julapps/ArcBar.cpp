@@ -61,7 +61,7 @@ void ArcBar :: setup ()
 {
 	init();
 	
-	perlinStep = new PerlinStep();
+	perlinStep = new ofxPerlinStep();
 	perlinStep->setup();
 	perlinStep->setSampleLength( perlinSampleLegth );
 	perlinStep->setResolution( perlinResolution );
@@ -70,7 +70,7 @@ void ArcBar :: setup ()
 	perlinStep->update();
 }
 
-void ArcBar :: setup ( PerlinStep *ps )
+void ArcBar :: setup ( ofxPerlinStep *ps )
 {
 	init();
 	
