@@ -23,11 +23,16 @@ Sydfest_02 :: ~Sydfest_02()
 
 void Sydfest_02 :: setup ()
 {
-	circlePacker.loadFromFile( "circle_data_04_becks" );
+	circlePacker.loadFromFile( "circle_data_05_becks" );
 	circles = circlePacker.getCircles();
+
+	gravityMult	= 10;
+	gravity.x	= -gravityMult;
+	gravity.y	=  gravityMult;
+	gravityOn	= true;
 	
 	box2d.init();
-	box2d.setGravity( -10, 10 );
+	box2d.setGravity( gravity.x, gravity.y );
 //	box2d.createBounds( renderArea.x, renderArea.y, renderArea.width, renderArea.height );
 	
 	for( int i=0; i<circles->size(); i++ )
@@ -101,6 +106,29 @@ void Sydfest_02 :: setup ()
 
 void Sydfest_02 :: update ()
 {
+	if( gravityOn )
+	{
+		gravityMult = MAX( 10 * cos( ofGetFrameNum() / 1000.0 ), 0 );
+		
+		if( gravityMult == 0 )
+			gravityOn = false;
+	}
+	
+	float t;
+	t = ofGetFrameNum() / 100.0;
+	
+	float s;
+	s = sin( t + TWO_PI * 0.125 ) * 0.2;
+
+	if( s > 0 )
+		s = 1 - s;
+	else 
+		s = -s;
+	
+	gravity.x = gravityMult * sin( TWO_PI * s );
+	gravity.y = gravityMult * cos( TWO_PI * s ) - 1.0;
+	
+	box2d.setGravity( gravity.x, gravity.y );
 	box2d.update();
 }
 
@@ -121,14 +149,19 @@ void Sydfest_02 :: draw ()
 		ofNoFill();
 		ofCircle( p.x, p.y, r );
 	}
-	
-	for( int i=0; i<box2dLineStrips.size(); i++ )
-	{
-		box2dLineStrips[ i ].draw();
-	}
 }
 
 void Sydfest_02 :: drawDebug ()
 {
+	for( int i=0; i<box2dLineStrips.size(); i++ )
+	{
+		box2dLineStrips[ i ].draw();
+	}
+
+	float cx = ofGetWidth()  * 0.5;
+	float cy = ofGetHeight() * 0.5;
 	
+//	ofNoFill();
+//	ofSetColor( 0xFF00FF );
+//	ofLine( cx, cy, cx + gravity.x * 10, cy + gravity.y * 10 );
 }
