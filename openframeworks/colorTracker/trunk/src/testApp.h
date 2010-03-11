@@ -9,6 +9,20 @@
 #include "contourSimplify.h"
 
 #define		MAX_NUM_CONTOURS_TO_FIND	20
+#define		TOTAL_OBJECTS_TRACKED		3
+
+struct HSVData
+{
+	float	hue, sat, val;
+	float	hueRange, satRange, valRange;
+	
+	int		minHue, maxHue;
+	int		minSat, maxSat;
+	int		minVal, maxVal;
+	
+	ofxCvGrayscaleImage		img;
+	unsigned char *         imgPixels;
+};
 
 class testApp : public ofSimpleApp
 {
@@ -39,15 +53,13 @@ public:
 	ofxCvGrayscaleImage		hueImg;
 	ofxCvGrayscaleImage		satImg;
 	ofxCvGrayscaleImage		valImg;
-	ofxCvGrayscaleImage		trkImg;
-	unsigned char *         trkImgPixels;
-	ofxCvGrayscaleImage		blrImg;
 
-	int minHue, maxHue, minSat, maxSat, minVal, maxVal;
-	float hue, hueWidth, sat, satWidth, val, valWidth;
+	HSVData		*hsv;
+	int			hsvTotal;
+	int			hsvIndex;
 	
-	float blur;
-	float threshold;
+	float	blur;
+	float	threshold;
 	
 	//-- contour analysis.
 	
