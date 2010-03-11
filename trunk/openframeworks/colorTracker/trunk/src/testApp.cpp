@@ -1,11 +1,16 @@
 #include "testApp.h"
 
-//--------------------------------------------------------------
+/////////////////////////////////////////////
+//	SETUP.
+/////////////////////////////////////////////
+
 void testApp::setup()
 {
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	
+	videoRect.x			= 290;
+	videoRect.y			= 110;
 	videoRect.width		= 320;
 	videoRect.height	= 240;
 	
@@ -17,17 +22,23 @@ void testApp::setup()
     hueImg.allocate( videoRect.width, videoRect.height );				// Hue Image
     satImg.allocate( videoRect.width, videoRect.height );				// Saturation Image
     valImg.allocate( videoRect.width, videoRect.height );				// value Image
-	trkImg.allocate( videoRect.width, videoRect.height );				// tracker image.
-	blrImg.allocate( videoRect.width, videoRect.height );				// blured image.
 
-    trkImgPixels = new unsigned char [ (int)videoRect.width * (int)videoRect.height ];	// tracker image pixels.
-
-	hue			= 0.0;
-	hueWidth	= 0.06;
-	sat			= 0.62;
-	satWidth	= 0.94;
-	val			= 0.8;
-	valWidth	= 0.62;
+	hsvTotal	= TOTAL_OBJECTS_TRACKED;
+	hsv			= new HSVData[ hsvTotal ];
+	hsvIndex	= 0;
+	
+	for( int i=0; i<hsvTotal; i++ )
+	{
+		hsv[ i ].hue		= 0.0;
+		hsv[ i ].hueRange	= 0.06;
+		hsv[ i ].sat		= 0.62;
+		hsv[ i ].satRange	= 0.94;
+		hsv[ i ].val		= 0.8;
+		hsv[ i ].valRange	= 0.62;
+		
+		hsv[ i ].img.allocate( videoRect.width, videoRect.height );									// tracker image.
+		hsv[ i ].imgPixels = new unsigned char [ (int)videoRect.width * (int)videoRect.height ];		// tracker image pixels.
+	}
 	
 	blur		= 0;
 	threshold	= 20;
@@ -38,13 +49,19 @@ void testApp::setup()
 
 void testApp :: initGui ()
 {
-	gui.addTitle( "HSV properties" );
-	gui.addSlider( "hue       ", hue,		0.0, 1.0 );
-	gui.addSlider( "hueWidth  ", hueWidth,  0.0, 1.0 );
-	gui.addSlider( "sat       ", sat,		0.0, 1.0 );
-	gui.addSlider( "satWidth  ", satWidth,	0.0, 1.0 );
-	gui.addSlider( "val       ", val,		0.0, 1.0 );
-	gui.addSlider( "valWidth  ", valWidth,	0.0, 1.0 );
+	for( int i=0; i<hsvTotal; i++ )
+	{
+		if( i > 0 )
+			gui.addPage();
+		
+		gui.addTitle( "hsv " + ofToString( i, 0 ) );
+		gui.addSlider( "hue       ", hsv[ i ].hue,		0.0, 1.0 );
+		gui.addSlider( "hueWidth  ", hsv[ i ].hueRange, 0.0, 1.0 );
+		gui.addSlider( "sat       ", hsv[ i ].sat,		0.0, 1.0 );
+		gui.addSlider( "satWidth  ", hsv[ i ].satRange,	0.0, 1.0 );
+		gui.addSlider( "val       ", hsv[ i ].val,		0.0, 1.0 );
+		gui.addSlider( "valWidth  ", hsv[ i ].valRange,	0.0, 1.0 );
+	}
 
 	gui.addPage();
 	gui.addTitle( "image processing" );
@@ -58,12 +75,16 @@ void testApp :: initGui ()
 	gui.addToggle( "contour angle   ", bShowAngle     );
 	gui.addToggle( "contour lines   ", bShowLines     );
 
-	gui.loadFromXML();
+//	gui.loadFromXML();
 	
 	gui.show();
+	gui.setPage( 1 );
 }
 
-//--------------------------------------------------------------
+/////////////////////////////////////////////
+//	UPDATE.
+/////////////////////////////////////////////
+
 void testApp::update()
 {
 	ofBackground( 100,100,100 );
@@ -72,14 +93,8 @@ void testApp::update()
 	
 	if( video.isFrameNew() )
 	{
-		minHue = max( ( hue - hueWidth * 0.5) * 255, 000.0);
-		maxHue = min( ( hue + hueWidth * 0.5) * 255, 255.0);
-		minSat = max( ( sat - satWidth * 0.5) * 255, 000.0);
-		maxSat = min( ( sat + satWidth * 0.5) * 255, 255.0);
-		minVal = max( ( val - valWidth * 0.5) * 255, 000.0);
-		maxVal = min( ( val + valWidth * 0.5) * 255, 255.0);
-	
 		colImg.setFromPixels( video.getPixels(), videoRect.width, videoRect.height );	
+		colImg.mirror( false, true );
 		
 		hsvImg = colImg;
 		hsvImg.convertRgbToHsv();
@@ -90,32 +105,48 @@ void testApp::update()
 		unsigned char * valPixels = valImg.getPixels();
 		int nPixels = videoRect.width * videoRect.height;
 	
-		for( int i=0; i<nPixels; i++ )
+		for( int i=0; i<hsvTotal; i++ )
 		{
-			if
-			(
-				( huePixels[ i ] >= minHue && huePixels[ i ] <= maxHue ) &&
-				( satPixels[ i ] >= minSat && satPixels[ i ] <= maxSat ) &&
-				( valPixels[ i ] >= minVal && valPixels[ i ] <= maxVal )
-			)
+			hsv[ i ].minHue = max( ( hsv[ i ].hue - hsv[ i ].hueRange * 0.5) * 255, 000.0 );
+			hsv[ i ].maxHue = min( ( hsv[ i ].hue + hsv[ i ].hueRange * 0.5) * 255, 255.0 );
+			hsv[ i ].minSat = max( ( hsv[ i ].sat - hsv[ i ].satRange * 0.5) * 255, 000.0 );
+			hsv[ i ].maxSat = min( ( hsv[ i ].sat + hsv[ i ].satRange * 0.5) * 255, 255.0 );
+			hsv[ i ].minVal = max( ( hsv[ i ].val - hsv[ i ].valRange * 0.5) * 255, 000.0 );
+			hsv[ i ].maxVal = min( ( hsv[ i ].val + hsv[ i ].valRange * 0.5) * 255, 255.0 );
+			
+			for( int j=0; j<nPixels; j++ )
 			{
-				trkImgPixels[ i ] = 255;
+				if
+				(
+					( huePixels[ j ] >= hsv[ i ].minHue && huePixels[ j ] <= hsv[ i ].maxHue ) &&
+					( satPixels[ j ] >= hsv[ i ].minSat && satPixels[ j ] <= hsv[ i ].maxSat ) &&
+					( valPixels[ j ] >= hsv[ i ].minVal && valPixels[ j ] <= hsv[ i ].maxVal )
+				)
+				{
+					hsv[ i ].imgPixels[ j ] = 255;
+				}
+				else
+				{
+					hsv[ i ].imgPixels[ j ] = 0;
+				}
 			}
-			else
-			{
-				trkImgPixels[ i ] = 0;
-			}
+			
+			hsv[ i ].img.setFromPixels( hsv[ i ].imgPixels, videoRect.width, videoRect.height );
+			
+			hsv[ i ].img.blur( blur );
+			hsv[ i ].img.threshold( threshold );
 		}
-		
-		trkImg.setFromPixels( trkImgPixels, videoRect.width, videoRect.height );
-		
-		blrImg = trkImg;
-		blrImg.blur( blur );
-		blrImg.threshold( threshold );
 		
 		computeContourAnalysis();
 		
-		LT.calcColorRange( hue, hueWidth, sat, satWidth, val );
+		LT.calcColorRange
+		(
+			hsv[ hsvIndex ].hue,
+			hsv[ hsvIndex ].hueRange,
+			hsv[ hsvIndex ].sat,
+			hsv[ hsvIndex ].satRange,
+			hsv[ hsvIndex ].val
+		);
 	}
 }
 
@@ -143,7 +174,7 @@ void testApp :: initContourAnalysis ()
 void testApp :: computeContourAnalysis ()
 {
 	int runningBlobs;
-	runningBlobs = contourFinder.findContours( blrImg, 100, 9999999, MAX_NUM_CONTOURS_TO_FIND, false, false );
+	runningBlobs = contourFinder.findContours( hsv[ hsvIndex ].img, 100, 9999999, MAX_NUM_CONTOURS_TO_FIND, false, false );
 
 	if( runningBlobs == 0 )
 		return;
@@ -177,11 +208,6 @@ void testApp :: computeContourAnalysis ()
 
 void testApp :: drawContourAnalysis()
 {
-	ofFill();
-	ofSetColor(0x333333);
-	ofRect(0,0,320,240);
-	ofSetColor(0xffffff);
-	
 	for( int i=0; i<contourFinder.nBlobs; i++ )
 	{
 		//-------------------  draw the contours
@@ -273,7 +299,7 @@ void testApp::draw()
 	ofSetColor(0xffffff);
 	
 	glPushMatrix();
-	glTranslatef( 290, 110, 0 );
+	glTranslatef( videoRect.x, videoRect.y, 0 );
 	
 	int pad;
 	pad = 10;
@@ -286,11 +312,31 @@ void testApp::draw()
 	
 	colImg.draw( w * 0, h * 0 );
 	hsvImg.draw( w * 1, h * 0 );
-	trkImg.draw( w * 2, h * 0 );
-	blrImg.draw( w * 2, h * 1 );
+	
+	for( int i=0; i<hsvTotal; i++ )
+	{
+		if( i == hsvIndex )
+		{
+			int b;	// border.
+			b = 4;
+			
+			ofFill();
+			ofSetColor( 0xFF0000 );
+			ofRect
+			(
+				w * i - b,
+				h * 1 - b,
+				320 + b * 2,
+				240 + b * 2
+			);
+			ofSetColor( 0xFFFFFF );
+		}
+		
+		hsv[ i ].img.draw( w * i, h * 1 );
+	}
 	
 	glPushMatrix();
-	glTranslatef( w * 1, h, 0 );
+	glTranslatef( w * 2, h * 0, 0 );
 
 	int x;
 	x = 140;
@@ -304,17 +350,17 @@ void testApp::draw()
 	LT.drawColorRange( 0, 0, 120, 44 );
 	
 	ofSetColor( 0xffffff );
-	ofDrawBitmapString( "minHue: " + ofToString( minHue ), x, y       );
-	ofDrawBitmapString( "maxHue: " + ofToString( maxHue ), x, y += dy );
-	ofDrawBitmapString( "minSat: " + ofToString( minSat ), x, y += dy );
-	ofDrawBitmapString( "maxSat: " + ofToString( maxSat ), x, y += dy );
-	ofDrawBitmapString( "minVal: " + ofToString( minVal ), x, y += dy );
-	ofDrawBitmapString( "maxVal: " + ofToString( maxVal ), x, y += dy );
+	ofDrawBitmapString( "minHue: " + ofToString( hsv[ hsvIndex ].minHue ), x, y       );
+	ofDrawBitmapString( "maxHue: " + ofToString( hsv[ hsvIndex ].maxHue ), x, y += dy );
+	ofDrawBitmapString( "minSat: " + ofToString( hsv[ hsvIndex ].minSat ), x, y += dy );
+	ofDrawBitmapString( "maxSat: " + ofToString( hsv[ hsvIndex ].maxSat ), x, y += dy );
+	ofDrawBitmapString( "minVal: " + ofToString( hsv[ hsvIndex ].minVal ), x, y += dy );
+	ofDrawBitmapString( "maxVal: " + ofToString( hsv[ hsvIndex ].maxVal ), x, y += dy );
 	
 	glPopMatrix();
 	
 	glPushMatrix();
-	glTranslatef( w * 0, h * 1, 0 );
+	glTranslatef( w * hsvIndex, h * 1, 0 );
 		drawContourAnalysis();
 	glPopMatrix();
 	
@@ -343,6 +389,11 @@ void testApp::keyPressed(int key)
 			case ']': gui.nextPage(); break;
 		}
 	}
+	
+	if( key >= '1' && key <= '3' )		// need to work out how to make the limit hsvTotal.
+	{
+		hsvIndex = key - '0' - 1;
+	}
 }
 
 //--------------------------------------------------------------
@@ -354,7 +405,23 @@ void testApp::mouseDragged(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
+void testApp::mousePressed(int x, int y, int button)
+{
+	if
+	(
+		x >= videoRect.x					&&
+		x <  videoRect.x + videoRect.width	&&
+		y >= videoRect.y					&&
+		y <  videoRect.y + videoRect.height
+	)
+	{
+		int p;		// pixel no.
+		p = ( y - videoRect.y ) * 320 + ( x - videoRect.x );
+		
+		hsv[ hsvIndex ].hue = hueImg.getPixels()[ p ] / 255.0;
+		hsv[ hsvIndex ].sat = satImg.getPixels()[ p ] / 255.0;
+		hsv[ hsvIndex ].val = valImg.getPixels()[ p ] / 255.0;
+	}
 }
 
 //--------------------------------------------------------------
