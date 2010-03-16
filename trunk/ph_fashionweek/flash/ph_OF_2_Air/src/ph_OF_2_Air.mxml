@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="absolute" width="480" height="640" windowComplete="init()">
+
+    <mx:Script>
+        <![CDATA[
+        	import com.julapy.vo.TrackerVO;
+        	import com.julapy.model.OFDataModel;
+        	import com.julapy.core.StageSizeEvent;
+        	import com.julapy.core.StageSize;
+        	import com.julapy.ui.Btn01;
+        	import com.julapy.net.SocketOFEvent;
+        	import com.julapy.net.SocketOF;
+		    import flash.display.Sprite;
+
+			private var model		: OFDataModel = new OFDataModel();
+
+			private var socket 		: SocketOF;
+
+			private var container	: Sprite;
+			private var info		: TextField;
+			private var fsBtn		: Btn01;
+
+			private function init ():void
+			{
+				StageSize.getInstance().stage = stage;
+				StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
+
+				socket = new SocketOF();
+				socket.addEventListener( SocketOFEvent.CONNECTED,			socketHandler );
+				socket.addEventListener( SocketOFEvent.DISCONNECTED,		socketHandler );
+				socket.addEventListener( SocketOFEvent.TRYING_TO_CONNECT,	socketHandler );
+				socket.addEventListener( SocketOFEvent.DATA_RECEIVED,		socketHandler );
+
+				stage.addChild( container = new Sprite() );
+
+				info = new TextField();
+				container.addChild( info );
+
+				fsBtn = new Btn01( );
+				fsBtn.addEventListener( MouseEvent.MOUSE_DOWN, fsBtnHandler );
+				container.addChild( fsBtn );
+
+				container.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
+
+				resize( StageSize.getInstance().stageWidth, StageSize.getInstance().stageHeight );
+			}
+
+			private function socketHandler ( e : SocketOFEvent ):void
+			{
+				if( e.type == SocketOFEvent.CONNECTED )
+				{
+					info.appendText( "\n" + "connected!" );
+				}
+
+				if( e.type == SocketOFEvent.DISCONNECTED )
+				{
+					info.text = "disconnected.";
+				}
+
+				if( e.type == SocketOFEvent.TRYING_TO_CONNECT )
+				{
+					info.appendText( "\n" + "no luck, waiting :( " );
+				}
+
+				if( e.type == SocketOFEvent.DATA_RECEIVED )
+				{
+					model.ofStringData = e.dataString;
+
+					info.text  = "\n" + "connected!";
+					info.appendText( "\n" + e.dataString );
+				}
+			}
+
+			private function fsBtnHandler ( e : MouseEvent ):void
+			{
+				if( stage.displayState != StageDisplayState.FULL_SCREEN_INTERACTIVE )
+				{
+					stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				}
+				else
+				{
+					stage.displayState = StageDisplayState.NORMAL;
+				}
+			}
+
+			private function stageResizeHandler ( e : StageSizeEvent ):void
+			{
+				resize( e.stageWidth, e.stageHeight );
+			}
+
+			private function resize ( stageWidth : int, stageHeight : int ):void
+			{
+				info.width	= stageWidth;
+				info.height = stageHeight;
+
+				fsBtn.x	= stageWidth - 50;
+				fsBtn.y	= 10;
+			}
+
+			private function enterFrameHandler ( e : Event ):void
+			{
+				var trackerVOs : Array;
+				trackerVOs = model.trackerVOs;
+
+				var colours : Array;
+				colours = [ 0xFF0000, 0x00FF00, 0x0000FF ];
+
+				container.graphics.clear();
+
+				var stageWidth 	: int;
+				var stageHeight	: int;
+				stageWidth	= StageSize.getInstance().stageWidth;
+				stageHeight	= StageSize.getInstance().stageHeight;
+
+				for( var i:int=0; i<trackerVOs.length; i++ )
+				{
+					var j : int;
+					j = Math.min( i, colours.length - 1 );
+
+					var trackerVO : TrackerVO;
+					trackerVO = trackerVOs[ i ];
+
+					container.graphics.lineStyle( 2, colours[ j ], 1.0 );
+					container.graphics.drawRect
+					(
+						trackerVO.rect.x		* stageWidth,
+						trackerVO.rect.y		* stageHeight,
+						trackerVO.rect.width	* stageWidth,
+						trackerVO.rect.height	* stageHeight
+					);
+				}
+			}
+
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>
