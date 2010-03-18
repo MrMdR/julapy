@@ -8,6 +8,8 @@
 #include "ofContourAnalysis.h"
 #include "contourSimplify.h"
 
+#include <fstream>
+
 #define		MAX_NUM_CONTOURS_TO_FIND	20
 #define		TOTAL_OBJECTS_TRACKED		3
 
@@ -60,6 +62,9 @@ public:
 	
 	void computeContourAnalysis ( int i );
 	void drawContourAnalysis	( int i );
+	
+	void writeToFile	( string filename = "config" );
+	void loadFromFile	( string filename = "config" );
 
 	void keyPressed		( int key );
 	void mouseMoved		( int x, int y );

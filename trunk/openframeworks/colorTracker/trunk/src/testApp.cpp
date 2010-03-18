@@ -553,6 +553,69 @@ void testApp :: drawContourAnalysis( int i )
 }
 
 /////////////////////////////////////////////
+//	CONFIG.
+/////////////////////////////////////////////
+
+void testApp :: writeToFile	( string filename )
+{
+	ofstream fout;
+	fout.open( ofToDataPath( filename ).c_str() );
+	
+	for( int i=0; i<hsvTotal; i++ )
+	{
+		string dataStr;
+		
+		dataStr = 
+		ofToString( hsv[ i ].hue,		6 ) + " " +
+		ofToString( hsv[ i ].hueRange,	6 ) + " " +
+		ofToString( hsv[ i ].sat,		6 ) + " " +
+		ofToString( hsv[ i ].satRange,	6 ) + " " +
+		ofToString( hsv[ i ].val,		6 ) + " " +
+		ofToString( hsv[ i ].valRange,	6 );
+		
+		fout << dataStr << endl;
+	}
+	
+	fout.close();
+}
+
+void testApp :: loadFromFile ( string filename )
+{
+	ifstream	dataFile;
+	string		dataStr;
+	
+	int i;
+	i = 0;
+	
+	dataFile.open( ofToDataPath( filename ).c_str() );
+	
+	if( dataFile.is_open() )
+	{
+		while( !dataFile.eof() )
+		{
+			getline( dataFile, dataStr );
+			
+			if( dataStr == "" )
+				continue;
+			
+			vector<string> data;
+			data = ofSplitString( dataStr, " " );
+			
+			hsv[ i ].hue		= atof( data[ 0 ].c_str() );
+			hsv[ i ].hueRange	= atof( data[ 1 ].c_str() );
+			hsv[ i ].sat		= atof( data[ 2 ].c_str() );
+			hsv[ i ].satRange	= atof( data[ 3 ].c_str() );
+			hsv[ i ].val		= atof( data[ 4 ].c_str() );
+			hsv[ i ].valRange	= atof( data[ 5 ].c_str() );
+			
+			++i;
+		}
+	}
+	
+	dataFile.close();
+}
+
+/////////////////////////////////////////////
 //	HANDLERS.
 /////////////////////////////////////////////
 
@@ -588,6 +651,16 @@ void testApp::keyPressed(int key)
 	if( key == 'c' )
 	{
 		hsv[ hsvIndex ].bShowContour = !hsv[ hsvIndex ].bShowContour;
+	}
+	
+	if( key == 'w' )
+	{
+		writeToFile();
+	}
+	
+	if( key == 'l' )
+	{
+		loadFromFile();
 	}
 }
 
