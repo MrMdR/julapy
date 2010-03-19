@@ -3,6 +3,7 @@
 
 #include "ofMain.h"
 #include "ofxSimpleGuiToo.h"
+#include "ofxNetwork.h"
 #include "ofxOpenCv.h"
 #include "laserTracking.h"
 #include "ofContourAnalysis.h"
@@ -57,8 +58,11 @@ public:
 	void update	();
 	void draw	();
 	
-	void initGui				();
 	void initContourAnalysis	();
+	void initTCP				();
+	void initGui				();
+	
+	void sendTrackerData		();
 	
 	void computeContourAnalysis ( int i );
 	void drawContourAnalysis	( int i );
@@ -80,6 +84,8 @@ public:
 	ofxCvGrayscaleImage		hueImg;
 	ofxCvGrayscaleImage		satImg;
 	ofxCvGrayscaleImage		valImg;
+	
+	ofxTCPServer			TCP;
 
 	float	blur;
 	float	threshold;
@@ -99,6 +105,8 @@ public:
 	
 	int						cfDetail;
 	float					cfMinArea;
+	
+	bool					bShowRect;
 	bool					bShowBox;
 	bool					bShowEllipse;
 	bool					bShowAngle;
