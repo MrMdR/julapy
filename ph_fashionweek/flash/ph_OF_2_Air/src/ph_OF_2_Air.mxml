@@ -4,6 +4,7 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.holler.utils.MathUtil;
         	import com.julapy.vo.TrackerVO;
         	import com.julapy.model.OFDataModel;
         	import com.julapy.core.StageSizeEvent;
@@ -106,12 +107,22 @@
 				var colours : Array;
 				colours = [ 0xFF0000, 0x00FF00, 0x0000FF ];
 
-				container.graphics.clear();
-
 				var stageWidth 	: int;
 				var stageHeight	: int;
 				stageWidth	= StageSize.getInstance().stageWidth;
 				stageHeight	= StageSize.getInstance().stageHeight;
+
+				var r : Rectangle;
+				r = new Rectangle();
+				r.x			= 0;
+				r.y			= 0;
+				r.width		= stageWidth;
+				r.height	= (int)( stageWidth * ( 3 / 4 ) );
+
+				container.graphics.clear();
+				container.graphics.beginFill( 0x333333 );
+				container.graphics.drawRect( r.x, r.y, r.width, r.height );
+				container.graphics.endFill();
 
 				for( var i:int=0; i<trackerVOs.length; i++ )
 				{
@@ -121,13 +132,38 @@
 					var trackerVO : TrackerVO;
 					trackerVO = trackerVOs[ i ];
 
-					container.graphics.lineStyle( 2, colours[ j ], 1.0 );
-					container.graphics.drawRect
+					//-- rect.
+
+					var rectName : String;
+					rectName = "rect_" + i.toString();
+
+					var rectMc : Sprite;
+					rectMc = container.getChildByName( rectName ) as Sprite;
+
+					if( !rectMc )
+					{
+						rectMc = new Sprite();
+						rectMc.name = rectName;
+						container.addChild( rectMc );
+					}
+
+					rectMc.graphics.clear();
+
+					if( !trackerVO.active )
+						continue;
+
+					rectMc.x = trackerVO.rect.x * r.width;
+					rectMc.y = trackerVO.rect.y * r.height;
+
+					rectMc.rotation = trackerVO.angle * 360;
+
+					rectMc.graphics.lineStyle( 2, colours[ j ], 1.0 );
+					rectMc.graphics.drawRect
 					(
-						trackerVO.rect.x		* stageWidth,
-						trackerVO.rect.y		* stageHeight,
-						trackerVO.rect.width	* stageWidth,
-						trackerVO.rect.height	* stageHeight
+						-trackerVO.rect.width  * 0.5 * r.width,
+						-trackerVO.rect.height * 0.5 * r.height,
+						trackerVO.rect.width   * r.width,
+						trackerVO.rect.height  * r.height
 					);
 				}
 			}

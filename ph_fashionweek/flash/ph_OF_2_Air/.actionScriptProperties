@@ -6,6 +6,7 @@
       <libraryPathEntry kind="4" path=""/>
       <libraryPathEntry kind="1" linkType="1" path="libs"/>
       <libraryPathEntry kind="3" linkType="1" path="/ph_common/bin/ph_common.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/AS3HollerLib/bin/AS3HollerLib.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
