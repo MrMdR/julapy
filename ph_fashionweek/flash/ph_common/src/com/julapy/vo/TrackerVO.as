@@ -6,6 +6,7 @@ package com.julapy.vo
 	{
 		public var active	: Boolean	= false;
 		public var rect		: Rectangle = new Rectangle();
+		public var angle	: Number	= 0;
 		public var points	: Array		= new Array();
 
 		public function TrackerVO()
