@@ -60,16 +60,24 @@ package com.julapy.model
 				var trackerStr : String;
 				trackerStr = dataStr[ i ];
 				trackerStr = trackerStr.split( "[" )[ 1 ];
+				if( !trackerStr )
+					continue;
 				trackerStr = trackerStr.split( "]" )[ 0 ];
+				if( !trackerStr )
+					continue;
 
 				var trackerValues : Array;
 				trackerValues = trackerStr.split( "," );
 
-				trackerVO.active		= trackerValues[ 0 ];
-				trackerVO.rect.x		= trackerValues[ 1 ];
-				trackerVO.rect.y		= trackerValues[ 2 ];
-				trackerVO.rect.width	= trackerValues[ 3 ];
-				trackerVO.rect.height	= trackerValues[ 4 ];
+				var j : int;
+				j = 0;
+
+				trackerVO.active		= trackerValues[ (int)( Math.min( j++, trackerValues.length - 1 ) ) ] == 1 ? true : false;
+				trackerVO.rect.x		= trackerValues[ (int)( Math.min( j++, trackerValues.length - 1 ) ) ];
+				trackerVO.rect.y		= trackerValues[ (int)( Math.min( j++, trackerValues.length - 1 ) ) ];
+				trackerVO.rect.width	= trackerValues[ (int)( Math.min( j++, trackerValues.length - 1 ) ) ];
+				trackerVO.rect.height	= trackerValues[ (int)( Math.min( j++, trackerValues.length - 1 ) ) ];
+				trackerVO.angle			= trackerValues[ (int)( Math.min( j++, trackerValues.length - 1 ) ) ];
 			}
 		}
 	}
