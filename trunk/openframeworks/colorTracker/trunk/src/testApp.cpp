@@ -47,6 +47,7 @@ void testApp::setup()
 	threshold	= 20;
 	
 	initContourAnalysis();
+	initTCP();
 	initGui();
 }
 
@@ -71,10 +72,17 @@ void testApp :: initContourAnalysis ()
 	
 	cfMinArea		= 0.001;	// do not go to zero, shit will get weird.
 	cfDetail		= 0;
-	bShowBox		= false;
+	
+	bShowRect		= false;
+	bShowBox		= true;
 	bShowEllipse	= false;
 	bShowAngle		= false;
 	bShowLines		= false;
+}
+
+void testApp :: initTCP ()
+{
+	TCP.setup( 11999 );
 }
 
 void testApp :: initGui ()
@@ -104,8 +112,10 @@ void testApp :: initGui ()
 	gui.addTitle( "contour analysis" );
 	gui.addSlider( "contour detail   ", cfDetail,	0,   3   );
 	gui.addSlider( "contour min area ", cfMinArea,	0.001, 0.2 );
-	gui.addToggle( "contour ellipse  ", bShowEllipse	);
+	
+	gui.addToggle( "bounding rect    ", bShowRect		);
 	gui.addToggle( "contour box      ", bShowBox		);
+	gui.addToggle( "contour ellipse  ", bShowEllipse	);
 	gui.addToggle( "contour angle    ", bShowAngle		);
 	gui.addToggle( "contour lines    ", bShowLines		);
 
@@ -181,6 +191,8 @@ void testApp::update()
 			hsv[ hsvIndex ].satRange,
 			hsv[ hsvIndex ].val
 		);
+		
+		sendTrackerData();
 	}
 }
 
@@ -207,7 +219,7 @@ void testApp :: computeContourAnalysis ( int i )
 		return;
 	}
 	
-	// TODO :: work out the biggest blob, drop the rest.
+	// TODO :: work out the biggest blob, drop the rest. - think its already arrange by largest.
 	
 	int nBlobs;
 	nBlobs = contourFinder.nBlobs;
@@ -269,6 +281,44 @@ void testApp :: computeContourAnalysis ( int i )
 		contourS.simplify( cdata[ i ].contourSmooth[ j ], cdata[ i ].contourSimple[ j ], tolerance );
 		contourS.convexHull( cdata[ i ].contourSmooth[ j ], cdata[ i ].contourHull[ j ] );
 	}
+}
+
+void testApp :: sendTrackerData ()
+{
+	string str;
+	for( int i=0; i<cdataTotal; i++ )
+	{
+		int b;
+		b = ( cdata[ i ].nBlobs > 0 ) ? 1 : 0;
+		
+		float x, y;
+		x = cdata[ i ].box[ 0 ].center.x / (float)videoRect.width;
+		y = cdata[ i ].box[ 0 ].center.y / (float)videoRect.height;
+		
+		float w, h;
+		w = cdata[ i ].box[ 0 ].size.width  / (float)videoRect.width;
+		h = cdata[ i ].box[ 0 ].size.height / (float)videoRect.height;
+		
+		float a;
+		a = cdata[ i ].box[ 0 ].angle / 360.0;
+		
+		str += "[";
+		str += ofToString( b, 0 ) + ",";
+		str += ofToString( x, 4 ) + ",";
+		str += ofToString( y, 4 ) + ",";
+		str += ofToString( w, 4 ) + ",";
+		str += ofToString( h, 4 ) + ",";
+		str += ofToString( a, 4 ) + ",";
+		str += "]";
+		
+		if( i < cdataTotal - 1 )
+			str += "\n";
+	}
+	
+	for( int i=0; i<TCP.getNumClients(); i++ )
+	{
+		TCP.send( i, str );
+	}	
 }
 
 /////////////////////////////////////////////
@@ -352,6 +402,8 @@ void testApp::draw()
 	ofDrawBitmapString( "minVal: " + ofToString( hsv[ hsvIndex ].minVal ), x, y += dy );
 	ofDrawBitmapString( "maxVal: " + ofToString( hsv[ hsvIndex ].maxVal ), x, y += dy );
 	
+	ofDrawBitmapString( "no. of TCP clients connected :: " + ofToString( TCP.getNumClients() ), 0, y+= 60 );
+	
 	glPopMatrix();
 	
 	for( int i=0; i<cdataTotal; i++ )
@@ -375,6 +427,9 @@ void testApp :: drawContourAnalysis( int i )
 	
 	for( int j=0; j<cdata[ i ].nBlobs; j++ )
 	{
+		if( j > 0 )		// only interested in the largest blob.
+			return;
+		
 		if( cfDetail == 0 )
 		{
 			ofSetColor( 0xFF0000 );
@@ -444,6 +499,20 @@ void testApp :: drawContourAnalysis( int i )
 					2
 				);
 			}
+		}
+		
+		if( bShowRect )
+		{
+			ofNoFill();
+			ofSetColor( 0xFFFFFF );
+			
+			ofRect
+			(
+				cdata[ i ].blobBoundingRect[ j ].x,
+				cdata[ i ].blobBoundingRect[ j ].y,
+				cdata[ i ].blobBoundingRect[ j ].width,
+				cdata[ i ].blobBoundingRect[ j ].height
+			);
 		}
 		
 		if( bShowBox )

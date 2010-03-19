@@ -39,6 +39,11 @@
 		156895F51146884A0014E02C /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156895EC1146884A0014E02C /* tinyxmlparser.cpp */; };
 		156895F61146884A0014E02C /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156895EE1146884A0014E02C /* ofxXmlSettings.cpp */; };
 		156895FE114688960014E02C /* laserTracking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156895FB114688960014E02C /* laserTracking.cpp */; };
+		15C2473711537B1A00C43AD4 /* ofxTCPClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C2472B11537B1A00C43AD4 /* ofxTCPClient.cpp */; };
+		15C2473811537B1A00C43AD4 /* ofxTCPManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C2472D11537B1A00C43AD4 /* ofxTCPManager.cpp */; };
+		15C2473911537B1A00C43AD4 /* ofxTCPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C2472F11537B1A00C43AD4 /* ofxTCPServer.cpp */; };
+		15C2473A11537B1A00C43AD4 /* ofxUDPManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C2473111537B1A00C43AD4 /* ofxUDPManager.cpp */; };
+		15C2473B11537B1A00C43AD4 /* ofxThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C2473511537B1A00C43AD4 /* ofxThread.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -207,6 +212,17 @@
 		156895FB114688960014E02C /* laserTracking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = laserTracking.cpp; path = src/laserTracking/laserTracking.cpp; sourceTree = SOURCE_ROOT; };
 		156895FC114688960014E02C /* laserTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = laserTracking.h; path = src/laserTracking/laserTracking.h; sourceTree = SOURCE_ROOT; };
 		156895FD114688960014E02C /* laserUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = laserUtils.h; path = src/laserTracking/laserUtils.h; sourceTree = SOURCE_ROOT; };
+		15C2472A11537B1A00C43AD4 /* ofxNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxNetwork.h; path = src/ofxNetwork/src/ofxNetwork.h; sourceTree = SOURCE_ROOT; };
+		15C2472B11537B1A00C43AD4 /* ofxTCPClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTCPClient.cpp; path = src/ofxNetwork/src/ofxTCPClient.cpp; sourceTree = SOURCE_ROOT; };
+		15C2472C11537B1A00C43AD4 /* ofxTCPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTCPClient.h; path = src/ofxNetwork/src/ofxTCPClient.h; sourceTree = SOURCE_ROOT; };
+		15C2472D11537B1A00C43AD4 /* ofxTCPManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTCPManager.cpp; path = src/ofxNetwork/src/ofxTCPManager.cpp; sourceTree = SOURCE_ROOT; };
+		15C2472E11537B1A00C43AD4 /* ofxTCPManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTCPManager.h; path = src/ofxNetwork/src/ofxTCPManager.h; sourceTree = SOURCE_ROOT; };
+		15C2472F11537B1A00C43AD4 /* ofxTCPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTCPServer.cpp; path = src/ofxNetwork/src/ofxTCPServer.cpp; sourceTree = SOURCE_ROOT; };
+		15C2473011537B1A00C43AD4 /* ofxTCPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTCPServer.h; path = src/ofxNetwork/src/ofxTCPServer.h; sourceTree = SOURCE_ROOT; };
+		15C2473111537B1A00C43AD4 /* ofxUDPManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxUDPManager.cpp; path = src/ofxNetwork/src/ofxUDPManager.cpp; sourceTree = SOURCE_ROOT; };
+		15C2473211537B1A00C43AD4 /* ofxUDPManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxUDPManager.h; path = src/ofxNetwork/src/ofxUDPManager.h; sourceTree = SOURCE_ROOT; };
+		15C2473511537B1A00C43AD4 /* ofxThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxThread.cpp; path = src/ofxThread/src/ofxThread.cpp; sourceTree = SOURCE_ROOT; };
+		15C2473611537B1A00C43AD4 /* ofxThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxThread.h; path = src/ofxThread/src/ofxThread.h; sourceTree = SOURCE_ROOT; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -294,6 +310,8 @@
 				156895E71146884A0014E02C /* ofxXmlSettings */,
 				156894C911467B560014E02C /* contourAnalysis */,
 				156895FA114688960014E02C /* laserTracking */,
+				15C2472811537B1A00C43AD4 /* ofxNetwork */,
+				15C2473311537B1A00C43AD4 /* ofxThread */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -557,6 +575,51 @@
 			);
 			name = laserTracking;
 			path = src/laserTracking;
+			sourceTree = SOURCE_ROOT;
+		};
+		15C2472811537B1A00C43AD4 /* ofxNetwork */ = {
+			isa = PBXGroup;
+			children = (
+				15C2472911537B1A00C43AD4 /* src */,
+			);
+			name = ofxNetwork;
+			path = src/ofxNetwork;
+			sourceTree = SOURCE_ROOT;
+		};
+		15C2472911537B1A00C43AD4 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				15C2472A11537B1A00C43AD4 /* ofxNetwork.h */,
+				15C2472B11537B1A00C43AD4 /* ofxTCPClient.cpp */,
+				15C2472C11537B1A00C43AD4 /* ofxTCPClient.h */,
+				15C2472D11537B1A00C43AD4 /* ofxTCPManager.cpp */,
+				15C2472E11537B1A00C43AD4 /* ofxTCPManager.h */,
+				15C2472F11537B1A00C43AD4 /* ofxTCPServer.cpp */,
+				15C2473011537B1A00C43AD4 /* ofxTCPServer.h */,
+				15C2473111537B1A00C43AD4 /* ofxUDPManager.cpp */,
+				15C2473211537B1A00C43AD4 /* ofxUDPManager.h */,
+			);
+			name = src;
+			path = src/ofxNetwork/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		15C2473311537B1A00C43AD4 /* ofxThread */ = {
+			isa = PBXGroup;
+			children = (
+				15C2473411537B1A00C43AD4 /* src */,
+			);
+			name = ofxThread;
+			path = src/ofxThread;
+			sourceTree = SOURCE_ROOT;
+		};
+		15C2473411537B1A00C43AD4 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				15C2473511537B1A00C43AD4 /* ofxThread.cpp */,
+				15C2473611537B1A00C43AD4 /* ofxThread.h */,
+			);
+			name = src;
+			path = src/ofxThread/src;
 			sourceTree = SOURCE_ROOT;
 		};
 		E45BE0360E8CC5DE009D7055 /* libs */ = {
@@ -952,6 +1015,11 @@
 				156895F51146884A0014E02C /* tinyxmlparser.cpp in Sources */,
 				156895F61146884A0014E02C /* ofxXmlSettings.cpp in Sources */,
 				156895FE114688960014E02C /* laserTracking.cpp in Sources */,
+				15C2473711537B1A00C43AD4 /* ofxTCPClient.cpp in Sources */,
+				15C2473811537B1A00C43AD4 /* ofxTCPManager.cpp in Sources */,
+				15C2473911537B1A00C43AD4 /* ofxTCPServer.cpp in Sources */,
+				15C2473A11537B1A00C43AD4 /* ofxUDPManager.cpp in Sources */,
+				15C2473B11537B1A00C43AD4 /* ofxThread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
