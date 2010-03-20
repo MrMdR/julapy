@@ -3,20 +3,22 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.julapy.ph.makeup.view.ApplicationView;
         	import com.julapy.core.StageSizeEvent;
         	import com.julapy.core.StageSize;
         	import mx.core.SpriteAsset;
         	import mx.core.MovieClipAsset;
         	import com.holler.assets.AssetLoader;
 
+			[Embed( source = "../_fla/assets.swf#makeup.asset" )]
+			var Asset : Class;
+
+			private var asset		: SpriteAsset;
+
 			private var stageWidth	: int;
 			private var stageHeight	: int;
 
-			[Embed( source = "../_fla/assets.swf#makeup.base" )]
-			var ImageLrg : Class;
-
-			private var imageLrg	: SpriteAsset;
-			private var zoomScale	: Number = 0;
+			private var app			: ApplicationView;
 
 			private function init ():void
 			{
@@ -26,45 +28,26 @@
 				stageWidth	= stage.stageWidth;
 				stageHeight	= stage.stageHeight;
 
-				imageLrg = new ImageLrg();
-				stage.addChild( imageLrg );
+				asset = new Asset();
+				stage.addChild( asset );
 
-				resize( stage.stageWidth, stage.stageHeight );
+				app = new ApplicationView( asset.getChildByName( "main" ) as MovieClip );
 
-				stage.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
+				stageResize( stage.stageWidth, stage.stageHeight );
 			}
 
 			private function stageResizeHandler ( e : StageSizeEvent ):void
 			{
-				resize( e.stageWidth, e.stageHeight );
+				stageResize( e.stageWidth, e.stageHeight );
 			}
 
-			private function resize ( stageWidth : int, stageHeight : int ):void
+			private function stageResize ( stageWidth : int, stageHeight : int ):void
 			{
 				this.stageWidth		= stage.stageWidth;
 				this.stageHeight	= stage.stageHeight;
 
-				zoomScale		= stageWidth / imageLrg.width;
-
-				imageLrg.x		= (int)( stageWidth  * 0.5 );
-				imageLrg.y		= (int)( stageHeight * 0.5 );
-				imageLrg.scaleX	= zoomScale;
-				imageLrg.scaleY	= zoomScale;
-			}
-
-			private function enterFrameHandler ( e : Event ):void
-			{
-				var px : Number;
-				var py : Number;
-
-//				px = ( ( stage.mouseX / stageWidth  ) - 0.5 ) * 2;
-//				py = ( ( stage.mouseY / stageHeight ) - 0.5 ) * 2;
-
-				px = stage.mouseX / stageWidth;
-				py = stage.mouseY / stageHeight;
-
-				imageLrg.scaleX	= ( 1 - zoomScale ) * px + zoomScale;
-				imageLrg.scaleY	= ( 1 - zoomScale ) * px + zoomScale;
+				asset.x		= (int)( stageWidth  * 0.5 );
+				asset.y		= (int)( stageHeight * 0.5 );
 			}
 
         ]]>
