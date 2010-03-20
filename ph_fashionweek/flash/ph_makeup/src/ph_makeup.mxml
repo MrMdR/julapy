@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="600" height="800" windowComplete="init()">
+
+    <mx:Script>
+        <![CDATA[
+        	import com.julapy.core.StageSizeEvent;
+        	import com.julapy.core.StageSize;
+        	import mx.core.SpriteAsset;
+        	import mx.core.MovieClipAsset;
+        	import com.holler.assets.AssetLoader;
+
+			private var stageWidth	: int;
+			private var stageHeight	: int;
+
+			[Embed( source = "../_fla/assets.swf#makeup.base" )]
+			var ImageLrg : Class;
+
+			private var imageLrg	: SpriteAsset;
+			private var zoomScale	: Number = 0;
+
+			private function init ():void
+			{
+				StageSize.getInstance().stage = stage;
+				StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
+
+				stageWidth	= stage.stageWidth;
+				stageHeight	= stage.stageHeight;
+
+				imageLrg = new ImageLrg();
+				stage.addChild( imageLrg );
+
+				resize( stage.stageWidth, stage.stageHeight );
+
+				stage.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
+			}
+
+			private function stageResizeHandler ( e : StageSizeEvent ):void
+			{
+				resize( e.stageWidth, e.stageHeight );
+			}
+
+			private function resize ( stageWidth : int, stageHeight : int ):void
+			{
+				this.stageWidth		= stage.stageWidth;
+				this.stageHeight	= stage.stageHeight;
+
+				zoomScale		= stageWidth / imageLrg.width;
+
+				imageLrg.x		= (int)( stageWidth  * 0.5 );
+				imageLrg.y		= (int)( stageHeight * 0.5 );
+				imageLrg.scaleX	= zoomScale;
+				imageLrg.scaleY	= zoomScale;
+			}
+
+			private function enterFrameHandler ( e : Event ):void
+			{
+				var px : Number;
+				var py : Number;
+
+//				px = ( ( stage.mouseX / stageWidth  ) - 0.5 ) * 2;
+//				py = ( ( stage.mouseY / stageHeight ) - 0.5 ) * 2;
+
+				px = stage.mouseX / stageWidth;
+				py = stage.mouseY / stageHeight;
+
+				imageLrg.scaleX	= ( 1 - zoomScale ) * px + zoomScale;
+				imageLrg.scaleY	= ( 1 - zoomScale ) * px + zoomScale;
+			}
+
+        ]]>
+    </mx:Script>
+
+</mx:WindowedApplication>
