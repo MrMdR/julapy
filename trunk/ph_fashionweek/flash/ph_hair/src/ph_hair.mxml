@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="600" height="800" windowComplete="init()">
+
+    <mx:Script>
+        <![CDATA[
+
+			private function init ():void
+			{
+				//
+			}
+
+        ]]>
+    </mx:Script>
+
+</mx:WindowedApplication>
