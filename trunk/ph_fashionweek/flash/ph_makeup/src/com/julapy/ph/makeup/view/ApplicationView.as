@@ -52,6 +52,9 @@ package com.julapy.ph.makeup.view
 			image		= new ImageBase();
 			container0.addChild( image );
 
+			makeup		= new MakeupView( container1 );
+			makeup.stepFace();
+
 			stageResize( StageSize.getInstance().stageWidth, StageSize.getInstance().stageHeight );
 
 			StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
