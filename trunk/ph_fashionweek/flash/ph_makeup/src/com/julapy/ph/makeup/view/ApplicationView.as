@@ -1,20 +1,20 @@
 package com.julapy.ph.makeup.view
 {
-	import com.julapy.core.StageSize;
-	import com.julapy.core.StageSizeEvent;
 	import com.julapy.ph.makeup.events.ZoomEvent;
+	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
+	import com.julapy.ph.makeup.of.SocketOF;
+	import com.julapy.ph.makeup.of.SocketOFEvent;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.events.Event;
 
 	public class ApplicationView
 	{
 		private var asset		: Sprite;
 
-		private var stageWidth	: int;
-		private var stageHeight	: int;
+		private var model		: MakeupModel;
+		private var socket 		: SocketOF;
 
 		private var container0	: Sprite;
 		private var container1	: Sprite;
@@ -28,33 +28,44 @@ package com.julapy.ph.makeup.view
 		{
 			this.asset	= asset;
 
-			ModelLocator.getInstance().makeupModel.addEventListener( ZoomEvent.ZOOM, zoomHandler );
+			container0	= asset.getChildByName( "container0" ) as MovieClip;
+			container1	= asset.getChildByName( "container1" ) as MovieClip;
 
-			initViews();
+			model = ModelLocator.getInstance().makeupModel;
+			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
+
 			initModel();
+			initViews();
+			initSocket();
 		}
 
 		private function initViews ():void
 		{
-			container0	= asset.getChildByName( "container0" ) as MovieClip;
-			container1	= asset.getChildByName( "container1" ) as MovieClip;
-
 			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
 			face		= new FaceView( container0 );
 
 			makeup		= new MakeupView( container1 );
 
-			zoom		= new ZoomView( container0, container1 );
+			zoom		= new ZoomView();
 		}
 
 		private function initModel ():void
 		{
 			var zoomScaleMin : Number;
-			zoomScaleMin = ModelLocator.getInstance().makeupModel.appWidth / container0.width;
-			ModelLocator.getInstance().makeupModel.zoomScaleMin	= zoomScaleMin;
-			ModelLocator.getInstance().makeupModel.zoomScaleMax	= 1.0;
-			ModelLocator.getInstance().makeupModel.zoomScale	= zoomScaleMin;
+			zoomScaleMin = model.appWidth / model.imageWidth;
+			model.zoomScaleMin	= zoomScaleMin;
+			model.zoomScaleMax	= 1.0;
+			model.zoomScale		= zoomScaleMin;
+		}
+
+		private function initSocket ():void
+		{
+			socket = new SocketOF();
+			socket.addEventListener( SocketOFEvent.CONNECTED,			socketHandler );
+			socket.addEventListener( SocketOFEvent.DISCONNECTED,		socketHandler );
+			socket.addEventListener( SocketOFEvent.TRYING_TO_CONNECT,	socketHandler );
+			socket.addEventListener( SocketOFEvent.DATA_RECEIVED,		socketHandler );
 		}
 
 		////////////////////////////////////////////////////
@@ -71,6 +82,29 @@ package com.julapy.ph.makeup.view
 
 			container1.scaleX	= sx;
 			container1.scaleY	= sy;
+		}
+
+		private function socketHandler ( e : SocketOFEvent ):void
+		{
+			if( e.type == SocketOFEvent.CONNECTED )
+			{
+				ModelLocator.getInstance().ofDataModel.connected = true;
+			}
+
+			if( e.type == SocketOFEvent.DISCONNECTED )
+			{
+				ModelLocator.getInstance().ofDataModel.connected = false;
+			}
+
+			if( e.type == SocketOFEvent.TRYING_TO_CONNECT )
+			{
+				// trying and trying.
+			}
+
+			if( e.type == SocketOFEvent.DATA_RECEIVED )
+			{
+				ModelLocator.getInstance().ofDataModel.ofStringData = e.dataString;
+			}
 		}
 	}
 }

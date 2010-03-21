@@ -1,27 +1,30 @@
 package com.julapy.ph.makeup.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.ModeEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
 
+	import fl.motion.easing.Quadratic;
+
 	import flash.display.Sprite;
 
 	public class ZoomView extends View
 	{
-		private var container0	: Sprite;
-		private var container1	: Sprite;
+		public  var zoomScaleMin	: Number = 0;
+		public  var zoomScaleMax	: Number = 0;
+		public  var zoomScale		: Number = 0;
+		public  var zoomTime		: Number = 0.5;
 
-		public  var zoomScale	: Number = 0;
-
-		public function ZoomView( container0 : Sprite, container1 : Sprite )
+		public function ZoomView( sprite : Sprite = null )
 		{
-			super( new Sprite() );
+			super( sprite );
 
-			this.container0 = container0;
-			this.container1 = container1;
-
-			zoomScale = ModelLocator.getInstance().makeupModel.zoomScaleMin;
+			zoomScaleMin	= ModelLocator.getInstance().makeupModel.zoomScaleMin;
+			zoomScaleMax	= ModelLocator.getInstance().makeupModel.zoomScaleMax;
+			zoomScale 		= ModelLocator.getInstance().makeupModel.zoomScale;
 
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE, modeEvent );
 		}
@@ -32,17 +35,75 @@ package com.julapy.ph.makeup.view
 
 		private function zoomToEyes ():void
 		{
-
+			Tweener.addTween
+			(
+				this,
+				{
+					zoomScale	: zoomScaleMax,
+					time		: zoomTime,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: null
+				}
+			);
 		}
 
 		private function zoomToLips ():void
 		{
-
+			Tweener.addTween
+			(
+				this,
+				{
+					zoomScale	: zoomScaleMax,
+					time		: zoomTime,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: null
+				}
+			);
 		}
 
 		private function zoomToFace ():void
 		{
+			Tweener.addTween
+			(
+				this,
+				{
+					zoomScale	: zoomScaleMax,
+					time		: zoomTime,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: null
+				}
+			);
+		}
 
+		private function zoomOut ():void
+		{
+			Tweener.addTween
+			(
+				this,
+				{
+					zoomScale	: zoomScaleMin,
+					time		: zoomTime,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: null
+				}
+			);
+		}
+
+		private function tweenUpdateHandler ():void
+		{
+			ModelLocator.getInstance().makeupModel.zoomScale = zoomScale;
 		}
 
 		//////////////////////////////////////////////////////////
@@ -63,7 +124,7 @@ package com.julapy.ph.makeup.view
 
 			if( e.mode == MakeupModel.FACE_MODE )
 			{
-				zoomToFace();
+				zoomOut();
 			}
 		}
 	}
