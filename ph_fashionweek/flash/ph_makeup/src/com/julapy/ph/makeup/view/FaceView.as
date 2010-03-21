@@ -2,6 +2,7 @@ package com.julapy.ph.makeup.view
 {
 	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
+	import com.julapy.ph.makeup.model.ModelLocator;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -86,11 +87,15 @@ package com.julapy.ph.makeup.view
 		private function showBlink ():void
 		{
 			blink.visible = true;
+
+			ModelLocator.getInstance().makeupModel.blinking = true;
 		}
 
 		private function hideBlink ():void
 		{
 			blink.visible = false;
+
+			ModelLocator.getInstance().makeupModel.blinking = false;
 		}
 	}
 }
