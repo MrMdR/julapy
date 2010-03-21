@@ -7,6 +7,7 @@ package com.julapy.ph.makeup.model
 		private static var instance : ModelLocator;
 
 		public var makeupModel : MakeupModel;
+		public var ofDataModel : OFDataModel;
 
 		public function ModelLocator()
 		{

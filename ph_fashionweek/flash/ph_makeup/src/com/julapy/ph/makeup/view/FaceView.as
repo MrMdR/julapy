@@ -60,7 +60,7 @@ package com.julapy.ph.makeup.view
 		private function initHideBlinkTimer ():void
 		{
 			var blinkDelay : int;
-			blinkDelay = 300;
+			blinkDelay = 150;
 
 			blinkTimer = new Timer( blinkDelay, 1 );
 			blinkTimer.addEventListener( TimerEvent.TIMER_COMPLETE, hideBlinkTimerHandler );

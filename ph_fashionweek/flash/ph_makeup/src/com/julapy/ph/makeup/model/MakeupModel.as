@@ -13,11 +13,12 @@ package com.julapy.ph.makeup.model
 		public static const LIPS_MODE	: int = 1;
 		public static const FACE_MODE	: int = 2;
 
-		private var _appRect	: Rectangle	= new Rectangle( 0, 0, 600, 800 );
+		private var _appRect		: Rectangle	= new Rectangle( 0, 0, 600, 800 );
+		private var _imageRect		: Rectangle = new Rectangle( 0, 0, 1351, 1800 );
 
-		private var _mode		: int = -1;
+		private var _mode			: int = -1;
 
-		private var _blinking	: Boolean	= false;
+		private var _blinking		: Boolean	= false;
 
 		private var _zoomScaleMin	: Number = 0;
 		private var _zoomScaleMax	: Number = 0;
@@ -40,6 +41,20 @@ package com.julapy.ph.makeup.model
 		public function get appHeight ():int
 		{
 			return _appRect.height;
+		}
+
+		/////////////////////////////////////
+		//	IMAGE SIZE.
+		/////////////////////////////////////
+
+		public function get imageWidth ():int
+		{
+			return _imageRect.width;
+		}
+
+		public function get imageHeight ():int
+		{
+			return _imageRect.height;
 		}
 
 		/////////////////////////////////////
