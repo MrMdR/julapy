@@ -1,5 +1,6 @@
 package com.julapy.ph.makeup.view
 {
+	import com.holler.assets.AssetLoader;
 	import com.holler.controls.BtnView;
 	import com.julapy.core.StageSize;
 	import com.julapy.core.StageSizeEvent;
@@ -9,20 +10,14 @@ package com.julapy.ph.makeup.view
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
-	import mx.core.SpriteAsset;
-
 	public class ApplicationView
 	{
-		[Embed( source = "../_fla/assets.swf#makeup.base" )]
-		var ImageBase : Class;
-
 		private var asset		: Sprite;
 
 		private var stageWidth	: int;
 		private var stageHeight	: int;
 
-		private var image		: SpriteAsset;
-		private var imageScale	: Number = 0;
+		private var scale		: Number = 0;
 
 		private var container0	: Sprite;
 		private var container1	: Sprite;
@@ -31,6 +26,7 @@ package com.julapy.ph.makeup.view
 		private var btn1		: BtnView;
 		private var btn2		: BtnView;
 
+		private var face		: FaceView;
 		private var makeup		: MakeupView;
 
 		public function ApplicationView( asset : Sprite )
@@ -49,8 +45,7 @@ package com.julapy.ph.makeup.view
 			btn2		= new BtnView( asset.getChildByName( "btn2" ) as MovieClip );
 			btn2.addEventListener( MouseEvent.MOUSE_DOWN, btnHandler );
 
-			image		= new ImageBase();
-			container0.addChild( image );
+			face		= new FaceView( container0 );
 
 			makeup		= new MakeupView( container1 );
 			makeup.stepFace();
@@ -71,10 +66,7 @@ package com.julapy.ph.makeup.view
 			this.stageWidth		= stageWidth;
 			this.stageHeight	= stageHeight;
 
-			imageScale			= stageWidth / container0.width;
-
-			container0.scaleX	= imageScale;
-			container0.scaleY	= imageScale;
+			scale				= stageWidth / container0.width;
 		}
 
 		////////////////////////////////////////////////////
@@ -94,13 +86,35 @@ package com.julapy.ph.makeup.view
 			px = ( asset.mouseX + stageWidth  * 0.5 ) / stageWidth;
 			py = ( asset.mouseY + stageHeight * 0.5 ) / stageHeight;
 
-			container0.scaleX	= ( 1 - imageScale ) * px + imageScale;
-			container0.scaleY	= ( 1 - imageScale ) * px + imageScale;
+			var sx : Number;
+			var sy : Number;
+
+			sx = ( 1 - scale ) * px + scale;
+			sy = ( 1 - scale ) * px + scale;
+
+			container0.scaleX	= sx;
+			container0.scaleY	= sy;
+
+			container1.scaleX	= sx;
+			container1.scaleY	= sy;
 		}
 
 		private function btnHandler ( e : MouseEvent ):void
 		{
+			if( e.target == btn0 )
+			{
+				makeup.stepEyes();
+			}
 
+			if( e.target == btn1 )
+			{
+				makeup.stepLips();
+			}
+
+			if( e.target == btn2 )
+			{
+				makeup.stepFace();
+			}
 		}
 	}
 }

@@ -1,35 +1,16 @@
 package com.julapy.ph.makeup.view
 {
+	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 
-	import mx.core.SpriteAsset;
-
 	public class MakeupView extends View
 	{
-		[Embed( source = "../_fla/assets.swf#makeup.face.00" )]
-		var Face00 : Class;
-
-		[Embed( source = "../_fla/assets.swf#makeup.face.01" )]
-		var Face01 : Class;
-
-		[Embed( source = "../_fla/assets.swf#makeup.eyes.00" )]
-		var Eyes00 : Class;
-
-		[Embed( source = "../_fla/assets.swf#makeup.eyes.01" )]
-		var Eyes01 : Class;
-
-		[Embed( source = "../_fla/assets.swf#makeup.lips.00" )]
-		var Lips00 : Class;
-
-		[Embed( source = "../_fla/assets.swf#makeup.lips.01" )]
-		var Lips01 : Class;
-
-		private var faceClasses : Array;
-		private var eyesClasses	: Array;
-		private var lipsClasses	: Array;
+		private var faceLinkage : Array;
+		private var eyesLinkage	: Array;
+		private var lipsLinkage	: Array;
 
 		private var faceIndex	: int = -1;
 		private var eyesIndex	: int = -1;
@@ -39,13 +20,9 @@ package com.julapy.ph.makeup.view
 		private var eyesHolder	: Sprite = new Sprite();
 		private var lipsHolder	: Sprite = new Sprite();
 
-		private var faceAsset	: SpriteAsset;
-		private var eyesAsset	: SpriteAsset;
-		private var lipsAsset	: SpriteAsset;
-
-		private var faceMc		: MovieClip;
-		private var eyesMc		: MovieClip;
-		private var lipsMc		: MovieClip;
+		private var faceAsset	: MovieClip;
+		private var eyesAsset	: MovieClip;
+		private var lipsAsset	: MovieClip;
 
 		public function MakeupView(sprite:Sprite=null)
 		{
@@ -55,22 +32,22 @@ package com.julapy.ph.makeup.view
 			_sprite.addChild( eyesHolder );
 			_sprite.addChild( lipsHolder );
 
-			faceClasses	=
+			faceLinkage	=
 			[
-				Face00,
-				Face01
+				"makeup.layers.face.00",
+				"makeup.layers.face.01"
 			];
 
-			eyesClasses	=
+			eyesLinkage	=
 			[
-				Eyes00,
-				Eyes01
+				"makeup.layers.eyes.00",
+				"makeup.layers.eyes.01"
 			];
 
-			lipsClasses	=
+			lipsLinkage	=
 			[
-				Lips00,
-				Lips01
+				"makeup.layers.lips.00",
+				"makeup.layers.lips.01"
 			];
 		}
 
@@ -80,25 +57,43 @@ package com.julapy.ph.makeup.view
 			{
 				faceHolder.removeChild( faceAsset );
 				faceAsset	= null;
-				faceMc		= null;
 			}
 
-			if( ++faceIndex >= faceClasses.length )
+			if( ++faceIndex >= faceLinkage.length )
 				faceIndex = 0;
 
-			faceAsset	= new faceClasses[ faceIndex ];
+			faceAsset	= AssetLoader.getInstance().getClassInstance( faceLinkage[ faceIndex ] ) as MovieClip;
 			faceHolder.addChild( faceAsset );
-			faceMc		= faceAsset.getChildByName( "mc" ) as MovieClip;
 		}
 
 		public function stepEyes ():void
 		{
+			if( eyesAsset )
+			{
+				eyesHolder.removeChild( eyesAsset );
+				eyesAsset	= null;
+			}
 
+			if( ++eyesIndex >= eyesLinkage.length )
+				eyesIndex = 0;
+
+			eyesAsset	= AssetLoader.getInstance().getClassInstance( eyesLinkage[ eyesIndex ] ) as MovieClip;
+			eyesHolder.addChild( eyesAsset );
 		}
 
 		public function stepLips ():void
 		{
+			if( lipsAsset )
+			{
+				lipsHolder.removeChild( lipsAsset );
+				lipsAsset	= null;
+			}
 
+			if( ++lipsIndex >= lipsLinkage.length )
+				lipsIndex = 0;
+
+			lipsAsset	= AssetLoader.getInstance().getClassInstance( lipsLinkage[ lipsIndex ] ) as MovieClip;
+			lipsHolder.addChild( lipsAsset );
 		}
 
 	}

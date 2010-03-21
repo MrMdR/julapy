@@ -3,6 +3,7 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.holler.assets.AssetGroupVOEvent;
         	import com.julapy.ph.makeup.view.ApplicationView;
         	import com.julapy.core.StageSizeEvent;
         	import com.julapy.core.StageSize;
@@ -10,10 +11,7 @@
         	import mx.core.MovieClipAsset;
         	import com.holler.assets.AssetLoader;
 
-			[Embed( source = "../_fla/assets.swf#makeup.asset" )]
-			var Asset : Class;
-
-			private var asset		: SpriteAsset;
+			private var asset		: MovieClip;
 
 			private var stageWidth	: int;
 			private var stageHeight	: int;
@@ -28,12 +26,26 @@
 				stageWidth	= stage.stageWidth;
 				stageHeight	= stage.stageHeight;
 
-				asset = new Asset();
+				var assetLoader : AssetLoader;
+				assetLoader = AssetLoader.getInstance();
+				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_COMPLETE,	assetLoaderHandler );
+				assetLoader.addAsset( "assets.swf", "assets", "main" );
+				assetLoader.loadAssets( "assets", false );
+			}
+
+			private function initApp ():void
+			{
+				asset = AssetLoader.getInstance().getClassInstance( "makeup.asset" ) as MovieClip;
 				stage.addChild( asset );
 
 				app = new ApplicationView( asset.getChildByName( "main" ) as MovieClip );
 
 				stageResize( stage.stageWidth, stage.stageHeight );
+			}
+
+			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
+			{
+				initApp();
 			}
 
 			private function stageResizeHandler ( e : StageSizeEvent ):void
