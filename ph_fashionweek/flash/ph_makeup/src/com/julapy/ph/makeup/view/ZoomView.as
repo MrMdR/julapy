@@ -10,13 +10,16 @@ package com.julapy.ph.makeup.view
 	import fl.motion.easing.Quadratic;
 
 	import flash.display.Sprite;
+	import flash.geom.Point;
 
 	public class ZoomView extends View
 	{
-		public  var zoomScaleMin	: Number = 0;
-		public  var zoomScaleMax	: Number = 0;
+		private var zoomScaleMin	: Number = 0;
+		private var zoomScaleMax	: Number = 0;
+		private var zoomTime		: Number = 0.5;
 		public  var zoomScale		: Number = 0;
-		public  var zoomTime		: Number = 0.5;
+		public  var zoomOffsetX		: Number = 0;
+		public  var zoomOffsetY		: Number = 0;
 
 		public function ZoomView( sprite : Sprite = null )
 		{
@@ -39,13 +42,14 @@ package com.julapy.ph.makeup.view
 			(
 				this,
 				{
-					zoomScale	: zoomScaleMax,
-					time		: zoomTime,
-					delay		: 0.0,
-					transition	: Quadratic.easeOut,
-					onStart		: null,
-					onUpdate	: tweenUpdateHandler,
-					onComplete	: null
+					zoomScale		: zoomScaleMax,
+					zoomOffsetY		: 172,
+					time			: zoomTime,
+					delay			: 0.0,
+					transition		: Quadratic.easeOut,
+					onStart			: null,
+					onUpdate		: tweenUpdateHandler,
+					onComplete		: null
 				}
 			);
 		}
@@ -56,13 +60,14 @@ package com.julapy.ph.makeup.view
 			(
 				this,
 				{
-					zoomScale	: zoomScaleMax,
-					time		: zoomTime,
-					delay		: 0.0,
-					transition	: Quadratic.easeOut,
-					onStart		: null,
-					onUpdate	: tweenUpdateHandler,
-					onComplete	: null
+					zoomScale		: zoomScaleMax,
+					zoomOffsetY		: -95,
+					time			: zoomTime,
+					delay			: 0.0,
+					transition		: Quadratic.easeOut,
+					onStart			: null,
+					onUpdate		: tweenUpdateHandler,
+					onComplete		: null
 				}
 			);
 		}
@@ -90,20 +95,22 @@ package com.julapy.ph.makeup.view
 			(
 				this,
 				{
-					zoomScale	: zoomScaleMin,
-					time		: zoomTime,
-					delay		: 0.0,
-					transition	: Quadratic.easeOut,
-					onStart		: null,
-					onUpdate	: tweenUpdateHandler,
-					onComplete	: null
+					zoomScale		: zoomScaleMin,
+					zoomOffsetY		: 0,
+					time			: zoomTime,
+					delay			: 0.0,
+					transition		: Quadratic.easeOut,
+					onStart			: null,
+					onUpdate		: tweenUpdateHandler,
+					onComplete		: null
 				}
 			);
 		}
 
 		private function tweenUpdateHandler ():void
 		{
-			ModelLocator.getInstance().makeupModel.zoomScale = zoomScale;
+			ModelLocator.getInstance().makeupModel.zoomOffset	= new Point( zoomOffsetX, zoomOffsetY );
+			ModelLocator.getInstance().makeupModel.zoomScale	= zoomScale;
 		}
 
 		//////////////////////////////////////////////////////////
