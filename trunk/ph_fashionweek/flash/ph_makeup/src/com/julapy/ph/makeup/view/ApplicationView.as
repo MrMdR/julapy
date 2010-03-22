@@ -18,11 +18,15 @@ package com.julapy.ph.makeup.view
 
 		private var container0	: Sprite;
 		private var container1	: Sprite;
+		private var container2	: Sprite;
+		private var container3	: Sprite;
 
 		private var menu		: MenuView;
 		private var face		: FaceView;
 		private var makeup		: MakeupView;
 		private var zoom		: ZoomView;
+		private var focus		: FocusView;
+		private var grid		: GridView;
 
 		public function ApplicationView( asset : Sprite )
 		{
@@ -30,6 +34,8 @@ package com.julapy.ph.makeup.view
 
 			container0	= asset.getChildByName( "container0" ) as MovieClip;
 			container1	= asset.getChildByName( "container1" ) as MovieClip;
+			container2	= asset.getChildByName( "container2" ) as MovieClip;
+			container3	= asset.getChildByName( "container3" ) as MovieClip;
 
 			model = ModelLocator.getInstance().makeupModel;
 			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
@@ -48,6 +54,10 @@ package com.julapy.ph.makeup.view
 			makeup		= new MakeupView( container1 );
 
 			zoom		= new ZoomView();
+
+			focus		= new FocusView( container2 );
+
+			grid		= new GridView( container3 );
 		}
 
 		private function initModel ():void
@@ -82,6 +92,12 @@ package com.julapy.ph.makeup.view
 
 			container1.scaleX	= sx;
 			container1.scaleY	= sy;
+
+			container0.x		= e.zoomOffset.x;
+			container0.y		= e.zoomOffset.y;
+
+			container1.x		= e.zoomOffset.x;
+			container1.y		= e.zoomOffset.y;
 		}
 
 		private function socketHandler ( e : SocketOFEvent ):void

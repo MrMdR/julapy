@@ -5,6 +5,7 @@ package com.julapy.ph.makeup.model
 	import com.julapy.ph.makeup.events.ZoomEvent;
 
 	import flash.events.EventDispatcher;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
 	public class MakeupModel extends EventDispatcher
@@ -23,6 +24,7 @@ package com.julapy.ph.makeup.model
 		private var _zoomScaleMin	: Number = 0;
 		private var _zoomScaleMax	: Number = 0;
 		private var _zoomScale		: Number = 0;
+		private var _zoomOffset		: Point	 = new Point();
 
 		public function MakeupModel()
 		{
@@ -128,12 +130,24 @@ package com.julapy.ph.makeup.model
 		{
 			_zoomScale = value;
 
-			dispatchEvent( new ZoomEvent( _zoomScale ) );
+			dispatchEvent( new ZoomEvent( _zoomScale, _zoomOffset.clone() ) );
 		}
 
 		public function get zoomScale ():Number
 		{
 			return _zoomScale;
+		}
+
+		//--
+
+		public function set zoomOffset ( value : Point ):void
+		{
+			_zoomOffset = value.clone();
+		}
+
+		public function get zoomOffset ():Point
+		{
+			return _zoomOffset;
 		}
 	}
 }
