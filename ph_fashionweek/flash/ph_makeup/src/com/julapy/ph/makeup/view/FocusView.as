@@ -20,7 +20,8 @@ package com.julapy.ph.makeup.view
 		{
 			super(sprite);
 
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE, modeEvent );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,	modeZoomInHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,	modeZoomOutHandler );
 		}
 
 		private function focusOnEyes ():void
@@ -102,7 +103,7 @@ package com.julapy.ph.makeup.view
 		//	HANDLERS.
 		//////////////////////////////////////////////////////////
 
-		private function modeEvent ( e : ModeEvent ):void
+		private function modeZoomInHandler ( e : ModeEvent ):void
 		{
 			if( e.mode == MakeupModel.EYES_MODE )
 			{
@@ -116,9 +117,13 @@ package com.julapy.ph.makeup.view
 
 			if( e.mode == MakeupModel.FACE_MODE )
 			{
-//				focusOnFace();
-				focusOut();
+				focusOnFace();
 			}
+		}
+
+		private function modeZoomOutHandler ( e : ModeEvent ):void
+		{
+			focusOut();
 		}
 	}
 }

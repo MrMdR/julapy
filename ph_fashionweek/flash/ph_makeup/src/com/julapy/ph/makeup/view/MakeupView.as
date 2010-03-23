@@ -46,9 +46,9 @@ package com.julapy.ph.makeup.view
 			_sprite.addChild( eyesHolder );
 			_sprite.addChild( lipsHolder );
 
-			eyesHolder.cacheAsBitmap	= true;
-//			lipsHolder.cacheAsBitmap	= true;
-//			faceHolder.cacheAsBitmap	= true;
+			eyesHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+//			lipsHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+//			faceHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
 
 			blinkMask = AssetLoader.getInstance().getClassInstance( "makeup.face.blink.mask" ) as MovieClip;
 			blinkMask.cacheAsBitmap		= true;
@@ -81,7 +81,7 @@ package com.julapy.ph.makeup.view
 				"makeup.mask.face"
 			];
 
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE,			modeEvent );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ANIM_IN,	modeEvent );
 			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_START,	blinkHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_STOP,		blinkHandler );
 
@@ -282,6 +282,8 @@ package com.julapy.ph.makeup.view
 				faceMaskView.container = null;
 				faceMaskView = null;
 			}
+
+			ModelLocator.getInstance().makeupModel.mode = -1;
 		}
 	}
 }

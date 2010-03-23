@@ -10,6 +10,7 @@ package com.julapy.ph.makeup.view
 	import fl.motion.easing.Quadratic;
 
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
 	public class ZoomView extends View
@@ -29,7 +30,8 @@ package com.julapy.ph.makeup.view
 			zoomScaleMax	= ModelLocator.getInstance().makeupModel.zoomScaleMax;
 			zoomScale 		= ModelLocator.getInstance().makeupModel.zoomScale;
 
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE, modeEvent );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,	modeZoomInHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,	modeZoomOutHandler );
 		}
 
 		//////////////////////////////////////////////////////////
@@ -117,7 +119,7 @@ package com.julapy.ph.makeup.view
 		//	HANDLERS.
 		//////////////////////////////////////////////////////////
 
-		private function modeEvent ( e : ModeEvent ):void
+		private function modeZoomInHandler ( e : ModeEvent ):void
 		{
 			if( e.mode == MakeupModel.EYES_MODE )
 			{
@@ -131,8 +133,13 @@ package com.julapy.ph.makeup.view
 
 			if( e.mode == MakeupModel.FACE_MODE )
 			{
-				zoomOut();
+				zoomToFace();
 			}
+		}
+
+		private function modeZoomOutHandler ( e : ModeEvent ):void
+		{
+			zoomOut();
 		}
 	}
 }
