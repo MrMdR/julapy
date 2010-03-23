@@ -20,6 +20,7 @@ package com.julapy.ph.makeup.model
 		private var _mode			: int = -1;
 
 		private var _blinking		: Boolean	= false;
+		private var _blinkForce		: Boolean	= false;
 
 		private var _zoomScaleMin	: Number = 0;
 		private var _zoomScaleMax	: Number = 0;
@@ -96,6 +97,27 @@ package com.julapy.ph.makeup.model
 		public function get blinking ():Boolean
 		{
 			return _blinking;
+		}
+
+		//-- force blink.
+
+		public function set blinkForce ( value : Boolean ):void
+		{
+			_blinkForce = value;
+
+			if( _blinkForce )
+			{
+				dispatchEvent( new BlinkEvent( BlinkEvent.BLINK_FORCE_START ) );
+			}
+			else
+			{
+				dispatchEvent( new BlinkEvent( BlinkEvent.BLINK_FORCE_STOP ) );
+			}
+		}
+
+		public function get blinkForce ():Boolean
+		{
+			return _blinkForce;
 		}
 
 		/////////////////////////////////////

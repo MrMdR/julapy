@@ -2,6 +2,7 @@ package com.julapy.ph.makeup.view
 {
 	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
+	import com.julapy.ph.makeup.events.BlinkEvent;
 	import com.julapy.ph.makeup.model.ModelLocator;
 
 	import flash.display.MovieClip;
@@ -28,6 +29,9 @@ package com.julapy.ph.makeup.view
 
 			hideBlink();
 			initShowBlinkTimer();
+
+			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_FORCE_START,	blinkForceHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_FORCE_STOP,	blinkForceHandler );
 		}
 
 		private function initShowBlinkTimer ():void
@@ -96,6 +100,23 @@ package com.julapy.ph.makeup.view
 			blink.visible = false;
 
 			ModelLocator.getInstance().makeupModel.blinking = false;
+		}
+
+		private function blinkForceHandler ( e : BlinkEvent ):void
+		{
+			if( e.blinkForce )
+			{
+				killHideBlinkTimer();
+				killShowBlinkTimer();
+				showBlink();
+			}
+			else
+			{
+				killHideBlinkTimer();
+				killShowBlinkTimer();
+				hideBlink();
+				initShowBlinkTimer();
+			}
 		}
 	}
 }

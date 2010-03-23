@@ -55,9 +55,9 @@ package com.julapy.ph.makeup.view
 
 			zoom		= new ZoomView();
 
-			focus		= new FocusView( container2 );
+			grid		= new GridView( container2 );
 
-			grid		= new GridView( container3 );
+			focus		= new FocusView( container3 );
 		}
 
 		private function initModel ():void
