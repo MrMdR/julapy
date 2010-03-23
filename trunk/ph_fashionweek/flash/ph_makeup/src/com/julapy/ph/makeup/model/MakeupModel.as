@@ -5,8 +5,10 @@ package com.julapy.ph.makeup.model
 	import com.julapy.ph.makeup.events.ZoomEvent;
 
 	import flash.events.EventDispatcher;
+	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 
 	public class MakeupModel extends EventDispatcher
 	{
@@ -17,7 +19,9 @@ package com.julapy.ph.makeup.model
 		private var _appRect		: Rectangle	= new Rectangle( 0, 0, 600, 800 );
 		private var _imageRect		: Rectangle = new Rectangle( 0, 0, 1351, 1800 );
 
-		private var _mode			: int = -1;
+		private var _mode				: int = -1;
+		private var _modeZoomInTimer	: Timer;
+		private var _modeZoomInTime		: int = 500;
 
 		private var _blinking		: Boolean	= false;
 		private var _blinkForce		: Boolean	= false;
@@ -66,14 +70,55 @@ package com.julapy.ph.makeup.model
 
 		public function set mode ( value : int ):void
 		{
-			_mode = value;
+			if( _mode != value )
+			{
+				if( value >= 0 && value <= 2 )
+				{
+					_mode = value;
 
-			dispatchEvent( new ModeEvent( _mode ) );
+					dispatchEvent( new ModeEvent( ModeEvent.MODE_ZOOM_IN, _mode ) );
+
+					killModeZoomInTimer();
+					initModeZoomInTimer();
+				}
+				else
+				{
+					_mode = -1;
+
+					dispatchEvent( new ModeEvent( ModeEvent.MODE_ZOOM_OUT, _mode ) );
+				}
+			}
 		}
 
 		public function get mode ():int
 		{
 			return _mode;
+		}
+
+		//-- mode zoom timer.
+
+		private function initModeZoomInTimer ():void
+		{
+			_modeZoomInTimer = new Timer( _modeZoomInTime, 1 );
+			_modeZoomInTimer.addEventListener( TimerEvent.TIMER_COMPLETE, modeZoomInTimerHandler );
+			_modeZoomInTimer.start();
+		}
+
+		private function killModeZoomInTimer ():void
+		{
+			if( _modeZoomInTimer )
+			{
+				_modeZoomInTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, modeZoomInTimerHandler );
+				_modeZoomInTimer.stop();
+				_modeZoomInTimer = null;
+			}
+		}
+
+		private function modeZoomInTimerHandler ( e : TimerEvent ):void
+		{
+			killModeZoomInTimer();
+
+			dispatchEvent( new ModeEvent( ModeEvent.MODE_ANIM_IN, _mode ) );
 		}
 
 		/////////////////////////////////////

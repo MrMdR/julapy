@@ -4,13 +4,15 @@ package com.julapy.ph.makeup.events
 
 	public class ModeEvent extends Event
 	{
-		public static const MODE : String = "mode";
+		public static const MODE_ZOOM_IN	: String = "modeZoomIn";
+		public static const MODE_ANIM_IN	: String = "modeAnimIn";
+		public static const MODE_ZOOM_OUT	: String = "modeAnimOut";
 
 		public var mode : int = -1;
 
-		public function ModeEvent( mode : int )
+		public function ModeEvent( type : String, mode : int )
 		{
-			super( MODE, false, false );
+			super( type, false, false );
 
 			this.mode = mode;
 		}
