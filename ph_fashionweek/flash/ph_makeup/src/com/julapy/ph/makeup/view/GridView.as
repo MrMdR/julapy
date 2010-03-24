@@ -84,6 +84,7 @@ package com.julapy.ph.makeup.view
 
 		private function playOut ():void
 		{
+			Tweener.removeTweens( this );
 			Tweener.addTween
 			(
 				this,

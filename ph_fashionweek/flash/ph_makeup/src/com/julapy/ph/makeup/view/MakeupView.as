@@ -283,6 +283,7 @@ package com.julapy.ph.makeup.view
 				faceMaskView = null;
 			}
 
+			trace( "maskCompleteHandler" );
 			ModelLocator.getInstance().makeupModel.mode = -1;
 		}
 	}

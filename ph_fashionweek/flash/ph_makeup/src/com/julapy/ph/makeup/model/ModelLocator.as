@@ -18,6 +18,7 @@ package com.julapy.ph.makeup.model
 
 			instance	= this;
 			makeupModel = new MakeupModel();
+			ofDataModel	= new OFDataModel();
 		}
 
 		public static function getInstance() : ModelLocator

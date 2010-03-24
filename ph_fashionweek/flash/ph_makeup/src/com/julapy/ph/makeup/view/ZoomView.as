@@ -10,7 +10,6 @@ package com.julapy.ph.makeup.view
 	import fl.motion.easing.Quadratic;
 
 	import flash.display.Sprite;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
 	public class ZoomView extends View
@@ -76,17 +75,21 @@ package com.julapy.ph.makeup.view
 
 		private function zoomToFace ():void
 		{
+			var z : Number;
+			z = zoomScaleMax + ( zoomScaleMin - zoomScaleMax ) * 0.4;
+
 			Tweener.addTween
 			(
 				this,
 				{
-					zoomScale	: zoomScaleMax,
-					time		: zoomTime,
-					delay		: 0.0,
-					transition	: Quadratic.easeOut,
-					onStart		: null,
-					onUpdate	: tweenUpdateHandler,
-					onComplete	: null
+					zoomScale		: z,
+					zoomOffsetY		: 50,
+					time			: zoomTime,
+					delay			: 0.0,
+					transition		: Quadratic.easeOut,
+					onStart			: null,
+					onUpdate		: tweenUpdateHandler,
+					onComplete		: null
 				}
 			);
 		}

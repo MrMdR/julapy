@@ -18,32 +18,61 @@ package com.julapy.ph.makeup.of
 	public class SocketOF extends EventDispatcher
 	{
 		private var socket 		: Socket;
+		private var timer		: Timer;
 		private var bConnected	: Boolean 	= false;
 		private var dataString	: String	= "";
 
 		public function SocketOF(target:IEventDispatcher=null)
 		{
 			super( target );
+		}
 
+	    /////////////////////////////////////////////////////
+	    //	PUBLIC.
+	    /////////////////////////////////////////////////////
+
+		public function connect ():void
+		{
+			killSocket();
+			killSocketTimer();
 			initSocket();
 		}
 
-		private function initSocketDelayed ( delay : int = 100 ):void
+		public function disconnect ():void
 		{
-			var timer : Timer;
+			killSocket();
+			killSocketTimer();
+
+			var event : SocketOFEvent;
+			event = new SocketOFEvent( SocketOFEvent.DISCONNECTED );
+			event.connected		= bConnected;
+			dispatchEvent( event );
+		}
+
+	    /////////////////////////////////////////////////////
+	    //	CONNECTION.
+	    /////////////////////////////////////////////////////
+
+		private function initSocketTimer ( delay : int = 100 ):void
+		{
 			timer = new Timer( delay, 1 );
-			timer.addEventListener( TimerEvent.TIMER_COMPLETE, initSocketDelayedHandler );
+			timer.addEventListener( TimerEvent.TIMER_COMPLETE, initSocketTimerHandler );
 			timer.start();
 		}
 
-		private function initSocketDelayedHandler( e : TimerEvent ):void
+		private function killSocketTimer ():void
 		{
-			var timer : Timer;
-			timer = e.target as Timer;
-			timer.removeEventListener( TimerEvent.TIMER_COMPLETE, initSocketDelayedHandler );
-			timer.stop();
-			timer = null;
+			if( timer )
+			{
+				timer.removeEventListener( TimerEvent.TIMER_COMPLETE, initSocketTimerHandler );
+				timer.stop();
+				timer = null;
+			}
+		}
 
+		private function initSocketTimerHandler( e : TimerEvent ):void
+		{
+			killSocketTimer();
 			initSocket();
 		}
 
@@ -92,7 +121,7 @@ package com.julapy.ph.makeup.of
 			bConnected = false;
 
 			killSocket();
-			initSocketDelayed( 1000 );
+			initSocketTimer( 1000 );
 
 			var event : SocketOFEvent;
 			event = new SocketOFEvent( SocketOFEvent.DISCONNECTED );
@@ -103,7 +132,7 @@ package com.julapy.ph.makeup.of
 	    private function socketIOErrorHandler ( e : IOErrorEvent ):void
 	    {
 			killSocket();
-			initSocketDelayed( 1000 );
+			initSocketTimer( 1000 );
 
 			var event : SocketOFEvent;
 			event = new SocketOFEvent( SocketOFEvent.TRYING_TO_CONNECT );
