@@ -8,6 +8,7 @@ package com.julapy.ph.makeup.view
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
@@ -16,8 +17,9 @@ package com.julapy.ph.makeup.view
 	public class DebugView extends View
 	{
 		private var infoText	: TextField;
-		private var dcBtn		: BtnView;
 		private var tracker		: MovieClip;
+		private var dcBtn		: BtnView;
+		private var fsBtn		: BtnView;
 
 		public function DebugView(sprite:Sprite=null)
 		{
@@ -28,6 +30,9 @@ package com.julapy.ph.makeup.view
 
 			dcBtn		= new BtnView( _sprite.getChildByName( "dcBtn" ) as MovieClip );
 			dcBtn.addEventListener( MouseEvent.MOUSE_DOWN, dcBtnHander );
+
+			fsBtn		= new BtnView( _sprite.getChildByName( "fsBtn" ) as MovieClip );
+			fsBtn.addEventListener( MouseEvent.MOUSE_DOWN, fsBtnHandler );
 
 			tracker		= _sprite.getChildByName( "tracker" ) as MovieClip;
 
@@ -129,5 +134,16 @@ package com.julapy.ph.makeup.view
 			ModelLocator.getInstance().ofDataModel.disconnect();
 		}
 
+		private function fsBtnHandler ( e : MouseEvent ):void
+		{
+			if( _sprite.stage.displayState != StageDisplayState.FULL_SCREEN_INTERACTIVE )
+			{
+				_sprite.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			}
+			else
+			{
+				_sprite.stage.displayState = StageDisplayState.NORMAL;
+			}
+		}
 	}
 }

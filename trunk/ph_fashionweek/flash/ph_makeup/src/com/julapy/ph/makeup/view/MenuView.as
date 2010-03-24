@@ -39,8 +39,6 @@ package com.julapy.ph.makeup.view
 
 		private function btnHandler ( e : MouseEvent ):void
 		{
-			trace( "menu" );
-
 			if( e.target == btn0 )
 			{
 				ModelLocator.getInstance().makeupModel.mode = MakeupModel.EYES_MODE;

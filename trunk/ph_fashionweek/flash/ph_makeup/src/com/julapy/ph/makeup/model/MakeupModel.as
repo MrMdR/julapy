@@ -9,6 +9,7 @@ package com.julapy.ph.makeup.model
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
+	import flash.utils.getQualifiedClassName;
 
 	public class MakeupModel extends EventDispatcher
 	{
@@ -91,8 +92,8 @@ package com.julapy.ph.makeup.model
 
 					initModeZoomOutTimer();
 				}
-				
-				trace( _mode );
+
+				trace( getQualifiedClassName( this ) + " :: mode = " + _mode.toString() );
 			}
 		}
 
