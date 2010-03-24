@@ -156,11 +156,6 @@ package com.julapy.ph.makeup.model
 			_ofPrimaryTrackerVO = highestTrackerVO;
 			_ofPrimaryIndex		= highestIndex;
 
-			if( ModelLocator.getInstance().makeupModel.mode != _ofPrimaryIndex )
-			{
-				trace( "findPrimaryTrackerVO" );
-			}
-
 			ModelLocator.getInstance().makeupModel.mode = _ofPrimaryIndex;
 		}
 
