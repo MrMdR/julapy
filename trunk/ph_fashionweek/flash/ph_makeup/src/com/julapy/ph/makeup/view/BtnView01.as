@@ -24,6 +24,16 @@ package com.julapy.ph.makeup.view
 
 		protected override function mouseOver(event:MouseEvent):void
 		{
+			over();
+		}
+
+		protected override function mouseOut(event:MouseEvent):void
+		{
+			out();
+		}
+
+		public function over ():void
+		{
 			Tweener.addTween
 			(
 				this,
@@ -39,7 +49,7 @@ package com.julapy.ph.makeup.view
 			);
 		}
 
-		protected override function mouseOut(event:MouseEvent):void
+		public function out ():void
 		{
 			Tweener.addTween
 			(

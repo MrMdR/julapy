@@ -1,5 +1,6 @@
 package com.julapy.ph.makeup.view
 {
+	import com.julapy.ph.makeup.events.DisconnectEvent;
 	import com.julapy.ph.makeup.events.ZoomEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
@@ -8,6 +9,8 @@ package com.julapy.ph.makeup.view
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
 
 	public class ApplicationView
 	{
@@ -27,6 +30,7 @@ package com.julapy.ph.makeup.view
 		private var zoom		: ZoomView;
 		private var focus		: FocusView;
 		private var grid		: GridView;
+		private var debug		: DebugView;
 
 		public function ApplicationView( asset : Sprite )
 		{
@@ -40,9 +44,13 @@ package com.julapy.ph.makeup.view
 			model = ModelLocator.getInstance().makeupModel;
 			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
 
+			ModelLocator.getInstance().ofDataModel.addEventListener( DisconnectEvent.DISCONNECT, disconnectHandler );
+
 			initModel();
 			initViews();
 			initSocket();
+
+			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
 		}
 
 		private function initViews ():void
@@ -58,6 +66,8 @@ package com.julapy.ph.makeup.view
 			grid		= new GridView( container2 );
 
 			focus		= new FocusView( container3 );
+
+			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
 		}
 
 		private function initModel ():void
@@ -76,6 +86,7 @@ package com.julapy.ph.makeup.view
 			socket.addEventListener( SocketOFEvent.DISCONNECTED,		socketHandler );
 			socket.addEventListener( SocketOFEvent.TRYING_TO_CONNECT,	socketHandler );
 			socket.addEventListener( SocketOFEvent.DATA_RECEIVED,		socketHandler );
+			socket.connect();
 		}
 
 		////////////////////////////////////////////////////
@@ -120,6 +131,19 @@ package com.julapy.ph.makeup.view
 			if( e.type == SocketOFEvent.DATA_RECEIVED )
 			{
 				ModelLocator.getInstance().ofDataModel.ofStringData = e.dataString;
+			}
+		}
+
+		private function disconnectHandler ( e : DisconnectEvent ):void
+		{
+			socket.disconnect();
+		}
+
+		private function keyDownHandler ( e : KeyboardEvent ):void
+		{
+			if( e.keyCode == Keyboard.D )
+			{
+				debug.visible = !debug.visible;
 			}
 		}
 	}

@@ -22,6 +22,8 @@ package com.julapy.ph.makeup.model
 		private var _mode				: int = -1;
 		private var _modeZoomInTimer	: Timer;
 		private var _modeZoomInTime		: int = 500;
+		private var _modeZoomOutTimer	: Timer;
+		private var _modeZoomOutTime	: int = 1000;
 
 		private var _blinking		: Boolean	= false;
 		private var _blinkForce		: Boolean	= false;
@@ -72,21 +74,25 @@ package com.julapy.ph.makeup.model
 		{
 			if( _mode != value )
 			{
+				killModeZoomInTimer();
+				killModeZoomOutTimer();
+
 				if( value >= 0 && value <= 2 )
 				{
 					_mode = value;
 
 					dispatchEvent( new ModeEvent( ModeEvent.MODE_ZOOM_IN, _mode ) );
 
-					killModeZoomInTimer();
 					initModeZoomInTimer();
 				}
 				else
 				{
 					_mode = -1;
 
-					dispatchEvent( new ModeEvent( ModeEvent.MODE_ZOOM_OUT, _mode ) );
+					initModeZoomOutTimer();
 				}
+				
+				trace( _mode );
 			}
 		}
 
@@ -95,7 +101,7 @@ package com.julapy.ph.makeup.model
 			return _mode;
 		}
 
-		//-- mode zoom timer.
+		//-- mode zoom in timer.
 
 		private function initModeZoomInTimer ():void
 		{
@@ -119,6 +125,32 @@ package com.julapy.ph.makeup.model
 			killModeZoomInTimer();
 
 			dispatchEvent( new ModeEvent( ModeEvent.MODE_ANIM_IN, _mode ) );
+		}
+
+		//-- mode zoom out timer.
+
+		private function initModeZoomOutTimer ():void
+		{
+			_modeZoomOutTimer = new Timer( _modeZoomOutTime, 1 );
+			_modeZoomOutTimer.addEventListener( TimerEvent.TIMER_COMPLETE, modeZoomOutTimerHandler );
+			_modeZoomOutTimer.start();
+		}
+
+		private function killModeZoomOutTimer ():void
+		{
+			if( _modeZoomOutTimer )
+			{
+				_modeZoomOutTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, modeZoomOutTimerHandler );
+				_modeZoomOutTimer.stop();
+				_modeZoomOutTimer = null;
+			}
+		}
+
+		private function modeZoomOutTimerHandler ( e : TimerEvent ):void
+		{
+			killModeZoomOutTimer();
+
+			dispatchEvent( new ModeEvent( ModeEvent.MODE_ZOOM_OUT, _mode ) );
 		}
 
 		/////////////////////////////////////

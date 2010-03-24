@@ -60,7 +60,19 @@ package com.julapy.ph.makeup.view
 
 		private function focusOnFace ():void
 		{
-
+			Tweener.addTween
+			(
+				this,
+				{
+					tweenValue	: 140,
+					time		: 0.4,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdate,
+					onComplete	: null
+				}
+			);
 		}
 
 		private function focusOut ():void
