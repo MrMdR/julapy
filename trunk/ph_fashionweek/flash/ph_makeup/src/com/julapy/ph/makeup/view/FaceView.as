@@ -21,11 +21,8 @@ package com.julapy.ph.makeup.view
 		{
 			super( sprite );
 
-			face	= AssetLoader.getInstance().getClassInstance( "makeup.face.base" ) as MovieClip;
-			blink	= AssetLoader.getInstance().getClassInstance( "makeup.face.blink" ) as MovieClip;
-
-			_sprite.addChild( face );
-			_sprite.addChild( blink );
+			face	= _sprite.getChildByName( "face" ) as MovieClip;
+			blink	= _sprite.getChildByName( "blink" ) as MovieClip;
 
 			hideBlink();
 			initShowBlinkTimer();

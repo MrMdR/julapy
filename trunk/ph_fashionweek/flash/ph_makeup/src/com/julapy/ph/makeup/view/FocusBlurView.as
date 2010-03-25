@@ -9,20 +9,32 @@ package com.julapy.ph.makeup.view
 
 	import fl.motion.easing.Quadratic;
 
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.filters.BlurFilter;
 
-	public class FocusView extends View
+	public class FocusBlurView extends View
 	{
+		private var face		: MovieClip;
+
 		public  var tweenValue	: Number = 0;
 		private var fillAlpha	: Number = 0.4;
 
 		private var fadeTop		: MovieClip;
 		private var fadeBtm		: MovieClip;
 
-		public function FocusView(sprite:Sprite=null)
+		private var faceBm		: Bitmap;
+		private var faceBmd		: BitmapData;
+		private var maskBmd		: BitmapData;
+		private var blurFilter	: BlurFilter = new BlurFilter( 8.0, 8.0, 4 );
+
+		public function FocusBlurView( sprite : Sprite, face : Sprite )
 		{
-			super(sprite);
+			super( sprite );
+
+			this.face = face as MovieClip;
 
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,	modeZoomInHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,	modeZoomOutHandler );
@@ -35,6 +47,20 @@ package com.julapy.ph.makeup.view
 
 			fadeBtm.y		= ModelLocator.getInstance().makeupModel.appHeight + fadeTop.height;
 			fadeBtm.visible	= false;
+
+			//-- blur.
+
+			var appW : int;
+			var appH : int;
+
+			appW = ModelLocator.getInstance().makeupModel.appWidth;
+			appH = ModelLocator.getInstance().makeupModel.appHeight;
+
+			faceBmd	= new BitmapData( appW, appH, false, 0xFFFFFF );
+			maskBmd	= new BitmapData( appW, appH, true,  0x00FFFFFF );
+			faceBm	= new Bitmap( faceBmd );
+
+			_sprite.addChild( faceBm );
 		}
 
 		private function focusOnEyes ():void
@@ -145,7 +171,9 @@ package com.julapy.ph.makeup.view
 			_sprite.graphics.drawRect( 0, fadeBtm.y, appW, h );
 			_sprite.graphics.endFill();
 
-			doValidate();
+			//-- blur.
+
+			faceBmd.draw( face );
 		}
 
 		//////////////////////////////////////////////////////////
