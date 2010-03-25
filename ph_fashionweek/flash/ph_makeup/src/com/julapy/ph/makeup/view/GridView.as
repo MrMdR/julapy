@@ -37,6 +37,11 @@ package com.julapy.ph.makeup.view
 			_sprite.alpha = tweenAlphaStart;
 			_sprite.graphics.clear();
 
+			playInCompleteHandler();
+			playOutCompleteHandler();
+
+			Tweener.removeTweens( this );
+
 			Tweener.addTween
 			(
 				this,
@@ -84,7 +89,11 @@ package com.julapy.ph.makeup.view
 
 		private function playOut ():void
 		{
+			playInCompleteHandler();
+			playOutCompleteHandler();
+
 			Tweener.removeTweens( this );
+
 			Tweener.addTween
 			(
 				this,
