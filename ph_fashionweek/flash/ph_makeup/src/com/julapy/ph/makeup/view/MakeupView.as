@@ -21,9 +21,9 @@ package com.julapy.ph.makeup.view
 		private var eyesIndex		: int = -1;
 		private var lipsIndex		: int = -1;
 
-		private var faceHolder		: Sprite = new Sprite();
-		private var eyesHolder		: Sprite = new Sprite();
-		private var lipsHolder		: Sprite = new Sprite();
+		private var faceHolder		: MovieClip;
+		private var eyesHolder		: MovieClip;
+		private var lipsHolder		: MovieClip;
 
 		private var faceAsset		: MovieClip;
 		private var eyesAsset		: MovieClip;
@@ -42,17 +42,15 @@ package com.julapy.ph.makeup.view
 		{
 			super(sprite);
 
-			_sprite.addChild( faceHolder );
-			_sprite.addChild( eyesHolder );
-			_sprite.addChild( lipsHolder );
+			faceHolder	= _sprite.getChildByName( "faceHolder" ) as MovieClip;
+			lipsHolder	= _sprite.getChildByName( "lipsHolder" ) as MovieClip;
+			eyesHolder	= _sprite.getChildByName( "eyesHolder" ) as MovieClip;
+			blinkMask	= _sprite.getChildByName( "blinkMask" ) as MovieClip;
 
 			eyesHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
 //			lipsHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
 //			faceHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
-
-			blinkMask = AssetLoader.getInstance().getClassInstance( "makeup.face.blink.mask" ) as MovieClip;
 			blinkMask.cacheAsBitmap		= true;
-			_sprite.addChild( blinkMask );
 
 			faceLinkage	=
 			[

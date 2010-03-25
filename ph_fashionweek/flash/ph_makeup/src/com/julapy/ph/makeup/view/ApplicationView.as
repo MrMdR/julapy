@@ -7,9 +7,12 @@ package com.julapy.ph.makeup.view
 	import com.julapy.ph.makeup.of.SocketOF;
 	import com.julapy.ph.makeup.of.SocketOFEvent;
 
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
+	import flash.geom.Matrix;
 	import flash.ui.Keyboard;
 
 	public class ApplicationView
@@ -19,16 +22,17 @@ package com.julapy.ph.makeup.view
 		private var model		: MakeupModel;
 		private var socket 		: SocketOF;
 
-		private var container0	: Sprite;
-		private var container1	: Sprite;
-		private var container2	: Sprite;
-		private var container3	: Sprite;
+		private var faceHolder		: Sprite;
+		private var faceBmHolder	: Sprite;
+		private var faceBm			: Bitmap;
+		private var useFaceBm		: Boolean = false;
 
 		private var menu		: MenuView;
 		private var face		: FaceView;
 		private var makeup		: MakeupView;
 		private var zoom		: ZoomView;
 		private var focus		: FocusView;
+		private var blur		: FocusBlurView;
 		private var grid		: GridView;
 		private var debug		: DebugView;
 
@@ -36,10 +40,10 @@ package com.julapy.ph.makeup.view
 		{
 			this.asset	= asset;
 
-			container0	= asset.getChildByName( "container0" ) as MovieClip;
-			container1	= asset.getChildByName( "container1" ) as MovieClip;
-			container2	= asset.getChildByName( "container2" ) as MovieClip;
-			container3	= asset.getChildByName( "container3" ) as MovieClip;
+			faceHolder		= asset.getChildByName( "face" ) as Sprite;
+			faceBmHolder	= asset.getChildByName( "faceBm" ) as Sprite;
+			faceBm			= new Bitmap( new BitmapData( 1, 1, true, 0x00FFFFFF ) );
+			faceBmHolder.addChild( faceBm );
 
 			model = ModelLocator.getInstance().makeupModel;
 			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
@@ -57,15 +61,17 @@ package com.julapy.ph.makeup.view
 		{
 			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
-			face		= new FaceView( container0 );
+			face		= new FaceView( faceHolder.getChildByName( "container0" ) as MovieClip );
 
-			makeup		= new MakeupView( container1 );
+			makeup		= new MakeupView( faceHolder.getChildByName( "container1" ) as MovieClip );
 
 			zoom		= new ZoomView();
 
-			grid		= new GridView( container2 );
+			grid		= new GridView( asset.getChildByName( "grid" ) as MovieClip );
 
-			focus		= new FocusView( container3 );
+			focus		= new FocusView( asset.getChildByName( "focus" ) as MovieClip );
+
+//			blur		= new FocusBlurView( asset.getChildByName( "focus" ) as MovieClip, faceHolder );
 
 			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
 		}
@@ -95,20 +101,39 @@ package com.julapy.ph.makeup.view
 
 		private function zoomHandler ( e : ZoomEvent ):void
 		{
+			var appW : int;
+			var appH : int;
+
+			appW = ModelLocator.getInstance().makeupModel.appWidth;
+			appH = ModelLocator.getInstance().makeupModel.appHeight;
+
 			var sx : Number = e.zoomScale;
 			var sy : Number = e.zoomScale;
 
-			container0.scaleX	= sx;
-			container0.scaleY	= sy;
+			if( useFaceBm )
+			{
+				if( !faceHolder.visible )
+				{
+					faceHolder.visible = false;
+				}
 
-			container1.scaleX	= sx;
-			container1.scaleY	= sy;
+				var m : Matrix;
+				m = new Matrix();
+				m.translate( (int)( appW * 0.5 ), (int)( appH * 0.5 ) );
+				m.scale( sx, sy );
 
-			container0.x		= e.zoomOffset.x;
-			container0.y		= e.zoomOffset.y;
+				faceBm.bitmapData.dispose();
+				faceBm.bitmapData = new BitmapData( appW, appH, false );
+				faceBm.bitmapData.draw( faceHolder, m );
+			}
+			else
+			{
+				faceHolder.scaleX	= sx;
+				faceHolder.scaleY	= sy;
 
-			container1.x		= e.zoomOffset.x;
-			container1.y		= e.zoomOffset.y;
+				faceHolder.x		= e.zoomOffset.x;
+				faceHolder.y		= e.zoomOffset.y;
+			}
 		}
 
 		private function socketHandler ( e : SocketOFEvent ):void
