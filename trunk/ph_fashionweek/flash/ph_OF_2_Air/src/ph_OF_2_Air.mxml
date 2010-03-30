@@ -4,14 +4,14 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.julapy.ph.vo.TrackerVO;
+        	import com.julapy.ph.of.SocketOF;
+        	import com.julapy.ph.model.OFDataModel;
+        	import com.julapy.ph.ui.Btn01;
+        	import com.julapy.ph.of.SocketOFEvent;
         	import com.holler.utils.MathUtil;
-        	import com.julapy.vo.TrackerVO;
-        	import com.julapy.model.OFDataModel;
         	import com.julapy.core.StageSizeEvent;
         	import com.julapy.core.StageSize;
-        	import com.julapy.ui.Btn01;
-        	import com.julapy.net.SocketOFEvent;
-        	import com.julapy.net.SocketOF;
 		    import flash.display.Sprite;
 
 			private var model		: OFDataModel = new OFDataModel();
@@ -32,6 +32,7 @@
 				socket.addEventListener( SocketOFEvent.DISCONNECTED,		socketHandler );
 				socket.addEventListener( SocketOFEvent.TRYING_TO_CONNECT,	socketHandler );
 				socket.addEventListener( SocketOFEvent.DATA_RECEIVED,		socketHandler );
+				socket.connect();
 
 				stage.addChild( container = new Sprite() );
 
