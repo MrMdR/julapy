@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties version="1">
   <includeClasses>
-    <classEntry path="com.julapy.net.SocketOFEvent"/>
     <classEntry path="com.julapy.core.StageSize"/>
     <classEntry path="com.julapy.core.StageSizeEvent"/>
+    <classEntry path="com.julapy.ph.of.SocketOF"/>
+    <classEntry path="com.julapy.ph.of.SocketOFEvent"/>
+    <classEntry path="com.julapy.ph.vo.TrackerVO"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
