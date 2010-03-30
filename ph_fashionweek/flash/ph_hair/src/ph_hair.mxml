@@ -3,34 +3,61 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.julapy.ph.hair.view.ApplicationView;
         	import com.holler.assets.AssetGroupVOEvent;
+        	import com.julapy.core.StageSizeEvent;
+        	import com.julapy.core.StageSize;
         	import com.holler.assets.AssetLoader;
+
+			private var asset		: MovieClip;
+
+			private var stageWidth	: int;
+			private var stageHeight	: int;
+
+			private var app			: ApplicationView;
 
 			private function init ():void
 			{
+				StageSize.getInstance().stage = stage;
+				StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
+
+				stageWidth	= stage.stageWidth;
+				stageHeight	= stage.stageHeight;
+
 				var assetLoader : AssetLoader;
 				assetLoader = AssetLoader.getInstance();
 				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_COMPLETE,	assetLoaderHandler );
-				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_ERROR,		assetLoaderHandler );
 				assetLoader.addAsset( "assets.swf", "assets", "main" );
 				assetLoader.loadAssets( "assets", false );
 			}
 
+			private function initApp ():void
+			{
+				asset = AssetLoader.getInstance().getClassInstance( "hair.asset" ) as MovieClip;
+				stage.addChild( asset );
+
+				app = new ApplicationView( asset.getChildByName( "main" ) as MovieClip );
+
+				stageResize( stage.stageWidth, stage.stageHeight );
+			}
+
 			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
 			{
-				if( e.type == AssetGroupVOEvent.ASSET_GROUP_ERROR )
-				{
-					trace( "error" );
-				}
+				initApp();
+			}
 
-				if( e.type == AssetGroupVOEvent.ASSET_GROUP_COMPLETE )
-				{
-					var mc : MovieClip;
-					mc		= AssetLoader.getInstance().getClassInstance( "makeup.asset" ) as MovieClip;
-					mc.x	= 300;
-					mc.y	= 400;
-					stage.addChild( mc );
-				}
+			private function stageResizeHandler ( e : StageSizeEvent ):void
+			{
+				stageResize( e.stageWidth, e.stageHeight );
+			}
+
+			private function stageResize ( stageWidth : int, stageHeight : int ):void
+			{
+				this.stageWidth		= stage.stageWidth;
+				this.stageHeight	= stage.stageHeight;
+
+				asset.x		= (int)( stageWidth  * 0.5 );
+				asset.y		= (int)( stageHeight * 0.5 );
 			}
 
         ]]>
