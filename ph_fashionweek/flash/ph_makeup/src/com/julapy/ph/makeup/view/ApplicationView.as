@@ -4,8 +4,8 @@ package com.julapy.ph.makeup.view
 	import com.julapy.ph.makeup.events.ZoomEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
-	import com.julapy.ph.makeup.of.SocketOF;
-	import com.julapy.ph.makeup.of.SocketOFEvent;
+	import com.julapy.ph.of.SocketOF;
+	import com.julapy.ph.of.SocketOFEvent;
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
