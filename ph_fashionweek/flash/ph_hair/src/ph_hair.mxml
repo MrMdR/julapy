@@ -3,10 +3,34 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.holler.assets.AssetGroupVOEvent;
+        	import com.holler.assets.AssetLoader;
 
 			private function init ():void
 			{
-				//
+				var assetLoader : AssetLoader;
+				assetLoader = AssetLoader.getInstance();
+				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_COMPLETE,	assetLoaderHandler );
+				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_ERROR,		assetLoaderHandler );
+				assetLoader.addAsset( "assets.swf", "assets", "main" );
+				assetLoader.loadAssets( "assets", false );
+			}
+
+			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
+			{
+				if( e.type == AssetGroupVOEvent.ASSET_GROUP_ERROR )
+				{
+					trace( "error" );
+				}
+
+				if( e.type == AssetGroupVOEvent.ASSET_GROUP_COMPLETE )
+				{
+					var mc : MovieClip;
+					mc		= AssetLoader.getInstance().getClassInstance( "makeup.asset" ) as MovieClip;
+					mc.x	= 300;
+					mc.y	= 400;
+					stage.addChild( mc );
+				}
 			}
 
         ]]>
