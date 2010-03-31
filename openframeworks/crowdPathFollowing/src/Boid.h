@@ -5,6 +5,7 @@
  *  Created by lukasz karluk on 28/03/10.
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
+ *	PORTED FROM, http://www.shiffman.net/teaching/nature/path-following/
  */
 
 #ifndef BOID
@@ -29,12 +30,18 @@ public :
 	void seek( const ofxVec2f& target );
 	void arrive( const ofxVec2f& target );
 	ofxVec2f steer( const ofxVec2f& target, bool slowdown );
-	void render();
 	void borders();
+
+	void render();
+	void renderDebug();
 	
 	ofxVec2f	loc;
 	ofxVec2f	vel;
 	ofxVec2f	acc;
+	ofxVec2f	dir;
+	ofxVec2f	target;
+	ofxVec2f	predict;
+	ofxVec2f	predictLoc;
 	float		r;
 	float		maxforce;    // Maximum steering force
 	float		maxspeed;    // Maximum speed

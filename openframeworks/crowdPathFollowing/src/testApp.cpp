@@ -6,6 +6,8 @@ void testApp::setup()
 	ofSetVerticalSync( true );
 	ofSetFrameRate( 60 );
 	
+	bDebug = true;
+	
 	float offset = 60;
 	
 	path.init();
@@ -15,11 +17,14 @@ void testApp::setup()
 	path.addPoint( ofGetWidth() * 0.5, ofGetHeight() - offset * 3 );
 	path.addPoint( offset, ofGetHeight() - offset );
 	
-	for( int i=0; i<120; i++ )
+	int noBoids;
+	noBoids = 10;
+	
+	for( int i=0; i<noBoids; i++ )
 	{
 		addBoid
 		(
-			ofRandom( 0, ofGetWidth() ),
+			ofRandom( 0, ofGetWidth()  ),
 			ofRandom( 0, ofGetHeight() )
 		);
 	}
@@ -60,12 +65,21 @@ void testApp::draw()
 	{
 		Boid& boid = boids.at( i );
 		boid.render();
+		
+		if( bDebug )
+		{
+			boid.renderDebug();
+		}
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed(int key){
-
+void testApp::keyPressed(int key)
+{
+	if( key == 'd' )
+	{
+		bDebug = !bDebug;
+	}
 }
 
 //--------------------------------------------------------------

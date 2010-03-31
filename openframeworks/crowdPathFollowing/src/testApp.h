@@ -27,6 +27,8 @@ public:
 	Path path;
 	vector<Boid> boids;
 	
+	bool bDebug;
+	
 };
 
 #endif
