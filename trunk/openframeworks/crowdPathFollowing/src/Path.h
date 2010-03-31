@@ -5,6 +5,7 @@
  *  Created by lukasz karluk on 28/03/10.
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
+ *	PORTED FROM, http://www.shiffman.net/teaching/nature/path-following/
  */
 
 #ifndef PATH

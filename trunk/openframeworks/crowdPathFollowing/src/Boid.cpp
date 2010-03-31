@@ -5,6 +5,7 @@
  *  Created by lukasz karluk on 28/03/10.
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
+ *	PORTED FROM, http://www.shiffman.net/teaching/nature/path-following/
  */
 
 #include "Boid.h"
@@ -36,38 +37,34 @@ void Boid :: run ()
 
 ofxVec2f Boid :: follow( const Path& path )
 {
-	ofxVec2f predict;
+	predict.set( 0, 0 );		// reset.
 	predict.set( vel );
 	predict.normalize();
 	predict *= 25;
-	
-	ofxVec2f predictLoc;
+
+	predictLoc.set( 0, 0 );		// reset.
 	predictLoc = loc + predict;
 	
-	bool debug = true;
+	target.set( 0, 0 );			// reset.
 	
-	if (debug)
-	{
-		ofSetColor( 0, 0, 0 );
-		ofFill();
-		ofLine( loc.x, loc.y, predictLoc.x, predictLoc.y );
-		ofEllipse( predictLoc.x, predictLoc.y, 4, 4 );
-	}
-	
-    ofxVec2f target;
-    ofxVec2f dir;
     float record = 1000000;
 	
-    for( int i = 0; i < path.points.size(); i++ )
+	for( int i=0; i<path.points.size(); i++ )
 	{
 		ofxVec2f a;
-		a.set( path.points.at( i ) );
+		a.set( path.points.at( i ) );									// current point.
 		
 		ofxVec2f b;
-		b.set( path.points.at( ( i + 1 ) % path.points.size() ) );
+		b.set( path.points.at( ( i + 1 ) % path.points.size() ) );		// next point.
+		
+		// the normal is a vector that extends from that point and is perpendicular to the line.
+		// http://www.shiffman.net/itp/classes/nature/pathimages/path5normal.jpg
+		// http://www.shiffman.net/itp/classes/nature/pathimages/path6normal.jpg
 		
 		ofxVec2f normal;
 		normal = getNormalPoint( predictLoc, a, b );
+		
+		// check if normal is on line segment
 		
 		float da;
 		da = normal.distance( a );
@@ -77,6 +74,8 @@ ofxVec2f Boid :: follow( const Path& path )
 		
 		ofxVec2f line;
 		line = b - a;
+		
+		// if it's not within the line segment, consider the normal to just be the end of the line segment (point b)
 
 		if( da + db > line.length() + 1 )
 		{
@@ -99,23 +98,6 @@ ofxVec2f Boid :: follow( const Path& path )
 			dir.normalize();
 			dir *= 25;
 		}
-    }
-	
-    if( debug )
-	{
-		ofSetColor( 0, 0, 0 );
-		ofFill();
-		ofLine( predictLoc.x, predictLoc.y, target.x, target.y );
-		ofEllipse( target.x, target.y, 4, 4 );
-		ofNoFill();
-		ofLine( predictLoc.x, predictLoc.y, target.x, target.y );
-		if( record > path.radius )
-		{
-			ofSetColor( 255, 0, 0 );
-			ofFill();
-		}
-		ofNoFill();
-		ofEllipse( target.x + dir.x, target.y + dir.y, 8, 8 );
     }
 	
     if( record > path.radius || vel.length() < 0.1 )
@@ -197,22 +179,22 @@ void Boid :: update()
 	acc *= 0;	// reset.
 }
 
-void Boid :: seek( const ofxVec2f& target )
+void Boid :: seek( const ofxVec2f& trg )
 {
-	acc += steer( target, false );
+	acc += steer( trg, false );
 }
 
-void Boid :: arrive( const ofxVec2f& target )
+void Boid :: arrive( const ofxVec2f& trg )
 {
-	acc += steer( target, true );
+	acc += steer( trg, true );
 }
 
-ofxVec2f Boid :: steer( const ofxVec2f& target, bool slowdown )
+ofxVec2f Boid :: steer( const ofxVec2f& trg, bool slowdown )
 {
 	ofxVec2f steer;
     
 	ofxVec2f desired;
-	desired = target - loc;
+	desired = trg - loc;
     
 	float d;
 	d = desired.length();
@@ -220,7 +202,7 @@ ofxVec2f Boid :: steer( const ofxVec2f& target, bool slowdown )
 	if( d > 0 )
 	{
 		desired.normalize();
-		if( ( slowdown ) && ( d < 100.0f ) )
+		if( slowdown && ( d < 100.0f ) )
 		{	
 			desired += maxspeed * ( d / 100.0f );
 		}
@@ -228,8 +210,9 @@ ofxVec2f Boid :: steer( const ofxVec2f& target, bool slowdown )
 		{
 			desired *= maxspeed;
 		}
-		steer = desired - vel;
-		steer.limit(maxforce);  // Limit to maximum steering force
+		
+		steer = desired - vel;		// Steering = Desired minus Velocity
+		steer.limit( maxforce );	// Limit to maximum steering force
     } 
     else
 	{
@@ -237,16 +220,6 @@ ofxVec2f Boid :: steer( const ofxVec2f& target, bool slowdown )
     }
 	
     return steer;
-}
-
-void Boid :: render()
-{
-	ofSetColor( 75, 75, 75 );
-	ofFill();
-	glPushMatrix();
-	glTranslatef( loc.x, loc.y, 0 );
-	ofEllipse( 0, 0, r, r );
-	glPopMatrix();
 }
 
 void Boid :: borders()
@@ -260,4 +233,43 @@ void Boid :: borders()
 	{
 		loc.x = -r;
 	}
+}
+
+void Boid :: render()
+{
+	ofSetColor( 75, 75, 75 );
+	ofFill();
+	glPushMatrix();
+	glTranslatef( loc.x, loc.y, 0 );
+	ofEllipse( 0, 0, r, r );
+	glPopMatrix();
+}
+
+void Boid :: renderDebug ()
+{
+	// red line from boid to normal point.
+	
+	ofSetColor( 255, 0, 0 );
+	ofLine( loc.x, loc.y, predictLoc.x, predictLoc.y );
+
+	// red dot is the normal point.
+	
+	ofFill();
+	ofEllipse( predictLoc.x, predictLoc.y, 4, 4 );
+	
+	// blue line, perpendicular from normal point to line.
+	
+	ofSetColor( 0, 0, 255 );
+	ofLine( predictLoc.x, predictLoc.y, target.x, target.y );
+	
+	// blue point, on line.
+	
+	ofFill();
+	ofEllipse( target.x, target.y, 4, 4 );
+	
+	// green circle, direction from target on line.
+	
+	ofSetColor( 0, 255, 0 );
+	ofNoFill();
+	ofEllipse( target.x + dir.x, target.y + dir.y, 8, 8 );
 }
