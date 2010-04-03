@@ -1,6 +1,7 @@
 package com.julapy.ph.makeup.view
 {
 	import com.holler.assets.AssetLoader;
+	import com.holler.controls.BtnView;
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.SectionEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
@@ -12,13 +13,18 @@ package com.julapy.ph.makeup.view
 
 	public class VideoBaseView extends View
 	{
+		private var videoHolder	: MovieClip;
 		private var videos		: Array;
 		private var video		: MovieClip;
 		private var videoIndex	: int = 0;
 
+		private var continueBtn	: BtnView;
+
 		public function VideoBaseView(sprite:Sprite=null)
 		{
 			super(sprite);
+
+			videoHolder = _sprite.getChildByName( "videoHolder" ) as MovieClip;
 
 			videos =
 			[
@@ -27,6 +33,9 @@ package com.julapy.ph.makeup.view
 				"makeup.video.03",
 				"makeup.video.04"
 			];
+
+			continueBtn = new BtnView( _sprite.getChildByName( "continueBtn" ) as MovieClip );
+			continueBtn.addEventListener( MouseEvent.MOUSE_DOWN, continueBtnHandler );
 
 			ModelLocator.getInstance().makeupModel.addEventListener( SectionEvent.SECTION_CHANGE, sectionChangeHandler );
 		}
@@ -39,14 +48,14 @@ package com.julapy.ph.makeup.view
 		{
 			video = AssetLoader.getInstance().getClassInstance( videos[ videoIndex ] ) as MovieClip
 
-			_sprite.addChild( video );
+			videoHolder.addChild( video );
 		}
 
 		private function killVideo ():void
 		{
 			if( video )
 			{
-				_sprite.removeChild( video );
+				videoHolder.removeChild( video );
 
 				video = null;
 			}
@@ -80,16 +89,12 @@ package com.julapy.ph.makeup.view
 		{
 			visible = true;
 			doValidate();
-
-			_sprite.addEventListener( MouseEvent.MOUSE_DOWN, mouseHandler );
 		}
 
 		private function disable ():void
 		{
 			visible = false;
 			doValidate();
-
-			_sprite.removeEventListener( MouseEvent.MOUSE_DOWN, mouseHandler );
 		}
 
 		/////////////////////////////////////////////
@@ -134,7 +139,7 @@ package com.julapy.ph.makeup.view
 			}
 		}
 
-		private function mouseHandler ( e : MouseEvent ):void
+		private function continueBtnHandler ( e : MouseEvent ):void
 		{
 			ModelLocator.getInstance().makeupModel.nextSection();
 		}
