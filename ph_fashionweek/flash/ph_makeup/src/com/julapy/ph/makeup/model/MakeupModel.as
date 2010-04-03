@@ -1,7 +1,9 @@
 package com.julapy.ph.makeup.model
 {
 	import com.julapy.ph.makeup.events.BlinkEvent;
+	import com.julapy.ph.makeup.events.GirlEvent;
 	import com.julapy.ph.makeup.events.ModeEvent;
+	import com.julapy.ph.makeup.events.SectionEvent;
 	import com.julapy.ph.makeup.events.ZoomEvent;
 
 	import flash.events.EventDispatcher;
@@ -13,12 +15,25 @@ package com.julapy.ph.makeup.model
 
 	public class MakeupModel extends EventDispatcher
 	{
-		public static const EYES_MODE	: int = 0;
-		public static const LIPS_MODE	: int = 1;
-		public static const FACE_MODE	: int = 2;
+		public static const GIRL_ONE		: int = 0;
+		public static const GIRL_TWO		: int = 1;
 
-		private var _appRect		: Rectangle	= new Rectangle( 0, 0, 600, 800 );
+		public static const SECTION_INTRO	: int = 0;
+		public static const SECTION_PLAY	: int = 1;
+		public static const SECTION_OUTRO	: int = 2;
+
+		public static const EYES_MODE		: int = 0;
+		public static const LIPS_MODE		: int = 1;
+		public static const FACE_MODE		: int = 2;
+
+		private var _appRect		: Rectangle	= new Rectangle( 0, 0, 576, 1024 );
 		private var _imageRect		: Rectangle = new Rectangle( 0, 0, 1351, 1800 );
+
+		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];
+		private var _sections		: Array = [ SECTION_INTRO, SECTION_PLAY, SECTION_OUTRO ];
+
+		private var _girl			: int = -1;
+		private var _section		: int = -1;
 
 		private var _mode				: int = -1;
 		private var _modeZoomInTimer	: Timer;
@@ -65,6 +80,75 @@ package com.julapy.ph.makeup.model
 		public function get imageHeight ():int
 		{
 			return _imageRect.height;
+		}
+
+		/////////////////////////////////////
+		//	GIRL.
+		/////////////////////////////////////
+
+		public function set girl ( value : int ):void
+		{
+			if( _girl != value )
+			{
+				_girl = value;
+
+				dispatchEvent( new GirlEvent( _girl ) );
+			}
+		}
+
+		public function get girl ():int
+		{
+			return _girl;
+		}
+
+		public function nextGirl ():void
+		{
+			var girlTemp : int;
+			girlTemp = _girl;
+
+			if( ++girlTemp >= _girls.length )
+			{
+				girl = 0;
+
+				return;
+			}
+
+			girl = girlTemp;
+		}
+
+		/////////////////////////////////////
+		//	SECTION.
+		/////////////////////////////////////
+
+		public function set section ( value : int ):void
+		{
+			if( _section != value )
+			{
+				_section = value;
+
+				dispatchEvent( new SectionEvent( _section ) );
+			}
+		}
+
+		public function get section ():int
+		{
+			return _section;
+		}
+
+		public function nextSection ():void
+		{
+			var sectionTemp : int;
+			sectionTemp = _section;
+
+			if( ++sectionTemp >= _sections.length )
+			{
+				nextGirl();
+				section = 0;
+
+				return;
+			}
+
+			section = sectionTemp;
 		}
 
 		/////////////////////////////////////
