@@ -27,6 +27,7 @@ package com.julapy.ph.makeup.view
 		private var faceBm			: Bitmap;
 		private var useFaceBm		: Boolean = false;
 
+		private var video		: VideoBaseView;
 		private var menu		: MenuView;
 		private var face		: FaceView;
 		private var makeup		: MakeupView;
@@ -55,10 +56,15 @@ package com.julapy.ph.makeup.view
 			initSocket();
 
 			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
+
+			ModelLocator.getInstance().makeupModel.girl		= MakeupModel.GIRL_ONE;
+			ModelLocator.getInstance().makeupModel.section	= MakeupModel.SECTION_INTRO;
 		}
 
 		private function initViews ():void
 		{
+			video		= new VideoBaseView( asset.getChildByName( "video" ) as MovieClip );
+
 			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
 			face		= new FaceView( faceHolder.getChildByName( "container0" ) as MovieClip );
