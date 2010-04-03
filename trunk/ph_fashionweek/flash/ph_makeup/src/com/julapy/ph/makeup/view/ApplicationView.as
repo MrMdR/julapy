@@ -35,6 +35,7 @@ package com.julapy.ph.makeup.view
 		private var focus		: FocusView;
 		private var blur		: FocusBlurView;
 		private var grid		: GridView;
+		private var timer		: TimerView;
 		private var debug		: DebugView;
 
 		public function ApplicationView( asset : Sprite )
@@ -79,7 +80,10 @@ package com.julapy.ph.makeup.view
 
 //			blur		= new FocusBlurView( asset.getChildByName( "focus" ) as MovieClip, faceHolder );
 
+			timer		= new TimerView( asset.getChildByName( "timer" ) as MovieClip );
+
 			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
+			debug.visible = false;
 		}
 
 		private function initModel ():void

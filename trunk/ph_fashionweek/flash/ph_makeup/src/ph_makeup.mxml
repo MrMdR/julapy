@@ -38,6 +38,7 @@
 				assetLoader.addAsset( "assets_video_01.swf",	"assets",	"video_01"	);
 				assetLoader.addAsset( "assets_video_02.swf",	"assets",	"video_02"	);
 				assetLoader.addAsset( "assets_video_03.swf",	"assets",	"video_03"	);
+				assetLoader.addAsset( "assets_video_04.swf",	"assets",	"video_04"	);
 				assetLoader.loadAssets( "assets", false );
 			}
 
