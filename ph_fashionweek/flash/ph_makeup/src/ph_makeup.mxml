@@ -21,8 +21,8 @@
 			{
 				nativeWindow.x		= 100;
 				nativeWindow.y		= -1200;
-				nativeWindow.width	= ModelLocator.getInstance().makeupModel.appWidth;
-				nativeWindow.height	= ModelLocator.getInstance().makeupModel.appHeight;
+				nativeWindow.width	= ModelLocator.getInstance().commondModel.appWidth;
+				nativeWindow.height	= ModelLocator.getInstance().commondModel.appHeight;
 
 				StageSize.getInstance().stage = stage;
 				StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
