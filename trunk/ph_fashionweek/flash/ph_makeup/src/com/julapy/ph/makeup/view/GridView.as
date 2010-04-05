@@ -128,8 +128,8 @@ package com.julapy.ph.makeup.view
 			var aw : int;
 			var ah : int;
 
-			aw = ModelLocator.getInstance().makeupModel.appWidth;
-			ah = ModelLocator.getInstance().makeupModel.appHeight;
+			aw = ModelLocator.getInstance().commondModel.appWidth;
+			ah = ModelLocator.getInstance().commondModel.appHeight;
 
 			var gw : int;		// grid width.
 			var gh : int;		// grid height.
@@ -165,8 +165,8 @@ package com.julapy.ph.makeup.view
 			var aw : int;
 			var ah : int;
 
-			aw = ModelLocator.getInstance().makeupModel.appWidth;
-			ah = ModelLocator.getInstance().makeupModel.appHeight;
+			aw = ModelLocator.getInstance().commondModel.appWidth;
+			ah = ModelLocator.getInstance().commondModel.appHeight;
 
 			var gw : int;		// grid width.
 			var gh : int;		// grid height.

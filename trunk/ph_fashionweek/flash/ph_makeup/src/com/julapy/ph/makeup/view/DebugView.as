@@ -2,9 +2,9 @@ package com.julapy.ph.makeup.view
 {
 	import com.holler.controls.BtnView;
 	import com.holler.core.View;
-	import com.julapy.ph.makeup.events.ConnectedEvent;
+	import com.julapy.ph.events.ConnectedEvent;
 	import com.julapy.ph.makeup.model.ModelLocator;
-	import com.julapy.ph.makeup.vo.TrackerVO;
+	import com.julapy.ph.vo.TrackerVO;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -52,8 +52,8 @@ package com.julapy.ph.makeup.view
 
 			var appWidth 	: int;
 			var appHeight	: int;
-			appWidth	= ModelLocator.getInstance().makeupModel.appWidth;;
-			appHeight	= ModelLocator.getInstance().makeupModel.appHeight;
+			appWidth	= ModelLocator.getInstance().commondModel.appWidth;;
+			appHeight	= ModelLocator.getInstance().commondModel.appHeight;
 
 			var r : Rectangle;
 			r = new Rectangle();
