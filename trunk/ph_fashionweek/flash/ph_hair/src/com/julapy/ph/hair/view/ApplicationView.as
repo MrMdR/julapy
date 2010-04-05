@@ -2,7 +2,10 @@ package com.julapy.ph.hair.view
 {
 	import com.julapy.ph.hair.model.HairModel;
 	import com.julapy.ph.hair.model.ModelLocator;
+	import com.julapy.ph.of.SocketOF;
+	import com.julapy.ph.of.SocketOFEvent;
 
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 
 	public class ApplicationView
@@ -10,12 +13,73 @@ package com.julapy.ph.hair.view
 		private var asset		: Sprite;
 
 		private var model		: HairModel;
+		private var socket 		: SocketOF;
+
+		private var menu		: MenuView;
+		private var videoInt	: VideoInteractiveView;
+		private var videoGen	: VideoGeneralView;
+		private var debug		: DebugView;
 
 		public function ApplicationView( asset : Sprite )
 		{
 			this.asset	= asset;
 
-			model		= ModelLocator.getInstance().hairModel;
+			initModel();
+			initViews();
+			initSocket();
+		}
+
+		private function initModel ():void
+		{
+			model = ModelLocator.getInstance().hairModel;
+		}
+
+		private function initViews ():void
+		{
+			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
+
+			videoInt	= new VideoInteractiveView( asset.getChildByName( "videoInt" ) as MovieClip );
+
+			videoGen	= new VideoGeneralView( asset.getChildByName( "videoGen" ) as MovieClip );
+
+			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
+		}
+
+		private function initSocket ():void
+		{
+			socket = new SocketOF();
+			socket.addEventListener( SocketOFEvent.CONNECTED,			socketHandler );
+			socket.addEventListener( SocketOFEvent.DISCONNECTED,		socketHandler );
+			socket.addEventListener( SocketOFEvent.TRYING_TO_CONNECT,	socketHandler );
+			socket.addEventListener( SocketOFEvent.DATA_RECEIVED,		socketHandler );
+			socket.connect();
+		}
+
+		////////////////////////////////////////////////////
+		//	HANDLERS.
+		////////////////////////////////////////////////////
+
+		private function socketHandler ( e : SocketOFEvent ):void
+		{
+			if( e.type == SocketOFEvent.CONNECTED )
+			{
+				ModelLocator.getInstance().ofDataModel.connected = true;
+			}
+
+			if( e.type == SocketOFEvent.DISCONNECTED )
+			{
+				ModelLocator.getInstance().ofDataModel.connected = false;
+			}
+
+			if( e.type == SocketOFEvent.TRYING_TO_CONNECT )
+			{
+				// trying and trying.
+			}
+
+			if( e.type == SocketOFEvent.DATA_RECEIVED )
+			{
+				ModelLocator.getInstance().ofDataModel.ofStringData = e.dataString;
+			}
 		}
 
 	}

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="600" height="800" windowComplete="init()">
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="576" height="1024" windowComplete="init()">
 
     <mx:Script>
         <![CDATA[
+        	import com.julapy.ph.hair.model.ModelLocator;
         	import com.julapy.ph.hair.view.ApplicationView;
         	import com.holler.assets.AssetGroupVOEvent;
         	import com.julapy.core.StageSizeEvent;
@@ -18,16 +19,26 @@
 
 			private function init ():void
 			{
+				nativeWindow.x		= 100;
+				nativeWindow.y		= -1200;
+				nativeWindow.width	= ModelLocator.getInstance().commonModel.appWidth;
+				nativeWindow.height	= ModelLocator.getInstance().commonModel.appHeight;
+
 				StageSize.getInstance().stage = stage;
 				StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
 
 				stageWidth	= stage.stageWidth;
 				stageHeight	= stage.stageHeight;
 
+				AssetLoader.USE_SIZE_SCRIPT = false;
 				var assetLoader : AssetLoader;
 				assetLoader = AssetLoader.getInstance();
 				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_COMPLETE,	assetLoaderHandler );
 				assetLoader.addAsset( "assets.swf", "assets", "main" );
+				assetLoader.addAsset( "assets_video_01.swf",	"assets",	"video_01"	);
+				assetLoader.addAsset( "assets_video_02.swf",	"assets",	"video_02"	);
+				assetLoader.addAsset( "assets_video_03.swf",	"assets",	"video_03"	);
+				assetLoader.addAsset( "assets_video_04.swf",	"assets",	"video_04"	);
 				assetLoader.loadAssets( "assets", false );
 			}
 
@@ -36,7 +47,7 @@
 				asset = AssetLoader.getInstance().getClassInstance( "hair.asset" ) as MovieClip;
 				stage.addChild( asset );
 
-				app = new ApplicationView( asset.getChildByName( "main" ) as MovieClip );
+				app = new ApplicationView( asset );
 
 				stageResize( stage.stageWidth, stage.stageHeight );
 			}
