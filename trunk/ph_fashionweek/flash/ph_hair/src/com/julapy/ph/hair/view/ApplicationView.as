@@ -7,6 +7,8 @@ package com.julapy.ph.hair.view
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
 
 	public class ApplicationView
 	{
@@ -27,6 +29,8 @@ package com.julapy.ph.hair.view
 			initModel();
 			initViews();
 			initSocket();
+
+			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
 		}
 
 		private function initModel ():void
@@ -43,6 +47,7 @@ package com.julapy.ph.hair.view
 			videoGen	= new VideoGeneralView( asset.getChildByName( "videoGen" ) as MovieClip );
 
 			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
+			debug.visible = false;
 		}
 
 		private function initSocket ():void
@@ -79,6 +84,14 @@ package com.julapy.ph.hair.view
 			if( e.type == SocketOFEvent.DATA_RECEIVED )
 			{
 				ModelLocator.getInstance().ofDataModel.ofStringData = e.dataString;
+			}
+		}
+
+		private function keyDownHandler ( e : KeyboardEvent ):void
+		{
+			if( e.keyCode == Keyboard.D )
+			{
+				debug.visible = !debug.visible;
 			}
 		}
 
