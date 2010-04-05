@@ -1,7 +1,7 @@
-#Mon Apr 05 15:47:18 EST 2010
+#Mon Apr 05 17:20:17 EST 2010
 WARNING=DO NOT MODIFY THIS FILE IF YOU DON'T UNDERSTAND
 defaultDestination=
 defaultVariables=
 eclipse.preferences.version=1
-map|0=bin-debug|\:ph_hair/src|assets.swf;assets_video_01.swf;assets_video_02.swf;assets_video_03.swf;assets_video_04.swf|,|,
+map|0=bin-debug/assets|\:ph_hair/src/assets|,|,|,
 useCurrentDateForDestinationFiles=false
