@@ -47,7 +47,7 @@
 				asset = AssetLoader.getInstance().getClassInstance( "makeup.asset" ) as MovieClip;
 				stage.addChild( asset );
 
-				app = new ApplicationView( asset.getChildByName( "main" ) as MovieClip );
+				app = new ApplicationView( asset );
 
 				stageResize( stage.stageWidth, stage.stageHeight );
 			}

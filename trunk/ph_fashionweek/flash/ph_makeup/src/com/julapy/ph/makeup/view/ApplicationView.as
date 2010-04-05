@@ -76,9 +76,9 @@ package com.julapy.ph.makeup.view
 
 			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
-			face		= new FaceView( faceHolder.getChildByName( "container0" ) as MovieClip );
+			face		= new FaceView( faceHolder.getChildByName( "baseImage" ) as MovieClip );
 
-			makeup		= new MakeupView( faceHolder.getChildByName( "container1" ) as MovieClip );
+			makeup		= new MakeupView( faceHolder.getChildByName( "makeupHolder" ) as MovieClip );
 
 			zoom		= new ZoomView();
 

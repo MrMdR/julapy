@@ -33,8 +33,6 @@ package com.julapy.ph.makeup.view
 		private var eyesMaskView	: MakeupMaskView;
 		private var lipsMaskView	: MakeupMaskView;
 
-		private var blinkMask		: MovieClip;
-
 		private var featureMasks	: Array = new Array();
 		private var featureIndex	: int = -1;
 
@@ -45,38 +43,36 @@ package com.julapy.ph.makeup.view
 			faceHolder	= _sprite.getChildByName( "faceHolder" ) as MovieClip;
 			lipsHolder	= _sprite.getChildByName( "lipsHolder" ) as MovieClip;
 			eyesHolder	= _sprite.getChildByName( "eyesHolder" ) as MovieClip;
-			blinkMask	= _sprite.getChildByName( "blinkMask" ) as MovieClip;
 
 			eyesHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
-//			lipsHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
-//			faceHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
-			blinkMask.cacheAsBitmap		= true;
+			lipsHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+			faceHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
 
 			faceLinkage	=
 			[
-				"makeup.layers.face.00",
-				"makeup.layers.face.01"
+				"makeup.g1.layers.face.00",
+				"makeup.g1.layers.face.01"
 			];
 
 			eyesLinkage	=
 			[
-				"makeup.layers.eyes.00",
-				"makeup.layers.eyes.01"
+				"makeup.g1.layers.eyes.00",
+				"makeup.g1.layers.eyes.01"
 			];
 
 			lipsLinkage	=
 			[
-				"makeup.layers.lips.00",
-				"makeup.layers.lips.01"
+				"makeup.g1.layers.lips.00",
+				"makeup.g1.layers.lips.01"
 			];
 
 			//-- masks.
 
 			featureMasks =
 			[
-				"makeup.mask.eyes",
-				"makeup.mask.lips",
-				"makeup.mask.face"
+				"makeup.g1.mask.eyes",
+				"makeup.g1.mask.lips",
+				"makeup.g1.mask.face"
 			];
 
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ANIM_IN,	modeEvent );
@@ -112,7 +108,7 @@ package com.julapy.ph.makeup.view
 			}
 
 			var faceMask : MovieClip;
-			faceMask		= AssetLoader.getInstance().getClassInstance( "makeup.mask.face" );
+			faceMask		= AssetLoader.getInstance().getClassInstance( "makeup.g1.mask.face" );
 			faceHolder.addChild( faceMask );
 
 			faceMaskView	= new MakeupMaskView( faceMask );
@@ -152,7 +148,7 @@ package com.julapy.ph.makeup.view
 			}
 
 			var eyesMask : MovieClip;
-			eyesMask		= AssetLoader.getInstance().getClassInstance( "makeup.mask.eyes" );
+			eyesMask		= AssetLoader.getInstance().getClassInstance( "makeup.g1.mask.eyes" );
 			eyesHolder.addChild( eyesMask );
 
 			eyesMaskView	= new MakeupMaskView( eyesMask );
@@ -188,7 +184,7 @@ package com.julapy.ph.makeup.view
 			}
 
 			var lipsMask : MovieClip;
-			lipsMask		= AssetLoader.getInstance().getClassInstance( "makeup.mask.lips" );
+			lipsMask		= AssetLoader.getInstance().getClassInstance( "makeup.g1.mask.lips" );
 			lipsHolder.addChild( lipsMask );
 
 			lipsMaskView	= new MakeupMaskView( lipsMask );
@@ -204,14 +200,14 @@ package com.julapy.ph.makeup.view
 
 		private function showBlink ():void
 		{
-			blinkMask.visible	= false;
-			eyesHolder.mask		= null;
+			if( eyesAsset )
+				eyesAsset.gotoAndStop( 2 );
 		}
 
 		private function hideBlink ():void
 		{
-			blinkMask.visible	= true;
-			eyesHolder.mask		= blinkMask;
+			if( eyesAsset )
+				eyesAsset.gotoAndStop( 1 );
 		}
 
 		//////////////////////////////////////////////////////////

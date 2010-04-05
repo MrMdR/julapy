@@ -43,8 +43,8 @@ package com.julapy.ph.makeup.view
 			(
 				this,
 				{
-					zoomScale		: zoomScaleMax,
-					zoomOffsetY		: 172,
+					zoomScale		: zoomScaleMax * 0.85,
+					zoomOffsetY		: 30,
 					time			: zoomTime,
 					delay			: 0.0,
 					transition		: Quadratic.easeOut,
@@ -62,7 +62,7 @@ package com.julapy.ph.makeup.view
 				this,
 				{
 					zoomScale		: zoomScaleMax,
-					zoomOffsetY		: -95,
+					zoomOffsetY		: -400,
 					time			: zoomTime,
 					delay			: 0.0,
 					transition		: Quadratic.easeOut,
@@ -76,14 +76,14 @@ package com.julapy.ph.makeup.view
 		private function zoomToFace ():void
 		{
 			var z : Number;
-			z = zoomScaleMax + ( zoomScaleMin - zoomScaleMax ) * 0.4;
+			z = zoomScaleMax + ( zoomScaleMin - zoomScaleMax ) * 0.6;
 
 			Tweener.addTween
 			(
 				this,
 				{
 					zoomScale		: z,
-					zoomOffsetY		: 50,
+					zoomOffsetY		: -50,
 					time			: zoomTime,
 					delay			: 0.0,
 					transition		: Quadratic.easeOut,
