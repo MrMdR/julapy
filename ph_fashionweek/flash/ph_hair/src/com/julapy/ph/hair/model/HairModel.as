@@ -6,7 +6,6 @@ package com.julapy.ph.hair.model
 
 	public class HairModel extends EventDispatcher
 	{
-		private var _appRect		: Rectangle	= new Rectangle( 0, 0, 600, 800 );
 
 		public function HairModel()
 		{
@@ -14,17 +13,8 @@ package com.julapy.ph.hair.model
 		}
 
 		/////////////////////////////////////
-		//	APP SIZE.
+		//
 		/////////////////////////////////////
 
-		public function get appWidth ():int
-		{
-			return _appRect.width;
-		}
-
-		public function get appHeight ():int
-		{
-			return _appRect.height;
-		}
 	}
 }
