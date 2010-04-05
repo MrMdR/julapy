@@ -1,6 +1,6 @@
 package com.julapy.ph.makeup.view
 {
-	import com.julapy.ph.makeup.events.DisconnectEvent;
+	import com.julapy.ph.events.DisconnectEvent;
 	import com.julapy.ph.makeup.events.ZoomEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
@@ -47,19 +47,27 @@ package com.julapy.ph.makeup.view
 			faceBm			= new Bitmap( new BitmapData( 1, 1, true, 0x00FFFFFF ) );
 			faceBmHolder.addChild( faceBm );
 
-			model = ModelLocator.getInstance().makeupModel;
-			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
-
-			ModelLocator.getInstance().ofDataModel.addEventListener( DisconnectEvent.DISCONNECT, disconnectHandler );
-
 			initModel();
 			initViews();
 			initSocket();
 
+			ModelLocator.getInstance().ofDataModel.addEventListener( DisconnectEvent.DISCONNECT, disconnectHandler );
 			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
 
-			ModelLocator.getInstance().makeupModel.girl		= MakeupModel.GIRL_ONE;
-			ModelLocator.getInstance().makeupModel.section	= MakeupModel.SECTION_INTRO;
+			model.girl		= MakeupModel.GIRL_ONE;
+			model.section	= MakeupModel.SECTION_INTRO;
+		}
+
+		private function initModel ():void
+		{
+			model = ModelLocator.getInstance().makeupModel;
+			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
+
+			var zoomScaleMin : Number;
+			zoomScaleMin = ModelLocator.getInstance().commondModel.appWidth / model.imageWidth;
+			model.zoomScaleMin	= zoomScaleMin;
+			model.zoomScaleMax	= 1.0;
+			model.zoomScale		= zoomScaleMin;
 		}
 
 		private function initViews ():void
@@ -86,15 +94,6 @@ package com.julapy.ph.makeup.view
 			debug.visible = false;
 		}
 
-		private function initModel ():void
-		{
-			var zoomScaleMin : Number;
-			zoomScaleMin = model.appWidth / model.imageWidth;
-			model.zoomScaleMin	= zoomScaleMin;
-			model.zoomScaleMax	= 1.0;
-			model.zoomScale		= zoomScaleMin;
-		}
-
 		private function initSocket ():void
 		{
 			socket = new SocketOF();
@@ -114,8 +113,8 @@ package com.julapy.ph.makeup.view
 			var appW : int;
 			var appH : int;
 
-			appW = ModelLocator.getInstance().makeupModel.appWidth;
-			appH = ModelLocator.getInstance().makeupModel.appHeight;
+			appW = ModelLocator.getInstance().commondModel.appWidth;
+			appH = ModelLocator.getInstance().commondModel.appHeight;
 
 			var sx : Number = e.zoomScale;
 			var sy : Number = e.zoomScale;

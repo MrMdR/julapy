@@ -1,13 +1,14 @@
 package com.julapy.ph.makeup.model
 {
-	import com.holler.vo.AbstractScreenVO;
+	import com.julapy.ph.model.CommonModel;
 
 	public class ModelLocator
 	{
 		private static var instance : ModelLocator;
 
-		public var makeupModel : MakeupModel;
-		public var ofDataModel : OFDataModel;
+		public var commondModel	: CommonModel;
+		public var makeupModel	: MakeupModel;
+		public var ofDataModel	: OFDataMakeupModel;
 
 		public function ModelLocator()
 		{
@@ -16,9 +17,10 @@ package com.julapy.ph.makeup.model
 				throw new Error( "ModelLocator must be a singleton" );
 			}
 
-			instance	= this;
-			makeupModel = new MakeupModel();
-			ofDataModel	= new OFDataModel();
+			instance		= this;
+			commondModel	= new CommonModel();
+			makeupModel		= new MakeupModel();
+			ofDataModel		= new OFDataMakeupModel();
 		}
 
 		public static function getInstance() : ModelLocator

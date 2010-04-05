@@ -33,7 +33,7 @@ package com.julapy.ph.makeup.view
 			fadeTop.y		= -fadeTop.height;
 			fadeTop.visible	= false;
 
-			fadeBtm.y		= ModelLocator.getInstance().makeupModel.appHeight + fadeTop.height;
+			fadeBtm.y		= ModelLocator.getInstance().commondModel.appHeight + fadeTop.height;
 			fadeBtm.visible	= false;
 		}
 
@@ -116,8 +116,8 @@ package com.julapy.ph.makeup.view
 			var appW : int;
 			var appH : int;
 
-			appW = ModelLocator.getInstance().makeupModel.appWidth;
-			appH = ModelLocator.getInstance().makeupModel.appHeight;
+			appW = ModelLocator.getInstance().commondModel.appWidth;
+			appH = ModelLocator.getInstance().commondModel.appHeight;
 
 			_sprite.graphics.clear();
 
