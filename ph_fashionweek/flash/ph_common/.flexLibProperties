@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties version="1">
   <includeClasses>
+    <classEntry path="com.julapy.ph.of.SocketOF"/>
+    <classEntry path="com.julapy.ph.vo.TrackerVO"/>
+    <classEntry path="com.julapy.ph.events.DisconnectEvent"/>
+    <classEntry path="com.julapy.ph.model.OFDataModel"/>
     <classEntry path="com.julapy.core.StageSize"/>
     <classEntry path="com.julapy.core.StageSizeEvent"/>
-    <classEntry path="com.julapy.ph.of.SocketOF"/>
     <classEntry path="com.julapy.ph.of.SocketOFEvent"/>
-    <classEntry path="com.julapy.ph.vo.TrackerVO"/>
+    <classEntry path="com.julapy.ph.events.ConnectedEvent"/>
+    <classEntry path="com.julapy.ph.model.CommonModel"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
