@@ -9,7 +9,8 @@ void testApp::setup()
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	
-	ct.init();
+	ct.init( 4 );
+	ct.loadFromFile();
 }
 
 /////////////////////////////////////////////
@@ -39,6 +40,11 @@ void testApp::draw()
 void testApp::keyPressed(int key)
 {
 	ct.keyPressed( key );
+	
+	if( key == 'f' )
+	{
+		ofToggleFullscreen();
+	}
 }
 
 void testApp::mouseMoved(int x, int y )

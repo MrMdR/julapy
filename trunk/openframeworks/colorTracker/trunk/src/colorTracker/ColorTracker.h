@@ -21,7 +21,6 @@
 #include <fstream>
 
 #define		MAX_NUM_CONTOURS_TO_FIND	20
-#define		TOTAL_OBJECTS_TRACKED		2
 
 struct HSVData
 {
@@ -63,7 +62,7 @@ class ColorTracker
 
 public :
 	
-	void init	();
+	void init	( int noColorsTracked );
 	void update	();
 	void draw	();
 	
@@ -84,6 +83,8 @@ public :
 	void mouseDragged	( int x, int y, int button );
 	void mousePressed	( int x, int y, int button );
 	void mouseReleased	();
+	
+	int						noColorsTracked;
 	
 	ofVideoGrabber			video;
 	ofRectangle				videoRect;
