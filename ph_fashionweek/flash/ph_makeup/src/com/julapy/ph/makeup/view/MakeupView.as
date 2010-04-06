@@ -13,6 +13,8 @@ package com.julapy.ph.makeup.view
 
 	public class MakeupView extends View
 	{
+		private var asset			: MovieClip;
+
 		private var faceLinkage 	: Array;
 		private var eyesLinkage		: Array;
 		private var lipsLinkage		: Array;
@@ -38,15 +40,9 @@ package com.julapy.ph.makeup.view
 
 		public function MakeupView(sprite:Sprite=null)
 		{
-			super(sprite);
+			super( null );
 
-			faceHolder	= _sprite.getChildByName( "faceHolder" ) as MovieClip;
-			lipsHolder	= _sprite.getChildByName( "lipsHolder" ) as MovieClip;
-			eyesHolder	= _sprite.getChildByName( "eyesHolder" ) as MovieClip;
-
-			eyesHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
-			lipsHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
-			faceHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+			setAsset( sprite as MovieClip );
 
 			faceLinkage	=
 			[
@@ -81,6 +77,37 @@ package com.julapy.ph.makeup.view
 
 			hideBlink();
 		}
+
+		/////////////////////////////////////////
+		//	PUBLIC
+		/////////////////////////////////////////
+
+		public function setAsset ( asset : MovieClip ):void
+		{
+			this.asset	= asset;
+
+			eyesHolder	= asset.getChildByName( "eyesHolder" ) as MovieClip;
+			lipsHolder	= asset.getChildByName( "lipsHolder" ) as MovieClip;
+			faceHolder	= asset.getChildByName( "faceHolder" ) as MovieClip;
+
+			eyesHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+			lipsHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+			faceHolder.cacheAsBitmap	= true;		// blending modes are lost if turned on.
+		}
+
+		public function start ():void
+		{
+			//
+		}
+
+		public function stop ():void
+		{
+			//
+		}
+
+		/////////////////////////////////////////
+		//	NOT SO PUBLIC.
+		/////////////////////////////////////////
 
 		private function stepFace ():void
 		{

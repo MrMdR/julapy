@@ -17,7 +17,7 @@ package com.julapy.ph.makeup.view
 		private var timer 			: Timer;
 		private var timerMc			: MovieClip;
 		private var timerText		: TextField;
-		private var timerSeconds	: int = 100;
+		private var timerSeconds	: int = 10;
 		private var timerCount		: int = 0;
 
 		public function TimerView(sprite:Sprite=null)
