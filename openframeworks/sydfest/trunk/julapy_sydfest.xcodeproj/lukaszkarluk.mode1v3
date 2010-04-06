@@ -229,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -280,7 +278,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
+									<integer>5</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -316,12 +314,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>testApp.cpp</string>
+								<string>Sydfest_06.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +329,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>testApp.cpp</string>
+										<string>Sydfest_06.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>15630FD011020AFC00B132DB</string>
+										<string>15C3D9881152D0250061046C</string>
 										<key>history</key>
 										<array>
 											<string>15CB383110469F1200A575F8</string>
@@ -373,22 +373,22 @@
 											<string>15785DCC10F370E300AEE198</string>
 											<string>15C199BD10F4A93F001CCFE9</string>
 											<string>15C199BE10F4A93F001CCFE9</string>
-											<string>15C19A1B10F4B292001CCFE9</string>
 											<string>15E1972B10F9CD73007D6F5E</string>
 											<string>15E1972C10F9CD73007D6F5E</string>
 											<string>15E197C910F9D362007D6F5E</string>
 											<string>15E198FE10F9F846007D6F5E</string>
 											<string>15E1992510F9FEEC007D6F5E</string>
 											<string>15E1993510FA14AA007D6F5E</string>
-											<string>15E1995910FA17E3007D6F5E</string>
 											<string>157B158310FB522F00C2334E</string>
 											<string>15630FC911020AFC00B132DB</string>
 											<string>15630FCA11020AFC00B132DB</string>
 											<string>15630FCB11020AFC00B132DB</string>
-											<string>15630FCC11020AFC00B132DB</string>
-											<string>15630FCD11020AFC00B132DB</string>
 											<string>15630FCE11020AFC00B132DB</string>
-											<string>15630FCF11020AFC00B132DB</string>
+											<string>15C3D9831152D0250061046C</string>
+											<string>15C3D9841152D0250061046C</string>
+											<string>15C3D9851152D0250061046C</string>
+											<string>15C3D9861152D0250061046C</string>
+											<string>15C3D9871152D0250061046C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -400,14 +400,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {666, 624}}</string>
+								<string>{{0, 0}, {666, 620}}</string>
 								<key>RubberWindowFrame</key>
 								<string>1 59 1027 819 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>624pt</string>
+							<string>620pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -420,14 +420,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 629}, {666, 149}}</string>
+								<string>{{0, 625}, {666, 153}}</string>
 								<key>RubberWindowFrame</key>
 								<string>1 59 1027 819 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>149pt</string>
+							<string>153pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -446,9 +446,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>15630FD111020AFC00B132DB</string>
+				<string>15C3D9891152D0250061046C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>15630FD211020AFC00B132DB</string>
+				<string>15C3D98A1152D0250061046C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -584,10 +584,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>15630FDB11020AFC00B132DB</string>
-		<string>15630FDC11020AFC00B132DB</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>15DB163210CCDF2A00AA436C</string>
 		<string>/Applications/OF_006/apps/_julapy/julapy_sydfest/julapy_sydfest.xcodeproj</string>
 	</array>
@@ -669,7 +665,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>15DB163210CCDF2A00AA436C</string>
-				<string>15630FD311020AFC00B132DB</string>
+				<string>15C3D98B1152D0250061046C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
