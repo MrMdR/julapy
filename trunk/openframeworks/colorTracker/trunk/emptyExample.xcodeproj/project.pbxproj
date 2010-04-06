@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		153FF0C3116AD0AF00EA31C2 /* ColorTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 153FF0C2116AD0AF00EA31C2 /* ColorTracker.cpp */; };
 		156894CF11467B560014E02C /* ofContourAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156894CD11467B560014E02C /* ofContourAnalysis.cpp */; };
 		15689597114687D90014E02C /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15689570114687D90014E02C /* ofxMSAInteractiveObject.cpp */; };
 		15689598114687D90014E02C /* ofxSimpleGuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15689575114687D90014E02C /* ofxSimpleGuiButton.cpp */; };
@@ -115,6 +116,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		153FF0C1116AD0AF00EA31C2 /* ColorTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorTracker.h; sourceTree = "<group>"; };
+		153FF0C2116AD0AF00EA31C2 /* ColorTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorTracker.cpp; sourceTree = "<group>"; };
 		156894CA11467B560014E02C /* contourNormals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = contourNormals.h; path = src/contourAnalysis/contourNormals.h; sourceTree = SOURCE_ROOT; };
 		156894CB11467B560014E02C /* contourSimplify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = contourSimplify.h; path = src/contourAnalysis/contourSimplify.h; sourceTree = SOURCE_ROOT; };
 		156894CC11467B560014E02C /* convexHull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convexHull.h; path = src/contourAnalysis/convexHull.h; sourceTree = SOURCE_ROOT; };
@@ -315,6 +318,16 @@
 			);
 			name = addons;
 			sourceTree = "<group>";
+		};
+		153FF0BF116AD09A00EA31C2 /* colorTracker */ = {
+			isa = PBXGroup;
+			children = (
+				153FF0C1116AD0AF00EA31C2 /* ColorTracker.h */,
+				153FF0C2116AD0AF00EA31C2 /* ColorTracker.cpp */,
+			);
+			name = colorTracker;
+			path = src/colorTracker;
+			sourceTree = SOURCE_ROOT;
 		};
 		156894C911467B560014E02C /* contourAnalysis */ = {
 			isa = PBXGroup;
@@ -814,6 +827,7 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				153FF0BF116AD09A00EA31C2 /* colorTracker */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
@@ -1020,6 +1034,7 @@
 				15C2473911537B1A00C43AD4 /* ofxTCPServer.cpp in Sources */,
 				15C2473A11537B1A00C43AD4 /* ofxUDPManager.cpp in Sources */,
 				15C2473B11537B1A00C43AD4 /* ofxThread.cpp in Sources */,
+				153FF0C3116AD0AF00EA31C2 /* ColorTracker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
