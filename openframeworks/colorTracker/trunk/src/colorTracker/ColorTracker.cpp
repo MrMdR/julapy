@@ -13,8 +13,10 @@
 //	SETUP.
 /////////////////////////////////////////////
 
-void ColorTracker :: init ()
+void ColorTracker :: init ( int v )
 {
+	noColorsTracked		= v;
+	
 	videoRect.x			= 290;
 	videoRect.y			= 110;
 	videoRect.width		= 320;
@@ -29,7 +31,7 @@ void ColorTracker :: init ()
     satImg.allocate( videoRect.width, videoRect.height );				// Saturation Image
     valImg.allocate( videoRect.width, videoRect.height );				// value Image
 	
-	hsvTotal	= TOTAL_OBJECTS_TRACKED;
+	hsvTotal	= noColorsTracked;
 	hsv			= new HSVData[ hsvTotal ];
 	hsvIndex	= 0;
 	
@@ -59,7 +61,7 @@ void ColorTracker :: init ()
 
 void ColorTracker :: initContourAnalysis ()
 {
-	cdataTotal	= TOTAL_OBJECTS_TRACKED;
+	cdataTotal	= noColorsTracked;
 	cdata		= new ContourData[ cdataTotal ];
 	
 	for( int i=0; i<cdataTotal; i++ )
@@ -350,6 +352,15 @@ void ColorTracker :: draw()
 	
 	for( int i=0; i<hsvTotal; i++ )
 	{
+		int vx;
+		int vy;
+		int pr;
+		
+		pr = 3;		// 3 per row.
+		
+		vx = w * ( i % pr );
+		vy = h * ( (int)( i / pr ) + 1 );
+		
 		if( i == hsvIndex )
 		{
 			int b;	// border.
@@ -359,11 +370,11 @@ void ColorTracker :: draw()
 			ofSetColor( 0xFF0000 );		// red border.
 			ofRect
 			(
-			 w * i - b,
-			 h * 1 - b,
-			 videoRect.width  + b * 2,
-			 videoRect.height + b * 2
-			 );
+				vx - b,
+				vy - b,
+				videoRect.width  + b * 2,
+				videoRect.height + b * 2
+			);
 			ofSetColor( 0xFFFFFF );
 		}
 		
@@ -371,16 +382,16 @@ void ColorTracker :: draw()
 		ofSetColor( 0x000000 );			// black bg.
 		ofRect
 		(
-		 w * i,
-		 h * 1,
-		 videoRect.width,
-		 videoRect.height
-		 );
+			vx,
+			vy,
+			videoRect.width,
+			videoRect.height
+		);
 		ofSetColor( 0xFFFFFF );
 		
 		if( hsv[ i ].bShowImg )
 		{
-			hsv[ i ].img.draw( w * i, h * 1 );
+			hsv[ i ].img.draw( vx, vy );
 		}
 	}
 	
@@ -412,8 +423,17 @@ void ColorTracker :: draw()
 	
 	for( int i=0; i<cdataTotal; i++ )
 	{
+		int vx;
+		int vy;
+		int pr;
+		
+		pr = 3;		// 3 per row.
+		
+		vx = w * ( i % pr );
+		vy = h * ( (int)( i / pr ) + 1 );
+		
 		glPushMatrix();
-		glTranslatef( w * i, h * 1, 0 );
+		glTranslatef( vx, vy, 0 );
 		drawContourAnalysis( i );
 		glPopMatrix();
 	}
@@ -443,9 +463,9 @@ void ColorTracker :: drawContourAnalysis( int i )
 			{
 				ofVertex
 				(
-				 cdata[ i ].contourReg[ j ].at( k ).x,
-				 cdata[ i ].contourReg[ j ].at( k ).y
-				 );
+					cdata[ i ].contourReg[ j ].at( k ).x,
+					cdata[ i ].contourReg[ j ].at( k ).y
+				);
 			}
 			ofEndShape( true );
 		}
@@ -458,9 +478,9 @@ void ColorTracker :: drawContourAnalysis( int i )
 			{
 				ofVertex
 				(
-				 cdata[ i ].contourSmooth[ j ].at( k ).x,
-				 cdata[ i ].contourSmooth[ j ].at( k ).y
-				 );
+					cdata[ i ].contourSmooth[ j ].at( k ).x,
+					cdata[ i ].contourSmooth[ j ].at( k ).y
+				);
 			}
 			ofEndShape(true);
 		}
@@ -473,9 +493,9 @@ void ColorTracker :: drawContourAnalysis( int i )
 			{
 				ofVertex
 				(
-				 cdata[ i ].contourSimple[ j ].at( k ).x,
-				 cdata[ i ].contourSimple[ j ].at( k ).y
-				 );
+					cdata[ i ].contourSimple[ j ].at( k ).x,
+					cdata[ i ].contourSimple[ j ].at( k ).y
+				);
 			}
 			ofEndShape(true);
 		}
@@ -488,9 +508,9 @@ void ColorTracker :: drawContourAnalysis( int i )
 			{
 				ofVertex
 				(
-				 cdata[ i ].contourHull[ j ].at( k ).x,
-				 cdata[ i ].contourHull[ j ].at( k ).y
-				 );
+					cdata[ i ].contourHull[ j ].at( k ).x,
+					cdata[ i ].contourHull[ j ].at( k ).y
+				);
 			}
 			ofEndShape(true);
 			
@@ -498,10 +518,10 @@ void ColorTracker :: drawContourAnalysis( int i )
 			{
 				ofCircle
 				(
-				 cdata[ i ].contourHull[ j ].at( k ).x,
-				 cdata[ i ].contourHull[ j ].at( k ).y,
-				 2
-				 );
+					cdata[ i ].contourHull[ j ].at( k ).x,
+					cdata[ i ].contourHull[ j ].at( k ).y,
+					2
+				);
 			}
 		}
 		
@@ -512,11 +532,11 @@ void ColorTracker :: drawContourAnalysis( int i )
 			
 			ofRect
 			(
-			 cdata[ i ].blobBoundingRect[ j ].x,
-			 cdata[ i ].blobBoundingRect[ j ].y,
-			 cdata[ i ].blobBoundingRect[ j ].width,
-			 cdata[ i ].blobBoundingRect[ j ].height
-			 );
+				cdata[ i ].blobBoundingRect[ j ].x,
+				cdata[ i ].blobBoundingRect[ j ].y,
+				cdata[ i ].blobBoundingRect[ j ].width,
+				cdata[ i ].blobBoundingRect[ j ].height
+			);
 		}
 		
 		if( bShowBox )
@@ -529,18 +549,18 @@ void ColorTracker :: drawContourAnalysis( int i )
 			glPushMatrix();
 			glTranslatef
 			(
-			 cdata[ i ].box[ j ].center.x,
-			 cdata[ i ].box[ j ].center.y,
-			 0
-			 );
+				cdata[ i ].box[ j ].center.x,
+				cdata[ i ].box[ j ].center.y,
+				0
+			);
 			glRotatef( cdata[ i ].box[ j ].angle, 0, 0, 1 );
 			ofRect
 			(
-			 0,
-			 0,
-			 cdata[ i ].box[ j ].size.width,
-			 cdata[ i ].box[ j ].size.height
-			 );
+				0,
+				0,
+				cdata[ i ].box[ j ].size.width,
+				cdata[ i ].box[ j ].size.height
+			);
 			glPopMatrix();
 			
 			ofSetRectMode( OF_RECTMODE_CORNER );
@@ -554,18 +574,18 @@ void ColorTracker :: drawContourAnalysis( int i )
 			glPushMatrix();
 			glTranslatef
 			(
-			 cdata[ i ].box[ j ].center.x,
-			 cdata[ i ].box[ j ].center.y,
-			 0
-			 );
+				cdata[ i ].box[ j ].center.x,
+				cdata[ i ].box[ j ].center.y,
+				0
+			);
 			glRotatef( cdata[ i ].box[ j ].angle, 0, 0, 1 );
 			ofEllipse
 			(
-			 0,
-			 0,
-			 cdata[ i ].box[ j ].size.width  * 0.5,
-			 cdata[ i ].box[ j ].size.height * 0.5
-			 );
+				0,
+				0,
+				cdata[ i ].box[ j ].size.width  * 0.5,
+				cdata[ i ].box[ j ].size.height * 0.5
+			);
 			glPopMatrix();
 		}
 		
@@ -603,23 +623,23 @@ void ColorTracker :: drawContourAnalysis( int i )
 			{
 				ofLine
 				(
-				 cdata[ i ].geomLines[ k ].x,
-				 cdata[ i ].geomLines[ k ].y,
-				 cdata[ i ].geomLines[ k ].z,
-				 cdata[ i ].geomLines[ k ].w
-				 );
+					cdata[ i ].geomLines[ k ].x,
+					cdata[ i ].geomLines[ k ].y,
+					cdata[ i ].geomLines[ k ].z,
+					cdata[ i ].geomLines[ k ].w
+				);
 				ofCircle
 				(
-				 cdata[ i ].geomLines[ k ].x,
-				 cdata[ i ].geomLines[ k ].y,
-				 3
-				 );
+					cdata[ i ].geomLines[ k ].x,
+					cdata[ i ].geomLines[ k ].y,
+					3
+				);
 				ofCircle
 				(
-				 cdata[ i ].geomLines[ k ].z,
-				 cdata[ i ].geomLines[ k ].w,
-				 3
-				 );
+					cdata[ i ].geomLines[ k ].z,
+					cdata[ i ].geomLines[ k ].w,
+					3
+				);
 			}
 		}
 	}
@@ -711,9 +731,11 @@ void ColorTracker :: keyPressed( int key )
 		}
 	}
 	
-	if( key >= '1' && key <= '3' )		// need to work out how to make the limit hsvTotal.
+	if( key >= '1' && key <= '9' )		// need to work out how to make the limit hsvTotal.
 	{
-		hsvIndex = key - '0' - 1;
+		hsvIndex	= key - '0' - 1;
+		hsvIndex	= MIN( hsvIndex, noColorsTracked - 1 );
+		hsvIndex	= MAX( hsvIndex, 0 );
 	}
 	
 	if( key == 'i' )
