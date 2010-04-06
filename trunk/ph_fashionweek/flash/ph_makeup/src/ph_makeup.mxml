@@ -24,6 +24,8 @@
 				nativeWindow.width	= ModelLocator.getInstance().commondModel.appWidth;
 				nativeWindow.height	= ModelLocator.getInstance().commondModel.appHeight;
 
+				stage.align			= StageAlign.TOP_LEFT;
+
 				StageSize.getInstance().stage = stage;
 				StageSize.getInstance().addEventListener( StageSizeEvent.RESIZE, stageResizeHandler );
 

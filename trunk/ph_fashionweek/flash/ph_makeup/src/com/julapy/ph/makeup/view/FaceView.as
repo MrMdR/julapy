@@ -1,6 +1,5 @@
 package com.julapy.ph.makeup.view
 {
-	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.BlinkEvent;
 	import com.julapy.ph.makeup.model.ModelLocator;
@@ -12,6 +11,7 @@ package com.julapy.ph.makeup.view
 
 	public class FaceView extends View
 	{
+		private var asset		: MovieClip;
 		private var face		: MovieClip;
 		private var blink		: MovieClip;
 
@@ -19,17 +19,47 @@ package com.julapy.ph.makeup.view
 
 		public function FaceView(sprite:Sprite=null)
 		{
-			super( sprite );
+			super( null );
 
-			face	= _sprite.getChildByName( "face" ) as MovieClip;
-			blink	= _sprite.getChildByName( "blink" ) as MovieClip;
+			setAsset( sprite as MovieClip );
 
-			hideBlink();
-			initShowBlinkTimer();
+			start();
 
 			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_FORCE_START,	blinkForceHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_FORCE_STOP,	blinkForceHandler );
 		}
+
+		/////////////////////////////////////////
+		//	PUBLIC
+		/////////////////////////////////////////
+
+		public function setAsset ( a : MovieClip ):void
+		{
+			asset	= null;
+			face	= null;
+			blink	= null;
+
+			asset	= a;
+			face	= asset.getChildByName( "face" ) as MovieClip;
+			blink	= asset.getChildByName( "blink" ) as MovieClip;
+		}
+
+		public function start ():void
+		{
+			hideBlink();
+			initShowBlinkTimer();
+		}
+
+		public function stop ():void
+		{
+			hideBlink();
+			killShowBlinkTimer();
+			killHideBlinkTimer();
+		}
+
+		/////////////////////////////////////////
+		//	NOT SO PUBLIC.
+		/////////////////////////////////////////
 
 		private function initShowBlinkTimer ():void
 		{

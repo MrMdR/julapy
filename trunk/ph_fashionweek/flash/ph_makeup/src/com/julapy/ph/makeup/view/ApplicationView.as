@@ -1,6 +1,7 @@
 package com.julapy.ph.makeup.view
 {
 	import com.julapy.ph.events.DisconnectEvent;
+	import com.julapy.ph.makeup.events.GirlEvent;
 	import com.julapy.ph.makeup.events.ZoomEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
@@ -22,10 +23,13 @@ package com.julapy.ph.makeup.view
 		private var model		: MakeupModel;
 		private var socket 		: SocketOF;
 
-		private var faceHolder		: Sprite;
-		private var faceBmHolder	: Sprite;
-		private var faceBm			: Bitmap;
-		private var useFaceBm		: Boolean = false;
+		private var girl			: MovieClip;
+		private var girlOne			: MovieClip;
+		private var girlTwo			: MovieClip;
+
+		private var girlBmHolder	: Sprite;
+		private var girlBm			: Bitmap;
+		private var useGirlBm		: Boolean = false;
 
 		private var video		: VideoBaseView;
 		private var menu		: MenuView;
@@ -42,10 +46,14 @@ package com.julapy.ph.makeup.view
 		{
 			this.asset	= asset;
 
-			faceHolder		= asset.getChildByName( "face" ) as Sprite;
-			faceBmHolder	= asset.getChildByName( "faceBm" ) as Sprite;
-			faceBm			= new Bitmap( new BitmapData( 1, 1, true, 0x00FFFFFF ) );
-			faceBmHolder.addChild( faceBm );
+			girlOne			= asset.getChildByName( "girlOne" ) as MovieClip;
+			girlTwo			= asset.getChildByName( "girlTwo" ) as MovieClip;
+			girlTwo.visible	= false;
+			girl			= girlOne;
+
+			girlBmHolder	= asset.getChildByName( "girlBm" ) as Sprite;
+			girlBm			= new Bitmap( new BitmapData( 1, 1, true, 0x00FFFFFF ) );
+			girlBmHolder.addChild( girlBm );
 
 			initModel();
 			initViews();
@@ -61,7 +69,8 @@ package com.julapy.ph.makeup.view
 		private function initModel ():void
 		{
 			model = ModelLocator.getInstance().makeupModel;
-			model.addEventListener( ZoomEvent.ZOOM, zoomHandler );
+			model.addEventListener( GirlEvent.GIRL_CHANGE,	girlChangeHandler );
+			model.addEventListener( ZoomEvent.ZOOM,			zoomHandler );
 
 			var zoomScaleMin : Number;
 			zoomScaleMin = ModelLocator.getInstance().commondModel.appWidth / model.imageWidth;
@@ -76,9 +85,9 @@ package com.julapy.ph.makeup.view
 
 			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
-			face		= new FaceView( faceHolder.getChildByName( "baseImage" ) as MovieClip );
+			face		= new FaceView( girl.getChildByName( "baseImage" ) as MovieClip );
 
-			makeup		= new MakeupView( faceHolder.getChildByName( "makeupHolder" ) as MovieClip );
+			makeup		= new MakeupView( girl.getChildByName( "makeupHolder" ) as MovieClip );
 
 			zoom		= new ZoomView();
 
@@ -108,6 +117,38 @@ package com.julapy.ph.makeup.view
 		//	HANDLERS.
 		////////////////////////////////////////////////////
 
+		private function girlChangeHandler ( e : GirlEvent ):void
+		{
+			var g : int;
+			g = ModelLocator.getInstance().makeupModel.girl;
+
+			face.stop();
+			makeup.stop();
+
+			girl.scaleX = model.zoomScaleMin;
+			girl.scaleY = model.zoomScaleMin;
+
+			if( g == MakeupModel.GIRL_ONE )
+			{
+				girlOne.visible = true;
+				girlTwo.visible = false;
+				girl			= girlOne;
+			}
+
+			if( g == MakeupModel.GIRL_TWO )
+			{
+				girlOne.visible = false;
+				girlTwo.visible = true;
+				girl			= girlTwo;
+			}
+
+			face.setAsset( girl.getChildByName( "baseImage" ) as MovieClip );
+			face.start();
+
+			makeup.setAsset( girl.getChildByName( "makeupHolder" ) as MovieClip );
+			makeup.start();
+		}
+
 		private function zoomHandler ( e : ZoomEvent ):void
 		{
 			var appW : int;
@@ -119,11 +160,11 @@ package com.julapy.ph.makeup.view
 			var sx : Number = e.zoomScale;
 			var sy : Number = e.zoomScale;
 
-			if( useFaceBm )
+			if( useGirlBm )
 			{
-				if( !faceHolder.visible )
+				if( !girl.visible )
 				{
-					faceHolder.visible = false;
+					girl.visible = false;
 				}
 
 				var m : Matrix;
@@ -131,17 +172,17 @@ package com.julapy.ph.makeup.view
 				m.translate( (int)( appW * 0.5 ), (int)( appH * 0.5 ) );
 				m.scale( sx, sy );
 
-				faceBm.bitmapData.dispose();
-				faceBm.bitmapData = new BitmapData( appW, appH, false );
-				faceBm.bitmapData.draw( faceHolder, m );
+				girlBm.bitmapData.dispose();
+				girlBm.bitmapData = new BitmapData( appW, appH, false );
+				girlBm.bitmapData.draw( girl, m );
 			}
 			else
 			{
-				faceHolder.scaleX	= sx;
-				faceHolder.scaleY	= sy;
+				girl.scaleX	= sx;
+				girl.scaleY	= sy;
 
-				faceHolder.x		= e.zoomOffset.x;
-				faceHolder.y		= e.zoomOffset.y;
+				girl.x		= e.zoomOffset.x;
+				girl.y		= e.zoomOffset.y;
 			}
 		}
 
