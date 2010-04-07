@@ -125,9 +125,6 @@ package com.julapy.ph.makeup.view
 			face.stop();
 			makeup.stop();
 
-			girl.scaleX = model.zoomScaleMin;
-			girl.scaleY = model.zoomScaleMin;
-
 			if( g == MakeupModel.GIRL_ONE )
 			{
 				girlOne.visible = true;
@@ -141,6 +138,9 @@ package com.julapy.ph.makeup.view
 				girlTwo.visible = true;
 				girl			= girlTwo;
 			}
+
+			girl.scaleX = model.zoomScaleMin;
+			girl.scaleY = model.zoomScaleMin;
 
 			face.setAsset( girl.getChildByName( "baseImage" ) as MovieClip );
 			face.start();
