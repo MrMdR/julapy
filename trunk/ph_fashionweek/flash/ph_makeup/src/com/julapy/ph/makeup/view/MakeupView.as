@@ -3,9 +3,13 @@ package com.julapy.ph.makeup.view
 	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.BlinkEvent;
+	import com.julapy.ph.makeup.events.GirlEvent;
 	import com.julapy.ph.makeup.events.ModeEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
+	import com.julapy.ph.makeup.vo.GirlMakeupVO;
+	import com.julapy.ph.makeup.vo.GirlOneMakeupVO;
+	import com.julapy.ph.makeup.vo.GirlTwoMakeupVO;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -15,13 +19,14 @@ package com.julapy.ph.makeup.view
 	{
 		private var asset			: MovieClip;
 
-		private var faceLinkage 	: Array;
-		private var eyesLinkage		: Array;
-		private var lipsLinkage		: Array;
+		private var girlVO			: GirlMakeupVO;
+		private var girlOneVO		: GirlOneMakeupVO = new GirlOneMakeupVO();
+		private var girlTwoVO		: GirlTwoMakeupVO = new GirlTwoMakeupVO();
 
 		private var faceIndex		: int = -1;
 		private var eyesIndex		: int = -1;
 		private var lipsIndex		: int = -1;
+		private var featureIndex	: int = -1;
 
 		private var faceHolder		: MovieClip;
 		private var eyesHolder		: MovieClip;
@@ -35,42 +40,15 @@ package com.julapy.ph.makeup.view
 		private var eyesMaskView	: MakeupMaskView;
 		private var lipsMaskView	: MakeupMaskView;
 
-		private var featureMasks	: Array = new Array();
-		private var featureIndex	: int = -1;
-
 		public function MakeupView(sprite:Sprite=null)
 		{
 			super( null );
 
 			setAsset( sprite as MovieClip );
 
-			faceLinkage	=
-			[
-				"makeup.g1.layers.face.00",
-				"makeup.g1.layers.face.01"
-			];
+			girlVO = girlOneVO;
 
-			eyesLinkage	=
-			[
-				"makeup.g1.layers.eyes.00",
-				"makeup.g1.layers.eyes.01"
-			];
-
-			lipsLinkage	=
-			[
-				"makeup.g1.layers.lips.00",
-				"makeup.g1.layers.lips.01"
-			];
-
-			//-- masks.
-
-			featureMasks =
-			[
-				"makeup.g1.mask.eyes",
-				"makeup.g1.mask.lips",
-				"makeup.g1.mask.face"
-			];
-
+			ModelLocator.getInstance().makeupModel.addEventListener( GirlEvent.GIRL_CHANGE,		girlChangeHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ANIM_IN,	modeEvent );
 			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_START,	blinkHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_STOP,		blinkHandler );
@@ -102,29 +80,60 @@ package com.julapy.ph.makeup.view
 
 		public function stop ():void
 		{
-			//
+			faceIndex		= -1;
+			eyesIndex		= -1;
+			lipsIndex		= -1;
+			featureIndex	= -1;
+
+			removeFace();
+			removeFaceMask();
+
+			removeEyes();
+			removeEyesMask();
+
+			removeLips();
+			removeLipsMask();
 		}
 
-		/////////////////////////////////////////
-		//	NOT SO PUBLIC.
-		/////////////////////////////////////////
+		//////////////////////////////////////////////////////////
+		//	FACE.
+		//////////////////////////////////////////////////////////
 
 		private function stepFace ():void
+		{
+			removeFace();
+			incFace();
+			addFace();
+
+			removeFaceMask();
+			addFaceMask();
+		}
+
+		//--
+
+		private function removeFace ():void
 		{
 			if( faceAsset )
 			{
 				faceHolder.removeChild( faceAsset );
 				faceAsset	= null;
 			}
+		}
 
-			if( ++faceIndex >= faceLinkage.length )
+		private function incFace ():void
+		{
+			if( ++faceIndex >= girlVO.faceLinkage.length )
 				faceIndex = 0;
+		}
 
-			faceAsset	= AssetLoader.getInstance().getClassInstance( faceLinkage[ faceIndex ] ) as MovieClip;
+		private function addFace ():void
+		{
+			faceAsset	= AssetLoader.getInstance().getClassInstance( girlVO.faceLinkage[ faceIndex ] ) as MovieClip;
 			faceHolder.addChild( faceAsset );
+		}
 
-			//-- mask.
-
+		private function removeFaceMask ():void
+		{
 			if( faceMaskView )
 			{
 				faceHolder.mask	= null;
@@ -133,9 +142,12 @@ package com.julapy.ph.makeup.view
 				faceMaskView.container = null;
 				faceMaskView = null;
 			}
+		}
 
+		private function addFaceMask ():void
+		{
 			var faceMask : MovieClip;
-			faceMask		= AssetLoader.getInstance().getClassInstance( "makeup.g1.mask.face" );
+			faceMask		= AssetLoader.getInstance().getClassInstance( girlVO.featureMasks[ 2 ] );
 			faceHolder.addChild( faceMask );
 
 			faceMaskView	= new MakeupMaskView( faceMask );
@@ -145,26 +157,47 @@ package com.julapy.ph.makeup.view
 			faceHolder.mask	= faceMaskView.mc;
 		}
 
+		//////////////////////////////////////////////////////////
+		//	EYES.
+		//////////////////////////////////////////////////////////
+
 		private function stepEyes ():void
+		{
+			removeEyes();
+			incEyes();
+			addEyes();
+
+			ModelLocator.getInstance().makeupModel.blinkForce = true;
+
+			removeLipsMask();
+			addEyesMask();
+		}
+
+		//--
+
+		private function removeEyes ():void
 		{
 			if( eyesAsset )
 			{
 				eyesHolder.removeChild( eyesAsset );
 				eyesAsset	= null;
 			}
+		}
 
-			if( ++eyesIndex >= eyesLinkage.length )
+		private function incEyes ():void
+		{
+			if( ++eyesIndex >= girlVO.eyesLinkage.length )
 				eyesIndex = 0;
+		}
 
-			eyesAsset	= AssetLoader.getInstance().getClassInstance( eyesLinkage[ eyesIndex ] ) as MovieClip;
+		private function addEyes ():void
+		{
+			eyesAsset	= AssetLoader.getInstance().getClassInstance( girlVO.eyesLinkage[ eyesIndex ] ) as MovieClip;
 			eyesHolder.addChild( eyesAsset );
+		}
 
-			//-- blink force.
-
-			ModelLocator.getInstance().makeupModel.blinkForce = true;
-
-			//-- mask.
-
+		private function removeEyesMask ():void
+		{
 			if( eyesMaskView )
 			{
 				eyesHolder.mask	= null;
@@ -173,9 +206,12 @@ package com.julapy.ph.makeup.view
 				eyesMaskView.container = null;
 				eyesMaskView = null;
 			}
+		}
 
+		private function addEyesMask ():void
+		{
 			var eyesMask : MovieClip;
-			eyesMask		= AssetLoader.getInstance().getClassInstance( "makeup.g1.mask.eyes" );
+			eyesMask		= AssetLoader.getInstance().getClassInstance( girlVO.featureMasks[ 0 ] );
 			eyesHolder.addChild( eyesMask );
 
 			eyesMaskView	= new MakeupMaskView( eyesMask );
@@ -185,22 +221,45 @@ package com.julapy.ph.makeup.view
 			eyesHolder.mask	= eyesMaskView.mc;
 		}
 
+		//////////////////////////////////////////////////////////
+		//	LIPS.
+		//////////////////////////////////////////////////////////
+
 		private function stepLips ():void
+		{
+			removeLips();
+			incLips();
+			addLips();
+
+			removeLipsMask();
+			addLipsMask();
+		}
+
+		//--
+
+		private function removeLips ():void
 		{
 			if( lipsAsset )
 			{
 				lipsHolder.removeChild( lipsAsset );
 				lipsAsset	= null;
 			}
+		}
 
-			if( ++lipsIndex >= lipsLinkage.length )
+		private function incLips ():void
+		{
+			if( ++lipsIndex >= girlVO.lipsLinkage.length )
 				lipsIndex = 0;
+		}
 
-			lipsAsset	= AssetLoader.getInstance().getClassInstance( lipsLinkage[ lipsIndex ] ) as MovieClip;
+		private function addLips ():void
+		{
+			lipsAsset	= AssetLoader.getInstance().getClassInstance( girlVO.lipsLinkage[ lipsIndex ] ) as MovieClip;
 			lipsHolder.addChild( lipsAsset );
+		}
 
-			//-- mask.
-
+		private function removeLipsMask ():void
+		{
 			if( lipsMaskView )
 			{
 				lipsHolder.mask	= null;
@@ -209,9 +268,12 @@ package com.julapy.ph.makeup.view
 				lipsMaskView.container = null;
 				lipsMaskView = null;
 			}
+		}
 
+		private function addLipsMask ():void
+		{
 			var lipsMask : MovieClip;
-			lipsMask		= AssetLoader.getInstance().getClassInstance( "makeup.g1.mask.lips" );
+			lipsMask		= AssetLoader.getInstance().getClassInstance( girlVO.featureMasks[ 1 ] );
 			lipsHolder.addChild( lipsMask );
 
 			lipsMaskView	= new MakeupMaskView( lipsMask );
@@ -240,6 +302,22 @@ package com.julapy.ph.makeup.view
 		//////////////////////////////////////////////////////////
 		//	HANDLERS.
 		//////////////////////////////////////////////////////////
+
+		private function girlChangeHandler ( e : GirlEvent ):void
+		{
+			var g : int;
+			g = ModelLocator.getInstance().makeupModel.girl;
+
+			if( g == MakeupModel.GIRL_ONE )
+			{
+				girlVO = girlOneVO;
+			}
+
+			if( g == MakeupModel.GIRL_TWO )
+			{
+				girlVO = girlTwoVO;
+			}
+		}
 
 		private function modeEvent ( e : ModeEvent ):void
 		{
@@ -277,31 +355,19 @@ package com.julapy.ph.makeup.view
 		{
 			if( e.target == eyesMaskView )
 			{
-				eyesHolder.mask	= null;
-
-				eyesMaskView.removeEventListener( Event.COMPLETE, maskCompleteHandler );
-				eyesMaskView.container = null;
-				eyesMaskView = null;
+				removeEyesMask();
 
 				ModelLocator.getInstance().makeupModel.blinkForce = false;
 			}
 
 			if( e.target == lipsMaskView )
 			{
-				lipsHolder.mask	= null;
-
-				lipsMaskView.removeEventListener( Event.COMPLETE, maskCompleteHandler );
-				lipsMaskView.container = null;
-				lipsMaskView = null;
+				removeLipsMask();
 			}
 
 			if( e.target == faceMaskView )
 			{
-				faceHolder.mask	= null;
-
-				faceMaskView.removeEventListener( Event.COMPLETE, maskCompleteHandler );
-				faceMaskView.container = null;
-				faceMaskView = null;
+				removeFaceMask();
 			}
 
 			ModelLocator.getInstance().makeupModel.mode = -1;
