@@ -31,6 +31,11 @@ package com.julapy.ph.hair.view
 			initSocket();
 
 			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
+
+			model.girl		= HairModel.GIRL_ONE;
+			model.style		= HairModel.STYLE_ONE;
+			model.section	= HairModel.SECTION_INTRO;
+			model.stylePart	= HairModel.STYLE_PART_ONE;
 		}
 
 		private function initModel ():void
