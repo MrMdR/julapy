@@ -34,6 +34,7 @@ public :
 	void setBallPos	( float x, float y );
 	
 	void drawDivider	();
+	void drawStarLayers	();
 	void drawStars		( vector<Star>& stars, ofImage& image );
 
 	vector<int>			colors;

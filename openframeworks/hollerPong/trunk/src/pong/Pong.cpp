@@ -36,17 +36,20 @@ void Pong :: init ()
 	paddles[ 1 ].setColor( paddleColors[ 1 ] );
 	paddles[ 1 ].setSide( 1 );
 	
-	int dir;
-	dir = ( ofRandom( 0, 1) < 0.5 ) ? -1 : 1;
+	int dirX, dirY;
+	dirX = ( ofRandom( 0, 1) < 0.5 ) ? -1 : 1;
+	dirY = ( ofRandom( 0, 1) < 0.5 ) ? -1 : 1;
 	
 	ball.setPositon( (int)( ofGetWidth() * 0.5 ), (int)( ofGetHeight() * 0.5 ) );
-	ball.setVelocity( 5 * dir, 5 );
+	ball.setVelocity( 5 * dirX, 5 * dirY );
 	
 	score.init();
 	
-	verdana.loadFont( "verdana.ttf", 100 );
+	font.loadFont( "fonts/mono0765.ttf", 100 );
+	font2.loadFont( "fonts/mono0755.ttf", 56 );
 	
-	pongVelGain = 1.2;
+	pongVelGain		= 1.2;
+	pongVelLimit	= 30;
 	
 	bPaused = false;
 	bReset	= false;
@@ -151,7 +154,7 @@ void Pong :: update ()
 	paddles[ 0 ].update();
 	paddles[ 1 ].update();
 
-	ball.vel.limit( 20 );
+	ball.vel.limit( pongVelLimit );
 	ball.update();
 	
 	checkBounds();
@@ -304,11 +307,12 @@ void Pong :: checkRightPaddleHit ()
 
 void Pong :: resetPoint ()
 {
-	int dir;
-	dir = ( ofRandom( 0, 1) < 0.5 ) ? -1 : 1;
+	int dirX, dirY;
+	dirX = ( ofRandom( 0, 1) < 0.5 ) ? -1 : 1;
+	dirY = ( ofRandom( 0, 1) < 0.5 ) ? -1 : 1;
 	
 	ball.setPositon( (int)( ofGetWidth() * 0.5 ), (int)( ofGetHeight() * 0.5 ) );
-	ball.setVelocity( 5 * dir, 5 );
+	ball.setVelocity( 5 * dirX, 5 * dirY );
 }
 
 ////////////////////////////////////////////////
@@ -317,17 +321,71 @@ void Pong :: resetPoint ()
 
 void Pong :: draw ()
 {
-	backdrop.draw();
-	
-	paddles[ 0 ].draw();
-	paddles[ 1 ].draw();
-	
-	ball.draw();
-	
-	score.draw();
-	
+	drawBackdrop();
+	drawPaddles();
+	drawBall();
+	drawScore();
+//	drawHollerLogo();
 	drawPaused();
 	drawReset();
+}
+
+void Pong :: drawBackdrop ()
+{
+	drawBackdropDivider();
+	drawBackdropStars();
+}
+
+void Pong :: drawBackdropDivider ()
+{
+	backdrop.drawDivider();
+}
+
+void Pong :: drawBackdropStars ()
+{
+	backdrop.drawStarLayers();
+}
+
+void Pong :: drawPaddles ()
+{
+	paddles[ 0 ].draw();
+	paddles[ 1 ].draw();
+}
+
+void Pong :: drawBall ()
+{
+	ball.draw();
+}
+
+void Pong :: drawScore ()
+{
+	score.draw();
+}
+
+void Pong :: drawHollerLogo ()
+{
+	string str;
+	str = "holler";
+	
+	ofRectangle rect;
+	rect = font2.getStringBoundingBox( str, 0, 0 );
+	
+	int sx, sy;
+	
+	sx = (int)( ( ofGetWidth()  - rect.width  ) * 0.5 );
+	sy = ofGetHeight() - 20;
+	
+	ofSetColor( 0xFFFFFF );
+	font2.drawString( str, sx, sy );
+}
+
+void Pong :: drawBlackAlphaLayer ()
+{
+	ofFill();
+	ofEnableAlphaBlending();
+	ofSetColor( 0, 0, 0, 180 );
+	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+	ofDisableAlphaBlending();
 }
 
 void Pong :: drawPaused ()
@@ -335,20 +393,27 @@ void Pong :: drawPaused ()
 	if( !bPaused )
 		return;
 	
-	string pausedStr;
-	pausedStr = "PAUSED";
+	drawBlackAlphaLayer();
+	
+	string str;
+	str = "PAUSED";
 	
 	ofRectangle rect;
-	rect = verdana.getStringBoundingBox( pausedStr, 0, 0 );
+	rect = font.getStringBoundingBox( str, 0, 0 );
 	
 	int sx, sy;
 	
 	sx = (int)( ( ofGetWidth()  - rect.width  ) * 0.5 );
 	sy = (int)( ( ofGetHeight() + rect.height ) * 0.5 );
-	
+
 	ofSetColor( 0x00FFFF );
+	font.drawString( str, sx - 4, sy - 4 );
 	
-	verdana.drawString( "PAUSED", sx, sy );
+	ofSetColor( 0xFF00FF );
+	font.drawString( str, sx + 4, sy + 4 );
+	
+	ofSetColor( 0xFFFFFF );
+	font.drawString( str, sx, sy );
 }
 
 void Pong :: drawReset ()
@@ -356,18 +421,25 @@ void Pong :: drawReset ()
 	if( !bReset )
 		return;
 	
-	string pausedStr;
-	pausedStr = "RESET";
+	drawBlackAlphaLayer();
+	
+	string str;
+	str = "RESET";
 	
 	ofRectangle rect;
-	rect = verdana.getStringBoundingBox( pausedStr, 0, 0 );
+	rect = font.getStringBoundingBox( str, 0, 0 );
 	
 	int sx, sy;
 	
 	sx = (int)( ( ofGetWidth()  - rect.width  ) * 0.5 );
 	sy = (int)( ( ofGetHeight() + rect.height ) * 0.5 );
+
+	ofSetColor( 0x00FFFF );
+	font.drawString( str, sx - 4, sy - 4 );
 	
 	ofSetColor( 0xFF00FF );
+	font.drawString( str, sx + 4, sy + 4 );
 	
-	verdana.drawString( "RESET", sx, sy );
+	ofSetColor( 0xFFFFFF );
+	font.drawString( str, sx, sy );
 }

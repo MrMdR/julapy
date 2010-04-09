@@ -36,8 +36,16 @@ public :
 	void reset			();
 	bool checkReset		();
 	
-	void drawPaused		();
-	void drawReset		();
+	void drawBackdrop			();
+	void drawBackdropDivider	();
+	void drawBackdropStars		();
+	void drawPaddles			();
+	void drawBall				();
+	void drawScore				();
+	void drawHollerLogo			();
+	void drawBlackAlphaLayer	();
+	void drawPaused				();
+	void drawReset				();
 	
 private :
 	
@@ -56,11 +64,13 @@ private :
 	Score		score;
 	Backdrop	backdrop;
 	
-	ofTrueTypeFont	verdana;
+	ofTrueTypeFont	font;
+	ofTrueTypeFont	font2;
 
 	int			paddleColors[ 2 ];
 	bool		paddleFlip;
 	float		pongVelGain;
+	float		pongVelLimit;
 	
 	bool		bPaused;
 	bool		bReset;

@@ -10,8 +10,7 @@ void testApp::setup()
 	ofSetVerticalSync( true );
 	ofEnableSmoothing();
 	
-	bShowDebug		= true;
-	bShowPong		= true;
+	bShowDebug		= false;
 	bUseMouse		= false;
 	
 	bPongPaused0	= false;
@@ -113,18 +112,54 @@ void testApp::draw()
 	{
 		ct.draw();
 	}
-	
-	if( !bShowDebug )
+	else 
 	{
 		ofFill();
 		ofSetColor( 0x000000 );
 		ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+		
+		pong.drawBackdropStars();
+		
+		drawVideo();
+		
+		pong.drawBackdropDivider();
+		pong.drawPaddles();
+		pong.drawBall();
+		pong.drawScore();
+		pong.drawPaused();
+		pong.drawReset();
+		
+		ofSetColor( 0xFFFFFF );
+		ofDrawBitmapString( "press 'd' for debug screen", 20, ofGetHeight() - 10 );
+		ofDrawBitmapString( "press 'f' for full screen", ofGetWidth() - 220, ofGetHeight() - 10 );
 	}
+}
+
+void testApp :: drawVideo ()
+{
+	int x, y, w, h, b;
+
+	b = 8;
+	w = ct.videoRect.width;
+	h = ct.videoRect.height;
+	x = (int)( ( ofGetWidth() - w ) * 0.5 );
+	y = ofGetHeight() - h - b;
+
+	ofEnableAlphaBlending();
 	
-	if( bShowPong )
-	{
-		pong.draw();
-	}
+	ofFill();
+	ofSetColor( 255, 255, 255, 60 );
+	
+	ofRect( x - b, y - b, w + b * 2, b );
+	ofRect( x - b, ofGetHeight() - b, w + b * 2, b );
+	ofRect( x - b, y, b, h );
+	ofRect( x + w, y, b, h );
+	
+	ofSetColor( 255, 255, 255, 120 );
+	
+	ct.colImg.draw( x, y );
+	
+	ofDisableAlphaBlending();
 }
 
 ///////////////////////////////////////////
@@ -143,11 +178,15 @@ void testApp::keyPressed(int key)
 	if( key == 'd' )
 	{
 		bShowDebug = !bShowDebug;
-	}
-	
-	if( key == 'p' )
-	{
-		bShowPong = !bShowPong;
+		
+		if( bShowDebug )
+		{
+			pong.setPaused( true );
+		}
+		else
+		{
+			pong.setPaused( false );
+		}
 	}
 	
 	if( key == 'm' )
@@ -155,7 +194,7 @@ void testApp::keyPressed(int key)
 		bUseMouse = !bUseMouse;
 	}
 	
-	if( key == ' ' )
+	if( key == 'p' )
 	{
 		pong.togglePause();
 	}

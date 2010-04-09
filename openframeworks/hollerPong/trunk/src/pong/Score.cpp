@@ -11,7 +11,7 @@
 
 void Score :: init()
 {
-	verdana.loadFont( "verdana.ttf", 50 );
+	font.loadFont( "fonts/mono0755.ttf", 56 );
 	
 	reset();
 }
@@ -54,6 +54,6 @@ void Score :: draw ()
 	
 	ofSetColor( 0xFFFFFF );
 	
-	verdana.drawString( p1s, c - 130, 100 );
-	verdana.drawString( p2s, c +  40, 100 );
+	font.drawString( p1s, c - 140, 80 );
+	font.drawString( p2s, c +  30, 80 );
 }

@@ -76,9 +76,44 @@ void Backdrop :: setBallPos	( float x, float y )
 
 void Backdrop :: draw ()
 {
+	drawDivider();
+	drawStarLayers();
+}
+
+void Backdrop :: drawDivider ()
+{
 	ofEnableAlphaBlending();
 	
-	drawDivider();
+	ofFill();
+	ofSetColor( 255, 255, 255, 60 );
+	
+	int cx;
+	cx = (int)( ofGetWidth() * 0.5 );
+	
+	int w;		// width bar.
+	w = 8;
+	
+	int h;		// height bar.
+	h = 40;
+	
+	int g;		// gap between bars.
+	g = 20;
+	
+	int y;		// y position.
+	y = 0;
+	
+	while( y < ofGetHeight() )
+	{
+		ofRect( cx - (int)( w * 0.5 ), y, w, h );
+		y += h + g;
+	}
+	
+	ofDisableAlphaBlending();
+}
+
+void Backdrop :: drawStarLayers ()
+{
+	ofEnableAlphaBlending();
 	
 	int dx, dy;
 	
@@ -96,33 +131,6 @@ void Backdrop :: draw ()
 	}
 	
 	ofDisableAlphaBlending();
-}
-
-void Backdrop :: drawDivider ()
-{
-	ofFill();
-	ofSetColor( 255, 255, 255, 100 );
-	
-	int cx;
-	cx = (int)( ofGetWidth() * 0.5 );
-	
-	int w;		// width bar.
-	w = 8;
-	
-	int h;		// height bar.
-	h = 80;
-	
-	int g;		// gap between bars.
-	g = 40;
-	
-	int y;		// y position.
-	y = 0;
-	
-	while( y < ofGetHeight() )
-	{
-		ofRect( cx - (int)( w * 0.5 ), y, w, h );
-		y += h + g;
-	}
 }
 
 void Backdrop :: drawStars ( vector<Star>& stars, ofImage& image )
