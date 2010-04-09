@@ -14,6 +14,8 @@ public:
 	void update	();
 	void draw	();
 	
+	void drawVideo	();
+	
 	void updatePongPaddles	( float p1y, float p2y );
 	void updatePongFlip		( float p1x, float p2x );
 	void updatePongPause	( bool bPongPaused );
@@ -34,7 +36,6 @@ public:
 	float			p2;
 	
 	bool			bShowDebug;
-	bool			bShowPong;
 	bool			bUseMouse;
 	
 	bool			bPongPaused0;

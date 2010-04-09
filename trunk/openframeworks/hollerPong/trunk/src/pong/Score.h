@@ -25,7 +25,7 @@ public :
 	void draw			();
 	
 	int				points[ 2 ];
-	ofTrueTypeFont	verdana;
+	ofTrueTypeFont	font;
 	
 };
 
