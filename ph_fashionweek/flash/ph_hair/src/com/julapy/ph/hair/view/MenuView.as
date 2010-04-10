@@ -1,113 +1,84 @@
 package com.julapy.ph.hair.view
 {
-	import caurina.transitions.Tweener;
-
-	import com.holler.controls.BtnView;
 	import com.holler.core.View;
 	import com.julapy.ph.hair.events.GirlEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
 	import com.julapy.ph.hair.events.StylePartEvent;
+	import com.julapy.ph.hair.events.ToolEvent;
 	import com.julapy.ph.hair.model.HairModel;
 	import com.julapy.ph.hair.model.ModelLocator;
 	import com.julapy.ph.hair.vo.StyleVO;
-
-	import fl.motion.easing.Quadratic;
+	import com.julapy.ph.vo.TrackerVO;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 
 	public class MenuView extends View
 	{
-		private var dropAreaDryer	: MovieClip;
-		private var dropAreaCurlers	: MovieClip;
-		private var dropAreaSpray	: MovieClip;
-		private var dropArea		: MovieClip;
+		private var dropArea		: MenuDropareaView;
 		private var dropAreas		: Array = new Array();
 
-		private var toolDryer		: MovieClip;
-		private var toolCurler		: MovieClip;
-		private var toolSpray		: MovieClip;
-		private var toolDryerBtn	: BtnView;
-		private var toolCurlerBtn	: BtnView;
-		private var toolSprayBtn	: BtnView;
-		private var tool			: MovieClip;
+		private var tool			: MenuToolView;
 		private var tools			: Array = new Array();
-		private var toolBtns		: Array = new Array();
 		private var toolIndex		: int = -1;
+		private var toolProximity	: int = 100;
 
 		public function MenuView(sprite:Sprite=null)
 		{
 			super(sprite);
 
-			dropAreaDryer	= _sprite.getChildByName( "dropAreaDryer" ) as MovieClip;
-			dropAreaCurlers	= _sprite.getChildByName( "dropAreaCurlers" ) as MovieClip;
-			dropAreaSpray	= _sprite.getChildByName( "dropAreaSpray" ) as MovieClip;
-
-			dropAreas		=
-			[
-				dropAreaDryer,
-				dropAreaCurlers,
-				dropAreaSpray
-			];
-
-			selectDropArea( -1 );
-
-			//--
-
-			toolDryer		= _sprite.getChildByName( "toolDryer" ) as MovieClip;
-			toolCurler		= _sprite.getChildByName( "toolCurler" ) as MovieClip;
-			toolSpray		= _sprite.getChildByName( "toolSpray" ) as MovieClip;
-
-			tools 			=
-			[
-				toolDryer,
-				toolCurler,
-				toolSpray
-			];
-
-			for( var i:int=0; i<tools.length; i++ )
-			{
-				var t : MovieClip;
-				t = tools[ i ] as MovieClip;
-
-				t.ix = t.x;
-				t.iy = t.y;
-
-				t.sx = t.scaleX;
-				t.sy = t.scaleY;
-			}
-
-			//--
-
-			toolDryerBtn	= new BtnView( toolDryer );
-			toolDryerBtn.addEventListener( MouseEvent.MOUSE_DOWN,	toolBtnHandler );
-			toolDryerBtn.addEventListener( MouseEvent.MOUSE_UP,		toolBtnHandler );
-
-			toolCurlerBtn	= new BtnView( toolCurler );
-			toolCurlerBtn.addEventListener( MouseEvent.MOUSE_DOWN,	toolBtnHandler );
-			toolCurlerBtn.addEventListener( MouseEvent.MOUSE_UP,	toolBtnHandler );
-
-			toolSprayBtn	= new BtnView( toolSpray );
-			toolSprayBtn.addEventListener( MouseEvent.MOUSE_DOWN, 	toolBtnHandler );
-			toolSprayBtn.addEventListener( MouseEvent.MOUSE_UP, 	toolBtnHandler );
-
-			toolBtns 		=
-			[
-				toolDryerBtn,
-				toolCurlerBtn,
-				toolSprayBtn
-			];
-
-			//--
+			initDropAreas();
+			initTools();
 
 			ModelLocator.getInstance().hairModel.addEventListener( GirlEvent.GIRL_CHANGE,				girlChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( StyleEvent.STYLE_CHANGE,				styleChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( SectionEvent.SECTION_CHANGE,			sectionChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( StylePartEvent.STYLE_PART_CHANGE,	stylePartChangeHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( ToolEvent.TOOL_CHANGE,				toolChangeHandler );
+		}
+
+		private function initDropAreas ():void
+		{
+			dropAreas =
+			[
+				new MenuDropareaView( _sprite.getChildByName( "dropAreaDryer" ) as MovieClip ),
+				new MenuDropareaView( _sprite.getChildByName( "dropAreaCurlers" ) as MovieClip ),
+				new MenuDropareaView( _sprite.getChildByName( "dropAreaSpray" ) as MovieClip )
+			];
+
+			for( var i:int=0; i<dropAreas.length; i++ )
+			{
+				var d : MenuDropareaView;
+				d = dropAreas[ i ] as MenuDropareaView;
+
+				d.addEventListener( Event.COMPLETE, dropAreaHandler );
+			}
+
+			selectDropArea( -1 );
+		}
+
+		private function initTools ():void
+		{
+			tools =
+			[
+				new MenuToolView( _sprite.getChildByName( "toolDryer" ) as MovieClip ),
+				new MenuToolView( _sprite.getChildByName( "toolCurler" ) as MovieClip ),
+				new MenuToolView( _sprite.getChildByName( "toolSpray" ) as MovieClip )
+			];
+
+			for( var i:int=0; i<tools.length; i++ )
+			{
+				var t : MenuToolView;
+				t = tools[ i ] as MenuToolView;
+
+				t.addEventListener( MouseEvent.MOUSE_DOWN,	toolBtnHandler );
+				t.addEventListener( MouseEvent.MOUSE_UP,	toolBtnHandler );
+			}
 		}
 
 		/////////////////////////////////////////////
@@ -116,14 +87,16 @@ package com.julapy.ph.hair.view
 
 		private function selectDropArea ( id : int ):void
 		{
+			dropArea = null;
+
 			for( var i:int=0; i<dropAreas.length; i++ )
 			{
 				if( i == id )
 				{
-					dropArea = dropAreas[ i ] as MovieClip;
+					dropArea = dropAreas[ i ] as MenuDropareaView;
 				}
 
-				( dropAreas[ i ] as MovieClip ).visible = ( i == id ) ? true : false;
+				( dropAreas[ i ] as MenuDropareaView ).show( i == id );
 			}
 		}
 
@@ -131,69 +104,107 @@ package com.julapy.ph.hair.view
 		//	TOOLS.
 		/////////////////////////////////////////////
 
-		private function startToolDrag ( m : MovieClip ):void
+		private function startToolDrag ( t : MenuToolView ):void
 		{
-			tool = m;
+			tool = t;
 
 			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
 
-		private function stopToolDrag ( m : MovieClip ):void
+		private function stopToolDrag ( t : MenuToolView ):void
 		{
 			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 
-			Tweener.addTween
-			(
-				m,
-				{
-					x			: m.ix,
-					y			: m.iy,
-					scaleX		: m.sx,
-					scaleY		: m.sy,
-					time		: 0.3,
-					delay		: 0.0,
-					transition	: Quadratic.easeOut,
-					onStart		: null,
-					onUpdate	: null,
-					onComplete	: null
-				}
-			);
-
-			if( checkToolMatch() )
-			{
-				ModelLocator.getInstance().hairModel.nextStylePart();
-			}
+			t.returnToMenu();
 		}
 
 		private function enterFrameHandler ( e : Event ):void
 		{
-			tool.x = _sprite.mouseX;
-			tool.y = _sprite.mouseY;
+			updateToolPosition();
+			updateToolScale();
+		}
 
-			if( checkToolMatch() )
+		private function updateToolPosition ():void
+		{
+			if( ModelLocator.getInstance().ofDataModel.connected )
 			{
-				tool.scaleX = 1;
-				tool.scaleY = 1;
+				var trackerVO : TrackerVO;
+				trackerVO = ModelLocator.getInstance().ofDataModel.primaryTrackerVO;
+
+				var area : Rectangle;
+				area = ModelLocator.getInstance().hairModel.videoIntRect;
+
+				var tx : int;
+				var ty : int;
+
+				tx = trackerVO.rect.x * area.width;
+				ty = trackerVO.rect.y * area.height;
+
+				var ease : Number;
+				ease = 0.5;
+
+				tool.x += ( tx - tool.x ) * ease;
+				tool.y += ( ty - tool.y ) * ease;
 			}
 			else
 			{
-				tool.scaleX = tool.sx;
-				tool.scaleY = tool.sy;
+				tool.x = _sprite.mouseX;
+				tool.y = _sprite.mouseY;
 			}
+
+			tool.doValidate();
 		}
 
-		private function checkToolMatch ():Boolean
+		private function updateToolScale ():void
 		{
-			var t : MovieClip;
-			t = tools[ toolIndex ] as MovieClip;
+			if( !dropArea )
+				return;
+
+			var isRightTool		: Boolean;
+			var isInProximity	: Boolean;
+
+			isRightTool		= checkIsRightTool();
+			isInProximity	= checkIsInProximity();
+
+			if( isInProximity )
+			{
+				if( isRightTool )
+				{
+					dropArea.over( true );
+					dropArea.showCross( false );
+				}
+				else
+				{
+					dropArea.showCross( true );
+				}
+			}
+			else
+			{
+				dropArea.over( false );
+				dropArea.showCross( false );
+			}
+
+			tool.scaleUp( isRightTool && isInProximity );
+		}
+
+		private function checkIsRightTool ():Boolean
+		{
+			if( !dropArea )
+				return false;
 
 			var isRightTool : Boolean;
 			isRightTool = ( toolIndex == ModelLocator.getInstance().hairModel.stylePart );
 
-			if( !isRightTool )
-			{
+			return isRightTool;
+		}
+
+		private function checkIsInProximity ():Boolean
+		{
+			if( !dropArea )
 				return false;
-			}
+
+			var t : MenuToolView;
+			t = tools[ toolIndex ] as MenuToolView;
 
 			var p1 : Point;
 			p1 = new Point( dropArea.x, dropArea.y );
@@ -205,7 +216,7 @@ package com.julapy.ph.hair.view
 			p3 = p1.subtract( p2 );
 
 			var isInProximity : Boolean;
-			isInProximity = ( p3.length < 50 );
+			isInProximity = ( p3.length < toolProximity );
 
 			return isInProximity;
 		}
@@ -227,7 +238,7 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
-		//	HANDLERS.
+		//	MODEL HANDLERS.
 		/////////////////////////////////////////////
 
 		private function girlChangeHandler ( e : GirlEvent ):void
@@ -272,13 +283,40 @@ package com.julapy.ph.hair.view
 			selectDropArea( stylePart );
 		}
 
-		//--
+		private function toolChangeHandler ( e : ToolEvent ):void
+		{
+			if( toolIndex >= 0 )
+			{
+				stopToolDrag( tools[ toolIndex ] );
+			}
+
+			toolIndex = e.tool;
+
+			if( toolIndex >= 0 )
+			{
+				startToolDrag( tools[ toolIndex ] );
+			}
+		}
+
+		/////////////////////////////////////////////
+		//	LOCAL HANDLERS.
+		/////////////////////////////////////////////
+
+		private function dropAreaHandler ( e : Event ):void
+		{
+			selectDropArea( -1 );
+
+			ModelLocator.getInstance().hairModel.menuSelection = toolIndex;
+		}
 
 		private function toolBtnHandler ( e : MouseEvent ):void
 		{
-			for( var i:int=0; i<toolBtns.length; i++ )
+			if( ModelLocator.getInstance().ofDataModel.connected )
+				return;
+
+			for( var i:int=0; i<tools.length; i++ )
 			{
-				if( toolBtns[ i ] == e.target )
+				if( tools[ i ] == e.target )
 				{
 					toolIndex = i;
 					break;
@@ -287,13 +325,14 @@ package com.julapy.ph.hair.view
 
 			if( e.type == MouseEvent.MOUSE_DOWN )
 			{
-				startToolDrag( tools[ i ] as MovieClip );
+				startToolDrag( tools[ toolIndex ] as MenuToolView );
 			}
 
 			if( e.type == MouseEvent.MOUSE_UP )
 			{
-				stopToolDrag( tools[ i ] as MovieClip );
+				stopToolDrag( tools[ toolIndex ] as MenuToolView );
 			}
 		}
+
 	}
 }
