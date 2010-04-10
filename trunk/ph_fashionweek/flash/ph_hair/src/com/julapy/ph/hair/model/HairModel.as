@@ -1,13 +1,16 @@
 package com.julapy.ph.hair.model
 {
 	import com.julapy.ph.hair.events.GirlEvent;
+	import com.julapy.ph.hair.events.MenuEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
 	import com.julapy.ph.hair.events.StylePartEvent;
+	import com.julapy.ph.hair.events.ToolEvent;
 	import com.julapy.ph.hair.vo.GirlVO;
 	import com.julapy.ph.hair.vo.StyleVO;
 
 	import flash.events.EventDispatcher;
+	import flash.geom.Rectangle;
 
 
 	public class HairModel extends EventDispatcher
@@ -26,6 +29,13 @@ package com.julapy.ph.hair.model
 		public static const STYLE_PART_TWO		: int = 1;
 		public static const STYLE_PART_THREE	: int = 2;
 
+		public static const TOOL_DRYER			: int = 0;
+		public static const TOOL_CURLER			: int = 1;
+		public static const TOOL_SPRAY			: int = 2;
+
+		private var _videoGenRect	: Rectangle = new Rectangle( 0, 0, 576, 1024 );
+		private var _videoIntRect	: Rectangle = new Rectangle( 0, 0, 576, 768 );
+
 		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];
 		private var _styles			: Array = [ STYLE_ONE, STYLE_TWO ];
 		private var _sections		: Array = [ SECTION_INTRO, SECTION_PLAY, SECTION_OUTRO ];
@@ -40,6 +50,10 @@ package com.julapy.ph.hair.model
 		private var _girlOneVO		: GirlVO;
 		private var _girlTwoVO		: GirlVO;
 
+		private var _menuSelection	: int = -1;
+
+		private var _tool			: int = -1;
+
 		public function HairModel()
 		{
 			_girlOneVO = girlOneVO;
@@ -47,6 +61,20 @@ package com.julapy.ph.hair.model
 
 			_girlVOs.push( _girlOneVO );
 			_girlVOs.push( _girlTwoVO );
+		}
+
+		/////////////////////////////////////
+		//	VIDEO RECT.
+		/////////////////////////////////////
+
+		public function get videoGenRect ():Rectangle
+		{
+			return _videoGenRect.clone();
+		}
+
+		public function get videoIntRect ():Rectangle
+		{
+			return _videoIntRect.clone();
 		}
 
 		/////////////////////////////////////
@@ -72,9 +100,9 @@ package com.julapy.ph.hair.model
 
 			var s1 : StyleVO;
 			s1 = new StyleVO();
-			s1.intro	= "makeup.video.01";
-			s1.outro	= "makeup.video.02";
-			s1.sections	=
+			s1.intro		= "makeup.video.01";
+			s1.outro		= "makeup.video.02";
+			s1.playParts	=
 			[
 				"makeup.ivideo.g1.s1.01",
 				"makeup.ivideo.g1.s1.02",
@@ -83,9 +111,9 @@ package com.julapy.ph.hair.model
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
-			s2.intro	= "makeup.video.03";
-			s2.outro	= "makeup.video.04";
-			s2.sections	=
+			s2.intro		= "makeup.video.03";
+			s2.outro		= "makeup.video.04";
+			s2.playParts	=
 			[
 				"makeup.ivideo.g1.s2.01",
 				"makeup.ivideo.g1.s2.02",
@@ -107,9 +135,9 @@ package com.julapy.ph.hair.model
 
 			var s1 : StyleVO;
 			s1 = new StyleVO();
-			s1.intro	= "makeup.video.05";
-			s1.outro	= "makeup.video.06";
-			s1.sections	=
+			s1.intro		= "makeup.video.05";
+			s1.outro		= "makeup.video.06";
+			s1.playParts	=
 			[
 				"makeup.ivideo.g2.s1.01",
 				"makeup.ivideo.g2.s1.02",
@@ -118,9 +146,9 @@ package com.julapy.ph.hair.model
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
-			s2.intro	= "makeup.video.07";
-			s2.outro	= "makeup.video.08";
-			s2.sections	=
+			s2.intro		= "makeup.video.07";
+			s2.outro		= "makeup.video.08";
+			s2.playParts	=
 			[
 				"makeup.ivideo.g2.s2.01",
 				"makeup.ivideo.g2.s2.02",
@@ -272,6 +300,44 @@ package com.julapy.ph.hair.model
 			}
 
 			stylePart = stylePartTemp;
+		}
+
+		/////////////////////////////////////
+		//	MENU SELECTION.
+		/////////////////////////////////////
+
+		public function set menuSelection ( value : int ):void
+		{
+			if( _menuSelection != value )
+			{
+				_menuSelection = value;
+
+				dispatchEvent( new MenuEvent( _menuSelection ) );
+			}
+		}
+
+		public function get menuSelection ():int
+		{
+			return _menuSelection;
+		}
+
+		/////////////////////////////////////
+		//	TOOL.
+		/////////////////////////////////////
+
+		public function set tool ( value : int ):void
+		{
+			if( _tool != value )
+			{
+				_tool = value;
+
+				dispatchEvent( new ToolEvent( _tool ) );
+			}
+		}
+
+		public function get tool ():int
+		{
+			return _tool;
 		}
 	}
 }

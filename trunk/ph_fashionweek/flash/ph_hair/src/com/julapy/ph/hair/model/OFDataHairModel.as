@@ -1,12 +1,16 @@
 package com.julapy.ph.hair.model
 {
-	import com.julapy.ph.events.ConnectedEvent;
-	import com.julapy.ph.events.DisconnectEvent;
 	import com.julapy.ph.model.OFDataModel;
 	import com.julapy.ph.vo.TrackerVO;
 
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+
 	public class OFDataHairModel extends OFDataModel
 	{
+		private var trackerMinTimer	: Timer;
+		private var bTrackerActive	: Boolean = true;
+
 		public function OFDataHairModel()
 		{
 			//
@@ -73,7 +77,51 @@ package com.julapy.ph.hair.model
 			_ofPrimaryTrackerVO = highestTrackerVO;
 			_ofPrimaryIndex		= highestIndex;
 
-//			ModelLocator.getInstance().makeupModel.mode = _ofPrimaryIndex;
+			//--
+
+			if( ModelLocator.getInstance().hairModel.tool == _ofPrimaryIndex )		// no change.
+				return;
+
+			if( !bTrackerActive )
+			{
+				if( _ofPrimaryIndex == -1 )		// if all tools are de-activeated, do not delay with timer.
+				{
+					ModelLocator.getInstance().hairModel.tool = -1;
+				}
+
+				return;
+			}
+
+			bTrackerActive = false;
+
+			killTrackerMinTimer();
+			initTrackerMinTimer();
+
+			ModelLocator.getInstance().hairModel.tool = _ofPrimaryIndex;
+		}
+
+		private function initTrackerMinTimer ():void
+		{
+			trackerMinTimer = new Timer( 1000, 1 );
+			trackerMinTimer.addEventListener( TimerEvent.TIMER_COMPLETE, trackerMinTimerHandler );
+			trackerMinTimer.start();
+		}
+
+		private function killTrackerMinTimer ():void
+		{
+			if( trackerMinTimer )
+			{
+				trackerMinTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, trackerMinTimerHandler );
+				trackerMinTimer.stop();
+				trackerMinTimer = null;
+			}
+		}
+
+		private function trackerMinTimerHandler ( e : TimerEvent ):void
+		{
+			killTrackerMinTimer();
+
+			bTrackerActive = true;
 		}
 	}
 }
