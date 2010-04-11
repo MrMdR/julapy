@@ -1,6 +1,7 @@
 package com.julapy.ph.hair.view
 {
 	import com.holler.core.View;
+	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
@@ -25,8 +26,15 @@ package com.julapy.ph.hair.view
 
 		private var tool			: MenuToolView;
 		private var tools			: Array = new Array();
+		private var toolCovers		: Array = new Array();
 		private var toolIndex		: int = -1;
+		private var toolSelected	: int = -1;
 		private var toolProximity	: int = 100;
+
+		private var isRightTool		: Boolean = false;
+		private var isInProximity	: Boolean = false;
+
+		private var bEnabled		: Boolean = false;
 
 		public function MenuView(sprite:Sprite=null)
 		{
@@ -56,10 +64,9 @@ package com.julapy.ph.hair.view
 				var d : MenuDropareaView;
 				d = dropAreas[ i ] as MenuDropareaView;
 
-				d.addEventListener( Event.COMPLETE, dropAreaHandler );
+				d.addEventListener( DropAreaEvent.DROP_AREA_COMPLETE,	dropAreaCompleteHandler );
+				d.addEventListener( DropAreaEvent.DROP_AREA_PLAYED_OUT, dropAreaPlayedOutHandler );
 			}
-
-			selectDropArea( -1 );
 		}
 
 		private function initTools ():void
@@ -79,6 +86,13 @@ package com.julapy.ph.hair.view
 				t.addEventListener( MouseEvent.MOUSE_DOWN,	toolBtnHandler );
 				t.addEventListener( MouseEvent.MOUSE_UP,	toolBtnHandler );
 			}
+
+			toolCovers =
+			[
+				new MenuToolCoverView( _sprite.getChildByName( "toolCover0" ) as MovieClip ),
+				new MenuToolCoverView( _sprite.getChildByName( "toolCover1" ) as MovieClip ),
+				new MenuToolCoverView( _sprite.getChildByName( "toolCover2" ) as MovieClip ),
+			];
 		}
 
 		/////////////////////////////////////////////
@@ -87,25 +101,54 @@ package com.julapy.ph.hair.view
 
 		private function selectDropArea ( id : int ):void
 		{
-			dropArea = null;
+			if( !dropArea && id == -1 )		// all already off, nothing to turn off.
+				return;
+
+			if( dropArea )
+			{
+				dropArea = null;
+			}
 
 			for( var i:int=0; i<dropAreas.length; i++ )
 			{
-				if( i == id )
+				var da : MenuDropareaView;
+				da = dropAreas[ i ] as MenuDropareaView;
+
+				var match : Boolean;
+				match = ( i == id );
+
+				if( match )
 				{
-					dropArea = dropAreas[ i ] as MenuDropareaView;
+					dropArea = da;
+					dropArea.reset();
+					dropArea.playIn( true );
 				}
 
-				( dropAreas[ i ] as MenuDropareaView ).show( i == id );
+				da.show( match );
 			}
 		}
 
 		/////////////////////////////////////////////
-		//	TOOLS.
+		//	TOOL COVERS
+		/////////////////////////////////////////////
+
+		private function selectToolCover ( j : int ):void
+		{
+			for( var i:int=0; i<toolCovers.length; i++ )
+			{
+				( toolCovers[ i ] as MenuToolCoverView ).show( ( i != j ) && ( j != -1 ) );
+			}
+		}
+
+		/////////////////////////////////////////////
+		//	LOGIC.
 		/////////////////////////////////////////////
 
 		private function startToolDrag ( t : MenuToolView ):void
 		{
+			if( toolSelected > -1 && toolSelected != toolIndex )
+				return;
+
 			tool = t;
 
 			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
@@ -115,14 +158,61 @@ package com.julapy.ph.hair.view
 		{
 			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 
+			t.scaleUp( false );
 			t.returnToMenu();
+
+			if( dropArea )		// if tool is deselects, reset dropArea.
+			{
+				dropArea.over( false );
+				dropArea.showCross( false );
+			}
 		}
 
 		private function enterFrameHandler ( e : Event ):void
 		{
+			isRightTool		= checkIsRightTool();
+			isInProximity	= checkIsInProximity();
+
 			updateToolPosition();
 			updateToolScale();
+			updateDropArea();
 		}
+
+		//--
+
+		private function checkIsRightTool ():Boolean
+		{
+			if( !dropArea )
+				return false;
+
+			isRightTool = ( toolIndex == ModelLocator.getInstance().hairModel.stylePart );
+
+			return isRightTool;
+		}
+
+		private function checkIsInProximity ():Boolean
+		{
+			if( !dropArea )
+				return false;
+
+			var t : MenuToolView;
+			t = tools[ toolIndex ] as MenuToolView;
+
+			var p1 : Point;
+			p1 = new Point( dropArea.x, dropArea.y );
+
+			var p2 : Point;
+			p2 = new Point( t.x, t.y );
+
+			var p3 : Point;
+			p3 = p1.subtract( p2 );
+
+			isInProximity = ( p3.length < toolProximity );
+
+			return isInProximity;
+		}
+
+		//--
 
 		private function updateToolPosition ():void
 		{
@@ -157,14 +247,13 @@ package com.julapy.ph.hair.view
 
 		private function updateToolScale ():void
 		{
+			tool.scaleUp( isRightTool && isInProximity );
+		}
+
+		private function updateDropArea ():void
+		{
 			if( !dropArea )
 				return;
-
-			var isRightTool		: Boolean;
-			var isInProximity	: Boolean;
-
-			isRightTool		= checkIsRightTool();
-			isInProximity	= checkIsInProximity();
 
 			if( isInProximity )
 			{
@@ -183,42 +272,6 @@ package com.julapy.ph.hair.view
 				dropArea.over( false );
 				dropArea.showCross( false );
 			}
-
-			tool.scaleUp( isRightTool && isInProximity );
-		}
-
-		private function checkIsRightTool ():Boolean
-		{
-			if( !dropArea )
-				return false;
-
-			var isRightTool : Boolean;
-			isRightTool = ( toolIndex == ModelLocator.getInstance().hairModel.stylePart );
-
-			return isRightTool;
-		}
-
-		private function checkIsInProximity ():Boolean
-		{
-			if( !dropArea )
-				return false;
-
-			var t : MenuToolView;
-			t = tools[ toolIndex ] as MenuToolView;
-
-			var p1 : Point;
-			p1 = new Point( dropArea.x, dropArea.y );
-
-			var p2 : Point;
-			p2 = new Point( t.x, t.y );
-
-			var p3 : Point;
-			p3 = p1.subtract( p2 );
-
-			var isInProximity : Boolean;
-			isInProximity = ( p3.length < toolProximity );
-
-			return isInProximity;
 		}
 
 		/////////////////////////////////////////////
@@ -227,13 +280,15 @@ package com.julapy.ph.hair.view
 
 		private function enable ():void
 		{
-			visible = true;
+			bEnabled	= true;
+			visible		= true;
 			doValidate();
 		}
 
 		private function disable ():void
 		{
-			visible = false;
+			bEnabled	= false;
+			visible		= false;
 			doValidate();
 		}
 
@@ -268,22 +323,32 @@ package com.julapy.ph.hair.view
 			if( sec == HairModel.SECTION_PLAY )
 			{
 				enable();
+
+				stylePartChangeHandler();
 			}
 			else
 			{
 				disable();
+
+				selectDropArea( -1 );
 			}
 		}
 
-		private function stylePartChangeHandler ( e : StylePartEvent ):void
+		private function stylePartChangeHandler ( e : StylePartEvent = null ):void
 		{
+			if( !bEnabled )
+				return;
+
 			var stylePart : int;
-			stylePart = e.stylePart;
+			stylePart = ModelLocator.getInstance().hairModel.stylePart;
+
+			toolSelected = -1;
 
 			selectDropArea( stylePart );
+			selectToolCover( -1 );
 		}
 
-		private function toolChangeHandler ( e : ToolEvent ):void
+		private function toolChangeHandler ( e : ToolEvent ):void		// this happens when OF tool has changed.
 		{
 			if( toolIndex >= 0 )
 			{
@@ -299,15 +364,25 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
-		//	LOCAL HANDLERS.
+		//	DROP AREA HANDLERS.
 		/////////////////////////////////////////////
 
-		private function dropAreaHandler ( e : Event ):void
+		private function dropAreaCompleteHandler ( e : DropAreaEvent ):void
 		{
-			selectDropArea( -1 );
-
-			ModelLocator.getInstance().hairModel.menuSelection = toolIndex;
+			toolSelected = toolIndex;
 		}
+
+		private function dropAreaPlayedOutHandler ( e : DropAreaEvent ):void
+		{
+			ModelLocator.getInstance().hairModel.menuSelection = toolSelected;
+
+			selectDropArea( -1 );
+			selectToolCover( toolIndex );
+		}
+
+		/////////////////////////////////////////////
+		//	TOOL MOUSE CLICK HANDLERS.
+		/////////////////////////////////////////////
 
 		private function toolBtnHandler ( e : MouseEvent ):void
 		{
