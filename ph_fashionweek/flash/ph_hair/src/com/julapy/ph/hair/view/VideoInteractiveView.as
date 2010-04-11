@@ -77,7 +77,7 @@ package com.julapy.ph.hair.view
 		private function videoEnterFrameHandler ( e : Event ):void
 		{
 //			if( video.currentFrame == video.totalFrames )
-			if( video.currentFrame == 90 )
+			if( video.currentFrame == 250 )
 			{
 				stopVideo();
 

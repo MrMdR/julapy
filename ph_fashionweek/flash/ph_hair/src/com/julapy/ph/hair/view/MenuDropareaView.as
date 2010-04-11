@@ -3,6 +3,7 @@ package com.julapy.ph.hair.view
 	import caurina.transitions.Tweener;
 
 	import com.holler.core.View;
+	import com.julapy.ph.hair.events.DropAreaEvent;
 
 	import fl.motion.easing.Quadratic;
 
@@ -40,7 +41,15 @@ package com.julapy.ph.hair.view
 		private var baseBmp			: Bitmap	= new Bitmap( new BitmapData( 1, 1, true, 0x00FFFFFF ) );
 		private var baseBmpRect		: Rectangle = new Rectangle( -250, -250, 500, 500 );
 
+		private var bShow			: Boolean	= true;
 		private var bIsOver			: Boolean	= false;
+		private var bPlayingIn		: Boolean	= false;
+		private var bPlayingOut		: Boolean	= false;
+
+		private var circleRadiusFull	: Number = 170;
+		private var circleWidthFull		: Number = 25;
+		private var _circleRadius		: Number = 0;
+		private var _circleWidth		: Number = 0;
 
 		public function MenuDropareaView(sprite:Sprite=null)
 		{
@@ -48,6 +57,10 @@ package com.julapy.ph.hair.view
 
 			ghost			= _sprite.getChildByName( "ghost" ) as MovieClip;
 			base			= _sprite.getChildByName( "base" ) as MovieClip;
+
+			ghost.ir		= ghost.rotation;
+			ghost.sx		= ghost.scaleX;
+			ghost.sy		= ghost.scaleY;
 
 			baseBmp.x		= (int)( -baseBmpRect.width  * 0.5 );
 			baseBmp.y		= (int)( -baseBmpRect.height * 0.5 );
@@ -67,10 +80,10 @@ package com.julapy.ph.hair.view
 			crossRect0Mask	= cross.getChildByName( "rect0Mask" ) as MovieClip;
 			crossRect1Mask	= cross.getChildByName( "rect1Mask" ) as MovieClip;
 
-			crossRect0Mask.ih		= crossRect0Mask.mc.height;
-			crossRect1Mask.ih		= crossRect1Mask.mc.height;
+//			crossRect0Mask.ih		= crossRect0Mask.mc.height;
+//			crossRect1Mask.ih		= crossRect1Mask.mc.height;
 
-			crossWidth = 0;
+			crossWidth	= 0;
 			progressVal = 0;
 
 			show( false );
@@ -82,7 +95,12 @@ package com.julapy.ph.hair.view
 
 		public function show ( b : Boolean ):void
 		{
-			if( b )
+			if( bShow == b )
+				return;
+
+			bShow = b;
+
+			if( bShow )
 			{
 				_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 			}
@@ -91,7 +109,158 @@ package com.julapy.ph.hair.view
 				_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 			}
 
-			visible = b;
+			visible = bShow;
+		}
+
+		///////////////////////////////////////////////////
+		//	PLAY IN / OUT
+		///////////////////////////////////////////////////
+
+		public function playIn ( b : Boolean ):void
+		{
+			if( b )
+			{
+				if( bPlayingIn )
+					return;
+
+				bPlayingIn = true;
+
+				circleRadius	= 0;
+				circleWidth		= 0;
+
+				drawCircle();
+				drawCross();
+
+				Tweener.addTween
+				(
+					this,
+					{
+						circleRadius	: circleRadiusFull,
+						circleWidth		: circleWidthFull,
+						time			: 0.3,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: null
+					}
+				);
+
+				ghost.alpha		= 0;
+				ghost.scaleX	= ghost.sx * 0.3;
+				ghost.scaleY	= ghost.sy * 0.3;
+
+				Tweener.addTween
+				(
+					ghost,
+					{
+						alpha			: 1.0,
+						scaleX			: ghost.sx,
+						scaleY			: ghost.sy,
+						time			: 0.3,
+						delay			: 0.2,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: playInCompleteHandler
+					}
+				);
+			}
+			else
+			{
+				if( bPlayingOut )
+					return;
+
+				bPlayingOut = true;
+
+				dispatchEvent( new DropAreaEvent( DropAreaEvent.DROP_AREA_COMPLETE ) );
+
+				Tweener.addTween
+				(
+					ghost,
+					{
+						alpha			: 0.0,
+						time			: 0.3,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: null
+					}
+				);
+
+				Tweener.addTween
+				(
+					progress,
+					{
+						alpha			: 0.0,
+						time			: 0.2,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: null
+					}
+				);
+
+				Tweener.addTween
+				(
+					this,
+					{
+						progressVal		: 0.0,
+						time			: 0.2,
+						delay			: 0.2,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: null
+					}
+				);
+
+				Tweener.addTween
+				(
+					this,
+					{
+						circleRadius	: 0,
+						circleWidth		: 0,
+						time			: 0.2,
+						delay			: 0.2,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: playOutCompleteHandler
+					}
+				);
+			}
+		}
+
+		private function playInCompleteHandler ():void
+		{
+			bPlayingIn = false;
+		}
+
+		private function playOutCompleteHandler ():void
+		{
+			bPlayingOut = false;
+
+			dispatchEvent( new DropAreaEvent( DropAreaEvent.DROP_AREA_PLAYED_OUT ) );
+		}
+
+		///////////////////////////////////////////////////
+		//	RESET.
+		///////////////////////////////////////////////////
+
+		public function reset ():void
+		{
+			crossWidth		= 0;
+			progressVal 	= 0;
+
+			circleRadius	= 0;
+			circleWidth		= 0;
+
+			progress.alpha	= 1.0;
+
+			ghost.rotation	= ghost.ir;
 		}
 
 		///////////////////////////////////////////////////
@@ -111,7 +280,7 @@ package com.julapy.ph.hair.view
 
 			time	= 0;
 			timeIn	= 2.0;
-			timeOut	= 2.0;
+			timeOut	= 1.0;
 
 			if( b )
 			{
@@ -153,7 +322,7 @@ package com.julapy.ph.hair.view
 
 		private function overCompleteHandler ():void
 		{
-			dispatchEvent( new Event( Event.COMPLETE ) );
+			playIn( false );
 		}
 
 		///////////////////////////////////////////////////
@@ -211,10 +380,6 @@ package com.julapy.ph.hair.view
 		public function set crossWidth ( value : Number ):void
 		{
 			_crossWidth = value;
-
-//			crossRect0Mask.mc.height = _crossWidth * crossRect0Mask.ih;
-			crossRect0Mask.mc.height = 0;
-			crossRect1Mask.mc.height = _crossWidth * crossRect1Mask.ih;
 		}
 
 		public function get crossWidth ():Number
@@ -232,8 +397,29 @@ package com.julapy.ph.hair.view
 			bCrossPlayingOut = false;
 		}
 
+		private function drawCross ():void
+		{
+			crossRect1Mask.rotation = 135;
+			crossRect1Mask.x =  Math.sin( 0.125 * 2 * Math.PI ) * circleRadius;
+			crossRect1Mask.y = -Math.cos( 0.125 * 2 * Math.PI ) * circleRadius;
+
+			var extra : Number;
+			extra = 2;
+
+			( crossRect1Mask.mc as MovieClip ).graphics.clear();
+			( crossRect1Mask.mc as MovieClip ).graphics.beginFill( 0xFFFFFF );
+			( crossRect1Mask.mc as MovieClip ).graphics.drawRect
+			(
+				-extra,
+				(int)( -circleWidth * 0.5 ),
+				( circleRadius * 2 + extra * 2 ) * crossWidth,
+				circleWidthFull
+			);
+			( crossRect1Mask.mc as MovieClip ).graphics.endFill();
+		}
+
 		///////////////////////////////////////////////////
-		// HANDLERS.
+		// PROGRESS.
 		///////////////////////////////////////////////////
 
 		public function set progressVal ( value : Number ):void
@@ -250,6 +436,9 @@ package com.julapy.ph.hair.view
 
 		private function drawWedge ():void
 		{
+			if( bPlayingOut )		// don't want to redrawn the progress when playing out.
+				return;
+
 			progressMask.graphics.clear();
 			progressMask.graphics.beginFill( 0xFF0000 );
 			progressMask.graphics.moveTo( 0, 0 );
@@ -275,6 +464,54 @@ package com.julapy.ph.hair.view
    		}
 
 		///////////////////////////////////////////////////
+		//	CIRCLE.
+		///////////////////////////////////////////////////
+
+		private function drawCircle ():void
+		{
+			var p : Number;
+			p = 20;
+
+			var cr : Number;
+			cr = circleRadius - progressVal * p;
+
+			var cw : Number;
+			cw = circleWidth + progressVal * p * 2;
+
+			circle.graphics.clear();
+			circle.graphics.beginFill( 0xFFFFFF );
+			circle.graphics.drawCircle( 0, 0, cr );
+			circle.graphics.drawCircle( 0, 0, cr + cw );
+			circle.graphics.endFill();
+
+			progress.graphics.clear();
+			progress.graphics.beginFill( 0xFFFFFF );
+			progress.graphics.drawCircle( 0, 0, cr );
+			progress.graphics.drawCircle( 0, 0, cr + cw );
+			progress.graphics.endFill();
+		}
+
+		public function set circleWidth ( value : Number ):void
+		{
+			_circleWidth = value;
+		}
+
+		public function get circleWidth ():Number
+		{
+			return _circleWidth;
+		}
+
+		public function set circleRadius ( value : Number ):void
+		{
+			_circleRadius = value;
+		}
+
+		public function get circleRadius ():Number
+		{
+			return _circleRadius;
+		}
+
+		///////////////////////////////////////////////////
 		// HANDLERS.
 		///////////////////////////////////////////////////
 
@@ -295,6 +532,9 @@ package com.julapy.ph.hair.view
 			baseBmp.bitmapData.draw( cross, m, ct );
 
 			ghost.rotation -= 0.2;
+
+			drawCircle();
+			drawCross();
 		}
 	}
 }
