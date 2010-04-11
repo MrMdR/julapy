@@ -31,14 +31,21 @@ package com.julapy.ph.hair.view
 		private var toolSelected	: int = -1;
 		private var toolProximity	: int = 100;
 
+		private var toolPath		: MovieClip;
+		private var toolPathRadiusX	: Number = 250;
+		private var toolPathRadiusY	: Number = 250;
+
 		private var isRightTool		: Boolean = false;
 		private var isInProximity	: Boolean = false;
 
 		private var bEnabled		: Boolean = false;
+		private var bVideoPlaying	: Boolean = false;
 
 		public function MenuView(sprite:Sprite=null)
 		{
 			super(sprite);
+
+			toolPath = _sprite.getChildByName( "toolPath" ) as MovieClip;
 
 			initDropAreas();
 			initTools();
@@ -170,15 +177,25 @@ package com.julapy.ph.hair.view
 
 		private function enterFrameHandler ( e : Event ):void
 		{
-			isRightTool		= checkIsRightTool();
-			isInProximity	= checkIsInProximity();
+			if( bVideoPlaying )
+			{
+				drawToolPath();
+				positionToolAlongPath();
+			}
+			else
+			{
+				isRightTool		= checkIsRightTool();
+				isInProximity	= checkIsInProximity();
 
-			updateToolPosition();
-			updateToolScale();
-			updateDropArea();
+				updateToolPosition();
+				updateToolScale();
+				updateDropArea();
+			}
 		}
 
-		//--
+		/////////////////////////////////////////////
+		//	PUT TOOL IN DROP AREA.
+		/////////////////////////////////////////////
 
 		private function checkIsRightTool ():Boolean
 		{
@@ -275,6 +292,143 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
+		//	USE TOOL WHILE VIDEO IS PLAYING.
+		/////////////////////////////////////////////
+
+		private function drawToolPath ():void
+		{
+			toolPath.graphics.clear();
+			toolPath.graphics.lineStyle( 1.0, 0xFFFFFF );
+
+			var bLineCircle : Boolean;
+			bLineCircle = false;
+
+			if( bLineCircle )
+			{
+				var steps : int;
+				steps = 360;
+
+				var ang : int;
+				ang = (int)( steps * 1.0 );
+
+				for( var i:int=0; i<ang+1; i++ )		// starts at top center and moves around clock wise.
+				{
+					var p : Point;
+					p	= new Point();
+					p.x =  Math.sin( ( i / steps ) * 2 * Math.PI ) * toolPathRadiusX;
+					p.y = -Math.cos( ( i / steps ) * 2 * Math.PI ) * toolPathRadiusY;
+
+					if( i == 0 )
+					{
+						toolPath.graphics.moveTo( p.x, p.y );
+					}
+					else
+					{
+						toolPath.graphics.lineTo( p.x, p.y );
+					}
+				}
+			}
+			else
+			{
+				toolPath.graphics.drawCircle( 0, 0, toolPathRadiusX );
+			}
+		}
+
+		private function clearToolPath ():void
+		{
+			toolPath.graphics.clear();
+		}
+
+		private function positionToolAlongPath ():void
+		{
+			var area : Rectangle;
+			area = ModelLocator.getInstance().hairModel.videoIntRect;
+
+			var p1 : Point;
+			p1 = new Point( area.width * 0.5, area.height * 0.5 );
+
+			var p2 : Point;
+			p2 = new Point();
+
+			var tx : int;
+			var ty : int;
+
+			var ease : Number;
+			ease = 0.5;
+
+			var t : MenuToolView;
+			t = tools[ toolSelected ];
+
+			if( ModelLocator.getInstance().ofDataModel.connected )
+			{
+				var trackerVO : TrackerVO;
+				trackerVO = ModelLocator.getInstance().ofDataModel.primaryTrackerVO;
+
+				tx = trackerVO.rect.x * area.width;
+				ty = trackerVO.rect.y * area.height;
+			}
+			else
+			{
+				tx = _sprite.mouseX;
+				ty = _sprite.mouseY;
+			}
+
+			p2.x = tx;
+			p2.y = ty;
+
+			var p3 : Point;
+			p3 = p1.subtract( p2 );
+
+			var a : Number;
+			a = Math.atan2( p3.x, p3.y ); // * ( 180.0 / Math.PI );
+
+			var p : Point;
+			p = new Point();
+			p.x = -Math.sin( a ) * toolPathRadiusX + toolPath.x;
+			p.y = -Math.cos( a ) * toolPathRadiusY + toolPath.y;
+
+			t.x += ( p.x - t.x ) * ease;
+			t.y += ( p.y - t.y ) * ease;
+
+			var r : Number;
+			r = -a * ( 180.0 / Math.PI );
+			if( r < 0 || r > 180 )
+			{
+				if( t.scaleY > 0 )
+				{
+					t.scaleY *= -1;
+				}
+			}
+			else
+			{
+				if( t.scaleY < 0 )
+				{
+					t.scaleY *= -1;
+				}
+			}
+
+			var rOff : Array;
+			rOff = [ -90, 0, 0 ];
+
+			r += rOff[ toolSelected ];
+
+			t.rotation += ( r - t.rotation ) * ease;
+
+			t.doValidate();
+		}
+
+		private function restoreSelectedTool ():void
+		{
+			if( toolSelected == -1 )
+				return;
+
+			var t : MenuToolView;
+			t = tools[ toolSelected ];
+
+			t.rotateBackToNormal();
+		}
+
+		/////////////////////////////////////////////
 		//	ENABLE.
 		/////////////////////////////////////////////
 
@@ -339,13 +493,17 @@ package com.julapy.ph.hair.view
 			if( !bEnabled )
 				return;
 
+			bVideoPlaying = false;
+
 			var stylePart : int;
 			stylePart = ModelLocator.getInstance().hairModel.stylePart;
 
+			restoreSelectedTool();
 			toolSelected = -1;
 
 			selectDropArea( stylePart );
 			selectToolCover( -1 );
+			clearToolPath();
 		}
 
 		private function toolChangeHandler ( e : ToolEvent ):void		// this happens when OF tool has changed.
@@ -374,6 +532,8 @@ package com.julapy.ph.hair.view
 
 		private function dropAreaPlayedOutHandler ( e : DropAreaEvent ):void
 		{
+			bVideoPlaying = true;
+
 			ModelLocator.getInstance().hairModel.menuSelection = toolSelected;
 
 			selectDropArea( -1 );
