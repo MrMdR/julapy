@@ -1,5 +1,7 @@
 package com.julapy.ph.hair.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
 	import com.julapy.ph.hair.events.GirlEvent;
@@ -11,6 +13,8 @@ package com.julapy.ph.hair.view
 	import com.julapy.ph.hair.model.ModelLocator;
 	import com.julapy.ph.hair.vo.StyleVO;
 
+	import fl.motion.easing.Quadratic;
+
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -20,12 +24,16 @@ package com.julapy.ph.hair.view
 		private var videoHolder	: MovieClip;
 		private var video		: MovieClip;
 		private var videoID		: String = "";
+		private var cover		: MovieClip;
 
 		public function VideoInteractiveView(sprite:Sprite=null)
 		{
 			super(sprite);
 
 			videoHolder = _sprite.getChildByName( "videoHolder" ) as MovieClip;
+			cover		= _sprite.getChildByName( "cover" ) as MovieClip;
+			cover.visible	= false;
+			cover.alpha		= 0.0;
 
 			ModelLocator.getInstance().hairModel.addEventListener( GirlEvent.GIRL_CHANGE,				girlChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( StyleEvent.STYLE_CHANGE,				styleChangeHandler );
@@ -102,6 +110,54 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
+		//	COVER.
+		/////////////////////////////////////////////
+
+		private function showCover ( b : Boolean ):void
+		{
+			if( b )
+			{
+				cover.visible	= true;
+				cover.alpha		= 0;
+
+				Tweener.addTween
+				(
+					cover,
+					{
+						alpha			: 0.5,
+						time			: 0.3,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: null
+					}
+				);
+			}
+			else
+			{
+				Tweener.addTween
+				(
+					cover,
+					{
+						alpha			: 0.0,
+						time			: 0.3,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: null,
+						onComplete		: hideCoverCompleteHandler
+					}
+				);
+			}
+		}
+
+		private function hideCoverCompleteHandler ():void
+		{
+			cover.visible = false;
+		}
+
+		/////////////////////////////////////////////
 		//	HANDLERS.
 		/////////////////////////////////////////////
 
@@ -168,11 +224,14 @@ package com.julapy.ph.hair.view
 			stopVideo();
 			killVideo();
 			initVideo();
+
+			showCover( true );
 		}
 
 		private function menuSelectHandler ( e : MenuEvent ):void
 		{
 			playVideo();
+			showCover( false );
 		}
 	}
 }

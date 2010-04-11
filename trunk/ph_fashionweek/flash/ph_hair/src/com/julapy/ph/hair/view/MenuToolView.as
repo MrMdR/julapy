@@ -15,6 +15,7 @@ package com.julapy.ph.hair.view
 		private var _iy : Number;
 		private var _sx : Number;
 		private var _sy : Number;
+		private var _ir	: Number;
 
 		public function MenuToolView(sprite:Sprite=null)
 		{
@@ -24,12 +25,14 @@ package com.julapy.ph.hair.view
 			_iy = ( _sprite as MovieClip ).y;
 			_sx = ( _sprite as MovieClip ).scaleX;
 			_sy = ( _sprite as MovieClip ).scaleY;
+			_ir = ( _sprite as MovieClip ).rotation;
 		}
 
 		public function get ix ():Number { return _ix };
 		public function get iy ():Number { return _iy };
 		public function get sx ():Number { return _sx };
 		public function get sy ():Number { return _sy };
+		public function get ir ():Number { return _ir };
 
 		public function returnToMenu ():void
 		{
@@ -41,6 +44,24 @@ package com.julapy.ph.hair.view
 					y			: iy,
 					scaleX		: sx,
 					scaleY		: sy,
+					rotation	: ir,
+					time		: 0.3,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: null
+				}
+			);
+		}
+
+		public function rotateBackToNormal ():void
+		{
+			Tweener.addTween
+			(
+				this,
+				{
+					rotation	: ir,
 					time		: 0.3,
 					delay		: 0.0,
 					transition	: Quadratic.easeOut,

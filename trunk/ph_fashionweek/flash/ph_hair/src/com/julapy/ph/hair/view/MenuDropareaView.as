@@ -34,6 +34,7 @@ package com.julapy.ph.hair.view
 
 		private var _crossWidth		: Number = 0;
 		private var _progressVal	: Number = 0;
+		private var _progressPop	: Number = 0;
 
 		private var bCrossPlayingIn		: Boolean = false;
 		private var bCrossPlayingOut 	: Boolean = false;
@@ -299,6 +300,20 @@ package com.julapy.ph.hair.view
 						onComplete	: overCompleteHandler
 					}
 				);
+
+				Tweener.addTween
+				(
+					this,
+					{
+						progressPop	: 1.0,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
 			}
 			else
 			{
@@ -317,12 +332,40 @@ package com.julapy.ph.hair.view
 						onComplete	: null
 					}
 				);
+
+				Tweener.addTween
+				(
+					this,
+					{
+						progressPop	: 0.0,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
 			}
 		}
 
 		private function overCompleteHandler ():void
 		{
 			playIn( false );
+		}
+
+		///////////////////////////////////////////////////
+		//	GHOST ROTATION.
+		///////////////////////////////////////////////////
+
+		public function setGhostRotation ( r : Number ):void
+		{
+			//
+		}
+
+		public function releaseGhostRotation ():void
+		{
+			//
 		}
 
 		///////////////////////////////////////////////////
@@ -464,19 +507,36 @@ package com.julapy.ph.hair.view
    		}
 
 		///////////////////////////////////////////////////
+		// PROGRESS POP.
+		///////////////////////////////////////////////////
+
+		public function set progressPop ( value : Number ):void
+		{
+			_progressPop = value;
+		}
+
+		public function get progressPop ():Number
+		{
+			return _progressPop;
+		}
+
+		///////////////////////////////////////////////////
 		//	CIRCLE.
 		///////////////////////////////////////////////////
 
 		private function drawCircle ():void
 		{
-			var p : Number;
-			p = 20;
+			var pv : Number;
+			pv = 12;
+
+			var pp : Number
+			pp = 5;
 
 			var cr : Number;
-			cr = circleRadius - progressVal * p;
+			cr = circleRadius - ( progressVal * pv ) - ( progressPop  * pp );
 
 			var cw : Number;
-			cw = circleWidth + progressVal * p * 2;
+			cw = circleWidth + ( progressVal * pv * 2 ) + ( progressPop * pp * 2 );
 
 			circle.graphics.clear();
 			circle.graphics.beginFill( 0xFFFFFF );
