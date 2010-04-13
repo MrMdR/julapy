@@ -1,5 +1,7 @@
 package com.julapy.ph.hair.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.holler.core.View;
 	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
@@ -11,6 +13,8 @@ package com.julapy.ph.hair.view
 	import com.julapy.ph.hair.model.ModelLocator;
 	import com.julapy.ph.hair.vo.StyleVO;
 	import com.julapy.ph.vo.TrackerVO;
+
+	import fl.motion.easing.Quadratic;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -33,6 +37,7 @@ package com.julapy.ph.hair.view
 
 		private var toolPath		: MovieClip;
 		private var toolPathCircle	: MovieClip;
+		private var toolPathShowing	: Boolean = false;
 
 		private var isRightTool		: Boolean = false;
 		private var isInProximity	: Boolean = false;
@@ -161,7 +166,15 @@ package com.julapy.ph.hair.view
 				return;
 
 			tool = t;
-			tool.rotateToDropArea();
+
+			if( bVideoPlaying )
+			{
+				playInToolPath( true );
+			}
+			else
+			{
+				tool.rotateToDropArea();
+			}
 
 			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
@@ -172,6 +185,11 @@ package com.julapy.ph.hair.view
 				return;
 
 			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
+
+			if( bVideoPlaying )
+			{
+				playInToolPath( false );
+			}
 
 			t.scaleUp( false );
 			t.returnToMenu();
@@ -187,7 +205,6 @@ package com.julapy.ph.hair.view
 		{
 			if( bVideoPlaying )
 			{
-				drawToolPath();
 				positionToolAlongPath();
 			}
 			else
@@ -303,68 +320,81 @@ package com.julapy.ph.hair.view
 		//	USE TOOL WHILE VIDEO IS PLAYING.
 		/////////////////////////////////////////////
 
-		private function drawToolPath ():void
+		private function playInToolPath ( b : Boolean ):void
 		{
+			if( toolPathShowing == b )
+				return;
+
+			if( toolSelected == -1 )
+				return;
+
+			toolPathShowing = b;
+
 			var t : MenuToolView;
 			t = tools[ toolSelected ];
 
-			toolPath.graphics.clear();
-			toolPath.graphics.lineStyle( 1.0, 0xFFFFFF );
+			var toolPathWidth	: Number;
+			var toolPathHeight	: Number;
 
-			var bLineCircle : Boolean;
-			bLineCircle = false;
+			toolPathWidth	= t.toolPathRadiusX * 2;
+			toolPathHeight	= t.toolPathRadiusY * 2;
 
-			if( bLineCircle )
+			if( toolPathShowing )
 			{
-				var steps : int;
-				steps = 360;
+				toolPathCircle.visible	= true;
+				toolPathCircle.alpha	= 0;
 
-				var ang : int;
-				ang = (int)( steps * 1.0 );
+				toolPathCircle.x		= t.toolPathCenter.x;
+				toolPathCircle.y		= t.toolPathCenter.y;
+				toolPathCircle.width	= toolPathWidth  * 0.8;
+				toolPathCircle.height	= toolPathHeight * 0.8;
 
-				for( var i:int=0; i<ang+1; i++ )		// starts at top center and moves around clock wise.
-				{
-					var p : Point;
-					p	= new Point();
-					p.x =  Math.sin( ( i / steps ) * 2 * Math.PI ) * t.toolPathRadiusX + t.toolPathCenter.x;
-					p.y = -Math.cos( ( i / steps ) * 2 * Math.PI ) * t.toolPathRadiusY + t.toolPathCenter.y;
-
-					if( i == 0 )
+				Tweener.addTween
+				(
+					toolPathCircle,
 					{
-						toolPath.graphics.moveTo( p.x, p.y );
+						alpha		: 0.2,
+						width		: toolPathWidth,
+						height		: toolPathHeight,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
 					}
-					else
-					{
-						toolPath.graphics.lineTo( p.x, p.y );
-					}
-				}
+				);
 			}
 			else
 			{
-//				toolPath.graphics.drawEllipse
-//				(
-//					t.toolPathCenter.x - t.toolPathRadiusX,
-//					t.toolPathCenter.y - t.toolPathRadiusY,
-//					t.toolPathRadiusX * 2,
-//					t.toolPathRadiusY * 2
-//				);
-
-				toolPathCircle.visible	= true;
-				toolPathCircle.x		= t.toolPathCenter.x;
-				toolPathCircle.y		= t.toolPathCenter.y;
-				toolPathCircle.width	= t.toolPathRadiusX * 2;
-				toolPathCircle.height	= t.toolPathRadiusY * 2;
+				Tweener.addTween
+				(
+					toolPathCircle,
+					{
+						alpha		: 0.0,
+						width		: toolPathWidth  * 0.9,
+						height		: toolPathHeight * 0.9,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: hideToolPath
+					}
+				);
 			}
 		}
 
-		private function clearToolPath ():void
+		private function hideToolPath ():void
 		{
-			toolPath.graphics.clear();
 			toolPathCircle.visible = false;
 		}
 
 		private function positionToolAlongPath ():void
 		{
+			if( toolSelected == -1 )
+				return;
+
 			var area : Rectangle;
 			area = ModelLocator.getInstance().hairModel.videoIntRect;
 
@@ -502,15 +532,18 @@ package com.julapy.ph.hair.view
 
 			stopToolDrag( tools[ toolIndex ] );			// return tool back to menu after interactive video has finished.
 			restoreSelectedTool();
+			playInToolPath( false );
 			toolSelected = -1;
 
 			selectDropArea( stylePart );
 			selectToolCover( -1 );
-			clearToolPath();
 		}
 
 		private function toolChangeHandler ( e : ToolEvent ):void		// this happens when OF tool has changed.
 		{
+			if( !bEnabled )
+				return;
+
 			if( toolIndex >= 0 )
 			{
 				stopToolDrag( tools[ toolIndex ] );
@@ -542,6 +575,7 @@ package com.julapy.ph.hair.view
 			selectDropArea( -1 );
 			selectToolCover( toolIndex );
 			scaleToolForInteractiveVideo();
+			playInToolPath( true );
 		}
 
 		/////////////////////////////////////////////
