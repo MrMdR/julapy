@@ -8,6 +8,7 @@ package com.julapy.ph.hair.view
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.Point;
 
 	public class MenuToolView extends BtnView
 	{
@@ -16,6 +17,12 @@ package com.julapy.ph.hair.view
 		private var _sx : Number;
 		private var _sy : Number;
 		private var _ir	: Number;
+
+		protected var _toolPathCenter		: Point	 = new Point( 288, 288 );
+		protected var _toolPathRadiusX		: Number = 250;
+		protected var _toolPathRadiusY		: Number = 250;
+		protected var _toolPathEase			: Number = 0.2;
+		protected var _toolRotationEase		: Number = 0.2;
 
 		public function MenuToolView(sprite:Sprite=null)
 		{
@@ -33,6 +40,17 @@ package com.julapy.ph.hair.view
 		public function get sx ():Number { return _sx };
 		public function get sy ():Number { return _sy };
 		public function get ir ():Number { return _ir };
+
+		public function get toolPathCenter  	():Point  { return _toolPathCenter.clone() };
+		public function get toolPathRadiusX 	():Number { return _toolPathRadiusX };
+		public function get toolPathRadiusY 	():Number { return _toolPathRadiusY };
+		public function get toolPathEase    	():Number { return _toolPathEase };
+		public function get toolRotationEase    ():Number { return _toolRotationEase };
+
+		public function set angle ( value : Number ):void
+		{
+			//
+		}
 
 		public function returnToMenu ():void
 		{
