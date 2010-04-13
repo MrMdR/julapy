@@ -9,9 +9,10 @@ package com.julapy.ph.hair.view
 		{
 			super(sprite);
 
-			_toolPathCenter		= new Point( 288, 320 );
-			_toolPathRadiusX	= 255;
-			_toolPathRadiusY	= 340;
+			_toolPathCenter			= new Point( 288, 320 );
+			_toolPathRadiusX		= 255;
+			_toolPathRadiusY		= 340;
+			_toolDropAreaRotation	= 29.3;
 		}
 
 		public override function set angle ( a : Number ):void

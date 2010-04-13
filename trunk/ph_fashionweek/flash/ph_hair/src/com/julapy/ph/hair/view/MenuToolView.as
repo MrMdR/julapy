@@ -23,6 +23,7 @@ package com.julapy.ph.hair.view
 		protected var _toolPathRadiusY		: Number = 250;
 		protected var _toolPathEase			: Number = 0.2;
 		protected var _toolRotationEase		: Number = 0.2;
+		protected var _toolDropAreaRotation	: Number = 0;
 
 		public function MenuToolView(sprite:Sprite=null)
 		{
@@ -41,11 +42,12 @@ package com.julapy.ph.hair.view
 		public function get sy ():Number { return _sy };
 		public function get ir ():Number { return _ir };
 
-		public function get toolPathCenter  	():Point  { return _toolPathCenter.clone() };
-		public function get toolPathRadiusX 	():Number { return _toolPathRadiusX };
-		public function get toolPathRadiusY 	():Number { return _toolPathRadiusY };
-		public function get toolPathEase    	():Number { return _toolPathEase };
-		public function get toolRotationEase    ():Number { return _toolRotationEase };
+		public function get toolPathCenter  		():Point  { return _toolPathCenter.clone() };
+		public function get toolPathRadiusX 		():Number { return _toolPathRadiusX };
+		public function get toolPathRadiusY 		():Number { return _toolPathRadiusY };
+		public function get toolPathEase    		():Number { return _toolPathEase };
+		public function get toolRotationEase   		():Number { return _toolRotationEase };
+		public function get toolDropAreaRotation    ():Number { return _toolDropAreaRotation };
 
 		public function set angle ( value : Number ):void
 		{
@@ -64,6 +66,23 @@ package com.julapy.ph.hair.view
 					scaleY		: sy,
 					rotation	: ir,
 					time		: 0.3,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: null
+				}
+			);
+		}
+
+		public function rotateToDropArea ():void
+		{
+			Tweener.addTween
+			(
+				this,
+				{
+					rotation	: toolDropAreaRotation,
+					time		: 0.2,
 					delay		: 0.0,
 					transition	: Quadratic.easeOut,
 					onStart		: null,
