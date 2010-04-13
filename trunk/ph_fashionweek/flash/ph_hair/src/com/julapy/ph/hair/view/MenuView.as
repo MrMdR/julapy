@@ -482,6 +482,10 @@ package com.julapy.ph.hair.view
 			{
 				disable();
 
+				stopToolDrag( tools[ toolIndex ] );
+				restoreSelectedTool();
+				toolSelected = -1;
+
 				selectDropArea( -1 );
 			}
 		}
