@@ -591,7 +591,7 @@ package com.julapy.ph.hair.view
 			baseBmp.bitmapData.draw( circle, m, ct );
 			baseBmp.bitmapData.draw( cross, m, ct );
 
-			ghost.rotation -= 0.2;
+//			ghost.rotation -= 0.2;
 
 			drawCircle();
 			drawCross();

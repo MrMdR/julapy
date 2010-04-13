@@ -32,8 +32,7 @@ package com.julapy.ph.hair.view
 		private var toolProximity	: int = 100;
 
 		private var toolPath		: MovieClip;
-		private var toolPathRadiusX	: Number = 250;
-		private var toolPathRadiusY	: Number = 250;
+		private var toolPathCircle	: MovieClip;
 
 		private var isRightTool		: Boolean = false;
 		private var isInProximity	: Boolean = false;
@@ -45,7 +44,12 @@ package com.julapy.ph.hair.view
 		{
 			super(sprite);
 
-			toolPath = _sprite.getChildByName( "toolPath" ) as MovieClip;
+			toolPath				= _sprite.getChildByName( "toolPath" ) as MovieClip;
+			toolPathCircle			= toolPath.getChildByName( "circle" ) as MovieClip;
+			toolPathCircle.iw		= toolPathCircle.width;
+			toolPathCircle.ih		= toolPathCircle.height;
+			toolPathCircle.visible	= false;
+			toolPathCircle.alpha	= 0.2;
 
 			initDropAreas();
 			initTools();
@@ -80,9 +84,9 @@ package com.julapy.ph.hair.view
 		{
 			tools =
 			[
-				new MenuToolView( _sprite.getChildByName( "toolDryer" ) as MovieClip ),
-				new MenuToolView( _sprite.getChildByName( "toolCurler" ) as MovieClip ),
-				new MenuToolView( _sprite.getChildByName( "toolSpray" ) as MovieClip )
+				new MenuToolDryerView(  _sprite.getChildByName( "toolDryer" )  as MovieClip ),
+				new MenuToolCurlerView( _sprite.getChildByName( "toolCurler" ) as MovieClip ),
+				new MenuToolSprayTool(  _sprite.getChildByName( "toolSpray" )  as MovieClip )
 			];
 
 			for( var i:int=0; i<tools.length; i++ )
@@ -163,6 +167,9 @@ package com.julapy.ph.hair.view
 
 		private function stopToolDrag ( t : MenuToolView ):void
 		{
+			if( !t )
+				return;
+
 			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 
 			t.scaleUp( false );
@@ -297,6 +304,9 @@ package com.julapy.ph.hair.view
 
 		private function drawToolPath ():void
 		{
+			var t : MenuToolView;
+			t = tools[ toolSelected ];
+
 			toolPath.graphics.clear();
 			toolPath.graphics.lineStyle( 1.0, 0xFFFFFF );
 
@@ -315,8 +325,8 @@ package com.julapy.ph.hair.view
 				{
 					var p : Point;
 					p	= new Point();
-					p.x =  Math.sin( ( i / steps ) * 2 * Math.PI ) * toolPathRadiusX;
-					p.y = -Math.cos( ( i / steps ) * 2 * Math.PI ) * toolPathRadiusY;
+					p.x =  Math.sin( ( i / steps ) * 2 * Math.PI ) * t.toolPathRadiusX + t.toolPathCenter.x;
+					p.y = -Math.cos( ( i / steps ) * 2 * Math.PI ) * t.toolPathRadiusY + t.toolPathCenter.y;
 
 					if( i == 0 )
 					{
@@ -330,13 +340,26 @@ package com.julapy.ph.hair.view
 			}
 			else
 			{
-				toolPath.graphics.drawCircle( 0, 0, toolPathRadiusX );
+//				toolPath.graphics.drawEllipse
+//				(
+//					t.toolPathCenter.x - t.toolPathRadiusX,
+//					t.toolPathCenter.y - t.toolPathRadiusY,
+//					t.toolPathRadiusX * 2,
+//					t.toolPathRadiusY * 2
+//				);
+
+				toolPathCircle.visible	= true;
+				toolPathCircle.x		= t.toolPathCenter.x;
+				toolPathCircle.y		= t.toolPathCenter.y;
+				toolPathCircle.width	= t.toolPathRadiusX * 2;
+				toolPathCircle.height	= t.toolPathRadiusY * 2;
 			}
 		}
 
 		private function clearToolPath ():void
 		{
 			toolPath.graphics.clear();
+			toolPathCircle.visible = false;
 		}
 
 		private function positionToolAlongPath ():void
@@ -352,12 +375,6 @@ package com.julapy.ph.hair.view
 
 			var tx : int;
 			var ty : int;
-
-			var ease : Number;
-			ease = 0.5;
-
-			var t : MenuToolView;
-			t = tools[ toolSelected ];
 
 			if( ModelLocator.getInstance().ofDataModel.connected )
 			{
@@ -380,41 +397,9 @@ package com.julapy.ph.hair.view
 			p3 = p1.subtract( p2 );
 
 			var a : Number;
-			a = Math.atan2( p3.x, p3.y ); // * ( 180.0 / Math.PI );
+			a = Math.atan2( p3.x, p3.y );
 
-			var p : Point;
-			p = new Point();
-			p.x = -Math.sin( a ) * toolPathRadiusX + toolPath.x;
-			p.y = -Math.cos( a ) * toolPathRadiusY + toolPath.y;
-
-			t.x += ( p.x - t.x ) * ease;
-			t.y += ( p.y - t.y ) * ease;
-
-			var r : Number;
-			r = -a * ( 180.0 / Math.PI );
-			if( r < 0 || r > 180 )
-			{
-				if( t.scaleY > 0 )
-				{
-					t.scaleY *= -1;
-				}
-			}
-			else
-			{
-				if( t.scaleY < 0 )
-				{
-					t.scaleY *= -1;
-				}
-			}
-
-			var rOff : Array;
-			rOff = [ -90, 0, 0 ];
-
-			r += rOff[ toolSelected ];
-
-			t.rotation += ( r - t.rotation ) * ease;
-
-			t.doValidate();
+			( tools[ toolSelected ] as MenuToolView ).angle = a;
 		}
 
 		private function restoreSelectedTool ():void
@@ -425,7 +410,19 @@ package com.julapy.ph.hair.view
 			var t : MenuToolView;
 			t = tools[ toolSelected ];
 
-			t.rotateBackToNormal();
+//			t.rotateBackToNormal();
+			t.returnToMenu();
+		}
+
+		private function scaleToolForInteractiveVideo ():void
+		{
+			if( toolSelected == -1 )
+				return;
+
+			var t : MenuToolView;
+			t = tools[ toolSelected ];
+
+			t.scaleUp( false ); // scaling down here, but could be any scale.
 		}
 
 		/////////////////////////////////////////////
@@ -498,6 +495,7 @@ package com.julapy.ph.hair.view
 			var stylePart : int;
 			stylePart = ModelLocator.getInstance().hairModel.stylePart;
 
+			stopToolDrag( tools[ toolIndex ] );			// return tool back to menu after interactive video has finished.
 			restoreSelectedTool();
 			toolSelected = -1;
 
@@ -538,6 +536,7 @@ package com.julapy.ph.hair.view
 
 			selectDropArea( -1 );
 			selectToolCover( toolIndex );
+			scaleToolForInteractiveVideo();
 		}
 
 		/////////////////////////////////////////////
