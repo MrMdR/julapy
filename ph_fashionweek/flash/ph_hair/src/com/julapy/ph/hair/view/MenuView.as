@@ -161,6 +161,7 @@ package com.julapy.ph.hair.view
 				return;
 
 			tool = t;
+			tool.rotateToDropArea();
 
 			_sprite.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 		}
