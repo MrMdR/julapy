@@ -3,6 +3,7 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.reintroducing.sound.SoundManager;
         	import com.julapy.ph.hair.model.ModelLocator;
         	import com.julapy.ph.hair.view.ApplicationView;
         	import com.holler.assets.AssetGroupVOEvent;
@@ -64,7 +65,20 @@
 				assetLoader.addAsset( "assets/assets_video_07.swf",	"assets",	"video_07"	);		// girl two, style two
 				assetLoader.addAsset( "assets/assets_video_08.swf",	"assets",	"video_08"	);
 
+				assetLoader.addAsset( "assets/assets_sound.swf",	"assets",	"sounds"	);
+
 				assetLoader.loadAssets( "assets", false );
+			}
+
+			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
+			{
+				initSounds();
+				initApp();
+			}
+
+			private function initSounds ():void
+			{
+				ModelLocator.getInstance().soundModel.init();
 			}
 
 			private function initApp ():void
@@ -75,11 +89,6 @@
 				app = new ApplicationView( asset );
 
 				stageResize( stage.stageWidth, stage.stageHeight );
-			}
-
-			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
-			{
-				initApp();
 			}
 
 			private function stageResizeHandler ( e : StageSizeEvent ):void
