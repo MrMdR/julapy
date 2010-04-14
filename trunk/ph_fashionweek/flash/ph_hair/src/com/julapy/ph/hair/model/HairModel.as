@@ -7,10 +7,12 @@ package com.julapy.ph.hair.model
 	import com.julapy.ph.hair.events.StyleEvent;
 	import com.julapy.ph.hair.events.StylePartEvent;
 	import com.julapy.ph.hair.events.ToolEvent;
+	import com.julapy.ph.hair.events.ToolPathEvent;
 	import com.julapy.ph.hair.vo.GirlVO;
 	import com.julapy.ph.hair.vo.StyleVO;
 
 	import flash.events.EventDispatcher;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
 
@@ -358,6 +360,15 @@ package com.julapy.ph.hair.model
 		public function dropAreaPlayedOut ():void
 		{
 			dispatchEvent( new DropAreaEvent( DropAreaEvent.DROP_AREA_PLAYED_OUT ) );
+		}
+
+		/////////////////////////////////////
+		//	TOOL PATH
+		/////////////////////////////////////
+
+		public function updateToolPathPosition ( p : Point ):void
+		{
+			dispatchEvent( new ToolPathEvent( p.clone() ) );
 		}
 	}
 }

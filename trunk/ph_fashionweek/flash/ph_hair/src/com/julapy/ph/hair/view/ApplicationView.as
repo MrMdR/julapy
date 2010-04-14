@@ -35,7 +35,7 @@ package com.julapy.ph.hair.view
 			model.girl		= HairModel.GIRL_ONE;
 			model.style		= HairModel.STYLE_ONE;
 			model.section	= HairModel.SECTION_INTRO;
-			model.stylePart	= HairModel.STYLE_PART_ONE;
+			model.stylePart	= HairModel.STYLE_PART_THREE;
 		}
 
 		private function initModel ():void
