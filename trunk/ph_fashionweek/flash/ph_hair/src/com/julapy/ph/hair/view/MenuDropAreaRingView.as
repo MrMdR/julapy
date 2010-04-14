@@ -19,13 +19,16 @@ package com.julapy.ph.hair.view
 		private var bOver	: Boolean = false;
 		private var bCross	: Boolean = false;
 
-		private var mc		: MovieClip;
-		private var ring	: MovieClip;
-		private var ring0	: MovieClip;
-		private var ring1	: MovieClip;
-		private var ring2	: MovieClip;
+		private var mc			: MovieClip;
+		private var ring		: MovieClip;
+		private var ring0		: MovieClip;
+		private var ring1		: MovieClip;
+		private var ringOver0	: MovieClip;
+		private var ringOver1	: MovieClip;
+		private var ringMask0	: MovieClip;
+		private var ringMask1	: MovieClip;
 
-		private var scl		: Point = new Point();
+		private var scl		: Point;
 
 		private var ringRotation		: Number = 1;
 		private var ringRotationTarget	: Number = 1;
@@ -40,10 +43,16 @@ package com.julapy.ph.hair.view
 			mc = _sprite as MovieClip;
 			mc.gotoAndStop( 1 );
 
-			ring	= mc.getChildByName( "ring" ) as MovieClip;
-			ring0	= ring.getChildByName( "ring0" ) as MovieClip;
-			ring1	= ring.getChildByName( "ring1" ) as MovieClip;
-			ring2	= ring.getChildByName( "ring2" ) as MovieClip;
+			ring		= mc.getChildByName( "ring" ) as MovieClip;
+			ring0		= ring.getChildByName( "ring0" ) as MovieClip;
+			ring1		= ring.getChildByName( "ring1" ) as MovieClip;
+			ringOver0	= ring.getChildByName( "ringOver0" ) as MovieClip;
+			ringOver1	= ring.getChildByName( "ringOver1" ) as MovieClip;
+			ringMask0	= ring.getChildByName( "ringMask0" ) as MovieClip;
+			ringMask1	= ring.getChildByName( "ringMask1" ) as MovieClip;
+
+			ringOver0.mask = ringMask0;
+			ringOver1.mask = ringMask1;
 
 			visible = false;
 			doValidate();
@@ -71,7 +80,7 @@ package com.julapy.ph.hair.view
 			}
 			else
 			{
-				ring.play();
+				mc.play();
 			}
 		}
 
@@ -116,6 +125,36 @@ package com.julapy.ph.hair.view
 			{
 				ringRotationTarget = 0.75;
 			}
+		}
+
+		public function reset ():void
+		{
+			mc.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
+
+			bShow	= false;
+			bInit	= false;
+			bOver	= false;
+			bCross	= false;
+
+			ringRotation		= 1;
+			ringRotationTarget	= 1;
+			ringCharge			= 0;
+
+			clearCharge();
+
+			Tweener.removeTweens( this );
+			Tweener.removeTweens( mc );
+
+			if( scl )
+			{
+				mc.scaleX = scl.x;
+				mc.scaleY = scl.y;
+			}
+
+			mc.gotoAndStop( 1 );
+
+			visible = false;
+			doValidate();
 		}
 
 		///////////////////////////////////////////////////
@@ -236,9 +275,13 @@ package com.julapy.ph.hair.view
 
 		private function drawCharge ():void
 		{
-			ring2.graphics.clear();
-			ring2.graphics.beginFill( 0xFF00FF );
-			ring2.graphics.moveTo( 0, 0 );
+			ringMask0.graphics.clear();
+			ringMask0.graphics.beginFill( 0xFF00FF );
+			ringMask0.graphics.moveTo( 0, 0 );
+
+			ringMask1.graphics.clear();
+			ringMask1.graphics.beginFill( 0xFF00FF );
+			ringMask1.graphics.moveTo( 0, 0 );
 
 			var radius : Number;
 			radius = 250;
@@ -249,23 +292,38 @@ package com.julapy.ph.hair.view
 			var ang : int;
 			ang = (int)( steps * ringCharge );
 
-			for( var i:int=0; i<ang+1; i++ )
+			var i : int;
+			var p : Point;
+
+			for( i=0; i<ang+1; i++ )
 			{
-				var p : Point;
 				p	= new Point();
 				p.x =  Math.sin( ( i / steps ) * 2 * Math.PI ) * radius;
 				p.y = -Math.cos( ( i / steps ) * 2 * Math.PI ) * radius;
 
-				ring2.graphics.lineTo( p.x, p.y );
+				ringMask0.graphics.lineTo( p.x, p.y );
 			}
 
-			ring2.graphics.moveTo( 0, 0 );
-			ring2.graphics.endFill();
+			for( i=0; i<ang+1; i++ )
+			{
+				p	= new Point();
+				p.x = -Math.sin( ( i / steps ) * 2 * Math.PI ) * radius;
+				p.y = -Math.cos( ( i / steps ) * 2 * Math.PI ) * radius;
+
+				ringMask1.graphics.lineTo( p.x, p.y );
+			}
+
+			ringMask0.graphics.moveTo( 0, 0 );
+			ringMask0.graphics.endFill();
+
+			ringMask1.graphics.moveTo( 0, 0 );
+			ringMask1.graphics.endFill();
 		}
 
 		private function clearCharge ():void
 		{
-			ring2.graphics.clear();
+			ringMask0.graphics.clear();
+			ringMask1.graphics.clear();
 		}
 
 		///////////////////////////////////////////////////
@@ -276,8 +334,10 @@ package com.julapy.ph.hair.view
 		{
 			ringRotation += ( ringRotationTarget - ringRotation ) * ringRotationEase;
 
-			ring0.rotation += ringRotation;
-			ring1.rotation -= ringRotation;
+			ring0.rotation		+= ringRotation;
+			ringOver0.rotation	+= ringRotation;
+			ring1.rotation		-= ringRotation;
+			ringOver1.rotation	-= ringRotation;
 
 			if( mc.currentFrame == 9 )
 			{
@@ -285,8 +345,12 @@ package com.julapy.ph.hair.view
 				{
 					bInit = true;
 
-					scl.x = mc.scaleX;
-					scl.y = mc.scaleY;
+					if( !scl )
+					{
+						scl		= new Point();
+						scl.x	= mc.scaleX;
+						scl.y	= mc.scaleY;
+					}
 
 					mc.stop();
 				}
@@ -294,10 +358,9 @@ package com.julapy.ph.hair.view
 
 			if( mc.currentFrame == mc.totalFrames )
 			{
-				mc.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
+				reset();
 
-				visible = false;
-				doValidate();
+				ModelLocator.getInstance().hairModel.dropAreaPlayedOut();
 			}
 		}
 

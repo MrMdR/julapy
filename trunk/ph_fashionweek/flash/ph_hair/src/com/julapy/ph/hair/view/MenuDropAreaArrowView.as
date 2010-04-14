@@ -19,6 +19,11 @@ package com.julapy.ph.hair.view
 			doValidate();
 		}
 
+		public function reset ():void
+		{
+			//
+		}
+
 		public function show ( b : Boolean ):void
 		{
 			if( b )

@@ -35,8 +35,7 @@ package com.julapy.ph.hair.view
 		private var toolSelected	: int = -1;
 		private var toolProximity	: int = 100;
 
-		private var toolPath		: MovieClip;
-		private var toolPathCircle	: MovieClip;
+		private var toolPath		: MenuToolPathView;
 		private var toolPathShowing	: Boolean = false;
 
 		private var isRightTool		: Boolean = false;
@@ -49,12 +48,7 @@ package com.julapy.ph.hair.view
 		{
 			super(sprite);
 
-			toolPath				= _sprite.getChildByName( "toolPath" ) as MovieClip;
-			toolPathCircle			= toolPath.getChildByName( "circle" ) as MovieClip;
-			toolPathCircle.iw		= toolPathCircle.width;
-			toolPathCircle.ih		= toolPathCircle.height;
-			toolPathCircle.visible	= false;
-			toolPathCircle.alpha	= 0.2;
+			toolPath = new MenuToolPathView( _sprite.getChildByName( "toolPath" ) as MovieClip );
 
 			initDropAreas();
 			initTools();
@@ -336,53 +330,20 @@ package com.julapy.ph.hair.view
 
 			if( toolPathShowing )
 			{
-				toolPathCircle.visible	= true;
-				toolPathCircle.alpha	= 0;
-
-				toolPathCircle.x		= t.toolPathCenter.x;
-				toolPathCircle.y		= t.toolPathCenter.y;
-				toolPathCircle.width	= toolPathWidth  * 0.8;
-				toolPathCircle.height	= toolPathHeight * 0.8;
-
-				Tweener.addTween
+				toolPath.setPath
 				(
-					toolPathCircle,
-					{
-						alpha		: 0.2,
-						width		: toolPathWidth,
-						height		: toolPathHeight,
-						time		: 0.2,
-						delay		: 0.0,
-						transition	: Quadratic.easeOut,
-						onStart		: null,
-						onUpdate	: null,
-						onComplete	: null
-					}
+					t.toolPathCenter.x,
+					t.toolPathCenter.y,
+					toolPathWidth,
+					toolPathHeight
 				);
+
+				toolPath.show( true );
 			}
 			else
 			{
-				Tweener.addTween
-				(
-					toolPathCircle,
-					{
-						alpha		: 0.0,
-						width		: toolPathWidth  * 0.9,
-						height		: toolPathHeight * 0.9,
-						time		: 0.2,
-						delay		: 0.0,
-						transition	: Quadratic.easeOut,
-						onStart		: null,
-						onUpdate	: null,
-						onComplete	: hideToolPath
-					}
-				);
+				toolPath.show( false );
 			}
-		}
-
-		private function hideToolPath ():void
-		{
-			toolPathCircle.visible = false;
 		}
 
 		private function positionToolAlongPath ():void
