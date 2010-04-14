@@ -25,7 +25,7 @@ package com.julapy.ph.hair.view
 
 	public class MenuView extends View
 	{
-		private var dropArea		: MenuDropareaView;
+		private var dropArea		: MenuDropAreaView;
 		private var dropAreas		: Array = new Array();
 
 		private var tool			: MenuToolView;
@@ -64,25 +64,20 @@ package com.julapy.ph.hair.view
 			ModelLocator.getInstance().hairModel.addEventListener( SectionEvent.SECTION_CHANGE,			sectionChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( StylePartEvent.STYLE_PART_CHANGE,	stylePartChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( ToolEvent.TOOL_CHANGE,				toolChangeHandler );
+
+			ModelLocator.getInstance().hairModel.addEventListener( DropAreaEvent.DROP_AREA_PLAYED_IN,	dropAreaPlayedInHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( DropAreaEvent.DROP_AREA_PLAYED_OUT,	dropAreaPlayedOutHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( DropAreaEvent.DROP_AREA_CHARGED, 	dropAreaChargedHandler );
 		}
 
 		private function initDropAreas ():void
 		{
 			dropAreas =
 			[
-				new MenuDropareaView( _sprite.getChildByName( "dropAreaDryer" ) as MovieClip ),
-				new MenuDropareaView( _sprite.getChildByName( "dropAreaCurlers" ) as MovieClip ),
-				new MenuDropareaView( _sprite.getChildByName( "dropAreaSpray" ) as MovieClip )
+				new MenuDropAreaView( _sprite.getChildByName( "dropAreaDryer" ) as MovieClip ),
+				new MenuDropAreaView( _sprite.getChildByName( "dropAreaCurlers" ) as MovieClip ),
+				new MenuDropAreaView( _sprite.getChildByName( "dropAreaSpray" ) as MovieClip )
 			];
-
-			for( var i:int=0; i<dropAreas.length; i++ )
-			{
-				var d : MenuDropareaView;
-				d = dropAreas[ i ] as MenuDropareaView;
-
-				d.addEventListener( DropAreaEvent.DROP_AREA_COMPLETE,	dropAreaCompleteHandler );
-				d.addEventListener( DropAreaEvent.DROP_AREA_PLAYED_OUT, dropAreaPlayedOutHandler );
-			}
 		}
 
 		private function initTools ():void
@@ -127,8 +122,8 @@ package com.julapy.ph.hair.view
 
 			for( var i:int=0; i<dropAreas.length; i++ )
 			{
-				var da : MenuDropareaView;
-				da = dropAreas[ i ] as MenuDropareaView;
+				var da : MenuDropAreaView;
+				da = dropAreas[ i ] as MenuDropAreaView;
 
 				var match : Boolean;
 				match = ( i == id );
@@ -557,13 +552,13 @@ package com.julapy.ph.hair.view
 			}
 		}
 
-		/////////////////////////////////////////////
-		//	DROP AREA HANDLERS.
-		/////////////////////////////////////////////
+		///////////////////////////////////////////////////
+		//	MODEL HANDLERS.
+		///////////////////////////////////////////////////
 
-		private function dropAreaCompleteHandler ( e : DropAreaEvent ):void
+		private function dropAreaPlayedInHandler ( e : DropAreaEvent ):void
 		{
-			toolSelected = toolIndex;
+			//
 		}
 
 		private function dropAreaPlayedOutHandler ( e : DropAreaEvent ):void
@@ -576,6 +571,11 @@ package com.julapy.ph.hair.view
 			selectToolCover( toolIndex );
 			scaleToolForInteractiveVideo();
 			playInToolPath( true );
+		}
+
+		private function dropAreaChargedHandler ( e : DropAreaEvent ):void
+		{
+			toolSelected = toolIndex;
 		}
 
 		/////////////////////////////////////////////
@@ -606,6 +606,5 @@ package com.julapy.ph.hair.view
 				stopToolDrag( tools[ toolIndex ] as MenuToolView );
 			}
 		}
-
 	}
 }

@@ -124,7 +124,7 @@ package com.julapy.ph.hair.view
 				(
 					cover,
 					{
-						alpha			: 0.5,
+						alpha			: 0.3,
 						time			: 0.3,
 						delay			: 0.0,
 						transition		: Quadratic.easeOut,
