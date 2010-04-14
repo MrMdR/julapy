@@ -21,6 +21,14 @@ package com.julapy.ph.hair.view
 
 			scl.x = _sprite.scaleX;
 			scl.y = _sprite.scaleY;
+
+			visible = false;
+			doValidate();
+		}
+
+		public function reset ():void
+		{
+			//
 		}
 
 		public function show ( b : Boolean ):void
@@ -32,6 +40,7 @@ package com.julapy.ph.hair.view
 
 			if( bShow )
 			{
+				visible	= true;
 				alpha	= 0;
 				scaleX	= scl.x * 0.3;
 				scaleY	= scl.y * 0.3;
@@ -78,7 +87,8 @@ package com.julapy.ph.hair.view
 
 		private function hideCompleteHandler ():void
 		{
-			ModelLocator.getInstance().hairModel.dropAreaPlayedOut();
+			visible = false;
+			doValidate();
 		}
 
 	}
