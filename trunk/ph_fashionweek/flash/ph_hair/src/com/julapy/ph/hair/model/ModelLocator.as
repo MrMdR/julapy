@@ -9,6 +9,7 @@ package com.julapy.ph.hair.model
 		public var commonModel	: CommonModel;
 		public var hairModel	: HairModel;
 		public var ofDataModel	: OFDataHairModel;
+		public var soundModel	: SoundModel;
 
 		public function ModelLocator()
 		{
@@ -22,6 +23,7 @@ package com.julapy.ph.hair.model
 			commonModel	= new CommonModel();
 			hairModel	= new HairModel();
 			ofDataModel	= new OFDataHairModel();
+			soundModel	= new SoundModel();
 		}
 
 		public static function getInstance() : ModelLocator

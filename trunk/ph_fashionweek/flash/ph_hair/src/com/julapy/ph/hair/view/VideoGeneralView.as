@@ -118,12 +118,16 @@ package com.julapy.ph.hair.view
 					videoID = styleVO.outro;
 				}
 
+				ModelLocator.getInstance().soundModel.playGeneralVideoSound( girl, sec, style );
+
 				killVideo();
 				initVideo();
 			}
 			else
 			{
 				disable();
+
+				ModelLocator.getInstance().soundModel.stopAllSounds();
 
 				killVideo();
 			}
