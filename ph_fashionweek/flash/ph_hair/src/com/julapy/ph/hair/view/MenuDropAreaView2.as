@@ -11,7 +11,7 @@ package com.julapy.ph.hair.view
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 
-	public class MenuDropAreaView extends View
+	public class MenuDropAreaView2 extends View
 	{
 		private var base			: MovieClip;
 
@@ -30,7 +30,7 @@ package com.julapy.ph.hair.view
 		private var _circleRadius		: Number = 0;
 		private var _circleWidth		: Number = 0;
 
-		public function MenuDropAreaView(sprite:Sprite=null)
+		public function MenuDropAreaView2(sprite:Sprite=null)
 		{
 			super(sprite);
 
@@ -86,7 +86,9 @@ package com.julapy.ph.hair.view
 
 		public function reset ():void
 		{
-			// reset rings etc.
+			ghost.reset();
+			ring.reset();
+			arrows.reset();
 		}
 
 		public function over ( b : Boolean ):void
