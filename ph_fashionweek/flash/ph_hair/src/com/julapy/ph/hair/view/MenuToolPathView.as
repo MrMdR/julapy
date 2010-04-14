@@ -2,6 +2,7 @@ package com.julapy.ph.hair.view
 {
 	import caurina.transitions.Tweener;
 
+	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
 
 	import fl.motion.easing.Quadratic;
@@ -16,6 +17,9 @@ package com.julapy.ph.hair.view
 		private var center	: Point = new Point();
 		private var size	: Point = new Point();
 
+		private var noDots	: int = 80;
+		private var dots	: Array = new Array();
+
 		private var circle	: MovieClip;
 
 		public function MenuToolPathView(sprite:Sprite=null)
@@ -23,10 +27,7 @@ package com.julapy.ph.hair.view
 			super(sprite);
 
 			circle			= _sprite.getChildByName( "circle" ) as MovieClip;
-			circle.iw		= circle.width;
-			circle.ih		= circle.height;
 			circle.visible	= false;
-			circle.alpha	= 0.2;
 		}
 
 		public function setPath ( cx : Number, cy : Number, rx : Number, ry : Number ):void
@@ -34,8 +35,43 @@ package com.julapy.ph.hair.view
 			center.x = cx;
 			center.y = cy;
 
-			size.x = rx;
-			size.y = ry;
+			size.x = rx * 0.5;
+			size.y = ry * 0.5;
+
+			circle.x = center.x;
+			circle.y = center.y;
+
+			removeDots();
+			addDots();
+		}
+
+		private function addDots ():void
+		{
+			for( var i:int=0; i<noDots; i++ )
+			{
+				var dot : MovieClip;
+				dot = AssetLoader.getInstance().getClassInstance( "hair.menu.tool.path.dot" ) as MovieClip;
+
+				circle.addChild( dot );
+
+				dot.x =  Math.sin( ( i / noDots ) * 2 * Math.PI ) * size.x;
+				dot.y = -Math.cos( ( i / noDots ) * 2 * Math.PI ) * size.y;
+
+				dots.push( dot );
+			}
+		}
+
+		private function removeDots ():void
+		{
+			for( var i:int=0; i<dots.length; i++ )
+			{
+				var dot : MovieClip;
+				dot = dots[ i ] as MovieClip;
+
+				circle.removeChild( dot );
+			}
+
+			dots = new Array();
 		}
 
 		public function show ( b : Boolean ):void
@@ -49,19 +85,16 @@ package com.julapy.ph.hair.view
 			{
 				circle.visible	= true;
 				circle.alpha	= 0;
-
-				circle.x		= center.x;
-				circle.y		= center.y;
-				circle.width	= size.x * 0.8;
-				circle.height	= size.y * 0.8;
+				circle.scaleX	= 0.8;
+				circle.scaleY	= 0.8;
 
 				Tweener.addTween
 				(
 					circle,
 					{
-						alpha		: 0.2,
-						width		: size.x,
-						height		: size.y,
+						alpha		: 0.4,
+						scaleX		: 1.0,
+						scaleY		: 1.0,
 						time		: 0.2,
 						delay		: 0.0,
 						transition	: Quadratic.easeOut,
@@ -78,8 +111,8 @@ package com.julapy.ph.hair.view
 					circle,
 					{
 						alpha		: 0.0,
-						width		: size.x  * 0.9,
-						height		: size.y * 0.9,
+						scaleX		: 0.9,
+						scaleY		: 0.9,
 						time		: 0.2,
 						delay		: 0.0,
 						transition	: Quadratic.easeOut,

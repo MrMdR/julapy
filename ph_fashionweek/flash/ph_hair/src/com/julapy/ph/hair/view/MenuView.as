@@ -1,7 +1,5 @@
 package com.julapy.ph.hair.view
 {
-	import caurina.transitions.Tweener;
-
 	import com.holler.core.View;
 	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
@@ -13,8 +11,6 @@ package com.julapy.ph.hair.view
 	import com.julapy.ph.hair.model.ModelLocator;
 	import com.julapy.ph.hair.vo.StyleVO;
 	import com.julapy.ph.vo.TrackerVO;
-
-	import fl.motion.easing.Quadratic;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -38,6 +34,8 @@ package com.julapy.ph.hair.view
 		private var toolPath		: MenuToolPathView;
 		private var toolPathShowing	: Boolean = false;
 
+		private var toolAnim		: MenuToolAnimView;
+
 		private var isRightTool		: Boolean = false;
 		private var isInProximity	: Boolean = false;
 
@@ -48,7 +46,8 @@ package com.julapy.ph.hair.view
 		{
 			super(sprite);
 
-			toolPath = new MenuToolPathView( _sprite.getChildByName( "toolPath" ) as MovieClip );
+			toolPath	= new MenuToolPathView( _sprite.getChildByName( "toolPath" ) as MovieClip );
+			toolAnim	= new MenuToolAnimView( _sprite.getChildByName( "toolAnim" ) as MovieClip );
 
 			initDropAreas();
 			initTools();
@@ -159,6 +158,7 @@ package com.julapy.ph.hair.view
 			if( bVideoPlaying )
 			{
 				playInToolPath( true );
+				playToolAnim( true );
 			}
 			else
 			{
@@ -178,6 +178,7 @@ package com.julapy.ph.hair.view
 			if( bVideoPlaying )
 			{
 				playInToolPath( false );
+				playToolAnim( false );
 			}
 
 			t.scaleUp( false );
@@ -412,6 +413,24 @@ package com.julapy.ph.hair.view
 			t.scaleUp( false ); // scaling down here, but could be any scale.
 		}
 
+		private function playToolAnim ( b : Boolean ):void
+		{
+			if( toolSelected == -1 )
+				return;
+
+			var t : MenuToolView;
+			t = tools[ toolSelected ];
+
+			if( b )
+			{
+				t.playToolAnim();
+			}
+			else
+			{
+				t.stopToolAnim();
+			}
+		}
+
 		/////////////////////////////////////////////
 		//	ENABLE.
 		/////////////////////////////////////////////
@@ -489,6 +508,7 @@ package com.julapy.ph.hair.view
 			stopToolDrag( tools[ toolIndex ] );			// return tool back to menu after interactive video has finished.
 			restoreSelectedTool();
 			playInToolPath( false );
+			playToolAnim( false );
 			toolSelected = -1;
 
 			selectDropArea( stylePart );
@@ -532,6 +552,7 @@ package com.julapy.ph.hair.view
 			selectToolCover( toolIndex );
 			scaleToolForInteractiveVideo();
 			playInToolPath( true );
+			playToolAnim( true );
 		}
 
 		private function dropAreaChargedHandler ( e : DropAreaEvent ):void

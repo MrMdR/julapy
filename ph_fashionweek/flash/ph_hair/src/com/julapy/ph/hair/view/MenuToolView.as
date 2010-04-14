@@ -3,6 +3,7 @@ package com.julapy.ph.hair.view
 	import caurina.transitions.Tweener;
 
 	import com.holler.controls.BtnView;
+	import com.julapy.ph.hair.model.ModelLocator;
 
 	import fl.motion.easing.Quadratic;
 
@@ -25,6 +26,8 @@ package com.julapy.ph.hair.view
 		protected var _toolRotationEase		: Number = 0.2;
 		protected var _toolDropAreaRotation	: Number = 0;
 
+		private var anim : MovieClip;
+
 		public function MenuToolView(sprite:Sprite=null)
 		{
 			super(sprite);
@@ -34,6 +37,8 @@ package com.julapy.ph.hair.view
 			_sx = ( _sprite as MovieClip ).scaleX;
 			_sy = ( _sprite as MovieClip ).scaleY;
 			_ir = ( _sprite as MovieClip ).rotation;
+
+			initToolAnim();
 		}
 
 		public function get ix ():Number { return _ix };
@@ -52,6 +57,11 @@ package com.julapy.ph.hair.view
 		public function set angle ( value : Number ):void
 		{
 			//
+		}
+
+		protected function updateModelWithPosition ():void
+		{
+			ModelLocator.getInstance().hairModel.updateToolPathPosition( new Point( x, y ) );
 		}
 
 		public function returnToMenu ():void
@@ -155,5 +165,27 @@ package com.julapy.ph.hair.view
 			doValidate();
 		}
 
+		////////////////////////////////////
+		//	TOOL ANIM.
+		////////////////////////////////////
+
+		private function initToolAnim ():void
+		{
+			anim = _sprite.getChildByName( "anim" ) as MovieClip;
+			anim.gotoAndStop( 1 );
+			anim.visible = false;
+		}
+
+		public function stopToolAnim ():void
+		{
+			anim.gotoAndStop( 1 );
+			anim.visible = false;
+		}
+
+		public function playToolAnim ():void
+		{
+			anim.play();
+			anim.visible = true;
+		}
 	}
 }

@@ -51,6 +51,8 @@ package com.julapy.ph.hair.view
 			rotation += ( r - rotation ) * toolRotationEase;
 
 			doValidate();
+
+			updateModelWithPosition();
 		}
 	}
 }
