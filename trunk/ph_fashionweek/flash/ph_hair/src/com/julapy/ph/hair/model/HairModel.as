@@ -1,5 +1,6 @@
 package com.julapy.ph.hair.model
 {
+	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
 	import com.julapy.ph.hair.events.MenuEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
@@ -338,6 +339,25 @@ package com.julapy.ph.hair.model
 		public function get tool ():int
 		{
 			return _tool;
+		}
+
+		/////////////////////////////////////
+		//	DROP AREA.
+		/////////////////////////////////////
+
+		public function dropAreaCharged ():void
+		{
+			dispatchEvent( new DropAreaEvent( DropAreaEvent.DROP_AREA_CHARGED ) );
+		}
+
+		public function dropAreaPlayedIn ():void
+		{
+			dispatchEvent( new DropAreaEvent( DropAreaEvent.DROP_AREA_PLAYED_IN ) );
+		}
+
+		public function dropAreaPlayedOut ():void
+		{
+			dispatchEvent( new DropAreaEvent( DropAreaEvent.DROP_AREA_PLAYED_OUT ) );
 		}
 	}
 }
