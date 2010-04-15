@@ -3,7 +3,9 @@ package com.julapy.ph.hair.view
 	import caurina.transitions.Tweener;
 
 	import com.holler.assets.AssetLoader;
+	import com.holler.controls.VideoView;
 	import com.holler.core.View;
+	import com.holler.events.VideoViewEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
 	import com.julapy.ph.hair.events.MenuEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
@@ -21,10 +23,17 @@ package com.julapy.ph.hair.view
 
 	public class VideoInteractiveView extends View
 	{
+		private var bEnabled	: Boolean = false;
+
 		private var videoHolder	: MovieClip;
 		private var video		: MovieClip;
 		private var videoID		: String = "";
 		private var cover		: MovieClip;
+
+		private var videoStream			: VideoView;
+		private var videoStreamHolder	: Sprite;
+
+		private var bUseTimelineVideo	: Boolean = false;
 
 		public function VideoInteractiveView(sprite:Sprite=null)
 		{
@@ -43,10 +52,10 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
-		//	VIDEO LOGIC.
+		//	TIMELINE VIDEO.
 		/////////////////////////////////////////////
 
-		private function initVideo ():void
+		private function initTimelineVideo ():void
 		{
 			video = AssetLoader.getInstance().getClassInstance( videoID ) as MovieClip
 			video.gotoAndStop( 1 );
@@ -54,7 +63,7 @@ package com.julapy.ph.hair.view
 			videoHolder.addChild( video );
 		}
 
-		private function killVideo ():void
+		private function killTimelineVideo ():void
 		{
 			if( video )
 			{
@@ -64,33 +73,91 @@ package com.julapy.ph.hair.view
 			}
 		}
 
-		private function playVideo ():void
+		private function playTimelineVideo ():void
 		{
 			if( video )
 			{
 				video.gotoAndPlay( 1 );
-				video.addEventListener( Event.ENTER_FRAME, videoEnterFrameHandler );
+				video.addEventListener( Event.ENTER_FRAME, timelineVideoEnterFrameHandler );
 			}
 		}
 
-		private function stopVideo ():void
+		private function stopTimelineVideo ():void
 		{
 			if( video )
 			{
-				video.removeEventListener( Event.ENTER_FRAME, videoEnterFrameHandler );
+				video.removeEventListener( Event.ENTER_FRAME, timelineVideoEnterFrameHandler );
 				video.stop();
 			}
 		}
 
-		private function videoEnterFrameHandler ( e : Event ):void
+		private function timelineVideoEnterFrameHandler ( e : Event ):void
 		{
 //			if( video.currentFrame == video.totalFrames )
 			if( video.currentFrame == 180 )
 			{
-				stopVideo();
+				stopTimelineVideo();
 
 				ModelLocator.getInstance().hairModel.nextStylePart();
 			}
+		}
+
+		/////////////////////////////////////////////
+		//	STREAM VIDEO.
+		/////////////////////////////////////////////
+
+		private function initStreamingVideo ():void
+		{
+			if( !videoStream )
+			{
+				videoHolder.addChild( videoStreamHolder = new Sprite() );
+
+				videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().hairModel.videoIntRect.clone() );
+				videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
+				videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
+				videoStream.videoURI = videoID;
+			}
+		}
+
+		private function killStreamingVideo ():void
+		{
+			if( videoStream )
+			{
+				videoHolder.removeChild( videoStreamHolder );
+
+				videoStream.removeEventListener( VideoViewEvent.READY,	videoStreamReadyHandler );
+				videoStream.removeEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
+				videoStream.paused		= false;
+				videoStream.container	= null;
+				videoStream				= null;
+				videoStreamHolder		= null;
+			}
+		}
+
+		private function playStreamingVideo ():void
+		{
+			if( videoStream )
+			{
+				videoStream.paused = false;
+			}
+		}
+
+		private function stopStreamingVideo ():void
+		{
+			if( videoStream )
+			{
+				videoStream.paused = true;
+			}
+		}
+
+		private function videoStreamReadyHandler ( e : VideoViewEvent ):void
+		{
+
+		}
+
+		private function videoStreamStopHandler ( e : VideoViewEvent ):void
+		{
+			ModelLocator.getInstance().hairModel.nextStylePart();
 		}
 
 		/////////////////////////////////////////////
@@ -99,13 +166,17 @@ package com.julapy.ph.hair.view
 
 		private function enable ():void
 		{
-			visible = true;
+			bEnabled	= true;
+
+			visible 	= true;
 			doValidate();
 		}
 
 		private function disable ():void
 		{
-			visible = false;
+			bEnabled	= false;
+
+			visible		= false;
 			doValidate();
 		}
 
@@ -179,8 +250,17 @@ package com.julapy.ph.hair.view
 			if( sec != HairModel.SECTION_PLAY )
 			{
 				disable();
-				stopVideo();
-				killVideo();
+
+				if( bUseTimelineVideo )
+				{
+					stopTimelineVideo();
+					killTimelineVideo();
+				}
+				else
+				{
+					stopStreamingVideo();
+					killStreamingVideo();
+				}
 
 				return;
 			}
@@ -197,16 +277,36 @@ package com.julapy.ph.hair.view
 			var playPart : int;
 			playPart = ModelLocator.getInstance().hairModel.stylePart;
 
-			videoID = styleVO.playParts[ playPart ];
+			if( bUseTimelineVideo )
+			{
+				videoID = styleVO.playParts[ playPart ];
+			}
+			else
+			{
+				videoID = styleVO.playStreams[ playPart ];
+			}
 
 			enable();
-			stopVideo();
-			killVideo();
-			initVideo();
+
+			if( bUseTimelineVideo )
+			{
+				stopTimelineVideo();
+				killTimelineVideo();
+				initTimelineVideo();
+			}
+			else
+			{
+				stopStreamingVideo();
+				killStreamingVideo();
+				initStreamingVideo();
+			}
 		}
 
 		private function stylePartChangeHandler ( e : StylePartEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			var girl : int;
 			girl	= ModelLocator.getInstance().hairModel.girl;
 
@@ -219,18 +319,42 @@ package com.julapy.ph.hair.view
 			var playPart : int;
 			playPart = ModelLocator.getInstance().hairModel.stylePart;
 
-			videoID = styleVO.playParts[ playPart ];
+			if( bUseTimelineVideo )
+			{
+				videoID = styleVO.playParts[ playPart ];
+			}
+			else
+			{
+				videoID = styleVO.playStreams[ playPart ];
+			}
 
-			stopVideo();
-			killVideo();
-			initVideo();
+			if( bUseTimelineVideo )
+			{
+				stopTimelineVideo();
+				killTimelineVideo();
+				initTimelineVideo();
+			}
+			else
+			{
+				stopStreamingVideo();
+				killStreamingVideo();
+				initStreamingVideo();
+			}
 
 			showCover( true );
 		}
 
 		private function menuSelectHandler ( e : MenuEvent ):void
 		{
-			playVideo();
+			if( bUseTimelineVideo )
+			{
+				playTimelineVideo();
+			}
+			else
+			{
+				playStreamingVideo();
+			}
+
 			showCover( false );
 		}
 	}

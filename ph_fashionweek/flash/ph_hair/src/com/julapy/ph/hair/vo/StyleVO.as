@@ -5,6 +5,7 @@ package com.julapy.ph.hair.vo
 		public var intro		: String;
 		public var outro		: String;
 		public var playParts	: Array = new Array();
+		public var playStreams	: Array = new Array();
 
 		public function StyleVO()
 		{
