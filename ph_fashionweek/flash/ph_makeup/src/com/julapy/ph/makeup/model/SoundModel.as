@@ -7,6 +7,8 @@ package com.julapy.ph.makeup.model
 	import com.julapy.ph.makeup.events.ZoomEvent;
 	import com.reintroducing.sound.SoundManager;
 
+	import flash.utils.getQualifiedClassName;
+
 	public class SoundModel
 	{
 		public static const BLACKOUT				: String = "makeup_18.mp3";
@@ -51,9 +53,6 @@ package com.julapy.ph.makeup.model
 		public static const SELECT_ANOTHER_TOOL_02	: String = "makeup_23.mp3";
 		public static const SELECT_ANOTHER_TOOL_03	: String = "makeup_24.mp3";
 
-		private var sm 		: SoundManager;
-		private var sounds	: Array = new Array();
-
 		private var finalLooks			: Array = new Array();
 		private var idleDoSomethign		: Array = new Array();
 		private var info				: Array = new Array();
@@ -61,6 +60,9 @@ package com.julapy.ph.makeup.model
 		private var instructions		: Array = new Array();
 		private var compliment			: Array = new Array();
 		private var selectAnotherTool	: Array = new Array();
+
+		private var sm 					: SoundManager;
+		private var sounds				: Array = new Array();
 
 		public function SoundModel()
 		{
@@ -183,7 +185,9 @@ package com.julapy.ph.makeup.model
 				soundID = sounds[ i ];
 
 				var SoundClass : Class;
-				SoundClass = AssetLoader.getInstance().getClassDefinitionByName( soundID )
+				SoundClass = AssetLoader.getInstance().getClassDefinitionByName( soundID );
+
+				trace( getQualifiedClassName( this ) + " :: loading sound :: " + soundID  );
 
 				sm.addLibrarySound( SoundClass, soundID );
 			}
@@ -207,6 +211,8 @@ package com.julapy.ph.makeup.model
 
 		private function sectionChangeHandler ( e : SectionEvent ):void
 		{
+			stopAllSounds();
+
 			if( e.section == MakeupModel.SECTION_INTRO )
 			{
 				playRandomIntro();
