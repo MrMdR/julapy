@@ -114,19 +114,27 @@ package com.julapy.ph.makeup.view
 				if( girl == MakeupModel.GIRL_ONE )
 				{
 					if( section == MakeupModel.SECTION_INTRO )
+					{
 						playVideo( 0 );
+					}
 
 					if( section == MakeupModel.SECTION_OUTRO )
+					{
 						playVideo( 1 );
+					}
 				}
 
 				if( girl == MakeupModel.GIRL_TWO )
 				{
 					if( section == MakeupModel.SECTION_INTRO )
+					{
 						playVideo( 2 );
+					}
 
 					if( section == MakeupModel.SECTION_OUTRO )
+					{
 						playVideo( 3 );
+					}
 				}
 
 				enable();

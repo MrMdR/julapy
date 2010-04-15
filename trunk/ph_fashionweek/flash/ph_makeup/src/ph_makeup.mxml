@@ -41,7 +41,19 @@
 				assetLoader.addAsset( "assets/assets_video_02.swf",	"assets",	"video_02"	);
 				assetLoader.addAsset( "assets/assets_video_03.swf",	"assets",	"video_03"	);
 				assetLoader.addAsset( "assets/assets_video_04.swf",	"assets",	"video_04"	);
+				assetLoader.addAsset( "assets/assets_sound.swf",	"assets",	"sound"		);
 				assetLoader.loadAssets( "assets", false );
+			}
+
+			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
+			{
+				initSound();
+				initApp();
+			}
+
+			private function initSound ():void
+			{
+				ModelLocator.getInstance().soundModel.init();
 			}
 
 			private function initApp ():void
@@ -52,11 +64,6 @@
 				app = new ApplicationView( asset );
 
 				stageResize( stage.stageWidth, stage.stageHeight );
-			}
-
-			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
-			{
-				initApp();
 			}
 
 			private function stageResizeHandler ( e : StageSizeEvent ):void
