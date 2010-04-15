@@ -9,6 +9,7 @@ package com.julapy.ph.makeup.model
 		public var commondModel	: CommonModel;
 		public var makeupModel	: MakeupModel;
 		public var ofDataModel	: OFDataMakeupModel;
+		public var soundModel	: SoundModel;
 
 		public function ModelLocator()
 		{
@@ -21,6 +22,7 @@ package com.julapy.ph.makeup.model
 			commondModel	= new CommonModel();
 			makeupModel		= new MakeupModel();
 			ofDataModel		= new OFDataMakeupModel();
+			soundModel		= new SoundModel();
 		}
 
 		public static function getInstance() : ModelLocator
