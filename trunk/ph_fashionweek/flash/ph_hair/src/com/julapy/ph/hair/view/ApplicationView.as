@@ -45,11 +45,12 @@ package com.julapy.ph.hair.view
 
 		private function initViews ():void
 		{
-			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
+
+			videoGen	= new VideoGeneralView( asset.getChildByName( "videoGen" ) as MovieClip );
 
 			videoInt	= new VideoInteractiveView( asset.getChildByName( "videoInt" ) as MovieClip );
 
-			videoGen	= new VideoGeneralView( asset.getChildByName( "videoGen" ) as MovieClip );
+			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
 			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
 			debug.visible = false;
