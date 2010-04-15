@@ -111,6 +111,12 @@ package com.julapy.ph.hair.model
 				"makeup.ivideo.g1.s1.02",
 				"makeup.ivideo.g1.s1.03"
 			];
+			s1.playStreams	=
+			[
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v"
+			];
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
@@ -121,6 +127,12 @@ package com.julapy.ph.hair.model
 				"makeup.ivideo.g1.s2.01",
 				"makeup.ivideo.g1.s2.02",
 				"makeup.ivideo.g1.s2.03"
+			];
+			s2.playStreams	=
+			[
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v"
 			];
 
 			vo.styles =
@@ -146,6 +158,12 @@ package com.julapy.ph.hair.model
 				"makeup.ivideo.g2.s1.02",
 				"makeup.ivideo.g2.s1.03"
 			];
+			s1.playStreams	=
+			[
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v"
+			];
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
@@ -156,6 +174,12 @@ package com.julapy.ph.hair.model
 				"makeup.ivideo.g2.s2.01",
 				"makeup.ivideo.g2.s2.02",
 				"makeup.ivideo.g2.s2.03"
+			];
+			s2.playStreams	=
+			[
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v",
+				"flv/A011_C073_576x768_10_mbps.f4v"
 			];
 
 			vo.styles =
