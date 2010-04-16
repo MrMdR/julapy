@@ -7,6 +7,7 @@ package com.julapy.ph.hair.view
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 
@@ -98,6 +99,18 @@ package com.julapy.ph.hair.view
 			if( e.keyCode == Keyboard.D )
 			{
 				debug.visible = !debug.visible;
+			}
+
+			if( e.keyCode == Keyboard.F )
+			{
+				if( asset.stage.displayState != StageDisplayState.FULL_SCREEN_INTERACTIVE )
+				{
+					asset.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				}
+				else
+				{
+					asset.stage.displayState = StageDisplayState.NORMAL;
+				}
 			}
 		}
 

@@ -31,7 +31,7 @@ package com.julapy.ph.hair.view
 			//
 		}
 
-		public function show ( b : Boolean ):void
+		public function show ( b : Boolean, delay : Number = 0 ):void
 		{
 			if( bShow == b )
 				return;
@@ -54,7 +54,7 @@ package com.julapy.ph.hair.view
 						scaleX			: scl.x,
 						scaleY			: scl.y,
 						time			: 0.3,
-						delay			: 0.2,
+						delay			: delay + 0.2,
 						transition		: Quadratic.easeOut,
 						onStart			: null,
 						onUpdate		: null,
@@ -70,7 +70,7 @@ package com.julapy.ph.hair.view
 					{
 						alpha			: 0.0,
 						time			: 0.3,
-						delay			: 0.0,
+						delay			: delay,
 						transition		: Quadratic.easeOut,
 						onStart			: null,
 						onUpdate		: null,

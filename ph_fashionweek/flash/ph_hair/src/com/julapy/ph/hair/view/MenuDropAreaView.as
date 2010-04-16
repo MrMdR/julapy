@@ -1,15 +1,13 @@
 package com.julapy.ph.hair.view
 {
-	import caurina.transitions.Tweener;
-
 	import com.holler.core.View;
 	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.model.ModelLocator;
 
-	import fl.motion.easing.Quadratic;
-
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
 
 	public class MenuDropAreaView extends View
 	{
@@ -29,6 +27,8 @@ package com.julapy.ph.hair.view
 		private var circleWidthFull		: Number = 25;
 		private var _circleRadius		: Number = 0;
 		private var _circleWidth		: Number = 0;
+
+		private var playInDelayIntv		: int;
 
 		public function MenuDropAreaView(sprite:Sprite=null)
 		{
@@ -67,9 +67,8 @@ package com.julapy.ph.hair.view
 
 				bPlayingIn = true;
 
-				ghost.show( true );
-				ring.show( true );
-				arrows.show( true );
+				clearInterval( playInDelayIntv );
+				playInDelayIntv = setInterval( playInDelay, 600 );
 			}
 			else
 			{
@@ -82,6 +81,15 @@ package com.julapy.ph.hair.view
 				ring.show( false );
 				arrows.show( false );
 			}
+		}
+
+		private function playInDelay ():void
+		{
+			clearInterval( playInDelayIntv );
+
+			ghost.show( true );
+			ring.show( true );
+			arrows.show( true );
 		}
 
 		public function reset ():void

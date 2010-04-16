@@ -150,12 +150,59 @@ package com.julapy.ph.hair.view
 			}
 		}
 
+		private function playInStreamingVideo ( b : Boolean ):void
+		{
+			if( b )
+			{
+				videoHolder.alpha = 0;
+
+				Tweener.addTween
+				(
+					videoHolder,
+					{
+						alpha		: 1.0,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+			}
+			else
+			{
+				Tweener.addTween
+				(
+					videoHolder,
+					{
+						alpha		: 0.0,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: playOutStreamingVideoCompleteHandler
+					}
+				);
+			}
+		}
+
 		private function videoStreamReadyHandler ( e : VideoViewEvent ):void
 		{
+			playInStreamingVideo( true );
 
+			ModelLocator.getInstance().hairModel.interactiveVideoPlayingIn();
 		}
 
 		private function videoStreamStopHandler ( e : VideoViewEvent ):void
+		{
+			playInStreamingVideo( false );
+
+			ModelLocator.getInstance().hairModel.interactiveVideoPlayingOut();
+		}
+
+		private function playOutStreamingVideoCompleteHandler ():void
 		{
 			ModelLocator.getInstance().hairModel.nextStylePart();
 		}
@@ -188,6 +235,13 @@ package com.julapy.ph.hair.view
 		{
 			if( b )
 			{
+				cover.visible	= true;
+				cover.alpha		= 0.5;
+
+				return;
+
+				//-- tween.
+
 				cover.visible	= true;
 				cover.alpha		= 0;
 
@@ -300,6 +354,8 @@ package com.julapy.ph.hair.view
 				killStreamingVideo();
 				initStreamingVideo();
 			}
+
+			showCover( true );
 		}
 
 		private function stylePartChangeHandler ( e : StylePartEvent ):void
