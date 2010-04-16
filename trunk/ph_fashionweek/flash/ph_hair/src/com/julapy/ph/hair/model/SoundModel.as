@@ -50,24 +50,26 @@ package com.julapy.ph.hair.model
 				var SoundClass : Class;
 				SoundClass = AssetLoader.getInstance().getClassDefinitionByName( soundID )
 
-				sm.addLibrarySound( SoundClass, soundID );
+//				sm.addLibrarySound( SoundClass, soundID );
 			}
 		}
 
 		public function playGeneralVideoSound ( girl : int, section : int, style : int ):void
 		{
+			return;
+
 			if( girl == HairModel.GIRL_ONE )
 			{
 				if( section == HairModel.SECTION_INTRO )
 				{
 					if( style == HairModel.STYLE_ONE )
 					{
-						SoundManager.getInstance().playSound( GIRL_1_STYLE_1_INTRO );
+						sm.playSound( GIRL_1_STYLE_1_INTRO );
 					}
 
 					if( style == HairModel.STYLE_TWO )
 					{
-						SoundManager.getInstance().playSound( GIRL_1_STYLE_2_INTRO );
+						sm.playSound( GIRL_1_STYLE_2_INTRO );
 					}
 				}
 
@@ -75,12 +77,12 @@ package com.julapy.ph.hair.model
 				{
 					if( style == HairModel.STYLE_ONE )
 					{
-						SoundManager.getInstance().playSound( GIRL_1_STYLE_1_OUTRO );
+						sm.playSound( GIRL_1_STYLE_1_OUTRO );
 					}
 
 					if( style == HairModel.STYLE_TWO )
 					{
-						SoundManager.getInstance().playSound( GIRL_1_STYLE_2_OUTRO );
+						sm.playSound( GIRL_1_STYLE_2_OUTRO );
 					}
 				}
 			}
@@ -91,12 +93,12 @@ package com.julapy.ph.hair.model
 				{
 					if( style == HairModel.STYLE_ONE )
 					{
-						SoundManager.getInstance().playSound( GIRL_2_STYLE_1_INTRO );
+						sm.playSound( GIRL_2_STYLE_1_INTRO );
 					}
 
 					if( style == HairModel.STYLE_TWO )
 					{
-						SoundManager.getInstance().playSound( GIRL_2_STYLE_2_INTRO );
+						sm.playSound( GIRL_2_STYLE_2_INTRO );
 					}
 				}
 
@@ -104,12 +106,12 @@ package com.julapy.ph.hair.model
 				{
 					if( style == HairModel.STYLE_ONE )
 					{
-						SoundManager.getInstance().playSound( GIRL_2_STYLE_1_OUTRO );
+						sm.playSound( GIRL_2_STYLE_1_OUTRO );
 					}
 
 					if( style == HairModel.STYLE_TWO )
 					{
-						SoundManager.getInstance().playSound( GIRL_2_STYLE_2_OUTRO );
+						sm.playSound( GIRL_2_STYLE_2_OUTRO );
 					}
 				}
 			}
@@ -117,7 +119,7 @@ package com.julapy.ph.hair.model
 
 		public function stopAllSounds ():void
 		{
-			SoundManager.getInstance().stopAllSounds();
+			sm.stopAllSounds();
 		}
 	}
 }
