@@ -27,7 +27,7 @@ package com.julapy.ph.hair.view
 
 		private var continueBtn		: BtnView;
 
-		private var bStreamVideo	: Boolean = true;
+		private var bStreamVideo	: Boolean = false;
 
 		public function VideoGeneralView(sprite:Sprite=null)
 		{
