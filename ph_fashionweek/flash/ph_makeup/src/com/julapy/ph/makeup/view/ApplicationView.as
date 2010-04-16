@@ -12,6 +12,7 @@ package com.julapy.ph.makeup.view
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Matrix;
 	import flash.ui.Keyboard;
@@ -219,6 +220,18 @@ package com.julapy.ph.makeup.view
 			if( e.keyCode == Keyboard.D )
 			{
 				debug.visible = !debug.visible;
+			}
+
+			if( e.keyCode == Keyboard.F )
+			{
+				if( asset.stage.displayState != StageDisplayState.FULL_SCREEN_INTERACTIVE )
+				{
+					asset.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				}
+				else
+				{
+					asset.stage.displayState = StageDisplayState.NORMAL;
+				}
 			}
 		}
 	}
