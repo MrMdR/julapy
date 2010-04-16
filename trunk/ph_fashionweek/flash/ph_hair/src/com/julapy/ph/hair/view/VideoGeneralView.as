@@ -1,5 +1,7 @@
 package com.julapy.ph.hair.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.holler.assets.AssetLoader;
 	import com.holler.controls.BtnView;
 	import com.holler.controls.VideoView;
@@ -11,6 +13,8 @@ package com.julapy.ph.hair.view
 	import com.julapy.ph.hair.model.HairModel;
 	import com.julapy.ph.hair.model.ModelLocator;
 	import com.julapy.ph.hair.vo.StyleVO;
+
+	import fl.motion.easing.Quadratic;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -41,6 +45,53 @@ package com.julapy.ph.hair.view
 			ModelLocator.getInstance().hairModel.addEventListener( GirlEvent.GIRL_CHANGE,		girlChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( StyleEvent.STYLE_CHANGE,		styleChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( SectionEvent.SECTION_CHANGE,	sectionChangeHandler );
+		}
+
+		/////////////////////////////////////////////
+		//	PLAY IN / OUT.
+		/////////////////////////////////////////////
+
+		private function playIn ( b : Boolean ):void
+		{
+			if( b )
+			{
+				videoHolder.alpha = 0;
+
+				Tweener.addTween
+				(
+					videoHolder,
+					{
+						alpha		: 1.0,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+			}
+			else
+			{
+				Tweener.addTween
+				(
+					videoHolder,
+					{
+						alpha		: 0.0,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: playOutCompleteHandler
+					}
+				);
+			}
+		}
+
+		private function playOutCompleteHandler ():void
+		{
+			ModelLocator.getInstance().hairModel.nextSection();
 		}
 
 		/////////////////////////////////////////////
@@ -100,11 +151,13 @@ package com.julapy.ph.hair.view
 		private function videoStreamReadyHandler ( e : VideoViewEvent ):void
 		{
 			videoStream.paused = false;
+
+			playIn( true );
 		}
 
 		private function videoStreamStopHandler ( e : VideoViewEvent ):void
 		{
-			//
+			playIn( false );
 		}
 
 		/////////////////////////////////////////////
@@ -193,6 +246,7 @@ package com.julapy.ph.hair.view
 				{
 					killTimelineVideo();
 					initTimelineVideo();
+					playIn( true );
 				}
 			}
 			else
@@ -203,7 +257,7 @@ package com.julapy.ph.hair.view
 
 				if( bStreamVideo )
 				{
-					initStreamingVideo();
+					killStreamingVideo();
 				}
 				else
 				{
@@ -214,7 +268,7 @@ package com.julapy.ph.hair.view
 
 		private function continueBtnHandler ( e : MouseEvent ):void
 		{
-			ModelLocator.getInstance().hairModel.nextSection();
+			playIn( false )
 		}
 	}
 }

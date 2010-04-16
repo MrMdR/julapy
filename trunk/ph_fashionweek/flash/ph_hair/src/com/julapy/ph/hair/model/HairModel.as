@@ -2,6 +2,7 @@ package com.julapy.ph.hair.model
 {
 	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
+	import com.julapy.ph.hair.events.InteractiveVideoEvent;
 	import com.julapy.ph.hair.events.MenuEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
@@ -105,8 +106,8 @@ package com.julapy.ph.hair.model
 			s1 = new StyleVO();
 			s1.introTimeline	= "makeup.video.01";
 			s1.outroTimeline	= "makeup.video.02";
-			s1.introStream		= "flv/A011_C073_576x768_10_mbps.f4v";
-			s1.outroStream		= "flv/A011_C073_576x768_10_mbps.f4v";
+			s1.introStream		= "flv/g1_s1_p1.f4v";
+			s1.outroStream		= "flv/g1_s1_p1.f4v";
 			s1.playParts		=
 			[
 				"makeup.ivideo.g1.s1.01",
@@ -115,17 +116,17 @@ package com.julapy.ph.hair.model
 			];
 			s1.playStreams	=
 			[
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v"
+				"flv/g1_s1_p1.f4v",
+				"flv/g1_s1_p2.f4v",
+				"flv/g1_s1_p3.f4v"
 			];
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
 			s2.introTimeline	= "makeup.video.03";
 			s2.outroTimeline	= "makeup.video.04";
-			s2.introStream		= "flv/A011_C073_576x768_10_mbps.f4v";
-			s2.outroStream		= "flv/A011_C073_576x768_10_mbps.f4v";
+			s2.introStream		= "flv/g1_s1_p1.f4v";
+			s2.outroStream		= "flv/g1_s1_p1.f4v";
 			s2.playParts		=
 			[
 				"makeup.ivideo.g1.s2.01",
@@ -134,9 +135,9 @@ package com.julapy.ph.hair.model
 			];
 			s2.playStreams	=
 			[
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v"
+				"flv/g1_s2_p1.f4v",
+				"flv/g1_s2_p2.f4v",
+				"flv/g1_s2_p3.f4v"
 			];
 
 			vo.styles =
@@ -156,8 +157,8 @@ package com.julapy.ph.hair.model
 			s1 = new StyleVO();
 			s1.introTimeline	= "makeup.video.05";
 			s1.outroTimeline	= "makeup.video.06";
-			s1.introStream		= "flv/A011_C073_576x768_10_mbps.f4v";
-			s1.outroStream		= "flv/A011_C073_576x768_10_mbps.f4v";
+			s1.introStream		= "flv/g1_s1_p1.f4v";
+			s1.outroStream		= "flv/g1_s1_p1.f4v";
 			s1.playParts		=
 			[
 				"makeup.ivideo.g2.s1.01",
@@ -166,17 +167,17 @@ package com.julapy.ph.hair.model
 			];
 			s1.playStreams	=
 			[
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v"
+				"flv/g1_s1_p1.f4v",
+				"flv/g1_s1_p2.f4v",
+				"flv/g1_s1_p3.f4v"
 			];
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
 			s2.introTimeline	= "makeup.video.07";
 			s2.outroTimeline	= "makeup.video.08";
-			s2.introStream		= "flv/A011_C073_576x768_10_mbps.f4v";
-			s2.outroStream		= "flv/A011_C073_576x768_10_mbps.f4v";
+			s2.introStream		= "flv/g1_s1_p1.f4v";
+			s2.outroStream		= "flv/g1_s1_p1.f4v";
 			s2.playParts		=
 			[
 				"makeup.ivideo.g2.s2.01",
@@ -185,9 +186,9 @@ package com.julapy.ph.hair.model
 			];
 			s2.playStreams	=
 			[
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v",
-				"flv/A011_C073_576x768_10_mbps.f4v"
+				"flv/g1_s1_p1.f4v",
+				"flv/g1_s1_p2.f4v",
+				"flv/g1_s1_p3.f4v"
 			];
 
 			vo.styles =
@@ -401,6 +402,30 @@ package com.julapy.ph.hair.model
 		public function updateToolPathPosition ( p : Point ):void
 		{
 			dispatchEvent( new ToolPathEvent( p.clone() ) );
+		}
+
+		/////////////////////////////////////
+		//	INTERACTIVE VIDEO
+		/////////////////////////////////////
+
+		public function interactiveVideoPlayingIn ():void
+		{
+			dispatchEvent( new InteractiveVideoEvent( InteractiveVideoEvent.PLAYING_IN ) );
+		}
+
+		public function interactiveVideoPlayedIn ():void
+		{
+			dispatchEvent( new InteractiveVideoEvent( InteractiveVideoEvent.PLAYED_IN ) );
+		}
+
+		public function interactiveVideoPlayingOut ():void
+		{
+			dispatchEvent( new InteractiveVideoEvent( InteractiveVideoEvent.PLAYING_OUT ) );
+		}
+
+		public function interactiveVideoPlayedOut ():void
+		{
+			dispatchEvent( new InteractiveVideoEvent( InteractiveVideoEvent.PLAYED_OUT ) );
 		}
 	}
 }

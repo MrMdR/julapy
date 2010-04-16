@@ -1,8 +1,11 @@
 package com.julapy.ph.hair.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.holler.core.View;
 	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
+	import com.julapy.ph.hair.events.InteractiveVideoEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
 	import com.julapy.ph.hair.events.StylePartEvent;
@@ -11,6 +14,8 @@ package com.julapy.ph.hair.view
 	import com.julapy.ph.hair.model.ModelLocator;
 	import com.julapy.ph.hair.vo.StyleVO;
 	import com.julapy.ph.vo.TrackerVO;
+
+	import fl.motion.easing.Quadratic;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -61,6 +66,11 @@ package com.julapy.ph.hair.view
 			ModelLocator.getInstance().hairModel.addEventListener( DropAreaEvent.DROP_AREA_PLAYED_IN,	dropAreaPlayedInHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( DropAreaEvent.DROP_AREA_PLAYED_OUT,	dropAreaPlayedOutHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( DropAreaEvent.DROP_AREA_CHARGED, 	dropAreaChargedHandler );
+
+			ModelLocator.getInstance().hairModel.addEventListener( InteractiveVideoEvent.PLAYING_IN,	interactiveVideoHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( InteractiveVideoEvent.PLAYED_IN,		interactiveVideoHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( InteractiveVideoEvent.PLAYING_OUT,	interactiveVideoHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( InteractiveVideoEvent.PLAYED_OUT,	interactiveVideoHandler );
 		}
 
 		private function initDropAreas ():void
@@ -97,6 +107,61 @@ package com.julapy.ph.hair.view
 				new MenuToolCoverView( _sprite.getChildByName( "toolCover1" ) as MovieClip ),
 				new MenuToolCoverView( _sprite.getChildByName( "toolCover2" ) as MovieClip ),
 			];
+		}
+
+		/////////////////////////////////////////////
+		//	PLAY IN.
+		/////////////////////////////////////////////
+
+		public function playIn ( b : Boolean ):void
+		{
+			if( b )
+			{
+				alpha = 1;
+				doValidate();
+
+				return;
+
+				//-- tween, remove return.
+
+				alpha = 0;
+				doValidate();
+
+				Tweener.addTween
+				(
+					this,
+					{
+						alpha			: 1.0,
+						time			: 0.3,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: playInTweenUpdateHandler,
+						onComplete		: null
+					}
+				);
+			}
+			else
+			{
+				Tweener.addTween
+				(
+					this,
+					{
+						alpha			: 0.0,
+						time			: 0.3,
+						delay			: 0.0,
+						transition		: Quadratic.easeOut,
+						onStart			: null,
+						onUpdate		: playInTweenUpdateHandler,
+						onComplete		: null
+					}
+				);
+			}
+		}
+
+		private function playInTweenUpdateHandler ():void
+		{
+			doValidate();
 		}
 
 		/////////////////////////////////////////////
@@ -481,6 +546,7 @@ package com.julapy.ph.hair.view
 			{
 				enable();
 
+				playIn( true );
 				stylePartChangeHandler();
 			}
 			else
@@ -502,8 +568,8 @@ package com.julapy.ph.hair.view
 
 			bVideoPlaying = false;
 
-			var stylePart : int;
-			stylePart = ModelLocator.getInstance().hairModel.stylePart;
+//			var stylePart : int;													// MOVED to interactive video, playing in handler.
+//			stylePart = ModelLocator.getInstance().hairModel.stylePart;
 
 			stopToolDrag( tools[ toolIndex ] );			// return tool back to menu after interactive video has finished.
 			restoreSelectedTool();
@@ -511,7 +577,7 @@ package com.julapy.ph.hair.view
 			playToolAnim( false );
 			toolSelected = -1;
 
-			selectDropArea( stylePart );
+//			selectDropArea( stylePart );
 			selectToolCover( -1 );
 		}
 
@@ -558,6 +624,29 @@ package com.julapy.ph.hair.view
 		private function dropAreaChargedHandler ( e : DropAreaEvent ):void
 		{
 			toolSelected = toolIndex;
+		}
+
+		/////////////////////////////////////////////
+		//	INTERACTIVE VIDEO HANDLERS.
+		/////////////////////////////////////////////
+
+		private function interactiveVideoHandler ( e : InteractiveVideoEvent ):void
+		{
+			if( e.type == InteractiveVideoEvent.PLAYING_IN )
+			{
+				var stylePart : int;
+				stylePart = ModelLocator.getInstance().hairModel.stylePart;
+
+				selectDropArea( stylePart );
+			}
+
+			if( e.type == InteractiveVideoEvent.PLAYING_OUT )
+			{
+				if( ModelLocator.getInstance().hairModel.stylePart == HairModel.STYLE_PART_THREE )
+				{
+					playIn( false );
+				}
+			}
 		}
 
 		/////////////////////////////////////////////
