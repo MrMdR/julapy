@@ -35,6 +35,9 @@ package com.julapy.ph.hair.model
 		private var sm 		: SoundManager;
 		private var sounds	: Array = new Array();
 
+		private var idles		: Array = new Array();
+		private var idleIndex	: int = 0;
+
 		public function SoundModel()
 		{
 			sm = SoundManager.getInstance();
@@ -66,7 +69,9 @@ package com.julapy.ph.hair.model
 				TOOL_SELECTED_1,
 				TOOL_SELECTED_2,
 				TOOL_SELECTED_3
-			]
+			];
+
+			idles = [ IDLE_1, IDLE_2, IDLE_3, IDLE_4 ];
 		}
 
 		public function init ():void
@@ -89,7 +94,19 @@ package com.julapy.ph.hair.model
 		}
 
 		/////////////////////////////////////////////////
-		//
+		//	RANDOM.
+		/////////////////////////////////////////////////
+
+		private function playRandom ( a : Array ):void
+		{
+			var i : int;
+			i = (int)( Math.random() * a.length );
+
+			sm.playSound( a[ i ] );
+		}
+
+		/////////////////////////////////////////////////
+		//	EXTERANAL.
 		/////////////////////////////////////////////////
 
 		public function playInteractiveInstruction ( i : int ):void
@@ -166,5 +183,23 @@ package com.julapy.ph.hair.model
 			}
 		}
 
+
+		public function playRandomIdle ():void
+		{
+			sm.stopSound( IDLE_1 );		// stop all idle before playing any more.
+			sm.stopSound( IDLE_2 );
+			sm.stopSound( IDLE_3 );
+			sm.stopSound( IDLE_4 );
+
+			playRandom( idles );
+		}
+
+		public function playNextIdle ():void
+		{
+			if( ++idleIndex >= idles.length )
+				idleIndex = 0;
+
+			sm.playSound( idles[ idleIndex ] );
+		}
 	}
 }
