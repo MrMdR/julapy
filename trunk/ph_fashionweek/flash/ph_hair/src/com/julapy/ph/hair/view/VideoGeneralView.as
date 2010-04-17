@@ -31,13 +31,14 @@ package com.julapy.ph.hair.view
 
 		private var continueBtn		: BtnView;
 
-		private var bStreamVideo	: Boolean = false;
+		private var bStreamVideo	: Boolean = true;
 
 		public function VideoGeneralView(sprite:Sprite=null)
 		{
 			super(sprite);
 
-			videoHolder = _sprite.getChildByName( "videoHolder" ) as MovieClip;
+			videoHolder		= _sprite.getChildByName( "videoHolder" ) as MovieClip;
+			videoHolder.y	= (int)( ( ModelLocator.getInstance().commonModel.appHeight - ModelLocator.getInstance().hairModel.videoGenRect.height ) * 0.5 );
 
 			continueBtn = new BtnView( _sprite.getChildByName( "continueBtn" ) as MovieClip );
 			continueBtn.addEventListener( MouseEvent.MOUSE_DOWN, continueBtnHandler );
@@ -128,7 +129,6 @@ package com.julapy.ph.hair.view
 				videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().hairModel.videoGenRect.clone() );
 				videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
 				videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
-				videoStream.loop		= true;
 				videoStream.videoURI	= videoID;
 			}
 		}
@@ -141,7 +141,7 @@ package com.julapy.ph.hair.view
 
 				videoStream.removeEventListener( VideoViewEvent.READY,	videoStreamReadyHandler );
 				videoStream.removeEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
-				videoStream.paused		= false;
+//				videoStream.paused		= false;
 				videoStream.container	= null;
 				videoStream				= null;
 				videoStreamHolder		= null;
@@ -234,8 +234,6 @@ package com.julapy.ph.hair.view
 						videoID = styleVO.outroTimeline;
 					}
 				}
-
-				ModelLocator.getInstance().soundModel.playGeneralVideoSound( girl, sec, style );
 
 				if( bStreamVideo )
 				{

@@ -77,20 +77,94 @@ package com.julapy.ph.hair.model
 				soundID = sounds[ i ];
 
 				var SoundClass : Class;
-				SoundClass = AssetLoader.getInstance().getClassDefinitionByName( soundID )
+				SoundClass = AssetLoader.getInstance().getClassDefinitionByName( soundID );
 
-//				sm.addLibrarySound( SoundClass, soundID );
+				sm.addLibrarySound( SoundClass, soundID );
 			}
-		}
-
-		public function playGeneralVideoSound ( girl : int, section : int, style : int ):void
-		{
-			return;
 		}
 
 		public function stopAllSounds ():void
 		{
 			sm.stopAllSounds();
 		}
+
+		/////////////////////////////////////////////////
+		//
+		/////////////////////////////////////////////////
+
+		public function playInteractiveInstruction ( i : int ):void
+		{
+			if( i == 0 )
+			{
+				if( Math.random() > 0.5 )
+					sm.playSound( PLAY_INTRO_1_A );
+				else
+					sm.playSound( PLAY_INTRO_1_B );
+			}
+			else if( i == 1 )
+			{
+				sm.playSound( PLAY_INTRO_2 );
+			}
+			else if( i == 2 )
+			{
+				sm.playSound( PLAY_INTRO_3 );
+			}
+		}
+
+		public function playInteractiveToolSelected ( i : int ):void
+		{
+			if( i == 0 )
+			{
+				sm.playSound( TOOL_SELECTED_1 );
+			}
+			else if( i == 1 )
+			{
+				sm.playSound( TOOL_SELECTED_2 );
+			}
+			else if( i == 2 )
+			{
+				sm.playSound( TOOL_SELECTED_3 );
+			}
+		}
+
+		public function playInteractiveInfo ( i : int ):void
+		{
+			if( i == 0 )
+			{
+				sm.playSound( PLAY_1_DRYER );
+			}
+			else if( i == 1 )
+			{
+				sm.playSound( PLAY_2_CURLER );
+			}
+			else if( i == 2 )
+			{
+				if( Math.random() > 0.5 )
+					sm.playSound( PLAY_3_SPRAY );
+				else
+					sm.playSound( PLAY_3_SPRAY_B );
+			}
+		}
+
+		public function playFinalLook ( i : int ):void
+		{
+			if( i == 0 )
+			{
+				sm.playSound( FINAL_LOOKS_10 );
+			}
+			else if( i == 1 )
+			{
+				sm.playSound( FINAL_LOOKS_5 );
+			}
+			else if( i == 2 )
+			{
+				sm.playSound( FINAL_LOOKS_0 );
+			}
+			else if( i == 3 )
+			{
+				sm.playSound( FINAL_LOOKS_1 );
+			}
+		}
+
 	}
 }

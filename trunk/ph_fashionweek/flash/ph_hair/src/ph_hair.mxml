@@ -37,33 +37,33 @@
 				assetLoader.addEventListener( AssetGroupVOEvent.ASSET_GROUP_COMPLETE,	assetLoaderHandler );
 				assetLoader.addAsset( "assets/assets.swf",			"assets",	"main" );
 
-				assetLoader.addAsset( "assets/assets_ivideo_g1_s1_01.swf",	"assets",	"assets_ivideo_g1_s1_01" );
-				assetLoader.addAsset( "assets/assets_ivideo_g1_s1_02.swf",	"assets",	"assets_ivideo_g1_s1_02" );
-				assetLoader.addAsset( "assets/assets_ivideo_g1_s1_03.swf",	"assets",	"assets_ivideo_g1_s1_03" );
-
-				assetLoader.addAsset( "assets/assets_ivideo_g1_s2_01.swf",	"assets",	"assets_ivideo_g1_s2_01" );
-				assetLoader.addAsset( "assets/assets_ivideo_g1_s2_02.swf",	"assets",	"assets_ivideo_g1_s2_02" );
-				assetLoader.addAsset( "assets/assets_ivideo_g1_s2_03.swf",	"assets",	"assets_ivideo_g1_s2_03" );
-
-				assetLoader.addAsset( "assets/assets_ivideo_g2_s1_01.swf",	"assets",	"assets_ivideo_g2_s1_01" );
-				assetLoader.addAsset( "assets/assets_ivideo_g2_s1_02.swf",	"assets",	"assets_ivideo_g2_s1_02" );
-				assetLoader.addAsset( "assets/assets_ivideo_g2_s1_03.swf",	"assets",	"assets_ivideo_g2_s1_03" );
-
-				assetLoader.addAsset( "assets/assets_ivideo_g2_s2_01.swf",	"assets",	"assets_ivideo_g2_s2_01" );
-				assetLoader.addAsset( "assets/assets_ivideo_g2_s2_02.swf",	"assets",	"assets_ivideo_g2_s2_02" );
-				assetLoader.addAsset( "assets/assets_ivideo_g2_s2_03.swf",	"assets",	"assets_ivideo_g2_s2_03" );
-
-				assetLoader.addAsset( "assets/assets_video_01.swf",	"assets",	"video_01"	);		// girl one, style one
-				assetLoader.addAsset( "assets/assets_video_02.swf",	"assets",	"video_02"	);
-
-				assetLoader.addAsset( "assets/assets_video_03.swf",	"assets",	"video_03"	);		// girl one, style two
-				assetLoader.addAsset( "assets/assets_video_04.swf",	"assets",	"video_04"	);
-
-				assetLoader.addAsset( "assets/assets_video_05.swf",	"assets",	"video_05"	);		// girl two, style one
-				assetLoader.addAsset( "assets/assets_video_06.swf",	"assets",	"video_06"	);
-
-				assetLoader.addAsset( "assets/assets_video_07.swf",	"assets",	"video_07"	);		// girl two, style two
-				assetLoader.addAsset( "assets/assets_video_08.swf",	"assets",	"video_08"	);
+//				assetLoader.addAsset( "assets/assets_ivideo_g1_s1_01.swf",	"assets",	"assets_ivideo_g1_s1_01" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g1_s1_02.swf",	"assets",	"assets_ivideo_g1_s1_02" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g1_s1_03.swf",	"assets",	"assets_ivideo_g1_s1_03" );
+//
+//				assetLoader.addAsset( "assets/assets_ivideo_g1_s2_01.swf",	"assets",	"assets_ivideo_g1_s2_01" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g1_s2_02.swf",	"assets",	"assets_ivideo_g1_s2_02" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g1_s2_03.swf",	"assets",	"assets_ivideo_g1_s2_03" );
+//
+//				assetLoader.addAsset( "assets/assets_ivideo_g2_s1_01.swf",	"assets",	"assets_ivideo_g2_s1_01" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g2_s1_02.swf",	"assets",	"assets_ivideo_g2_s1_02" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g2_s1_03.swf",	"assets",	"assets_ivideo_g2_s1_03" );
+//
+//				assetLoader.addAsset( "assets/assets_ivideo_g2_s2_01.swf",	"assets",	"assets_ivideo_g2_s2_01" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g2_s2_02.swf",	"assets",	"assets_ivideo_g2_s2_02" );
+//				assetLoader.addAsset( "assets/assets_ivideo_g2_s2_03.swf",	"assets",	"assets_ivideo_g2_s2_03" );
+//
+//				assetLoader.addAsset( "assets/assets_video_01.swf",	"assets",	"video_01"	);		// girl one, style one
+//				assetLoader.addAsset( "assets/assets_video_02.swf",	"assets",	"video_02"	);
+//
+//				assetLoader.addAsset( "assets/assets_video_03.swf",	"assets",	"video_03"	);		// girl one, style two
+//				assetLoader.addAsset( "assets/assets_video_04.swf",	"assets",	"video_04"	);
+//
+//				assetLoader.addAsset( "assets/assets_video_05.swf",	"assets",	"video_05"	);		// girl two, style one
+//				assetLoader.addAsset( "assets/assets_video_06.swf",	"assets",	"video_06"	);
+//
+//				assetLoader.addAsset( "assets/assets_video_07.swf",	"assets",	"video_07"	);		// girl two, style two
+//				assetLoader.addAsset( "assets/assets_video_08.swf",	"assets",	"video_08"	);
 
 				assetLoader.addAsset( "assets/assets_sound.swf",	"assets",	"sounds"	);
 

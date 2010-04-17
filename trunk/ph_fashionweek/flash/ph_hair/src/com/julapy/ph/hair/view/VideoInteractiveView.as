@@ -20,10 +20,14 @@ package com.julapy.ph.hair.view
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 
 	public class VideoInteractiveView extends View
 	{
 		private var bEnabled	: Boolean = false;
+
+		private var playPart	: int = -1;
 
 		private var videoHolder	: MovieClip;
 		private var video		: MovieClip;
@@ -32,6 +36,9 @@ package com.julapy.ph.hair.view
 
 		private var videoStream			: VideoView;
 		private var videoStreamHolder	: Sprite;
+
+		private var infoSoundTimer		: Timer;
+		private var finalLookSoundTimer	: Timer;
 
 		private var bUseTimelineVideo	: Boolean = false;
 
@@ -283,6 +290,83 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
+		//	INFO SOUND TIMER.
+		/////////////////////////////////////////////
+
+		private function initInfoSoundTimer ():void
+		{
+			if( infoSoundTimer )
+				killInfoSoundTimer();
+
+			infoSoundTimer = new Timer( 4000, 1 );
+			infoSoundTimer.addEventListener( TimerEvent.TIMER_COMPLETE, infoSoundTimerHandler );
+			infoSoundTimer.start();
+		}
+
+		private function killInfoSoundTimer ():void
+		{
+			if( infoSoundTimer )
+			{
+				infoSoundTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, infoSoundTimerHandler );
+				infoSoundTimer.stop();
+				infoSoundTimer = null;
+			}
+		}
+
+		private function infoSoundTimerHandler ( e : TimerEvent ):void
+		{
+			killInfoSoundTimer();
+
+			ModelLocator.getInstance().soundModel.playInteractiveInfo( playPart );
+		}
+		/////////////////////////////////////////////
+		//	FINAL LOOK SOUND TIMER.
+		/////////////////////////////////////////////
+
+		private function initFinalLookSoundTimer ():void
+		{
+			if( finalLookSoundTimer )
+				killFinalLookSoundTimer();
+
+			var time : int;
+			time = 23000;
+
+			if( playPart == 0 )
+			{
+				time= (int)( ( videoStream.duration - 3.1 ) * 1000 );
+			}
+			else if( playPart == 1 )
+			{
+				time= (int)( ( videoStream.duration - 4.6 ) * 1000 );
+			}
+			else if( playPart == 2 )
+			{
+				time= (int)( ( videoStream.duration - 7.6 ) * 1000 );
+			}
+
+			finalLookSoundTimer = new Timer( time, 1 );
+			finalLookSoundTimer.addEventListener( TimerEvent.TIMER_COMPLETE, finalLookSoundTimerHandler );
+			finalLookSoundTimer.start();
+		}
+
+		private function killFinalLookSoundTimer ():void
+		{
+			if( finalLookSoundTimer )
+			{
+				finalLookSoundTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, finalLookSoundTimerHandler );
+				finalLookSoundTimer.stop();
+				finalLookSoundTimer = null;
+			}
+		}
+
+		private function finalLookSoundTimerHandler ( e : TimerEvent ):void
+		{
+			killFinalLookSoundTimer();
+
+			ModelLocator.getInstance().soundModel.playFinalLook( playPart );
+		}
+
+		/////////////////////////////////////////////
 		//	HANDLERS.
 		/////////////////////////////////////////////
 
@@ -328,7 +412,6 @@ package com.julapy.ph.hair.view
 			var styleVO : StyleVO;
 			styleVO = ModelLocator.getInstance().hairModel.getStyleVO( girl, style );
 
-			var playPart : int;
 			playPart = ModelLocator.getInstance().hairModel.stylePart;
 
 			if( bUseTimelineVideo )
@@ -356,6 +439,10 @@ package com.julapy.ph.hair.view
 			}
 
 			showCover( true );
+
+			//-- sound.
+
+			ModelLocator.getInstance().soundModel.playInteractiveInstruction( playPart );
 		}
 
 		private function stylePartChangeHandler ( e : StylePartEvent ):void
@@ -372,7 +459,6 @@ package com.julapy.ph.hair.view
 			var styleVO : StyleVO;
 			styleVO = ModelLocator.getInstance().hairModel.getStyleVO( girl, style );
 
-			var playPart : int;
 			playPart = ModelLocator.getInstance().hairModel.stylePart;
 
 			if( bUseTimelineVideo )
@@ -398,10 +484,17 @@ package com.julapy.ph.hair.view
 			}
 
 			showCover( true );
+
+			//-- sound.
+
+			ModelLocator.getInstance().soundModel.playInteractiveInstruction( playPart );
 		}
 
 		private function menuSelectHandler ( e : MenuEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			if( bUseTimelineVideo )
 			{
 				playTimelineVideo();
@@ -412,6 +505,13 @@ package com.julapy.ph.hair.view
 			}
 
 			showCover( false );
+
+			//-- sound.
+
+			ModelLocator.getInstance().soundModel.playInteractiveToolSelected( playPart );
+
+			initInfoSoundTimer();
+			initFinalLookSoundTimer();
 		}
 	}
 }
