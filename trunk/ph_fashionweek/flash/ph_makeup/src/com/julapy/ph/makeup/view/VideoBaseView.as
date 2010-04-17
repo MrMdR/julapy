@@ -36,7 +36,8 @@ package com.julapy.ph.makeup.view
 		{
 			super(sprite);
 
-			videoHolder = _sprite.getChildByName( "videoHolder" ) as MovieClip;
+			videoHolder		= _sprite.getChildByName( "videoHolder" ) as MovieClip;
+			videoHolder.y	= (int)( ( ModelLocator.getInstance().commondModel.appHeight - ModelLocator.getInstance().makeupModel.videoRect.height ) * 0.5 );
 
 			videos =
 			[
@@ -48,10 +49,10 @@ package com.julapy.ph.makeup.view
 
 			videoStreamPaths =
 			[
-				"flv/g1_s1_p1.f4v",
-				"flv/g1_s1_p2.f4v",
-				"flv/g1_s1_p3.f4v",
-				"flv/g1_s2_p1.f4v"
+				"flv/makeupmodel01look01intro.f4v",
+				"flv/makeupmodel01look01outro.f4v",
+				"flv/makeupmodel01look02intro.f4v",
+				"flv/makeupmodel01look02outro.f4v"
 			];
 
 			continueBtn = new BtnView( _sprite.getChildByName( "continueBtn" ) as MovieClip );
@@ -134,16 +135,15 @@ package com.julapy.ph.makeup.view
 
 		private function initStreamingVideo ():void
 		{
-			if( !videoStream )
-			{
-				videoHolder.addChild( videoStreamHolder = new Sprite() );
+			if( videoStream )
+				killStreamingVideo();
 
-				videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().makeupModel.videoRect );
-				videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
-				videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
-				videoStream.loop		= true;
-				videoStream.videoURI	= videoStreamPaths[ videoIndex ];
-			}
+			videoHolder.addChild( videoStreamHolder = new Sprite() );
+
+			videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().makeupModel.videoRect );
+			videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
+			videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
+			videoStream.videoURI	= videoStreamPaths[ videoIndex ];
 		}
 
 		private function killStreamingVideo ():void
@@ -240,7 +240,6 @@ package com.julapy.ph.makeup.view
 				{
 					if( bStreamVideo )
 					{
-						killStreamingVideo();
 						initStreamingVideo();
 					}
 					else
