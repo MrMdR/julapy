@@ -5,17 +5,32 @@ package com.julapy.ph.hair.model
 
 	public class SoundModel
 	{
-		public static const GIRL_1_STYLE_1_INTRO	: String = "balspheming_barry.mp3";
-		public static const GIRL_1_STYLE_1_OUTRO	: String = "being_blessed.mp3";
 
-		public static const GIRL_1_STYLE_2_INTRO	: String = "fudu_fa_fa.mp3";
-		public static const GIRL_1_STYLE_2_OUTRO	: String = "hortifkinculturist.mp3";
+		public static const BLACKOUT		: String = "hair.sound.hair_blackout_1";
 
-		public static const GIRL_2_STYLE_1_INTRO	: String = "i_was_guided.mp3";
-		public static const GIRL_2_STYLE_1_OUTRO	: String = "its_been_emotional.mp3";
+		public static const FINAL_LOOKS_0	: String = "hair.sound.hair_final_looks_0";
+		public static const FINAL_LOOKS_1	: String = "hair.sound.hair_final_looks_1";
+		public static const FINAL_LOOKS_5	: String = "hair.sound.hair_final_looks_5";
+		public static const FINAL_LOOKS_10	: String = "hair.sound.hair_final_looks_10";
 
-		public static const GIRL_2_STYLE_2_INTRO	: String = "ive_been_shot.mp3";
-		public static const GIRL_2_STYLE_2_OUTRO	: String = "balspheming_barry.mp3";
+		public static const IDLE_1			: String = "hair.sound.hair_idle_1";
+		public static const IDLE_2			: String = "hair.sound.hair_idle_2";
+		public static const IDLE_3			: String = "hair.sound.hair_idle_3";
+		public static const IDLE_4			: String = "hair.sound.hair_idle_4";
+
+		public static const PLAY_1_DRYER	: String = "hair.sound.hair_play_1_dryer";
+		public static const PLAY_2_CURLER	: String = "hair.sound.hair_play_2_curler";
+		public static const PLAY_3_SPRAY	: String = "hair.sound.hair_play_3_spray";
+		public static const PLAY_3_SPRAY_B	: String = "hair.sound.hair_play_3_spray_compliment";
+
+		public static const PLAY_INTRO_1_A	: String = "hair.sound.hair_play_intro_1a";
+		public static const PLAY_INTRO_1_B	: String = "hair.sound.hair_play_intro_1b";
+		public static const PLAY_INTRO_2	: String = "hair.sound.hair_play_intro_2_dryer";
+		public static const PLAY_INTRO_3	: String = "hair.sound.hair_play_intro_3_curler";
+
+		public static const TOOL_SELECTED_1	: String = "hair.sound.hair_tool_selected_1_dryer";
+		public static const TOOL_SELECTED_2	: String = "hair.sound.hair_tool_selected_2_curler";
+		public static const TOOL_SELECTED_3	: String = "hair.sound.hair_tool_selected_3_spray";
 
 		private var sm 		: SoundManager;
 		private var sounds	: Array = new Array();
@@ -26,17 +41,31 @@ package com.julapy.ph.hair.model
 
 			sounds =
 			[
-				GIRL_1_STYLE_1_INTRO,
-				GIRL_1_STYLE_1_OUTRO,
+				BLACKOUT,
 
-				GIRL_1_STYLE_2_INTRO,
-				GIRL_1_STYLE_2_OUTRO,
+				FINAL_LOOKS_0,
+				FINAL_LOOKS_1,
+				FINAL_LOOKS_5,
+				FINAL_LOOKS_10,
 
-				GIRL_2_STYLE_1_INTRO,
-				GIRL_2_STYLE_1_OUTRO,
+				IDLE_1,
+				IDLE_2,
+				IDLE_3,
+				IDLE_4,
 
-				GIRL_2_STYLE_2_INTRO,
-				GIRL_2_STYLE_2_OUTRO
+				PLAY_1_DRYER,
+				PLAY_2_CURLER,
+				PLAY_3_SPRAY,
+				PLAY_3_SPRAY_B,
+
+				PLAY_INTRO_1_A,
+				PLAY_INTRO_1_B,
+				PLAY_INTRO_2,
+				PLAY_INTRO_3,
+
+				TOOL_SELECTED_1,
+				TOOL_SELECTED_2,
+				TOOL_SELECTED_3
 			]
 		}
 
@@ -57,64 +86,6 @@ package com.julapy.ph.hair.model
 		public function playGeneralVideoSound ( girl : int, section : int, style : int ):void
 		{
 			return;
-
-			if( girl == HairModel.GIRL_ONE )
-			{
-				if( section == HairModel.SECTION_INTRO )
-				{
-					if( style == HairModel.STYLE_ONE )
-					{
-						sm.playSound( GIRL_1_STYLE_1_INTRO );
-					}
-
-					if( style == HairModel.STYLE_TWO )
-					{
-						sm.playSound( GIRL_1_STYLE_2_INTRO );
-					}
-				}
-
-				if( section == HairModel.SECTION_OUTRO )
-				{
-					if( style == HairModel.STYLE_ONE )
-					{
-						sm.playSound( GIRL_1_STYLE_1_OUTRO );
-					}
-
-					if( style == HairModel.STYLE_TWO )
-					{
-						sm.playSound( GIRL_1_STYLE_2_OUTRO );
-					}
-				}
-			}
-
-			if( girl == HairModel.GIRL_TWO )
-			{
-				if( section == HairModel.SECTION_INTRO )
-				{
-					if( style == HairModel.STYLE_ONE )
-					{
-						sm.playSound( GIRL_2_STYLE_1_INTRO );
-					}
-
-					if( style == HairModel.STYLE_TWO )
-					{
-						sm.playSound( GIRL_2_STYLE_2_INTRO );
-					}
-				}
-
-				if( section == HairModel.SECTION_OUTRO )
-				{
-					if( style == HairModel.STYLE_ONE )
-					{
-						sm.playSound( GIRL_2_STYLE_1_OUTRO );
-					}
-
-					if( style == HairModel.STYLE_TWO )
-					{
-						sm.playSound( GIRL_2_STYLE_2_OUTRO );
-					}
-				}
-			}
 		}
 
 		public function stopAllSounds ():void
