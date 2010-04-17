@@ -26,7 +26,7 @@ package com.julapy.ph.makeup.model
 		public static const LIPS_MODE		: int = 1;
 		public static const FACE_MODE		: int = 2;
 
-		private var _videoRect		: Rectangle = new Rectangle( 0, 0, 576, 1024 );
+		private var _videoRect		: Rectangle = new Rectangle( 0, 0, 576, 324 );
 		private var _imageRect		: Rectangle = new Rectangle( 0, 0, 1152, 2048 );
 
 		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];

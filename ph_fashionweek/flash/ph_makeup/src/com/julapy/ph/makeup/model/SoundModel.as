@@ -41,11 +41,16 @@ package com.julapy.ph.makeup.model
 		public static const PLAY_INTRO_INSTRUCT_05	: String = "makeup_10.mp3";
 		public static const PLAY_INTRO_INSTRUCT_06	: String = "makeup_11.mp3";
 
-		public static const QUICK_COMPLIMENT_01		: String = "makeup_32.mp3";
-		public static const QUICK_COMPLIMENT_02		: String = "makeup_33.mp3";
-		public static const QUICK_COMPLIMENT_03		: String = "makeup_34.mp3";
-		public static const QUICK_COMPLIMENT_04		: String = "makeup_35.mp3";
-		public static const QUICK_COMPLIMENT_05		: String = "makeup_36.mp3";
+		public static const QUICK_COMPLIMENT_01_A	: String = "makeup_32_a.wav";
+		public static const QUICK_COMPLIMENT_01_B	: String = "makeup_32_b.wav";
+		public static const QUICK_COMPLIMENT_02_A	: String = "makeup_33_a.wav";
+		public static const QUICK_COMPLIMENT_02_B	: String = "makeup_33_b.wav";
+		public static const QUICK_COMPLIMENT_03_A	: String = "makeup_34_a.wav";
+		public static const QUICK_COMPLIMENT_03_B	: String = "makeup_34_b.wav";
+		public static const QUICK_COMPLIMENT_04_A	: String = "makeup_35_a.wav";
+		public static const QUICK_COMPLIMENT_04_B	: String = "makeup_35_b.wav";
+		public static const QUICK_COMPLIMENT_05_A	: String = "makeup_36_a.wav";
+		public static const QUICK_COMPLIMENT_05_B	: String = "makeup_36_b.wav";
 
 		public static const REACTIVE_LIPS			: String = "makeup_06.mp3";
 
@@ -100,11 +105,16 @@ package com.julapy.ph.makeup.model
 				PLAY_INTRO_INSTRUCT_05,
 				PLAY_INTRO_INSTRUCT_06,
 
-				QUICK_COMPLIMENT_01,
-				QUICK_COMPLIMENT_02,
-				QUICK_COMPLIMENT_03,
-				QUICK_COMPLIMENT_04,
-				QUICK_COMPLIMENT_05,
+				QUICK_COMPLIMENT_01_A,
+				QUICK_COMPLIMENT_01_B,
+				QUICK_COMPLIMENT_02_A,
+				QUICK_COMPLIMENT_02_B,
+				QUICK_COMPLIMENT_03_A,
+				QUICK_COMPLIMENT_03_B,
+				QUICK_COMPLIMENT_04_A,
+				QUICK_COMPLIMENT_04_B,
+				QUICK_COMPLIMENT_05_A,
+				QUICK_COMPLIMENT_05_B,
 
 				REACTIVE_LIPS,
 
@@ -158,11 +168,16 @@ package com.julapy.ph.makeup.model
 
 			compliment =
 			[
-				QUICK_COMPLIMENT_01,
-				QUICK_COMPLIMENT_02,
-				QUICK_COMPLIMENT_03,
-				QUICK_COMPLIMENT_04,
-				QUICK_COMPLIMENT_05
+				QUICK_COMPLIMENT_01_A,
+				QUICK_COMPLIMENT_01_B,
+				QUICK_COMPLIMENT_02_A,
+				QUICK_COMPLIMENT_02_B,
+				QUICK_COMPLIMENT_03_A,
+				QUICK_COMPLIMENT_03_B,
+				QUICK_COMPLIMENT_04_A,
+				QUICK_COMPLIMENT_04_B,
+				QUICK_COMPLIMENT_05_A,
+				QUICK_COMPLIMENT_05_B
 			];
 
 			selectAnotherTool =
@@ -211,11 +226,9 @@ package com.julapy.ph.makeup.model
 
 		private function sectionChangeHandler ( e : SectionEvent ):void
 		{
-			stopAllSounds();
-
 			if( e.section == MakeupModel.SECTION_INTRO )
 			{
-				playRandomIntro();
+				//
 			}
 
 			if( e.section == MakeupModel.SECTION_PLAY )
@@ -225,7 +238,7 @@ package com.julapy.ph.makeup.model
 
 			if( e.section == MakeupModel.SECTION_OUTRO )
 			{
-				playRandomInfo();
+				//
 			}
 		}
 
