@@ -106,8 +106,8 @@ package com.julapy.ph.hair.model
 			s1 = new StyleVO();
 			s1.introTimeline	= "makeup.video.01";
 			s1.outroTimeline	= "makeup.video.02";
-			s1.introStream		= "flv/g1_s1_p1.f4v";
-			s1.outroStream		= "flv/g1_s1_p1.f4v";
+			s1.introStream		= "";
+			s1.outroStream		= "flv/hairmodel01look01outro.f4v";
 			s1.playParts		=
 			[
 				"makeup.ivideo.g1.s1.01",
@@ -125,8 +125,8 @@ package com.julapy.ph.hair.model
 			s2 = new StyleVO();
 			s2.introTimeline	= "makeup.video.03";
 			s2.outroTimeline	= "makeup.video.04";
-			s2.introStream		= "flv/g1_s1_p1.f4v";
-			s2.outroStream		= "flv/g1_s1_p1.f4v";
+			s2.introStream		= "flv/hairmodel01look02intro.f4v";
+			s2.outroStream		= "flv/hairmodel01look02outro.f4v";
 			s2.playParts		=
 			[
 				"makeup.ivideo.g1.s2.01",
@@ -157,8 +157,8 @@ package com.julapy.ph.hair.model
 			s1 = new StyleVO();
 			s1.introTimeline	= "makeup.video.05";
 			s1.outroTimeline	= "makeup.video.06";
-			s1.introStream		= "flv/g1_s1_p1.f4v";
-			s1.outroStream		= "flv/g1_s1_p1.f4v";
+			s1.introStream		= "flv/hairmodel02look01intro.f4v";
+			s1.outroStream		= "flv/hairmodel02look01outro.f4v";
 			s1.playParts		=
 			[
 				"makeup.ivideo.g2.s1.01",
@@ -167,17 +167,17 @@ package com.julapy.ph.hair.model
 			];
 			s1.playStreams	=
 			[
-				"flv/g1_s1_p1.f4v",
-				"flv/g1_s1_p2.f4v",
-				"flv/g1_s1_p3.f4v"
+				"flv/g2_s1_p1.f4v",
+				"flv/g2_s1_p2.f4v",
+				"flv/g2_s1_p3.f4v"
 			];
 
 			var s2 : StyleVO;
 			s2 = new StyleVO();
 			s2.introTimeline	= "makeup.video.07";
 			s2.outroTimeline	= "makeup.video.08";
-			s2.introStream		= "flv/g1_s1_p1.f4v";
-			s2.outroStream		= "flv/g1_s1_p1.f4v";
+			s2.introStream		= "flv/hairmodel02look02intro.f4v";
+			s2.outroStream		= "flv/hairmodel02look02outro.f4v";
 			s2.playParts		=
 			[
 				"makeup.ivideo.g2.s2.01",
@@ -186,9 +186,9 @@ package com.julapy.ph.hair.model
 			];
 			s2.playStreams	=
 			[
-				"flv/g1_s1_p1.f4v",
-				"flv/g1_s1_p2.f4v",
-				"flv/g1_s1_p3.f4v"
+				"flv/g2_s2_p1.f4v",
+				"flv/g2_s2_p2.f4v",
+				"flv/g2_s2_p3.f4v"
 			];
 
 			vo.styles =
