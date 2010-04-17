@@ -37,7 +37,7 @@ package com.julapy.ph.hair.model
 		public static const TOOL_CURLER			: int = 1;
 		public static const TOOL_SPRAY			: int = 2;
 
-		private var _videoGenRect	: Rectangle = new Rectangle( 0, 0, 576, 1024 );
+		private var _videoGenRect	: Rectangle = new Rectangle( 0, 0, 576, 324 );
 		private var _videoIntRect	: Rectangle = new Rectangle( 0, 0, 576, 768 );
 
 		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];
@@ -101,50 +101,7 @@ package com.julapy.ph.hair.model
 		{
 			var vo : GirlVO;
 			vo = new GirlVO();
-
-			var s1 : StyleVO;
-			s1 = new StyleVO();
-			s1.introTimeline	= "makeup.video.01";
-			s1.outroTimeline	= "makeup.video.02";
-			s1.introStream		= "";
-			s1.outroStream		= "flv/hairmodel01look01outro.f4v";
-			s1.playParts		=
-			[
-				"makeup.ivideo.g1.s1.01",
-				"makeup.ivideo.g1.s1.02",
-				"makeup.ivideo.g1.s1.03"
-			];
-			s1.playStreams	=
-			[
-				"flv/g1_s1_p1.f4v",
-				"flv/g1_s1_p2.f4v",
-				"flv/g1_s1_p3.f4v"
-			];
-
-			var s2 : StyleVO;
-			s2 = new StyleVO();
-			s2.introTimeline	= "makeup.video.03";
-			s2.outroTimeline	= "makeup.video.04";
-			s2.introStream		= "flv/hairmodel01look02intro.f4v";
-			s2.outroStream		= "flv/hairmodel01look02outro.f4v";
-			s2.playParts		=
-			[
-				"makeup.ivideo.g1.s2.01",
-				"makeup.ivideo.g1.s2.02",
-				"makeup.ivideo.g1.s2.03"
-			];
-			s2.playStreams	=
-			[
-				"flv/g1_s2_p1.f4v",
-				"flv/g1_s2_p2.f4v",
-				"flv/g1_s2_p3.f4v"
-			];
-
-			vo.styles =
-			[
-				s1, s2
-			];
-
+			vo.styles =	[ g1s1_vo, g2s1_vo ];
 			return vo;
 		}
 
@@ -152,51 +109,104 @@ package com.julapy.ph.hair.model
 		{
 			var vo : GirlVO;
 			vo = new GirlVO();
+			vo.styles = [ g1s2_vo, g2s2_vo ];
+			return vo;
+		}
 
-			var s1 : StyleVO;
-			s1 = new StyleVO();
-			s1.introTimeline	= "makeup.video.05";
-			s1.outroTimeline	= "makeup.video.06";
-			s1.introStream		= "flv/hairmodel02look01intro.f4v";
-			s1.outroStream		= "flv/hairmodel02look01outro.f4v";
-			s1.playParts		=
+		private function get g1s1_vo ():StyleVO
+		{
+			var styleVO : StyleVO;
+			styleVO = new StyleVO();
+			styleVO.introTimeline	= "makeup.video.01";
+			styleVO.outroTimeline	= "makeup.video.02";
+			styleVO.introStream		= "";
+			styleVO.outroStream		= "flv/hairmodel01look01outro.f4v";
+			styleVO.playParts		=
+			[
+				"makeup.ivideo.g1.s1.01",
+				"makeup.ivideo.g1.s1.02",
+				"makeup.ivideo.g1.s1.03"
+			];
+			styleVO.playStreams	=
+			[
+				"flv/g1_s1_p1.f4v",
+				"flv/g1_s1_p2.f4v",
+				"flv/g1_s1_p3.f4v"
+			];
+
+			return styleVO;
+		}
+
+		private function get g1s2_vo ():StyleVO
+		{
+			var styleVO : StyleVO;
+			styleVO = new StyleVO();
+			styleVO.introTimeline	= "makeup.video.03";
+			styleVO.outroTimeline	= "makeup.video.04";
+			styleVO.introStream		= "flv/hairmodel01look02intro.f4v";
+			styleVO.outroStream		= "flv/hairmodel01look02outro.f4v";
+			styleVO.playParts		=
+			[
+				"makeup.ivideo.g1.s2.01",
+				"makeup.ivideo.g1.s2.02",
+				"makeup.ivideo.g1.s2.03"
+			];
+			styleVO.playStreams	=
+			[
+				"flv/g1_s2_p1.f4v",
+				"flv/g1_s2_p2.f4v",
+				"flv/g1_s2_p3.f4v"
+			];
+
+			return styleVO;
+		}
+
+		private function get g2s1_vo ():StyleVO
+		{
+			var styleVO : StyleVO;
+			styleVO = new StyleVO();
+			styleVO.introTimeline	= "makeup.video.05";
+			styleVO.outroTimeline	= "makeup.video.06";
+			styleVO.introStream		= "flv/hairmodel02look01intro.f4v";
+			styleVO.outroStream		= "flv/hairmodel02look01outro.f4v";
+			styleVO.playParts		=
 			[
 				"makeup.ivideo.g2.s1.01",
 				"makeup.ivideo.g2.s1.02",
 				"makeup.ivideo.g2.s1.03"
 			];
-			s1.playStreams	=
+			styleVO.playStreams	=
 			[
 				"flv/g2_s1_p1.f4v",
 				"flv/g2_s1_p2.f4v",
 				"flv/g2_s1_p3.f4v"
 			];
 
-			var s2 : StyleVO;
-			s2 = new StyleVO();
-			s2.introTimeline	= "makeup.video.07";
-			s2.outroTimeline	= "makeup.video.08";
-			s2.introStream		= "flv/hairmodel02look02intro.f4v";
-			s2.outroStream		= "flv/hairmodel02look02outro.f4v";
-			s2.playParts		=
+			return styleVO;
+		}
+
+		private function get g2s2_vo ():StyleVO
+		{
+			var styleVO : StyleVO;
+			styleVO = new StyleVO();
+			styleVO.introTimeline	= "makeup.video.07";
+			styleVO.outroTimeline	= "makeup.video.08";
+			styleVO.introStream		= "flv/hairmodel02look02intro.f4v";
+			styleVO.outroStream		= "flv/hairmodel02look02outro.f4v";
+			styleVO.playParts		=
 			[
 				"makeup.ivideo.g2.s2.01",
 				"makeup.ivideo.g2.s2.02",
 				"makeup.ivideo.g2.s2.03"
 			];
-			s2.playStreams	=
+			styleVO.playStreams	=
 			[
 				"flv/g2_s2_p1.f4v",
 				"flv/g2_s2_p2.f4v",
 				"flv/g2_s2_p3.f4v"
 			];
 
-			vo.styles =
-			[
-				s1, s2
-			];
-
-			return vo;
+			return styleVO;
 		}
 
 		/////////////////////////////////////
