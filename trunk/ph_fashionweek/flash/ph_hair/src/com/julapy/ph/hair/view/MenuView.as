@@ -21,8 +21,10 @@ package com.julapy.ph.hair.view
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 
 	public class MenuView extends View
 	{
@@ -40,6 +42,8 @@ package com.julapy.ph.hair.view
 		private var toolPathShowing	: Boolean = false;
 
 		private var toolAnim		: MenuToolAnimView;
+
+		private var idleSoundTimer	: Timer;
 
 		private var isRightTool		: Boolean = false;
 		private var isInProximity	: Boolean = false;
@@ -254,6 +258,8 @@ package com.julapy.ph.hair.view
 				dropArea.over( false );
 				dropArea.showCross( false );
 			}
+
+			initIdleSoundTimer();
 		}
 
 		private function enterFrameHandler ( e : Event ):void
@@ -497,6 +503,47 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
+		//	IDLE SOUND TIMER.
+		/////////////////////////////////////////////
+
+		private function initIdleSoundTimer ():void
+		{
+			if( idleSoundTimer )
+				killIdleSoundTimer();
+
+			var time : int;
+			time = (int)( Math.random() * 10000 ) + 8000;
+
+			idleSoundTimer = new Timer( time, 1 );
+			idleSoundTimer.addEventListener( TimerEvent.TIMER_COMPLETE, idleSoundTimerHandler );
+			idleSoundTimer.start();
+		}
+
+		private function killIdleSoundTimer ():void
+		{
+			if( idleSoundTimer )
+			{
+				idleSoundTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, idleSoundTimerHandler );
+				idleSoundTimer.stop();
+				idleSoundTimer = null;
+			}
+		}
+
+		private function idleSoundTimerHandler ( e : TimerEvent ):void
+		{
+			initIdleSoundTimer();
+
+			if( !bEnabled )
+				return;
+
+			if( bVideoPlaying )
+				return;
+
+//			ModelLocator.getInstance().soundModel.playRandomIdle();
+			ModelLocator.getInstance().soundModel.playNextIdle();
+		}
+
+		/////////////////////////////////////////////
 		//	ENABLE.
 		/////////////////////////////////////////////
 
@@ -548,6 +595,8 @@ package com.julapy.ph.hair.view
 
 				playIn( true );
 				stylePartChangeHandler();
+
+				initIdleSoundTimer();
 			}
 			else
 			{
@@ -558,6 +607,8 @@ package com.julapy.ph.hair.view
 				toolSelected = -1;
 
 				selectDropArea( -1 );
+
+				killIdleSoundTimer();
 			}
 		}
 
