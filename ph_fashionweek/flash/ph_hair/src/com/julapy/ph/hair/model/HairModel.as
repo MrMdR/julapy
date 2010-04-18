@@ -134,7 +134,7 @@ package com.julapy.ph.hair.model
 			styleVO = new StyleVO();
 			styleVO.introTimeline	= "makeup.video.01";
 			styleVO.outroTimeline	= "makeup.video.02";
-			styleVO.introStream		= "";
+			styleVO.introStream		= "flv/hairmodel01look01intro.f4v";
 			styleVO.outroStream		= "flv/hairmodel01look01outro.f4v";
 			styleVO.playParts		=
 			[
