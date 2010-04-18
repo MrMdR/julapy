@@ -94,6 +94,14 @@ package com.julapy.ph.hair.view
 
 		public function reset ():void
 		{
+			show( false );
+			clearInterval( playInDelayIntv );
+
+			bPlayingIn	= false;
+			bPlayingOut	= false;
+
+			bIsOver		= false;
+
 			ghost.reset();
 			ring.reset();
 			arrows.reset();

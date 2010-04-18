@@ -112,6 +112,34 @@ package com.julapy.ph.hair.view
 					asset.stage.displayState = StageDisplayState.NORMAL;
 				}
 			}
+
+			if( e.keyCode == Keyboard.NUMBER_1 )
+			{
+				ModelLocator.getInstance().hairModel.toolTrigger = HairModel.TOOL_DRYER;
+			}
+
+			if( e.keyCode == Keyboard.NUMBER_2 )
+			{
+				ModelLocator.getInstance().hairModel.toolTrigger = HairModel.TOOL_CURLER;
+			}
+
+			if( e.keyCode == Keyboard.NUMBER_3 )
+			{
+				ModelLocator.getInstance().hairModel.toolTrigger = HairModel.TOOL_SPRAY;
+			}
+
+			if( e.keyCode == Keyboard.NUMBER_4 )
+			{
+				if( ModelLocator.getInstance().hairModel.bAttractor )
+				{
+					ModelLocator.getInstance().hairModel.bAttractor = false;
+				}
+				else
+				{
+					ModelLocator.getInstance().hairModel.reset();
+					ModelLocator.getInstance().hairModel.bAttractor = true;
+				}
+			}
 		}
 
 	}
