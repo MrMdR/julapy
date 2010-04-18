@@ -8,6 +8,7 @@ package com.julapy.ph.makeup.view
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.utils.Timer;
 
 	public class MenuView extends View
 	{

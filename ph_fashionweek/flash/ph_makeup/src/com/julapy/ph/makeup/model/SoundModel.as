@@ -24,15 +24,15 @@ package com.julapy.ph.makeup.model
 		public static const IDLE_DO_SOMETHING_04	: String = "makeup_20.mp3";
 		public static const IDLE_DO_SOMETHING_05	: String = "makeup_21.mp3";
 
-		public static const INFO_01					: String = "makeup_12.mp3";
-		public static const INFO_02					: String = "makeup_13.mp3";
-		public static const INFO_03					: String = "makeup_14.mp3";
-		public static const INFO_04					: String = "makeup_15.mp3";
+		public static const INFO_01					: String = "makeup_12.mp3";		// used in video.
+		public static const INFO_02					: String = "makeup_13.mp3";		// used in video.
+		public static const INFO_03					: String = "makeup_14.mp3";		// used in video.
+		public static const INFO_04					: String = "makeup_15.mp3";		// used in video.
 
-		public static const INTRO_01				: String = "makeup_01.mp3";
-		public static const INTRO_02				: String = "makeup_02.mp3";
-		public static const INTRO_03				: String = "makeup_03.mp3";
-		public static const INTRO_04				: String = "makeup_04.mp3";
+		public static const INTRO_01				: String = "makeup_01.mp3";		// used in video.
+		public static const INTRO_02				: String = "makeup_02.mp3";		// used in video.
+		public static const INTRO_03				: String = "makeup_03.mp3";		// used in video.
+		public static const INTRO_04				: String = "makeup_04.mp3";		// used in video.
 
 		public static const PLAY_INTRO_INSTRUCT_01	: String = "makeup_05.mp3";
 		public static const PLAY_INTRO_INSTRUCT_02	: String = "makeup_07.mp3";
@@ -65,6 +65,8 @@ package com.julapy.ph.makeup.model
 		private var instructions		: Array = new Array();
 		private var compliment			: Array = new Array();
 		private var selectAnotherTool	: Array = new Array();
+
+		private var idleIndex			: int = -1;
 
 		private var sm 					: SoundManager;
 		private var sounds				: Array = new Array();
@@ -312,6 +314,18 @@ package com.julapy.ph.makeup.model
 			i = (int)( Math.random() * a.length );
 
 			sm.playSound( a[ i ] );
+		}
+
+		//////////////////////////////////////////////
+		//	PLAY.
+		//////////////////////////////////////////////
+
+		public function playNextIdle ():void
+		{
+			if( ++idleIndex >= idleDoSomethign.length )
+				idleIndex = 0;
+
+			sm.playSound( idleDoSomethign[ idleIndex ] );
 		}
 	}
 }

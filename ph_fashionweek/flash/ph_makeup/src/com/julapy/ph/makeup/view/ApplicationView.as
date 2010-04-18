@@ -33,6 +33,7 @@ package com.julapy.ph.makeup.view
 		private var useGirlBm		: Boolean = false;
 
 		private var video		: VideoBaseView;
+		private var cover		: CoverView;
 		private var menu		: MenuView;
 		private var face		: FaceView;
 		private var makeup		: MakeupView;
@@ -83,6 +84,8 @@ package com.julapy.ph.makeup.view
 		private function initViews ():void
 		{
 			video		= new VideoBaseView( asset.getChildByName( "video" ) as MovieClip );
+
+			cover		= new CoverView( asset.getChildByName( "cover" ) as MovieClip );
 
 			menu		= new MenuView( asset.getChildByName( "menu" ) as MovieClip );
 
