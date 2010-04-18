@@ -45,6 +45,9 @@ package com.julapy.ph.hair.view
 
 		private var idleSoundTimer	: Timer;
 
+		private var timeoutTimer	: Timer;
+		private var timeoutTimerSec	: int = 60;
+
 		private var isRightTool		: Boolean = false;
 		private var isInProximity	: Boolean = false;
 
@@ -260,6 +263,7 @@ package com.julapy.ph.hair.view
 			}
 
 			initIdleSoundTimer();
+			initTimeoutTimer();
 		}
 
 		private function enterFrameHandler ( e : Event ):void
@@ -544,6 +548,53 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
+		//	TIMEOUT TIMER.
+		/////////////////////////////////////////////
+
+		private function initTimeoutTimer ():void
+		{
+			if( timeoutTimer )
+				killTimeoutTimer();
+
+			if( !bEnabled )
+				return;
+
+			if( bVideoPlaying )
+				return;
+
+			var time : int;
+			time = ModelLocator.getInstance().hairModel.attractorTimeoutSeconds * 1000;
+
+			timeoutTimer = new Timer( time, 1 );
+			timeoutTimer.addEventListener( TimerEvent.TIMER_COMPLETE, timeoutTimerHandler );
+			timeoutTimer.start();
+		}
+
+		private function killTimeoutTimer ():void
+		{
+			if( timeoutTimer )
+			{
+				timeoutTimer.removeEventListener( TimerEvent.TIMER_COMPLETE, timeoutTimerHandler );
+				timeoutTimer.stop();
+				timeoutTimer = null;
+			}
+		}
+
+		private function timeoutTimerHandler ( e : TimerEvent ):void
+		{
+			killTimeoutTimer();
+
+			if( !bEnabled )
+				return;
+
+			if( bVideoPlaying )
+				return;
+
+			ModelLocator.getInstance().hairModel.reset();
+			ModelLocator.getInstance().hairModel.bAttractor = true;
+		}
+
+		/////////////////////////////////////////////
 		//	ENABLE.
 		/////////////////////////////////////////////
 
@@ -597,10 +648,13 @@ package com.julapy.ph.hair.view
 				stylePartChangeHandler();
 
 				initIdleSoundTimer();
+				initTimeoutTimer();
 			}
 			else
 			{
 				disable();
+
+				ModelLocator.getInstance().hairModel.menuSelection = -1;
 
 				stopToolDrag( tools[ toolIndex ] );
 				restoreSelectedTool();
@@ -609,6 +663,7 @@ package com.julapy.ph.hair.view
 				selectDropArea( -1 );
 
 				killIdleSoundTimer();
+				killTimeoutTimer();
 			}
 		}
 

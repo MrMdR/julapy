@@ -183,15 +183,18 @@ package com.julapy.ph.hair.model
 			}
 		}
 
-
 		public function playRandomIdle ():void
 		{
-			sm.stopSound( IDLE_1 );		// stop all idle before playing any more.
+			stopAllIdle();
+			playRandom( idles );
+		}
+
+		public function stopAllIdle ():void
+		{
+			sm.stopSound( IDLE_1 );
 			sm.stopSound( IDLE_2 );
 			sm.stopSound( IDLE_3 );
 			sm.stopSound( IDLE_4 );
-
-			playRandom( idles );
 		}
 
 		public function playNextIdle ():void

@@ -7,6 +7,7 @@ package com.julapy.ph.hair.view
 	import com.holler.controls.VideoView;
 	import com.holler.core.View;
 	import com.holler.events.VideoViewEvent;
+	import com.julapy.ph.hair.events.AttractorChangeEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
@@ -22,6 +23,8 @@ package com.julapy.ph.hair.view
 
 	public class VideoGeneralView extends View
 	{
+		private var bEnabled		: Boolean = false;
+
 		private var videoHolder		: MovieClip;
 		private var video			: MovieClip;
 		private var videoID			: String = "";
@@ -43,9 +46,10 @@ package com.julapy.ph.hair.view
 			continueBtn = new BtnView( _sprite.getChildByName( "continueBtn" ) as MovieClip );
 			continueBtn.addEventListener( MouseEvent.MOUSE_DOWN, continueBtnHandler );
 
-			ModelLocator.getInstance().hairModel.addEventListener( GirlEvent.GIRL_CHANGE,		girlChangeHandler );
-			ModelLocator.getInstance().hairModel.addEventListener( StyleEvent.STYLE_CHANGE,		styleChangeHandler );
-			ModelLocator.getInstance().hairModel.addEventListener( SectionEvent.SECTION_CHANGE,	sectionChangeHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( GirlEvent.GIRL_CHANGE,					girlChangeHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( StyleEvent.STYLE_CHANGE,					styleChangeHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( SectionEvent.SECTION_CHANGE,				sectionChangeHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( AttractorChangeEvent.ATTRACTOR_CHANGE,	attractorChangeHandler );
 		}
 
 		/////////////////////////////////////////////
@@ -92,7 +96,14 @@ package com.julapy.ph.hair.view
 
 		private function playOutCompleteHandler ():void
 		{
-			ModelLocator.getInstance().hairModel.nextSection();
+			if( ModelLocator.getInstance().hairModel.bAttractor )
+			{
+				initAttractor();
+			}
+			else
+			{
+				ModelLocator.getInstance().hairModel.nextSection();
+			}
 		}
 
 		/////////////////////////////////////////////
@@ -122,15 +133,15 @@ package com.julapy.ph.hair.view
 
 		private function initStreamingVideo ():void
 		{
-			if( !videoStream )
-			{
-				videoHolder.addChild( videoStreamHolder = new Sprite() );
+			if( videoStream )
+				killStreamingVideo();
 
-				videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().hairModel.videoGenRect.clone() );
-				videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
-				videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
-				videoStream.videoURI	= videoID;
-			}
+			videoHolder.addChild( videoStreamHolder = new Sprite() );
+
+			videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().hairModel.videoGenRect.clone() );
+			videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
+			videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
+			videoStream.videoURI	= videoID;
 		}
 
 		private function killStreamingVideo ():void
@@ -161,18 +172,33 @@ package com.julapy.ph.hair.view
 		}
 
 		/////////////////////////////////////////////
+		//	ATTRACTOR.
+		/////////////////////////////////////////////
+
+		private function initAttractor ():void
+		{
+			ModelLocator.getInstance().hairModel.nextAttractor();
+
+			videoID = ModelLocator.getInstance().hairModel.attractorFlvPath;
+
+			initStreamingVideo();
+		}
+
+		/////////////////////////////////////////////
 		//	ENABLE.
 		/////////////////////////////////////////////
 
 		private function enable ():void
 		{
-			visible = true;
+			bEnabled	= true;
+			visible		= true;
 			doValidate();
 		}
 
 		private function disable ():void
 		{
-			visible = false;
+			bEnabled	= false;
+			visible		= false;
 			doValidate();
 		}
 
@@ -190,7 +216,7 @@ package com.julapy.ph.hair.view
 
 		}
 
-		private function sectionChangeHandler ( e : SectionEvent ):void
+		private function sectionChangeHandler ( e : SectionEvent = null ):void
 		{
 			var girl : int;
 			girl	= ModelLocator.getInstance().hairModel.girl;
@@ -264,9 +290,21 @@ package com.julapy.ph.hair.view
 			}
 		}
 
+		private function attractorChangeHandler ( e : AttractorChangeEvent ):void
+		{
+			if( !bEnabled )
+				return;
+
+			playIn( false );
+		}
+
+		/////////////////////////////////////////////////////
+		//	BTN HANDLER.
+		/////////////////////////////////////////////////////
+
 		private function continueBtnHandler ( e : MouseEvent ):void
 		{
-			playIn( false )
+			playIn( false );
 		}
 	}
 }

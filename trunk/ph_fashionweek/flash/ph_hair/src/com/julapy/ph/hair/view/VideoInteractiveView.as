@@ -115,15 +115,15 @@ package com.julapy.ph.hair.view
 
 		private function initStreamingVideo ():void
 		{
-			if( !videoStream )
-			{
-				videoHolder.addChild( videoStreamHolder = new Sprite() );
+			if( videoStream )
+				killStreamingVideo();
 
-				videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().hairModel.videoIntRect.clone() );
-				videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
-				videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
-				videoStream.videoURI = videoID;
-			}
+			videoHolder.addChild( videoStreamHolder = new Sprite() );
+
+			videoStream = new VideoView( videoStreamHolder, ModelLocator.getInstance().hairModel.videoIntRect.clone() );
+			videoStream.addEventListener( VideoViewEvent.READY, videoStreamReadyHandler );
+			videoStream.addEventListener( VideoViewEvent.STOP,	videoStreamStopHandler );
+			videoStream.videoURI = videoID;
 		}
 
 		private function killStreamingVideo ():void
@@ -400,6 +400,9 @@ package com.julapy.ph.hair.view
 					killStreamingVideo();
 				}
 
+				killFinalLookSoundTimer();
+				killInfoSoundTimer();
+
 				return;
 			}
 
@@ -433,8 +436,6 @@ package com.julapy.ph.hair.view
 			}
 			else
 			{
-				stopStreamingVideo();
-				killStreamingVideo();
 				initStreamingVideo();
 			}
 

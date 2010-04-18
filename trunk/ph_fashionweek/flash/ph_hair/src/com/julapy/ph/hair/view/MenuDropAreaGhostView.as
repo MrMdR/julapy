@@ -28,7 +28,11 @@ package com.julapy.ph.hair.view
 
 		public function reset ():void
 		{
-			//
+			bShow	= false;
+
+			visible	= false;
+			alpha	= 0;
+			doValidate();
 		}
 
 		public function show ( b : Boolean, delay : Number = 0 ):void

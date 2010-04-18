@@ -1,14 +1,17 @@
 package com.julapy.ph.hair.model
 {
+	import com.julapy.ph.hair.events.AttractorChangeEvent;
 	import com.julapy.ph.hair.events.DropAreaEvent;
 	import com.julapy.ph.hair.events.GirlEvent;
 	import com.julapy.ph.hair.events.InteractiveVideoEvent;
 	import com.julapy.ph.hair.events.MenuEvent;
+	import com.julapy.ph.hair.events.ResetEvent;
 	import com.julapy.ph.hair.events.SectionEvent;
 	import com.julapy.ph.hair.events.StyleEvent;
 	import com.julapy.ph.hair.events.StylePartEvent;
 	import com.julapy.ph.hair.events.ToolEvent;
 	import com.julapy.ph.hair.events.ToolPathEvent;
+	import com.julapy.ph.hair.events.ToolTriggerEvent;
 	import com.julapy.ph.hair.vo.GirlVO;
 	import com.julapy.ph.hair.vo.StyleVO;
 
@@ -40,6 +43,11 @@ package com.julapy.ph.hair.model
 		private var _videoGenRect	: Rectangle = new Rectangle( 0, 0, 576, 324 );
 		private var _videoIntRect	: Rectangle = new Rectangle( 0, 0, 576, 768 );
 
+		private var _attractors					: Array = new Array();
+		private var _attractorIndex				: int	= -1;
+		private var _attractorTimeoutSeconds	: int = 60;
+		private var _bAttractor					: Boolean = false;
+
 		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];
 		private var _styles			: Array = [ STYLE_ONE, STYLE_TWO ];
 		private var _sections		: Array = [ SECTION_INTRO, SECTION_PLAY, SECTION_OUTRO ];
@@ -57,6 +65,7 @@ package com.julapy.ph.hair.model
 		private var _menuSelection	: int = -1;
 
 		private var _tool			: int = -1;
+		private var _toolTrigger	: int = -1;
 
 		public function HairModel()
 		{
@@ -65,6 +74,12 @@ package com.julapy.ph.hair.model
 
 			_girlVOs.push( _girlOneVO );
 			_girlVOs.push( _girlTwoVO );
+
+			_attractors =
+			[
+				"flv/attractor_hairdesigner.f4v",
+				"flv/attractor_models.f4v"
+			];
 		}
 
 		/////////////////////////////////////
@@ -436,6 +451,73 @@ package com.julapy.ph.hair.model
 		public function interactiveVideoPlayedOut ():void
 		{
 			dispatchEvent( new InteractiveVideoEvent( InteractiveVideoEvent.PLAYED_OUT ) );
+		}
+
+		/////////////////////////////////////
+		//	TOOL TRIGGER.
+		/////////////////////////////////////
+
+		public function set toolTrigger ( value : int ):void
+		{
+			_toolTrigger = value;
+
+			dispatchEvent( new ToolTriggerEvent( _toolTrigger ) );
+		}
+
+		public function get toolTrigger ():int
+		{
+			return _toolTrigger;
+		}
+
+		/////////////////////////////////////
+		//	ATTRACTOR.
+		/////////////////////////////////////
+
+		public function set bAttractor ( value : Boolean ):void
+		{
+			if( _bAttractor != value )
+			{
+				_bAttractor = value;
+
+				dispatchEvent( new AttractorChangeEvent( _bAttractor ) );
+			}
+		}
+
+		public function get bAttractor ():Boolean
+		{
+			return _bAttractor;
+		}
+
+		public function nextAttractor ():void
+		{
+			if( ++_attractorIndex >= _attractors.length )
+				_attractorIndex = 0;
+		}
+
+		public function get attractorFlvPath ():String
+		{
+			return _attractors[ _attractorIndex ];
+		}
+
+		public function get attractorTimeoutSeconds ():int
+		{
+			return _attractorTimeoutSeconds;
+		}
+
+		/////////////////////////////////////
+		//	RESET.
+		/////////////////////////////////////
+
+		public function reset ():void
+		{
+//			girl		= GIRL_ONE;				// keep the girl and style counter - we want to come back to where we left off.
+//			style		= STYLE_ONE;
+			section		= SECTION_INTRO;
+			stylePart	= STYLE_PART_ONE;
+
+			ModelLocator.getInstance().soundModel.stopAllSounds();
+
+			dispatchEvent( new ResetEvent() );
 		}
 	}
 }
