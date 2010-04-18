@@ -64,7 +64,7 @@ package com.julapy.ph.makeup.view
 			ModelLocator.getInstance().ofDataModel.addEventListener( DisconnectEvent.DISCONNECT, disconnectHandler );
 			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
 
-			model.girl		= MakeupModel.GIRL_ONE;
+			model.girl		= MakeupModel.GIRL_TWO;
 			model.section	= MakeupModel.SECTION_INTRO;
 		}
 
@@ -235,6 +235,11 @@ package com.julapy.ph.makeup.view
 				{
 					asset.stage.displayState = StageDisplayState.NORMAL;
 				}
+			}
+
+			if( e.keyCode == Keyboard.NUMBER_4 )
+			{
+				// reset.
 			}
 		}
 	}
