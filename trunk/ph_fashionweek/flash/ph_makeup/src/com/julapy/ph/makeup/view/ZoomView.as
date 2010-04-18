@@ -4,6 +4,7 @@ package com.julapy.ph.makeup.view
 
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.ModeEvent;
+	import com.julapy.ph.makeup.events.SectionEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
 
@@ -14,6 +15,8 @@ package com.julapy.ph.makeup.view
 
 	public class ZoomView extends View
 	{
+		private var bEnabled		: Boolean = false;
+
 		private var zoomScaleMin	: Number = 0;
 		private var zoomScaleMax	: Number = 0;
 		private var zoomTime		: Number = 0.5;
@@ -29,8 +32,35 @@ package com.julapy.ph.makeup.view
 			zoomScaleMax	= ModelLocator.getInstance().makeupModel.zoomScaleMax;
 			zoomScale 		= ModelLocator.getInstance().makeupModel.zoomScale;
 
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,	modeZoomInHandler );
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,	modeZoomOutHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( SectionEvent.SECTION_CHANGE,	sectionChangeHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,		modeZoomInHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,		modeZoomOutHandler );
+		}
+
+		/////////////////////////////////////////////
+		//	ENABLE.
+		/////////////////////////////////////////////
+
+		private function enable ( b : Boolean ):void
+		{
+			if( bEnabled == b )
+				return;
+
+			bEnabled	= b;
+
+			visible		= bEnabled;
+			doValidate();
+		}
+
+		//////////////////////////////////////////////////////////
+		//	RESET.
+		//////////////////////////////////////////////////////////
+
+		private function reset ():void
+		{
+			zoomScale = zoomScaleMin;
+			ModelLocator.getInstance().makeupModel.zoomScale	= zoomScale;
+			ModelLocator.getInstance().makeupModel.zoomOffset	= new Point( 0, 0 );
 		}
 
 		//////////////////////////////////////////////////////////
@@ -122,8 +152,31 @@ package com.julapy.ph.makeup.view
 		//	HANDLERS.
 		//////////////////////////////////////////////////////////
 
+		private function sectionChangeHandler ( e : SectionEvent ):void
+		{
+			var girl	: int;
+			var section : int;
+
+			girl	= ModelLocator.getInstance().makeupModel.girl;
+			section = ModelLocator.getInstance().makeupModel.section;
+
+			if( section == MakeupModel.SECTION_INTRO || section == MakeupModel.SECTION_OUTRO )
+			{
+				enable( false );
+				reset();
+			}
+
+			if( section == MakeupModel.SECTION_PLAY )
+			{
+				enable( true );
+			}
+		}
+
 		private function modeZoomInHandler ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			if( e.mode == MakeupModel.EYES_MODE )
 			{
 				zoomToEyes();
@@ -142,6 +195,9 @@ package com.julapy.ph.makeup.view
 
 		private function modeZoomOutHandler ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			zoomOut();
 		}
 	}

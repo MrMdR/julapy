@@ -16,6 +16,8 @@ package com.julapy.ph.makeup.view
 
 	public class TimerView extends View
 	{
+		private var bEnabled		: Boolean;
+
 		private var timer 			: Timer;
 		private var timerMc			: MovieClip;
 		private var timerText		: TextField;
@@ -37,6 +39,21 @@ package com.julapy.ph.makeup.view
 			ModelLocator.getInstance().makeupModel.addEventListener( SectionEvent.SECTION_CHANGE,	sectionChangeHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,		modeZoomInHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,		modeZoomOutHandler );
+		}
+
+		/////////////////////////////////////////////
+		//	ENABLE.
+		/////////////////////////////////////////////
+
+		private function enable ( b : Boolean ):void
+		{
+			if( bEnabled == b )
+				return;
+
+			bEnabled	= b;
+
+			visible		= bEnabled;
+			doValidate();
 		}
 
 		///////////////////////////////////////////////
@@ -145,7 +162,7 @@ package com.julapy.ph.makeup.view
 				killIdleTimer();
 
 			var time : int;
-			time = (int)( Math.random() * 3000 ) + 6000;
+			time = (int)( Math.random() * 4000 ) + 8000;
 
 			idleTimer = new Timer( time, 1 );
 			idleTimer.addEventListener( TimerEvent.TIMER_COMPLETE, idleTimerHandler );
@@ -166,6 +183,9 @@ package com.julapy.ph.makeup.view
 		{
 			initIdleTimer();
 
+			if( timerCount > timerSeconds - 12 )		// don't play over final countdown.
+				return;
+
 			ModelLocator.getInstance().soundModel.playNextIdle();
 		}
 
@@ -180,25 +200,36 @@ package com.julapy.ph.makeup.view
 
 			if( section == MakeupModel.SECTION_PLAY )
 			{
+				enable( true );
+
 				initTimer();
-				initFinalLookTimer();
 				initIdleTimer();
+				initFinalLookTimer();
 			}
 
 			if( section == MakeupModel.SECTION_INTRO || section == MakeupModel.SECTION_OUTRO )
 			{
+				enable( false );
+
 				killTimer();
 				killIdleTimer();
+				killFinalLookTimer();
 			}
 		}
 
 		private function modeZoomInHandler ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			killIdleTimer();
 		}
 
 		private function modeZoomOutHandler ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			initIdleTimer();
 		}
 	}

@@ -239,7 +239,15 @@ package com.julapy.ph.makeup.view
 
 			if( e.keyCode == Keyboard.NUMBER_4 )
 			{
-				// reset.
+				if( ModelLocator.getInstance().makeupModel.bAttractor )
+				{
+					ModelLocator.getInstance().makeupModel.bAttractor = false;
+				}
+				else
+				{
+					ModelLocator.getInstance().makeupModel.reset();
+					ModelLocator.getInstance().makeupModel.bAttractor = true;
+				}
 			}
 		}
 	}

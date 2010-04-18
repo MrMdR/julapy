@@ -1,10 +1,15 @@
 package com.julapy.ph.makeup.model
 {
+	import com.julapy.ph.makeup.events.AttractorChangeEvent;
 	import com.julapy.ph.makeup.events.BlinkEvent;
 	import com.julapy.ph.makeup.events.GirlEvent;
 	import com.julapy.ph.makeup.events.ModeEvent;
+	import com.julapy.ph.makeup.events.ResetEvent;
 	import com.julapy.ph.makeup.events.SectionEvent;
 	import com.julapy.ph.makeup.events.ZoomEvent;
+	import com.julapy.ph.makeup.vo.GirlMakeupVO;
+	import com.julapy.ph.makeup.vo.GirlOneMakeupVO;
+	import com.julapy.ph.makeup.vo.GirlTwoMakeupVO;
 
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
@@ -29,8 +34,17 @@ package com.julapy.ph.makeup.model
 		private var _videoRect		: Rectangle = new Rectangle( 0, 0, 576, 324 );
 		private var _imageRect		: Rectangle = new Rectangle( 0, 0, 1152, 2048 );
 
+		private var _attractors					: Array = new Array();
+		private var _attractorIndex				: int	= -1;
+		private var _attractorTimeoutSeconds	: int = 60;
+		private var _bAttractor					: Boolean = false;
+
 		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];
 		private var _sections		: Array = [ SECTION_INTRO, SECTION_PLAY, SECTION_OUTRO ];
+
+		private var _girlOneVO		: GirlOneMakeupVO = new GirlOneMakeupVO();
+		private var _girlTwoVO		: GirlTwoMakeupVO = new GirlTwoMakeupVO();
+		private var _girlVOs		: Array = [ _girlOneVO, _girlTwoVO ];
 
 		private var _girl			: int = -1;
 		private var _section		: int = -1;
@@ -51,7 +65,11 @@ package com.julapy.ph.makeup.model
 
 		public function MakeupModel()
 		{
-			//
+			_attractors =
+			[
+				"flv/attractor_makeupartist.f4v",
+				"flv/attractor_models.f4v"
+			];
 		}
 
 		/////////////////////////////////////
@@ -78,6 +96,20 @@ package com.julapy.ph.makeup.model
 		}
 
 		/////////////////////////////////////
+		//	GIRL VO.
+		/////////////////////////////////////
+
+		public function get girlVOs ():Array
+		{
+			return _girlVOs;
+		}
+
+		public function get girlVO ():GirlMakeupVO
+		{
+			return _girlVOs[ _girl ];
+		}
+
+		/////////////////////////////////////
 		//	GIRL.
 		/////////////////////////////////////
 
@@ -100,6 +132,10 @@ package com.julapy.ph.makeup.model
 		{
 			var girlTemp : int;
 			girlTemp = _girl;
+
+			var vo : GirlMakeupVO;		// move onto next video.
+			vo = _girlVOs[ _girl ];
+			vo.stepVideo();
 
 			if( ++girlTemp >= _girls.length )
 			{
@@ -327,6 +363,55 @@ package com.julapy.ph.makeup.model
 		public function get zoomOffset ():Point
 		{
 			return _zoomOffset;
+		}
+
+		/////////////////////////////////////
+		//	ATTRACTOR.
+		/////////////////////////////////////
+
+		public function set bAttractor ( value : Boolean ):void
+		{
+			if( _bAttractor != value )
+			{
+				_bAttractor = value;
+
+				dispatchEvent( new AttractorChangeEvent( _bAttractor ) );
+			}
+		}
+
+		public function get bAttractor ():Boolean
+		{
+			return _bAttractor;
+		}
+
+		public function nextAttractor ():void
+		{
+			if( ++_attractorIndex >= _attractors.length )
+				_attractorIndex = 0;
+		}
+
+		public function get attractorFlvPath ():String
+		{
+			return _attractors[ _attractorIndex ];
+		}
+
+		public function get attractorTimeoutSeconds ():int
+		{
+			return _attractorTimeoutSeconds;
+		}
+
+		/////////////////////////////////////
+		//	RESET.
+		/////////////////////////////////////
+
+		public function reset ():void
+		{
+			_section	= -1;				// force section reset.
+			section		= SECTION_INTRO;
+
+			ModelLocator.getInstance().soundModel.stopAllSounds();
+
+			dispatchEvent( new ResetEvent() );
 		}
 	}
 }
