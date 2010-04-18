@@ -57,6 +57,17 @@ struct ContourData
 	vector<ofxPoint2f>		*contourHull;
 };
 
+struct ColorTrackerData
+{
+	bool  active;
+	float cx;
+	float cy;
+	float width;
+	float height;
+	float angle;
+};
+
+
 class ColorTracker
 {
 
@@ -70,7 +81,11 @@ public :
 	void initTCP				();
 	void initGui				();
 	
+	void updateTrackerData		();
 	void sendTrackerData		();
+	
+	const ColorTrackerData*	getTrackerData		();
+	int						getNoColorsTracked	();
 	
 	void computeContourAnalysis ( int i );
 	void drawContourAnalysis	( int i );
@@ -97,15 +112,17 @@ public :
 	
 	ofxTCPServer			TCP;
 	
-	float	blur;
-	float	threshold;
+	int	blur;
+	int	threshold;
 	
-	HSVData			*hsv;
-	int				hsvTotal;
-	int				hsvIndex;
+	HSVData				*hsv;
+	int					hsvTotal;
+	int					hsvIndex;
 	
-	ContourData		*cdata;
-	int				cdataTotal;
+	ContourData			*cdata;
+	int					cdataTotal;
+	
+	ColorTrackerData	*data;
 	
 	ofxCvContourFinder		contourFinder;
 	contourSimplify			contourS;
@@ -115,6 +132,7 @@ public :
 	
 	int						cfDetail;
 	float					cfMinArea;
+	float					cfMaxArea;
 	
 	bool					bShowRect;
 	bool					bShowBox;

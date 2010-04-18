@@ -31,6 +31,18 @@ void ColorTracker :: init ( int v )
     satImg.allocate( videoRect.width, videoRect.height );				// Saturation Image
     valImg.allocate( videoRect.width, videoRect.height );				// value Image
 	
+	data		= new ColorTrackerData[ noColorsTracked ];
+	
+	for( int i=0; i<noColorsTracked; i++ )
+	{
+		data[ i ].active	= false;
+		data[ i ].cx		= 0;
+		data[ i ].cy		= 0;
+		data[ i ].width		= 0;
+		data[ i ].height	= 0;
+		data[ i ].angle		= 0;
+	}
+	
 	hsvTotal	= noColorsTracked;
 	hsv			= new HSVData[ hsvTotal ];
 	hsvIndex	= 0;
@@ -52,11 +64,13 @@ void ColorTracker :: init ( int v )
 	}
 	
 	blur		= 0;
-	threshold	= 20;
+	threshold	= 124;
 	
 	initContourAnalysis();
 	initTCP();
 	initGui();
+	
+	loadFromFile();
 }
 
 void ColorTracker :: initContourAnalysis ()
@@ -79,6 +93,7 @@ void ColorTracker :: initContourAnalysis ()
 	tolerance		= 20.0f;
 	
 	cfMinArea		= 0.001;	// do not go to zero, shit will get weird.
+	cfMaxArea		= 1.0;
 	cfDetail		= 0;
 	
 	bShowRect		= false;
@@ -113,13 +128,14 @@ void ColorTracker :: initGui ()
 	
 	gui.addPage();
 	gui.addTitle( "image processing" );
-	gui.addSlider( "blur      ", blur,		0.0, 30.0  );
-	gui.addSlider( "threshold ", threshold,	0.0, 255.0 );
+	gui.addSlider( "blur      ", blur,		0, 30  );
+	gui.addSlider( "threshold ", threshold,	0, 255 );
 	
 	gui.addPage();
 	gui.addTitle( "contour analysis" );
 	gui.addSlider( "contour detail   ", cfDetail,	0,   3   );
 	gui.addSlider( "contour min area ", cfMinArea,	0.001, 0.2 );
+	gui.addSlider( "contour max area ", cfMaxArea,	0.001, 1.0 );
 	
 	gui.addToggle( "bounding rect    ", bShowRect		);
 	gui.addToggle( "contour box      ", bShowBox		);
@@ -183,21 +199,23 @@ void ColorTracker :: update ()
 			
 			hsv[ i ].img.setFromPixels( hsv[ i ].imgPixels, videoRect.width, videoRect.height );
 			
-			hsv[ i ].img.blur( blur );
-			hsv[ i ].img.threshold( threshold );
+//			hsv[ i ].img.blur( blur );
+			hsv[ i ].img.blurGaussian( blur );		// gaussian blur fills more empty area.
+			hsv[ i ].img.threshold( 255 - threshold );
 			
 			computeContourAnalysis( i );
 		}
 		
 		LT.calcColorRange
 		(
-		 hsv[ hsvIndex ].hue,
-		 hsv[ hsvIndex ].hueRange,
-		 hsv[ hsvIndex ].sat,
-		 hsv[ hsvIndex ].satRange,
-		 hsv[ hsvIndex ].val
-		 );
+			hsv[ hsvIndex ].hue,
+			hsv[ hsvIndex ].hueRange,
+			hsv[ hsvIndex ].sat,
+			hsv[ hsvIndex ].satRange,
+			hsv[ hsvIndex ].val
+		);
 		
+		updateTrackerData();
 		sendTrackerData();
 	}
 }
@@ -210,13 +228,13 @@ void ColorTracker :: computeContourAnalysis ( int i )
 	int runningBlobs;
 	runningBlobs = contourFinder.findContours
 	(
-	 hsv[ i ].img,					// image to be used.
-	 (int)( maxArea * cfMinArea ),	// min area.
-	 maxArea,						// max area.
-	 MAX_NUM_CONTOURS_TO_FIND,		// max number of contours to find.
-	 false,							// find holes.
-	 false							// use approximation.
-	 );
+		hsv[ i ].img,					// image to be used.
+		(int)( maxArea * cfMinArea ),	// min area.
+		(int)( maxArea * cfMaxArea ),	// max area.
+		MAX_NUM_CONTOURS_TO_FIND,		// max number of contours to find.
+		false,							// find holes.
+		false							// use approximation.
+	);
 	
 	if( runningBlobs == 0 )
 	{
@@ -256,20 +274,20 @@ void ColorTracker :: computeContourAnalysis ( int i )
 		
 		fitEllipse
 		(
-		 contourFinder.blobs[ j ].pts,
-		 cdata[ i ].box[ j ]
-		 );
+			contourFinder.blobs[ j ].pts,
+			cdata[ i ].box[ j ]
+		);
 		
 		cdata[ i ].blobAngle[ j ] = getOrientation( contourFinder.blobs[ j ].pts );
 		
 		findLines
 		(
-		 contourFinder.blobs[ j ].pts,	// blob points.
-		 cdata[ i ].geomLines,			// lines vector.
-		 30,								// angle threshold.
-		 40,								// minimum length.
-		 30								// resolution.
-		 );
+			contourFinder.blobs[ j ].pts,	// blob points.
+			cdata[ i ].geomLines,			// lines vector.
+			30,								// angle threshold.
+			40,								// minimum length.
+			30								// resolution.
+		);
 		
 		cdata[ i ].contourReg[ j ].clear();
 		cdata[ i ].contourReg[ j ].assign( contourLength, ofxPoint2f() );
@@ -289,24 +307,41 @@ void ColorTracker :: computeContourAnalysis ( int i )
 	}
 }
 
+/////////////////////////////////////////////
+//	TRACKER DATA.
+/////////////////////////////////////////////
+
+void ColorTracker :: updateTrackerData ()
+{
+	for( int i=0; i<noColorsTracked; i++ )
+	{
+		data[ i ].active	= ( cdata[ i ].nBlobs > 0 ) ? 1 : 0;
+		data[ i ].cx		= cdata[ i ].box[ 0 ].center.x / (float)videoRect.width;
+		data[ i ].cy		= cdata[ i ].box[ 0 ].center.y / (float)videoRect.height;
+		data[ i ].width		= cdata[ i ].box[ 0 ].size.width  / (float)videoRect.width;
+		data[ i ].height	= cdata[ i ].box[ 0 ].size.height / (float)videoRect.height;
+		data[ i ].angle		= cdata[ i ].box[ 0 ].angle / 360.0;
+	}
+}
+
 void ColorTracker :: sendTrackerData ()
 {
 	string str;
 	for( int i=0; i<cdataTotal; i++ )
 	{
 		int b;
-		b = ( cdata[ i ].nBlobs > 0 ) ? 1 : 0;
+		b = data[ i ].active;
 		
 		float x, y;
-		x = cdata[ i ].box[ 0 ].center.x / (float)videoRect.width;
-		y = cdata[ i ].box[ 0 ].center.y / (float)videoRect.height;
+		x = data[ i ].cx;
+		y = data[ i ].cy;
 		
 		float w, h;
-		w = cdata[ i ].box[ 0 ].size.width  / (float)videoRect.width;
-		h = cdata[ i ].box[ 0 ].size.height / (float)videoRect.height;
+		w = data[ i ].width;
+		h = data[ i ].height;
 		
 		float a;
-		a = cdata[ i ].box[ 0 ].angle / 360.0;
+		a = data[ i ].angle;
 		
 		str += "[";
 		str += ofToString( b, 0 ) + ",";
@@ -328,12 +363,30 @@ void ColorTracker :: sendTrackerData ()
 }
 
 /////////////////////////////////////////////
+//	GET TRACKER DATA.
+/////////////////////////////////////////////
+
+const ColorTrackerData* ColorTracker :: getTrackerData ()
+{
+	return data;
+}
+
+int ColorTracker :: getNoColorsTracked ()
+{
+	return noColorsTracked;
+}
+
+/////////////////////////////////////////////
 //	DRAW.
 /////////////////////////////////////////////
 
 void ColorTracker :: draw()
 {
-	ofSetColor(0xffffff);
+	ofFill();
+	ofSetColor( 0x333333 );
+	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+	
+	ofSetColor( 0xFFFFFF );
 	
 	glPushMatrix();
 	glTranslatef( videoRect.x, videoRect.y, 0 );

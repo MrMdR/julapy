@@ -8,8 +8,9 @@ void testApp::setup()
 {
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
+	ofSetBackgroundAuto( true );
 	
-	ct.init( 4 );
+	ct.init( 3 );
 	ct.loadFromFile();
 }
 
@@ -19,9 +20,10 @@ void testApp::setup()
 
 void testApp::update()
 {
-	ofBackground( 100,100,100 );
-
 	ct.update();
+	
+	const ColorTrackerData* data;	// data to be used externally.
+	data = ct.getTrackerData();
 }
 
 /////////////////////////////////////////////
