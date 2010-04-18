@@ -4,6 +4,8 @@ package com.julapy.ph.makeup.vo
 	{
 		public function GirlOneMakeupVO()
 		{
+			name = "GirlOneMakeupVO";
+
 			faceLinkage	=
 			[
 				"makeup.g1.layers.face.00",
@@ -30,6 +32,18 @@ package com.julapy.ph.makeup.vo
 				"makeup.g1.mask.eyes",
 				"makeup.g1.mask.lips",
 				"makeup.g1.mask.face"
+			];
+
+			introVideos =								// names for videos were mixed up, so these videos are for model one.
+			[
+				"flv/makeupmodel02look01intro.f4v",
+				"flv/makeupmodel02look02intro.f4v"
+			];
+
+			outroVideos =
+			[
+				"flv/makeupmodel02look01outro.f4v",
+				"flv/makeupmodel02look02outro.f4v"
 			];
 		}
 

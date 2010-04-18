@@ -5,11 +5,10 @@ package com.julapy.ph.makeup.view
 	import com.julapy.ph.makeup.events.BlinkEvent;
 	import com.julapy.ph.makeup.events.GirlEvent;
 	import com.julapy.ph.makeup.events.ModeEvent;
+	import com.julapy.ph.makeup.events.SectionEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
 	import com.julapy.ph.makeup.vo.GirlMakeupVO;
-	import com.julapy.ph.makeup.vo.GirlOneMakeupVO;
-	import com.julapy.ph.makeup.vo.GirlTwoMakeupVO;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -17,11 +16,11 @@ package com.julapy.ph.makeup.view
 
 	public class MakeupView extends View
 	{
+		private var bEnabled		: Boolean;
+
 		private var asset			: MovieClip;
 
 		private var girlVO			: GirlMakeupVO;
-		private var girlOneVO		: GirlOneMakeupVO = new GirlOneMakeupVO();
-		private var girlTwoVO		: GirlTwoMakeupVO = new GirlTwoMakeupVO();
 
 		private var faceIndex		: int = -1;
 		private var eyesIndex		: int = -1;
@@ -46,14 +45,32 @@ package com.julapy.ph.makeup.view
 
 			setAsset( sprite as MovieClip );
 
-			girlVO = girlOneVO;
+			var girlID : int;
+			girlID = ModelLocator.getInstance().makeupModel.girl;
+			girlVO = ModelLocator.getInstance().makeupModel.girlVOs[ girlID ];
 
-			ModelLocator.getInstance().makeupModel.addEventListener( GirlEvent.GIRL_CHANGE,		girlChangeHandler );
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ANIM_IN,	modeEvent );
-			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_START,	blinkHandler );
-			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_STOP,		blinkHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( GirlEvent.GIRL_CHANGE,			girlChangeHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( SectionEvent.SECTION_CHANGE,	sectionChangeHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ANIM_IN,		modeEvent );
+			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_START,		blinkHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( BlinkEvent.BLINK_STOP,			blinkHandler );
 
 			hideBlink();
+		}
+
+		/////////////////////////////////////////////
+		//	ENABLE.
+		/////////////////////////////////////////////
+
+		private function enable ( b : Boolean ):void
+		{
+			if( bEnabled == b )
+				return;
+
+			bEnabled	= b;
+
+			visible		= bEnabled;
+			doValidate();
 		}
 
 		/////////////////////////////////////////
@@ -305,22 +322,33 @@ package com.julapy.ph.makeup.view
 
 		private function girlChangeHandler ( e : GirlEvent ):void
 		{
-			var g : int;
-			g = ModelLocator.getInstance().makeupModel.girl;
+			var girlID : int;
+			girlID = ModelLocator.getInstance().makeupModel.girl;
+			girlVO = ModelLocator.getInstance().makeupModel.girlVOs[ girlID ];
+		}
 
-			if( g == MakeupModel.GIRL_ONE )
+		private function sectionChangeHandler ( e : SectionEvent ):void
+		{
+			var section	: int;
+			section = ModelLocator.getInstance().makeupModel.section;
+
+			if( section == MakeupModel.SECTION_PLAY )
 			{
-				girlVO = girlOneVO;
+				enable( true );
 			}
 
-			if( g == MakeupModel.GIRL_TWO )
+			if( section == MakeupModel.SECTION_INTRO || section == MakeupModel.SECTION_OUTRO )
 			{
-				girlVO = girlTwoVO;
+				enable( false );
+				stop();
 			}
 		}
 
 		private function modeEvent ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			featureIndex = e.mode;
 
 			if( e.mode == MakeupModel.EYES_MODE )
@@ -341,6 +369,9 @@ package com.julapy.ph.makeup.view
 
 		private function blinkHandler ( e : BlinkEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
 			if( e.blinking )
 			{
 				showBlink();

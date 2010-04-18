@@ -135,11 +135,11 @@ package com.julapy.ph.makeup.model
 
 			idleDoSomethign =
 			[
-				IDLE_DO_SOMETHING_01,
-				IDLE_DO_SOMETHING_02,
 				IDLE_DO_SOMETHING_03,
+				IDLE_DO_SOMETHING_02,
 				IDLE_DO_SOMETHING_04,
-				IDLE_DO_SOMETHING_05
+				IDLE_DO_SOMETHING_01
+//				IDLE_DO_SOMETHING_05
 			];
 
 			info =
