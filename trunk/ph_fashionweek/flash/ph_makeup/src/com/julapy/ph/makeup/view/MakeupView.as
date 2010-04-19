@@ -1,5 +1,7 @@
 package com.julapy.ph.makeup.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.holler.assets.AssetLoader;
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.BlinkEvent;
@@ -9,6 +11,8 @@ package com.julapy.ph.makeup.view
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
 	import com.julapy.ph.makeup.vo.GirlMakeupVO;
+
+	import fl.motion.easing.Quadratic;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -118,6 +122,37 @@ package com.julapy.ph.makeup.view
 
 		private function stepFace ():void
 		{
+			playOutFace();
+		}
+
+		//--
+
+		private function playOutFace ():void
+		{
+			if( faceAsset )
+			{
+				Tweener.addTween
+				(
+					faceAsset,
+					{
+						alpha		: 0,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: playOutFaceCompleteHandler
+					}
+				);
+			}
+			else
+			{
+				playOutFaceCompleteHandler();
+			}
+		}
+
+		private function playOutFaceCompleteHandler ():void
+		{
 			removeFace();
 			incFace();
 			addFace();
@@ -125,8 +160,6 @@ package com.julapy.ph.makeup.view
 			removeFaceMask();
 			addFaceMask();
 		}
-
-		//--
 
 		private function removeFace ():void
 		{
@@ -181,13 +214,42 @@ package com.julapy.ph.makeup.view
 
 		private function stepEyes ():void
 		{
+			playOutEyes();
+		}
+
+		private function playOutEyes ():void
+		{
+			if( eyesAsset )
+			{
+				Tweener.addTween
+				(
+					eyesAsset,
+					{
+						alpha		: 0,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: playOutEyesCompleteHandler
+					}
+				);
+			}
+			else
+			{
+				playOutEyesCompleteHandler();
+			}
+		}
+
+		private function playOutEyesCompleteHandler ():void
+		{
 			removeEyes();
 			incEyes();
 			addEyes();
 
 			ModelLocator.getInstance().makeupModel.blinkForce = true;
 
-			removeLipsMask();
+			removeEyesMask();
 			addEyesMask();
 		}
 
@@ -245,6 +307,35 @@ package com.julapy.ph.makeup.view
 		//////////////////////////////////////////////////////////
 
 		private function stepLips ():void
+		{
+			playOutLips();
+		}
+
+		private function playOutLips ():void
+		{
+			if( lipsAsset )
+			{
+				Tweener.addTween
+				(
+					lipsAsset,
+					{
+						alpha		: 0,
+						time		: 0.2,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: playOutLipsCompleteHandler
+					}
+				);
+			}
+			else
+			{
+				playOutLipsCompleteHandler();
+			}
+		}
+
+		private function playOutLipsCompleteHandler ():void
 		{
 			removeLips();
 			incLips();
@@ -356,6 +447,8 @@ package com.julapy.ph.makeup.view
 				return;
 
 			featureIndex = e.mode;
+
+			trace( featureIndex );
 
 			if( e.mode == MakeupModel.EYES_MODE )
 			{
