@@ -11,7 +11,7 @@ package com.julapy.ph.hair.model
 		private var trackerMinTimer		: Timer;
 		private var bWaitForMinTimer	: Boolean = false;
 
-		private var trackerBufferTime	: int = 300;		// massive number!
+		private var trackerBufferTime	: int = 300;
 		private var trackerBufferTimer	: Timer;
 		private var bWaitForBufferTimer	: Boolean = false;
 
