@@ -5,7 +5,6 @@ package com.julapy.ph.hair.model
 
 	public class SoundModel
 	{
-
 		public static const BLACKOUT		: String = "hair.sound.hair_blackout_1";
 
 		public static const FINAL_LOOKS_0	: String = "hair.sound.hair_final_looks_0";
@@ -32,11 +31,15 @@ package com.julapy.ph.hair.model
 		public static const TOOL_SELECTED_2	: String = "hair.sound.hair_tool_selected_2_curler";
 		public static const TOOL_SELECTED_3	: String = "hair.sound.hair_tool_selected_3_spray";
 
+		public static const BACKGROUND		: String = "hair.sound.hair_bg";
+
 		private var sm 		: SoundManager;
 		private var sounds	: Array = new Array();
 
 		private var idles		: Array = new Array();
 		private var idleIndex	: int = 0;
+
+		private var voiceVolume	: Number = 0.5;
 
 		public function SoundModel()
 		{
@@ -68,7 +71,9 @@ package com.julapy.ph.hair.model
 
 				TOOL_SELECTED_1,
 				TOOL_SELECTED_2,
-				TOOL_SELECTED_3
+				TOOL_SELECTED_3,
+
+				BACKGROUND
 			];
 
 			idles = [ IDLE_1, IDLE_2, IDLE_3, IDLE_4 ];
@@ -97,12 +102,12 @@ package com.julapy.ph.hair.model
 		//	RANDOM.
 		/////////////////////////////////////////////////
 
-		private function playRandom ( a : Array ):void
+		private function playRandom ( a : Array, volume : Number = 1.0 ):void
 		{
 			var i : int;
 			i = (int)( Math.random() * a.length );
 
-			sm.playSound( a[ i ] );
+			sm.playSound( a[ i ], volume );
 		}
 
 		/////////////////////////////////////////////////
@@ -114,17 +119,17 @@ package com.julapy.ph.hair.model
 			if( i == 0 )
 			{
 				if( Math.random() > 0.5 )
-					sm.playSound( PLAY_INTRO_1_A );
+					sm.playSound( PLAY_INTRO_1_A, voiceVolume );
 				else
-					sm.playSound( PLAY_INTRO_1_B );
+					sm.playSound( PLAY_INTRO_1_B, voiceVolume );
 			}
 			else if( i == 1 )
 			{
-				sm.playSound( PLAY_INTRO_2 );
+				sm.playSound( PLAY_INTRO_2, voiceVolume );
 			}
 			else if( i == 2 )
 			{
-				sm.playSound( PLAY_INTRO_3 );
+				sm.playSound( PLAY_INTRO_3, voiceVolume );
 			}
 		}
 
@@ -132,15 +137,15 @@ package com.julapy.ph.hair.model
 		{
 			if( i == 0 )
 			{
-				sm.playSound( TOOL_SELECTED_1 );
+				sm.playSound( TOOL_SELECTED_1, voiceVolume );
 			}
 			else if( i == 1 )
 			{
-				sm.playSound( TOOL_SELECTED_2 );
+				sm.playSound( TOOL_SELECTED_2, voiceVolume );
 			}
 			else if( i == 2 )
 			{
-				sm.playSound( TOOL_SELECTED_3 );
+				sm.playSound( TOOL_SELECTED_3, voiceVolume );
 			}
 		}
 
@@ -148,18 +153,18 @@ package com.julapy.ph.hair.model
 		{
 			if( i == 0 )
 			{
-				sm.playSound( PLAY_1_DRYER );
+				sm.playSound( PLAY_1_DRYER, voiceVolume );
 			}
 			else if( i == 1 )
 			{
-				sm.playSound( PLAY_2_CURLER );
+				sm.playSound( PLAY_2_CURLER, voiceVolume );
 			}
 			else if( i == 2 )
 			{
 				if( Math.random() > 0.5 )
-					sm.playSound( PLAY_3_SPRAY );
+					sm.playSound( PLAY_3_SPRAY, voiceVolume );
 				else
-					sm.playSound( PLAY_3_SPRAY_B );
+					sm.playSound( PLAY_3_SPRAY_B, voiceVolume );
 			}
 		}
 
@@ -167,26 +172,26 @@ package com.julapy.ph.hair.model
 		{
 			if( i == 0 )
 			{
-				sm.playSound( FINAL_LOOKS_10 );
+				sm.playSound( FINAL_LOOKS_10, voiceVolume );
 			}
 			else if( i == 1 )
 			{
-				sm.playSound( FINAL_LOOKS_5 );
+				sm.playSound( FINAL_LOOKS_5, voiceVolume );
 			}
 			else if( i == 2 )
 			{
-				sm.playSound( FINAL_LOOKS_0 );
+				sm.playSound( FINAL_LOOKS_0, voiceVolume );
 			}
 			else if( i == 3 )
 			{
-				sm.playSound( FINAL_LOOKS_1 );
+				sm.playSound( FINAL_LOOKS_1, voiceVolume );
 			}
 		}
 
 		public function playRandomIdle ():void
 		{
 			stopAllIdle();
-			playRandom( idles );
+			playRandom( idles, voiceVolume );
 		}
 
 		public function stopAllIdle ():void
@@ -202,7 +207,12 @@ package com.julapy.ph.hair.model
 			if( ++idleIndex >= idles.length )
 				idleIndex = 0;
 
-			sm.playSound( idles[ idleIndex ] );
+			sm.playSound( idles[ idleIndex ], voiceVolume );
+		}
+
+		public function playBackground ():void
+		{
+			sm.playSound( BACKGROUND, 0.3, 0, 100 );
 		}
 	}
 }

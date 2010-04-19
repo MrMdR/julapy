@@ -650,6 +650,8 @@ package com.julapy.ph.hair.view
 
 				initIdleSoundTimer();
 				initTimeoutTimer();
+
+				ModelLocator.getInstance().soundModel.playBackground();
 			}
 			else
 			{
@@ -666,6 +668,8 @@ package com.julapy.ph.hair.view
 
 				killIdleSoundTimer();
 				killTimeoutTimer();
+
+				ModelLocator.getInstance().soundModel.stopAllSounds();
 			}
 		}
 
