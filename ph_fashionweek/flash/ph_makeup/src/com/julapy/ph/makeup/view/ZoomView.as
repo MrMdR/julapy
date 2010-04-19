@@ -12,6 +12,8 @@ package com.julapy.ph.makeup.view
 
 	import flash.display.Sprite;
 	import flash.geom.Point;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
 
 	public class ZoomView extends View
 	{
@@ -58,9 +60,10 @@ package com.julapy.ph.makeup.view
 
 		private function reset ():void
 		{
-			zoomScale = zoomScaleMin;
-			ModelLocator.getInstance().makeupModel.zoomScale	= zoomScale;
+			Tweener.removeTweens( this );
+
 			ModelLocator.getInstance().makeupModel.zoomOffset	= new Point( 0, 0 );
+			ModelLocator.getInstance().makeupModel.zoomScale	= zoomScale = zoomScaleMin;
 		}
 
 		//////////////////////////////////////////////////////////
@@ -163,11 +166,12 @@ package com.julapy.ph.makeup.view
 			if( section == MakeupModel.SECTION_INTRO || section == MakeupModel.SECTION_OUTRO )
 			{
 				enable( false );
-				reset();
+//				reset();
 			}
 
 			if( section == MakeupModel.SECTION_PLAY )
 			{
+				reset();
 				enable( true );
 			}
 		}
@@ -175,6 +179,9 @@ package com.julapy.ph.makeup.view
 		private function modeZoomInHandler ( e : ModeEvent ):void
 		{
 			if( !bEnabled )
+				return;
+
+			if( ModelLocator.getInstance().makeupModel.bPlayIntroPeriod )
 				return;
 
 			if( e.mode == MakeupModel.EYES_MODE )
@@ -196,6 +203,9 @@ package com.julapy.ph.makeup.view
 		private function modeZoomOutHandler ( e : ModeEvent ):void
 		{
 			if( !bEnabled )
+				return;
+
+			if( ModelLocator.getInstance().makeupModel.bPlayIntroPeriod )
 				return;
 
 			zoomOut();

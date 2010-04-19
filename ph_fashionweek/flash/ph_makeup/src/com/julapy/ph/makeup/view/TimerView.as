@@ -13,6 +13,8 @@ package com.julapy.ph.makeup.view
 	import flash.events.TimerEvent;
 	import flash.text.TextField;
 	import flash.utils.Timer;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
 
 	public class TimerView extends View
 	{
@@ -21,11 +23,12 @@ package com.julapy.ph.makeup.view
 		private var timer 			: Timer;
 		private var timerMc			: MovieClip;
 		private var timerText		: TextField;
-		private var timerSeconds	: int = 60;
+		private var timerSeconds	: int = 20;
 		private var timerCount		: int = 0;
 
 		private var finalLookTimer	: Timer;
 		private var idleTimer		: Timer;
+		private var introPeriodIntv	: int;
 
 		public function TimerView(sprite:Sprite=null)
 		{
@@ -103,6 +106,31 @@ package com.julapy.ph.makeup.view
 
 				ModelLocator.getInstance().makeupModel.nextSection();
 			}
+		}
+
+		///////////////////////////////////////////////
+		//	INTRO TIMER.
+		///////////////////////////////////////////////
+
+		private function initIntroTimer ():void
+		{
+			ModelLocator.getInstance().makeupModel.bPlayIntroPeriod = true;
+
+			killIntroTimer();
+
+			introPeriodIntv = setInterval( introPeriodCompleteHandler, 1000 );
+		}
+
+		private function killIntroTimer ():void
+		{
+			clearInterval( introPeriodIntv );
+		}
+
+		private function introPeriodCompleteHandler ():void
+		{
+			killIntroTimer();
+
+			ModelLocator.getInstance().makeupModel.bPlayIntroPeriod = false;
 		}
 
 		///////////////////////////////////////////////
@@ -203,6 +231,7 @@ package com.julapy.ph.makeup.view
 				enable( true );
 
 				initTimer();
+				initIntroTimer();
 				initIdleTimer();
 				initFinalLookTimer();
 			}
@@ -212,6 +241,7 @@ package com.julapy.ph.makeup.view
 				enable( false );
 
 				killTimer();
+				killIntroTimer();
 				killIdleTimer();
 				killFinalLookTimer();
 			}

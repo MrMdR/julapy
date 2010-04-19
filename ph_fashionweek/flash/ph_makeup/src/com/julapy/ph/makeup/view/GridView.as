@@ -4,6 +4,7 @@ package com.julapy.ph.makeup.view
 
 	import com.holler.core.View;
 	import com.julapy.ph.makeup.events.ModeEvent;
+	import com.julapy.ph.makeup.events.SectionEvent;
 	import com.julapy.ph.makeup.model.MakeupModel;
 	import com.julapy.ph.makeup.model.ModelLocator;
 
@@ -14,6 +15,8 @@ package com.julapy.ph.makeup.view
 
 	public class GridView extends View
 	{
+		private var bEnabled		: Boolean = false;
+
 		public  var tweenInValue0	: Number = 0;
 		public  var tweenInValue1	: Number = 0;
 		public  var tweenOutValue	: Number = 0;
@@ -28,9 +31,44 @@ package com.julapy.ph.makeup.view
 
 			_sprite.blendMode	= BlendMode.OVERLAY;
 
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,	modeZoomInHandler );
-			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,	modeZoomOutHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( SectionEvent.SECTION_CHANGE,	sectionChangeHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_IN,		modeZoomInHandler );
+			ModelLocator.getInstance().makeupModel.addEventListener( ModeEvent.MODE_ZOOM_OUT,		modeZoomOutHandler );
 		}
+
+		/////////////////////////////////////////////
+		//	ENABLE.
+		/////////////////////////////////////////////
+
+		private function enable ( b : Boolean ):void
+		{
+			if( bEnabled == b )
+				return;
+
+			bEnabled	= b;
+
+			visible		= bEnabled;
+			doValidate();
+		}
+
+		/////////////////////////////////////////////
+		//	RESET.
+		/////////////////////////////////////////////
+
+		private function reset ():void
+		{
+			Tweener.removeTweens( this );
+
+			tweenInValue0 = 0;
+			tweenInValue1 = 0;
+			tweenOutValue = 0;
+
+			_sprite.graphics.clear();
+		}
+
+		/////////////////////////////////////////////
+		//	PLAY IN / OUT.
+		/////////////////////////////////////////////
 
 		private function playIn ():void
 		{
@@ -201,8 +239,31 @@ package com.julapy.ph.makeup.view
 		//	HANDLERS.
 		//////////////////////////////////////////////////////////
 
+		private function sectionChangeHandler ( e : SectionEvent ):void
+		{
+			var section	: int;
+			section = ModelLocator.getInstance().makeupModel.section;
+
+			if( section == MakeupModel.SECTION_PLAY )
+			{
+				reset();
+				enable( true );
+			}
+
+			if( section == MakeupModel.SECTION_INTRO || section == MakeupModel.SECTION_OUTRO )
+			{
+				enable( false );
+			}
+		}
+
 		private function modeZoomInHandler ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
+			if( ModelLocator.getInstance().makeupModel.bPlayIntroPeriod )
+				return;
+
 			if( e.mode == MakeupModel.EYES_MODE )
 			{
 				playIn();
@@ -221,6 +282,12 @@ package com.julapy.ph.makeup.view
 
 		private function modeZoomOutHandler ( e : ModeEvent ):void
 		{
+			if( !bEnabled )
+				return;
+
+			if( ModelLocator.getInstance().makeupModel.bPlayIntroPeriod )
+				return;
+
 			playOut();
 		}
 	}

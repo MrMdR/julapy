@@ -6,44 +6,55 @@ package com.julapy.ph.makeup.view
 
 	import fl.motion.easing.Quadratic;
 
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
 	public class BtnView01 extends BtnView
 	{
-		private var alphaOver	: Number = 1.0;
-		private var alphaOut	: Number = 0.5;
+		private var tool		: MovieClip;
 
 		public function BtnView01(sprite:Sprite=null)
 		{
 			super(sprite);
 
-			alpha = alphaOut;
+			tool	= _sprite.getChildByName( "tool" ) as MovieClip;
+			tool.ix	= tool.x;
+			tool.iy	= tool.y;
+
 			doValidate();
 		}
 
 		protected override function mouseOver(event:MouseEvent):void
 		{
-			over();
+//			over();
 		}
 
 		protected override function mouseOut(event:MouseEvent):void
 		{
-			out();
+//			out();
+		}
+
+		public function reset ():void
+		{
+			Tweener.removeTweens( tool );
+
+			tool.x = tool.ix;
+			tool.y = tool.iy;
 		}
 
 		public function over ():void
 		{
 			Tweener.addTween
 			(
-				this,
+				tool,
 				{
-					alpha		: alphaOver,
+					y			: tool.iy - 50,
 					time		: 0.3,
 					delay		: 0.0,
 					transition	: Quadratic.easeOut,
 					onStart		: null,
-					onUpdate	: tweenUpdateHandler,
+					onUpdate	: null,
 					onComplete	: null
 				}
 			);
@@ -53,14 +64,14 @@ package com.julapy.ph.makeup.view
 		{
 			Tweener.addTween
 			(
-				this,
+				tool,
 				{
-					alpha		: alphaOut,
+					y			: tool.iy,
 					time		: 0.3,
 					delay		: 0.0,
 					transition	: Quadratic.easeOut,
 					onStart		: null,
-					onUpdate	: tweenUpdateHandler,
+					onUpdate	: null,
 					onComplete	: null
 				}
 			);

@@ -165,6 +165,7 @@ package com.julapy.ph.makeup.view
 		{
 			var faceMask : MovieClip;
 			faceMask		= AssetLoader.getInstance().getClassInstance( girlVO.featureMasks[ 2 ] );
+			faceMask.cacheAsBitmap = true;
 			faceHolder.addChild( faceMask );
 
 			faceMaskView	= new MakeupMaskView( faceMask );
@@ -229,6 +230,7 @@ package com.julapy.ph.makeup.view
 		{
 			var eyesMask : MovieClip;
 			eyesMask		= AssetLoader.getInstance().getClassInstance( girlVO.featureMasks[ 0 ] );
+			eyesMask.cacheAsBitmap = true;
 			eyesHolder.addChild( eyesMask );
 
 			eyesMaskView	= new MakeupMaskView( eyesMask );
@@ -291,6 +293,7 @@ package com.julapy.ph.makeup.view
 		{
 			var lipsMask : MovieClip;
 			lipsMask		= AssetLoader.getInstance().getClassInstance( girlVO.featureMasks[ 1 ] );
+			lipsMask.cacheAsBitmap = true;
 			lipsHolder.addChild( lipsMask );
 
 			lipsMaskView	= new MakeupMaskView( lipsMask );
@@ -347,6 +350,9 @@ package com.julapy.ph.makeup.view
 		private function modeEvent ( e : ModeEvent ):void
 		{
 			if( !bEnabled )
+				return;
+
+			if( ModelLocator.getInstance().makeupModel.bPlayIntroPeriod )
 				return;
 
 			featureIndex = e.mode;

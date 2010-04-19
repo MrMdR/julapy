@@ -63,6 +63,8 @@ package com.julapy.ph.makeup.model
 		private var _zoomScale		: Number = 0;
 		private var _zoomOffset		: Point	 = new Point();
 
+		private var _bPlayIntroPeriod	: Boolean = false;
+
 		public function MakeupModel()
 		{
 			_attractors =
@@ -412,6 +414,20 @@ package com.julapy.ph.makeup.model
 			ModelLocator.getInstance().soundModel.stopAllSounds();
 
 			dispatchEvent( new ResetEvent() );
+		}
+
+		/////////////////////////////////////
+		//	PLAY INTRO PERIOD.
+		/////////////////////////////////////
+
+		public function set bPlayIntroPeriod ( value : Boolean ):void
+		{
+			_bPlayIntroPeriod = value;
+		}
+
+		public function get bPlayIntroPeriod ():Boolean
+		{
+			return _bPlayIntroPeriod;
 		}
 	}
 }

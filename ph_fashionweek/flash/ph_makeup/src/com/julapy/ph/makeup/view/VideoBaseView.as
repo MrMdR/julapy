@@ -33,6 +33,9 @@ package com.julapy.ph.makeup.view
 		private var videoStream			: VideoView;
 		private var videoStreamHolder	: Sprite;
 
+		private var top				: MovieClip;
+		private var btm				: MovieClip;
+
 		private var bStreamVideo		: Boolean = true;
 
 		public function VideoBaseView(sprite:Sprite=null)
@@ -52,6 +55,11 @@ package com.julapy.ph.makeup.view
 
 			continueBtn = new BtnView( _sprite.getChildByName( "continueBtn" ) as MovieClip );
 			continueBtn.addEventListener( MouseEvent.MOUSE_DOWN, continueBtnHandler );
+			continueBtn.alpha = 0;
+			continueBtn.doValidate();
+
+			top	= _sprite.getChildByName( "top" ) as MovieClip;
+			btm = _sprite.getChildByName( "btm" ) as MovieClip;
 
 			ModelLocator.getInstance().makeupModel.addEventListener( SectionEvent.SECTION_CHANGE,			sectionChangeHandler );
 			ModelLocator.getInstance().makeupModel.addEventListener( AttractorChangeEvent.ATTRACTOR_CHANGE,	attractorChangeHandler );
@@ -65,6 +73,34 @@ package com.julapy.ph.makeup.view
 		{
 			if( b )
 			{
+				Tweener.addTween
+				(
+					top,
+					{
+						y			: 0,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
+				Tweener.addTween
+				(
+					btm,
+					{
+						y			: ModelLocator.getInstance().commondModel.appHeight,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
 				videoHolder.alpha = 0;
 
 				Tweener.addTween
@@ -73,7 +109,7 @@ package com.julapy.ph.makeup.view
 					{
 						alpha		: 1.0,
 						time		: 0.3,
-						delay		: 0.0,
+						delay		: 0.3,
 						transition	: Quadratic.easeOut,
 						onStart		: null,
 						onUpdate	: null,
@@ -83,6 +119,34 @@ package com.julapy.ph.makeup.view
 			}
 			else
 			{
+				Tweener.addTween
+				(
+					top,
+					{
+						y			: -top.height,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
+				Tweener.addTween
+				(
+					btm,
+					{
+						y			: ModelLocator.getInstance().commondModel.appHeight + btm.height,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
 				Tweener.addTween
 				(
 					videoHolder,

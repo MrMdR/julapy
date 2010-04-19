@@ -57,6 +57,18 @@ package com.julapy.ph.makeup.view
 		}
 
 		/////////////////////////////////////////////
+		//	RESET.
+		/////////////////////////////////////////////
+
+		public function reset ():void
+		{
+			for( var i:int=0; i<btns.length; i++ )
+			{
+				( btns[ i ] as BtnView01 ).reset();
+			}
+		}
+
+		/////////////////////////////////////////////
 		//	HANDLERS.
 		/////////////////////////////////////////////
 
@@ -67,6 +79,7 @@ package com.julapy.ph.makeup.view
 
 			if( section == MakeupModel.SECTION_PLAY )
 			{
+				reset();
 				enable( true );
 			}
 
