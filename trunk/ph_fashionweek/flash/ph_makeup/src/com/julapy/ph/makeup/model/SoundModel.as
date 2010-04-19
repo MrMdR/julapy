@@ -7,8 +7,6 @@ package com.julapy.ph.makeup.model
 	import com.julapy.ph.makeup.events.ZoomEvent;
 	import com.reintroducing.sound.SoundManager;
 
-	import flash.utils.getQualifiedClassName;
-
 	public class SoundModel
 	{
 		public static const BLACKOUT				: String = "makeup_18.mp3";
@@ -57,6 +55,8 @@ package com.julapy.ph.makeup.model
 		public static const SELECT_ANOTHER_TOOL_01	: String = "makeup_22.mp3";
 		public static const SELECT_ANOTHER_TOOL_02	: String = "makeup_23.mp3";
 		public static const SELECT_ANOTHER_TOOL_03	: String = "makeup_24.mp3";
+
+		public static const BACKGROUND				: String = "makeup_bg.wav"
 
 		private var finalLooks			: Array = new Array();
 		private var idleDoSomethign		: Array = new Array();
@@ -122,7 +122,9 @@ package com.julapy.ph.makeup.model
 
 				SELECT_ANOTHER_TOOL_01,
 				SELECT_ANOTHER_TOOL_02,
-				SELECT_ANOTHER_TOOL_03
+				SELECT_ANOTHER_TOOL_03,
+
+				BACKGROUND
 			];
 
 			finalLooks =
@@ -203,8 +205,6 @@ package com.julapy.ph.makeup.model
 
 				var SoundClass : Class;
 				SoundClass = AssetLoader.getInstance().getClassDefinitionByName( soundID );
-
-				trace( getQualifiedClassName( this ) + " :: loading sound :: " + soundID  );
 
 				sm.addLibrarySound( SoundClass, soundID );
 			}
@@ -299,6 +299,14 @@ package com.julapy.ph.makeup.model
 			sm.stopAllSounds();
 		}
 
+		public function stopAllSoundsInArray ( a : Array ):void
+		{
+			for( var i:int=0; i<a.length; i++ )
+			{
+				sm.stopSound( a[ i ] );
+			}
+		}
+
 		//////////////////////////////////////////////
 		//	PLAY RANDOM.
 		//////////////////////////////////////////////
@@ -307,28 +315,51 @@ package com.julapy.ph.makeup.model
 		public function playRandomIdle				():void		{	playRandom( idleDoSomethign );		}
 		public function playRandomInfo				():void		{	playRandom( info );					}
 		public function playRandomIntro				():void		{	playRandom( intro );				}
-		public function playRandomInstructions		():void		{	playRandom( instructions );			}
-		public function playRandomCompliment		():void		{	playRandom( compliment );			}
 		public function playRandomSelectAnotherTool	():void		{	playRandom( selectAnotherTool );	}
 
-		private function playRandom ( a : Array ):void
+		private function playRandom ( a : Array, volume : Number = 1 ):void
 		{
 			var i : int;
 			i = (int)( Math.random() * a.length );
 
-			sm.playSound( a[ i ] );
+			sm.playSound( a[ i ], volume );
 		}
 
 		//////////////////////////////////////////////
 		//	PLAY.
 		//////////////////////////////////////////////
 
+		public function playRandomInstructions ():void
+		{
+			playRandom( instructions, 0.5 );
+		}
+
+		public function playRandomCompliment ():void
+		{
+			playRandom( compliment, 0.5 );
+		}
+
 		public function playNextIdle ():void
 		{
+			stopAllSoundsInArray( compliment );
+
 			if( ++idleIndex >= idleDoSomethign.length )
 				idleIndex = 0;
 
-			sm.playSound( idleDoSomethign[ idleIndex ] );
+			sm.playSound( idleDoSomethign[ idleIndex ], 0.5 );
+		}
+
+		public function playBackground ():void
+		{
+			sm.playSound( BACKGROUND, 0.6, 0, 100 );
+		}
+
+		public function playFinalLooks ():void
+		{
+			stopAllSoundsInArray( idleDoSomethign );
+			stopAllSoundsInArray( compliment );
+
+			sm.playSound( FINAL_LOOKS_04, 0.4 );
 		}
 	}
 }
