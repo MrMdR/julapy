@@ -12,6 +12,9 @@ package com.julapy.ph.model
 		protected var _ofTrackerVOs			: Array		= new Array();
 		protected var _ofPrimaryTrackerVO	: TrackerVO;
 		protected var _ofPrimaryIndex		: int = -1;
+		protected var _ofLastIndex			: int = -1;
+		protected var _ofLastValidIndex		: int = 0;
+		protected var _ofFocusIndex			: int = -1;
 		protected var _connected			: Boolean	= false;
 
 		public function OFDataModel()
@@ -43,7 +46,14 @@ package com.julapy.ph.model
 
 		public function get primaryTrackerVO ():TrackerVO
 		{
-			return _ofPrimaryTrackerVO;
+			if( _ofFocusIndex >= 0 )
+			{
+				return _ofTrackerVOs[ _ofFocusIndex ] as TrackerVO;
+			}
+			else
+			{
+				return _ofTrackerVOs[ _ofLastValidIndex ] as TrackerVO;
+			}
 		}
 
 		//--
@@ -128,6 +138,20 @@ package com.julapy.ph.model
 			{
 				dispatchEvent( new DisconnectEvent() );
 			}
+		}
+
+		///////////////////////////////////////////////////
+		//	FOCUS INDEX.
+		///////////////////////////////////////////////////
+
+		public function set focusIndex ( value : int ):void
+		{
+			_ofFocusIndex = value;
+		}
+
+		public function get focusIndex ():int
+		{
+			return _ofFocusIndex;
 		}
 	}
 }
