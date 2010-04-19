@@ -126,9 +126,6 @@ package com.julapy.ph.makeup.view
 			var g : int;
 			g = ModelLocator.getInstance().makeupModel.girl;
 
-			face.stop();
-			makeup.stop();
-
 			if( g == MakeupModel.GIRL_ONE )
 			{
 				girlOne.visible = true;
@@ -146,15 +143,20 @@ package com.julapy.ph.makeup.view
 			girl.scaleX = model.zoomScaleMin;
 			girl.scaleY = model.zoomScaleMin;
 
+			face.stop();
 			face.setAsset( girl.getChildByName( "baseImage" ) as MovieClip );
 			face.start();
 
+			makeup.stop();
 			makeup.setAsset( girl.getChildByName( "makeupHolder" ) as MovieClip );
 			makeup.start();
 		}
 
 		private function zoomHandler ( e : ZoomEvent ):void
 		{
+			if( ModelLocator.getInstance().makeupModel.bPlayIntroPeriod )
+				return;
+
 			var appW : int;
 			var appH : int;
 

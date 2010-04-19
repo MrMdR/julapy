@@ -246,6 +246,9 @@ package com.julapy.ph.makeup.model
 
 		private function modeHandler ( e : ModeEvent ):void
 		{
+			if( ModelLocator.getInstance().makeupModel.section != MakeupModel.SECTION_PLAY )
+				return;
+
 			if( e.type == ModeEvent.MODE_ZOOM_IN )
 			{
 				//
