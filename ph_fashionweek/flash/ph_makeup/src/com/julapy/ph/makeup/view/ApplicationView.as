@@ -95,7 +95,7 @@ package com.julapy.ph.makeup.view
 
 			zoom		= new ZoomView();
 
-			grid		= new GridView( asset.getChildByName( "grid" ) as MovieClip );
+//			grid		= new GridView( asset.getChildByName( "grid" ) as MovieClip );
 
 			focus		= new FocusView( asset.getChildByName( "focus" ) as MovieClip );
 

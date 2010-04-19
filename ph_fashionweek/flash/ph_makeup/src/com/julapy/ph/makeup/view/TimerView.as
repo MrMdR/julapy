@@ -177,7 +177,7 @@ package com.julapy.ph.makeup.view
 		{
 			killFinalLookTimer();
 
-			ModelLocator.getInstance().soundModel.play( SoundModel.FINAL_LOOKS_04 );
+			ModelLocator.getInstance().soundModel.playFinalLooks();
 		}
 
 		///////////////////////////////////////////////////
@@ -234,6 +234,8 @@ package com.julapy.ph.makeup.view
 				initIntroTimer();
 				initIdleTimer();
 				initFinalLookTimer();
+
+				ModelLocator.getInstance().soundModel.playBackground();
 			}
 
 			if( section == MakeupModel.SECTION_INTRO || section == MakeupModel.SECTION_OUTRO )
@@ -244,6 +246,8 @@ package com.julapy.ph.makeup.view
 				killIntroTimer();
 				killIdleTimer();
 				killFinalLookTimer();
+
+				ModelLocator.getInstance().soundModel.stopAllSounds();
 			}
 		}
 
