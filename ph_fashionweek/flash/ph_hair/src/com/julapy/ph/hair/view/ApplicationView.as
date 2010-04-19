@@ -38,6 +38,8 @@ package com.julapy.ph.hair.view
 			model.style		= HairModel.STYLE_ONE;
 			model.section	= HairModel.SECTION_INTRO;
 			model.stylePart	= HairModel.STYLE_PART_ONE;
+
+			asset.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 		}
 
 		private function initModel ():void
@@ -56,6 +58,7 @@ package com.julapy.ph.hair.view
 
 			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
 			debug.visible = false;
+			debug.doValidate();
 		}
 
 		private function initSocket ():void
