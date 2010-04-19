@@ -66,6 +66,8 @@ package com.julapy.ph.makeup.view
 
 			model.girl		= MakeupModel.GIRL_TWO;
 			model.section	= MakeupModel.SECTION_INTRO;
+
+			asset.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 		}
 
 		private function initModel ():void
@@ -105,6 +107,7 @@ package com.julapy.ph.makeup.view
 
 			debug		= new DebugView( asset.getChildByName( "debug" ) as MovieClip );
 			debug.visible = false;
+			debug.doValidate();
 		}
 
 		private function initSocket ():void

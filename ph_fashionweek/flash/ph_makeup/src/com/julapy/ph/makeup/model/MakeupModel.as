@@ -223,6 +223,9 @@ package com.julapy.ph.makeup.model
 
 		private function initModeZoomInTimer ():void
 		{
+			if( _modeZoomInTimer )
+				killModeZoomInTimer();
+
 			_modeZoomInTimer = new Timer( _modeZoomInTime, 1 );
 			_modeZoomInTimer.addEventListener( TimerEvent.TIMER_COMPLETE, modeZoomInTimerHandler );
 			_modeZoomInTimer.start();
@@ -249,6 +252,9 @@ package com.julapy.ph.makeup.model
 
 		private function initModeZoomOutTimer ():void
 		{
+			if( _modeZoomOutTimer )
+				killModeZoomOutTimer();
+
 			_modeZoomOutTimer = new Timer( _modeZoomOutTime, 1 );
 			_modeZoomOutTimer.addEventListener( TimerEvent.TIMER_COMPLETE, modeZoomOutTimerHandler );
 			_modeZoomOutTimer.start();

@@ -23,7 +23,7 @@ package com.julapy.ph.makeup.view
 		private var timer 			: Timer;
 		private var timerMc			: MovieClip;
 		private var timerText		: TextField;
-		private var timerSeconds	: int = 20;
+		private var timerSeconds	: int = 15;
 		private var timerCount		: int = 0;
 
 		private var finalLookTimer	: Timer;
@@ -36,6 +36,8 @@ package com.julapy.ph.makeup.view
 
 			timerMc		= _sprite.getChildByName( "timerMc" ) as MovieClip;
 			timerText	= timerMc.getChildByName( "timerText" ) as TextField;
+
+			timerMc.visible = false;		// hide timer.
 
 			setTimerCopy( timerSeconds );
 
