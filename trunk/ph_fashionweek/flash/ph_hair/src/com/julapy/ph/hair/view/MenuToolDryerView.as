@@ -1,5 +1,7 @@
 package com.julapy.ph.hair.view
 {
+	import com.julapy.ph.hair.model.HairModel;
+
 	import flash.display.Sprite;
 	import flash.geom.Point;
 
@@ -8,6 +10,8 @@ package com.julapy.ph.hair.view
 		public function MenuToolDryerView(sprite:Sprite=null)
 		{
 			super(sprite);
+
+			toolIndex = HairModel.TOOL_DRYER;
 
 			_toolPathCenter			= new Point( 288, 320 );
 			_toolPathRadiusX		= 255;
@@ -51,5 +55,18 @@ package com.julapy.ph.hair.view
 			updateModelWithPosition();
 		}
 
+		////////////////////////////////////
+		//	TOOL SOUND.
+		////////////////////////////////////
+
+		protected override function playToolSound ():void
+		{
+			//
+		}
+
+		protected override function stopToolSound ():void
+		{
+			//
+		}
 	}
 }

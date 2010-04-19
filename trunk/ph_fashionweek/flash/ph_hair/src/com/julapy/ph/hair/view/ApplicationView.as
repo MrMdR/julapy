@@ -31,7 +31,8 @@ package com.julapy.ph.hair.view
 			initViews();
 			initSocket();
 
-			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN, keyDownHandler );
+			asset.stage.addEventListener( KeyboardEvent.KEY_DOWN,	keyDownHandler );
+			asset.stage.addEventListener( KeyboardEvent.KEY_UP,		keyUpHandler );
 
 			model.girl		= HairModel.GIRL_ONE;
 			model.style		= HairModel.STYLE_ONE;
@@ -115,17 +116,17 @@ package com.julapy.ph.hair.view
 
 			if( e.keyCode == Keyboard.NUMBER_1 )
 			{
-				ModelLocator.getInstance().hairModel.toolTrigger = HairModel.TOOL_DRYER;
+				ModelLocator.getInstance().hairModel.toolTriggerOn = HairModel.TOOL_DRYER;
 			}
 
 			if( e.keyCode == Keyboard.NUMBER_2 )
 			{
-				ModelLocator.getInstance().hairModel.toolTrigger = HairModel.TOOL_CURLER;
+				ModelLocator.getInstance().hairModel.toolTriggerOn = HairModel.TOOL_CURLER;
 			}
 
 			if( e.keyCode == Keyboard.NUMBER_3 )
 			{
-				ModelLocator.getInstance().hairModel.toolTrigger = HairModel.TOOL_SPRAY;
+				ModelLocator.getInstance().hairModel.toolTriggerOn = HairModel.TOOL_SPRAY;
 			}
 
 			if( e.keyCode == Keyboard.NUMBER_4 )
@@ -139,6 +140,24 @@ package com.julapy.ph.hair.view
 					ModelLocator.getInstance().hairModel.reset();
 					ModelLocator.getInstance().hairModel.bAttractor = true;
 				}
+			}
+		}
+
+		private function keyUpHandler ( e : KeyboardEvent ):void
+		{
+			if( e.keyCode == Keyboard.NUMBER_1 )
+			{
+				ModelLocator.getInstance().hairModel.toolTriggerOff = HairModel.TOOL_DRYER;
+			}
+
+			if( e.keyCode == Keyboard.NUMBER_2 )
+			{
+				ModelLocator.getInstance().hairModel.toolTriggerOff = HairModel.TOOL_CURLER;
+			}
+
+			if( e.keyCode == Keyboard.NUMBER_3 )
+			{
+				ModelLocator.getInstance().hairModel.toolTriggerOff = HairModel.TOOL_SPRAY;
 			}
 		}
 

@@ -34,6 +34,9 @@ package com.julapy.ph.hair.view
 
 		private var continueBtn		: BtnView;
 
+		private var top				: MovieClip;
+		private var btm				: MovieClip;
+
 		private var bStreamVideo	: Boolean = true;
 
 		public function VideoGeneralView(sprite:Sprite=null)
@@ -43,8 +46,22 @@ package com.julapy.ph.hair.view
 			videoHolder		= _sprite.getChildByName( "videoHolder" ) as MovieClip;
 			videoHolder.y	= (int)( ( ModelLocator.getInstance().commonModel.appHeight - ModelLocator.getInstance().hairModel.videoGenRect.height ) * 0.5 );
 
-			continueBtn = new BtnView( _sprite.getChildByName( "continueBtn" ) as MovieClip );
-			continueBtn.addEventListener( MouseEvent.MOUSE_DOWN, continueBtnHandler );
+			var useContinueBtn : Boolean;
+			useContinueBtn = true;
+
+			var continueBtnMc : MovieClip;
+			continueBtnMc = _sprite.getChildByName( "continueBtn" ) as MovieClip;
+
+			if( useContinueBtn )
+			{
+				continueBtn = new BtnView( continueBtnMc );
+				continueBtn.addEventListener( MouseEvent.MOUSE_DOWN, continueBtnHandler );
+				continueBtn.alpha = 0;
+				continueBtn.doValidate();
+			}
+
+			top	= _sprite.getChildByName( "top" ) as MovieClip;
+			btm = _sprite.getChildByName( "btm" ) as MovieClip;
 
 			ModelLocator.getInstance().hairModel.addEventListener( GirlEvent.GIRL_CHANGE,					girlChangeHandler );
 			ModelLocator.getInstance().hairModel.addEventListener( StyleEvent.STYLE_CHANGE,					styleChangeHandler );
@@ -60,6 +77,38 @@ package com.julapy.ph.hair.view
 		{
 			if( b )
 			{
+//				top.y = -top.height;
+
+				Tweener.addTween
+				(
+					top,
+					{
+						y			: 0,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
+//				btm.y = ModelLocator.getInstance().commonModel.appHeight + btm.height;
+
+				Tweener.addTween
+				(
+					btm,
+					{
+						y			: ModelLocator.getInstance().commonModel.appHeight,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
 				videoHolder.alpha = 0;
 
 				Tweener.addTween
@@ -68,7 +117,7 @@ package com.julapy.ph.hair.view
 					{
 						alpha		: 1.0,
 						time		: 0.3,
-						delay		: 0.0,
+						delay		: 0.3,
 						transition	: Quadratic.easeOut,
 						onStart		: null,
 						onUpdate	: null,
@@ -78,6 +127,34 @@ package com.julapy.ph.hair.view
 			}
 			else
 			{
+				Tweener.addTween
+				(
+					top,
+					{
+						y			: -top.height,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
+				Tweener.addTween
+				(
+					btm,
+					{
+						y			: ModelLocator.getInstance().commonModel.appHeight + btm.height,
+						time		: 0.3,
+						delay		: 0.0,
+						transition	: Quadratic.easeOut,
+						onStart		: null,
+						onUpdate	: null,
+						onComplete	: null
+					}
+				);
+
 				Tweener.addTween
 				(
 					videoHolder,

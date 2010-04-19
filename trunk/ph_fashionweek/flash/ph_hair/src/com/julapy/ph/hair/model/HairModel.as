@@ -18,6 +18,7 @@ package com.julapy.ph.hair.model
 	import flash.events.EventDispatcher;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.getQualifiedClassName;
 
 
 	public class HairModel extends EventDispatcher
@@ -45,7 +46,7 @@ package com.julapy.ph.hair.model
 
 		private var _attractors					: Array = new Array();
 		private var _attractorIndex				: int	= -1;
-		private var _attractorTimeoutSeconds	: int = 60;
+		private var _attractorTimeoutSeconds	: int	= 60;
 		private var _bAttractor					: Boolean = false;
 
 		private var _girls			: Array = [ GIRL_ONE, GIRL_TWO ];
@@ -66,6 +67,8 @@ package com.julapy.ph.hair.model
 
 		private var _tool			: int = -1;
 		private var _toolTrigger	: int = -1;
+
+		private var _bInteractiveVideoPlaying	: Boolean = false;
 
 		public function HairModel()
 		{
@@ -392,6 +395,8 @@ package com.julapy.ph.hair.model
 			{
 				_tool = value;
 
+				trace( getQualifiedClassName( this ) + " :: tool = " + _tool );
+
 				dispatchEvent( new ToolEvent( _tool ) );
 			}
 		}
@@ -457,11 +462,16 @@ package com.julapy.ph.hair.model
 		//	TOOL TRIGGER.
 		/////////////////////////////////////
 
-		public function set toolTrigger ( value : int ):void
+		public function set toolTriggerOn ( value : int ):void
 		{
 			_toolTrigger = value;
 
-			dispatchEvent( new ToolTriggerEvent( _toolTrigger ) );
+			dispatchEvent( new ToolTriggerEvent( ToolTriggerEvent.TOOL_TRIGGER_ON, _toolTrigger ) );
+		}
+
+		public function set toolTriggerOff ( value : int ):void
+		{
+			dispatchEvent( new ToolTriggerEvent( ToolTriggerEvent.TOOL_TRIGGER_OFF, _toolTrigger ) );
 		}
 
 		public function get toolTrigger ():int
@@ -518,6 +528,20 @@ package com.julapy.ph.hair.model
 			ModelLocator.getInstance().soundModel.stopAllSounds();
 
 			dispatchEvent( new ResetEvent() );
+		}
+
+		/////////////////////////////////////
+		//	INTERACTIVE VIDEO.
+		/////////////////////////////////////
+
+		public function set bInteractiveVideoPlaying ( value : Boolean ):void
+		{
+			_bInteractiveVideoPlaying = value
+		}
+
+		public function get bInteractiveVideoPlaying ():Boolean
+		{
+			return _bInteractiveVideoPlaying;
 		}
 	}
 }

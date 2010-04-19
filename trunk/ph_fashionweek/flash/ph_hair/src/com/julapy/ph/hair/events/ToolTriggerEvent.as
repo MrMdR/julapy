@@ -4,13 +4,14 @@ package com.julapy.ph.hair.events
 
 	public class ToolTriggerEvent extends Event
 	{
-		public static const TOOL_TRIGGER	: String = "toolTrigger";
+		public static const TOOL_TRIGGER_ON		: String = "toolTriggerOn";
+		public static const TOOL_TRIGGER_OFF	: String = "toolTriggerOff";
 
-		private var toolTrigger : int;
+		public var toolTrigger : int;
 
-		public function ToolTriggerEvent( toolTrigger : int )
+		public function ToolTriggerEvent( type : String, toolTrigger : int )
 		{
-			super( TOOL_TRIGGER );
+			super( type );
 
 			this.toolTrigger = toolTrigger;
 		}

@@ -52,7 +52,6 @@ package com.julapy.ph.hair.view
 		private var isInProximity	: Boolean = false;
 
 		private var bEnabled		: Boolean = false;
-		private var bVideoPlaying	: Boolean = false;
 
 		public function MenuView(sprite:Sprite=null)
 		{
@@ -227,10 +226,10 @@ package com.julapy.ph.hair.view
 
 			tool = t;
 
-			if( bVideoPlaying )
+			if( ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying )
 			{
 				playInToolPath( true );
-				playToolAnim( true );
+//				playToolAnim( true );
 			}
 			else
 			{
@@ -247,7 +246,7 @@ package com.julapy.ph.hair.view
 
 			_sprite.removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
 
-			if( bVideoPlaying )
+			if( ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying )
 			{
 				playInToolPath( false );
 				playToolAnim( false );
@@ -268,7 +267,7 @@ package com.julapy.ph.hair.view
 
 		private function enterFrameHandler ( e : Event ):void
 		{
-			if( bVideoPlaying )
+			if( ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying )
 			{
 				positionToolAlongPath();
 			}
@@ -444,6 +443,8 @@ package com.julapy.ph.hair.view
 				var trackerVO : TrackerVO;
 				trackerVO = ModelLocator.getInstance().ofDataModel.primaryTrackerVO;
 
+				trace( ModelLocator.getInstance().ofDataModel.focusIndex );
+
 				tx = trackerVO.rect.x * area.width;
 				ty = trackerVO.rect.y * area.height;
 			}
@@ -540,7 +541,7 @@ package com.julapy.ph.hair.view
 			if( !bEnabled )
 				return;
 
-			if( bVideoPlaying )
+			if( ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying )
 				return;
 
 //			ModelLocator.getInstance().soundModel.playRandomIdle();
@@ -559,7 +560,7 @@ package com.julapy.ph.hair.view
 			if( !bEnabled )
 				return;
 
-			if( bVideoPlaying )
+			if( ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying )
 				return;
 
 			var time : int;
@@ -587,7 +588,7 @@ package com.julapy.ph.hair.view
 			if( !bEnabled )
 				return;
 
-			if( bVideoPlaying )
+			if( ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying )
 				return;
 
 			ModelLocator.getInstance().hairModel.reset();
@@ -654,7 +655,8 @@ package com.julapy.ph.hair.view
 			{
 				disable();
 
-				ModelLocator.getInstance().hairModel.menuSelection = -1;
+				ModelLocator.getInstance().hairModel.menuSelection	= -1;
+				ModelLocator.getInstance().ofDataModel.focusIndex	= -1;
 
 				stopToolDrag( tools[ toolIndex ] );
 				restoreSelectedTool();
@@ -672,7 +674,7 @@ package com.julapy.ph.hair.view
 			if( !bEnabled )
 				return;
 
-			bVideoPlaying = false;
+			ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying = false;
 
 //			var stylePart : int;													// MOVED to interactive video, playing in handler.
 //			stylePart = ModelLocator.getInstance().hairModel.stylePart;
@@ -682,6 +684,8 @@ package com.julapy.ph.hair.view
 			playInToolPath( false );
 			playToolAnim( false );
 			toolSelected = -1;
+
+			ModelLocator.getInstance().ofDataModel.focusIndex = -1;
 
 //			selectDropArea( stylePart );
 			selectToolCover( -1 );
@@ -716,7 +720,7 @@ package com.julapy.ph.hair.view
 
 		private function dropAreaPlayedOutHandler ( e : DropAreaEvent ):void
 		{
-			bVideoPlaying = true;
+			ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying = true;
 
 			ModelLocator.getInstance().hairModel.menuSelection = toolSelected;
 
@@ -724,12 +728,14 @@ package com.julapy.ph.hair.view
 			selectToolCover( toolIndex );
 			scaleToolForInteractiveVideo();
 			playInToolPath( true );
-			playToolAnim( true );
+//			playToolAnim( true );
 		}
 
 		private function dropAreaChargedHandler ( e : DropAreaEvent ):void
 		{
 			toolSelected = toolIndex;
+
+			ModelLocator.getInstance().ofDataModel.focusIndex = toolSelected;
 		}
 
 		/////////////////////////////////////////////

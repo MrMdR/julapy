@@ -3,6 +3,7 @@ package com.julapy.ph.hair.view
 	import caurina.transitions.Tweener;
 
 	import com.holler.controls.BtnView;
+	import com.julapy.ph.hair.events.ToolTriggerEvent;
 	import com.julapy.ph.hair.model.ModelLocator;
 
 	import fl.motion.easing.Quadratic;
@@ -13,6 +14,8 @@ package com.julapy.ph.hair.view
 
 	public class MenuToolView extends BtnView
 	{
+		protected var toolIndex	: int = -1;
+
 		private var _ix	: Number;
 		private var _iy : Number;
 		private var _sx : Number;
@@ -39,6 +42,9 @@ package com.julapy.ph.hair.view
 			_ir = ( _sprite as MovieClip ).rotation;
 
 			initToolAnim();
+
+			ModelLocator.getInstance().hairModel.addEventListener( ToolTriggerEvent.TOOL_TRIGGER_ON,	toolTriggerHandler );
+			ModelLocator.getInstance().hairModel.addEventListener( ToolTriggerEvent.TOOL_TRIGGER_OFF,	toolTriggerHandler );
 		}
 
 		public function get ix ():Number { return _ix };
@@ -186,6 +192,62 @@ package com.julapy.ph.hair.view
 		{
 			anim.play();
 			anim.visible = true;
+		}
+
+		////////////////////////////////////
+		//	TOOL SOUND.
+		////////////////////////////////////
+
+		protected function playToolSound ():void
+		{
+			//
+		}
+
+		protected function stopToolSound ():void
+		{
+			//
+		}
+
+		////////////////////////////////////
+		//	TOOL ANIM.
+		////////////////////////////////////
+
+		private function toolTriggerHandler ( e : ToolTriggerEvent ):void
+		{
+			var b1 : Boolean;
+			var b2 : Boolean;
+
+			b1 = ModelLocator.getInstance().hairModel.bInteractiveVideoPlaying;
+			b2 = ModelLocator.getInstance().hairModel.menuSelection == toolIndex
+
+			var valid : Boolean;
+			valid = b1 && b2;
+
+			if( e.type == ToolTriggerEvent.TOOL_TRIGGER_ON )
+			{
+				if( e.toolTrigger == toolIndex )
+				{
+					playToolSound();
+
+					if( valid )
+					{
+						playToolAnim();
+					}
+				}
+			}
+
+			if( e.type == ToolTriggerEvent.TOOL_TRIGGER_OFF )
+			{
+				if( e.toolTrigger == toolIndex )
+				{
+					stopToolSound();
+
+					if( valid )
+					{
+						stopToolAnim();
+					}
+				}
+			}
 		}
 	}
 }
