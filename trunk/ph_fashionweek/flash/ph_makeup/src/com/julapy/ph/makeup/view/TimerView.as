@@ -23,7 +23,7 @@ package com.julapy.ph.makeup.view
 		private var timer 			: Timer;
 		private var timerMc			: MovieClip;
 		private var timerText		: TextField;
-		private var timerSeconds	: int = 15;
+		private var timerSeconds	: int = 60;
 		private var timerCount		: int = 0;
 
 		private var finalLookTimer	: Timer;
