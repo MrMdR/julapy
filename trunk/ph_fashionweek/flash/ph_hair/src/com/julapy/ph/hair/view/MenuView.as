@@ -500,10 +500,12 @@ package com.julapy.ph.hair.view
 			if( b )
 			{
 				t.playToolAnim();
+				t.playToolSound();
 			}
 			else
 			{
 				t.stopToolAnim();
+				t.stopToolSound();
 			}
 		}
 

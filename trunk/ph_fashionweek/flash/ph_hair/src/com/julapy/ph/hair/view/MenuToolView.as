@@ -198,12 +198,12 @@ package com.julapy.ph.hair.view
 		//	TOOL SOUND.
 		////////////////////////////////////
 
-		protected function playToolSound ():void
+		public function playToolSound ():void
 		{
 			//
 		}
 
-		protected function stopToolSound ():void
+		public function stopToolSound ():void
 		{
 			//
 		}
@@ -227,10 +227,9 @@ package com.julapy.ph.hair.view
 			{
 				if( e.toolTrigger == toolIndex )
 				{
-					playToolSound();
-
 					if( valid )
 					{
+						playToolSound();
 						playToolAnim();
 					}
 				}
@@ -240,10 +239,9 @@ package com.julapy.ph.hair.view
 			{
 				if( e.toolTrigger == toolIndex )
 				{
-					stopToolSound();
-
 					if( valid )
 					{
+						stopToolSound();
 						stopToolAnim();
 					}
 				}

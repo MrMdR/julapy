@@ -63,12 +63,12 @@ package com.julapy.ph.hair.view
 		//	TOOL SOUND.
 		////////////////////////////////////
 
-		protected override function playToolSound ():void
+		public override function playToolSound ():void
 		{
 			//
 		}
 
-		protected override function stopToolSound ():void
+		public override function stopToolSound ():void
 		{
 			//
 		}
