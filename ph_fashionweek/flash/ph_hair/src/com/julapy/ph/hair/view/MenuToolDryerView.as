@@ -1,12 +1,21 @@
 package com.julapy.ph.hair.view
 {
+	import caurina.transitions.Tweener;
+
 	import com.julapy.ph.hair.model.HairModel;
+	import com.julapy.ph.hair.model.SoundModel;
+	import com.reintroducing.sound.SoundManager;
+
+	import fl.motion.easing.Quadratic;
 
 	import flash.display.Sprite;
 	import flash.geom.Point;
 
 	public class MenuToolDryerView extends MenuToolView
 	{
+		private var bPlayingSound	: Boolean	= false;
+		public  var soundVolume		: Number	= 1;
+
 		public function MenuToolDryerView(sprite:Sprite=null)
 		{
 			super(sprite);
@@ -59,14 +68,51 @@ package com.julapy.ph.hair.view
 		//	TOOL SOUND.
 		////////////////////////////////////
 
-		protected override function playToolSound ():void
+		public override function playToolSound ():void
 		{
-			//
+			if( !bPlayingSound )
+			{
+				bPlayingSound = true;
+
+				SoundManager.getInstance().playSound( SoundModel.DRYER_LONG, 1, 0, 100 );
+			}
 		}
 
-		protected override function stopToolSound ():void
+		public override function stopToolSound ():void
 		{
-			//
+			if( bPlayingSound )
+			{
+				fadeOutToolSound();
+			}
+		}
+
+		private function fadeOutToolSound ():void
+		{
+			Tweener.addTween
+			(
+				this,
+				{
+					soundVolume	: 0,
+					time		: 0.2,
+					delay		: 0.0,
+					transition	: Quadratic.easeOut,
+					onStart		: null,
+					onUpdate	: tweenUpdateHandler,
+					onComplete	: tweenCompleteHandler
+				}
+			);
+		}
+
+		private function tweenUpdateHandler ():void
+		{
+			SoundManager.getInstance().setSoundVolume( SoundModel.DRYER_LONG, soundVolume );
+		}
+
+		private function tweenCompleteHandler ():void
+		{
+			SoundManager.getInstance().stopSound( SoundModel.DRYER_LONG );
+
+			bPlayingSound = false;
 		}
 	}
 }

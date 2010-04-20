@@ -33,6 +33,8 @@ package com.julapy.ph.hair.model
 
 		public static const BACKGROUND		: String = "hair.sound.hair_bg";
 
+		public static const DRYER_LONG		: String = "hair.sound.hair_dryer_long";
+
 		private var sm 		: SoundManager;
 		private var sounds	: Array = new Array();
 
@@ -73,7 +75,9 @@ package com.julapy.ph.hair.model
 				TOOL_SELECTED_2,
 				TOOL_SELECTED_3,
 
-				BACKGROUND
+				BACKGROUND,
+
+				DRYER_LONG
 			];
 
 			idles = [ IDLE_1, IDLE_2, IDLE_3, IDLE_4 ];
@@ -213,6 +217,16 @@ package com.julapy.ph.hair.model
 		public function playBackground ():void
 		{
 			sm.playSound( BACKGROUND, 0.3, 0, 100 );
+		}
+
+		public function playDryer ():void
+		{
+			sm.playSound( DRYER_LONG, 1.0, 0, 100 );
+		}
+
+		public function stopDryer ():void
+		{
+			sm.stopSound( DRYER_LONG );
 		}
 	}
 }
