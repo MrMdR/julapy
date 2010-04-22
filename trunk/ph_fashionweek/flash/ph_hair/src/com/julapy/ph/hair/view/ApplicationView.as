@@ -117,32 +117,63 @@ package com.julapy.ph.hair.view
 				}
 			}
 
-			if( e.keyCode == Keyboard.NUMBER_1 )
+			var k1 : Boolean;
+			var k2 : Boolean;
+			var k3 : Boolean;
+			var k4 : Boolean;
+
+			k1 = e.keyCode == Keyboard.NUMBER_1;
+			k2 = e.keyCode == Keyboard.NUMBER_2;
+			k3 = e.keyCode == Keyboard.NUMBER_3;
+			k4 = e.keyCode == Keyboard.NUMBER_4;
+
+			if( k1 )
 			{
 				ModelLocator.getInstance().hairModel.toolTriggerOn = HairModel.TOOL_DRYER;
 			}
 
-			if( e.keyCode == Keyboard.NUMBER_2 )
+			if( k2 )
 			{
 				ModelLocator.getInstance().hairModel.toolTriggerOn = HairModel.TOOL_CURLER;
 			}
 
-			if( e.keyCode == Keyboard.NUMBER_3 )
+			if( k3 )
 			{
 				ModelLocator.getInstance().hairModel.toolTriggerOn = HairModel.TOOL_SPRAY;
 			}
 
-			if( e.keyCode == Keyboard.NUMBER_4 )
+			if( k4 )
 			{
-				if( ModelLocator.getInstance().hairModel.bAttractor )
-				{
-					ModelLocator.getInstance().hairModel.bAttractor = false;
-				}
-				else
-				{
-					ModelLocator.getInstance().hairModel.reset();
-					ModelLocator.getInstance().hairModel.bAttractor = true;
-				}
+				toggleScreens();
+			}
+
+			var b1 : Boolean;
+			var b2 : Boolean;
+
+			b1 = ModelLocator.getInstance().hairModel.section == HairModel.SECTION_INTRO;
+			b2 = ModelLocator.getInstance().hairModel.bAttractor;
+
+			if( ( k1 || k2 || k3 ) && b1 )
+			{
+				videoGen.playIn( false );
+			}
+
+			if( ( k1 || k2 || k3 ) && b2 )
+			{
+				toggleScreens();
+			}
+		}
+
+		private function toggleScreens ():void
+		{
+			if( ModelLocator.getInstance().hairModel.bAttractor )
+			{
+				ModelLocator.getInstance().hairModel.bAttractor = false;
+			}
+			else
+			{
+				ModelLocator.getInstance().hairModel.reset();
+				ModelLocator.getInstance().hairModel.bAttractor = true;
 			}
 		}
 

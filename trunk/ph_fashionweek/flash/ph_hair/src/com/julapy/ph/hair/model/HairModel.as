@@ -522,6 +522,9 @@ package com.julapy.ph.hair.model
 		{
 //			girl		= GIRL_ONE;				// keep the girl and style counter - we want to come back to where we left off.
 //			style		= STYLE_ONE;
+
+			nextStyle();
+
 			section		= SECTION_INTRO;
 			stylePart	= STYLE_PART_ONE;
 

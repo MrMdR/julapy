@@ -73,7 +73,7 @@ package com.julapy.ph.hair.view
 		//	PLAY IN / OUT.
 		/////////////////////////////////////////////
 
-		private function playIn ( b : Boolean ):void
+		public function playIn ( b : Boolean ):void
 		{
 			if( b )
 			{
