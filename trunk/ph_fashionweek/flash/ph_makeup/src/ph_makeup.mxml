@@ -43,9 +43,9 @@
 				assetLoader.addAsset( "assets/assets_sound.swf",	"assets",	"sound"		);
 				assetLoader.loadAssets( "assets", false );
 
-				orderTimer = new Timer( 30000, 1 );
-				orderTimer.addEventListener( TimerEvent.TIMER, orderTimerHandler );
-				orderTimer.start();
+//				orderTimer = new Timer( 30000, 1 );
+//				orderTimer.addEventListener( TimerEvent.TIMER, orderTimerHandler );
+//				orderTimer.start();
 			}
 
 			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
