@@ -3,6 +3,7 @@
 
     <mx:Script>
         <![CDATA[
+        	import com.holler.utils.TimeFormat;
         	import com.julapy.ph.makeup.model.ModelLocator;
         	import com.holler.assets.AssetGroupVOEvent;
         	import com.julapy.ph.makeup.view.ApplicationView;
@@ -16,6 +17,8 @@
 			private var stageHeight	: int;
 
 			private var app			: ApplicationView;
+
+			private var orderTimer	: Timer;
 
 			private function init ():void
 			{
@@ -39,6 +42,10 @@
 				assetLoader.addAsset( "assets/assets.swf",			"assets",	"main" 		);
 				assetLoader.addAsset( "assets/assets_sound.swf",	"assets",	"sound"		);
 				assetLoader.loadAssets( "assets", false );
+
+				orderTimer = new Timer( 30000, 1 );
+				orderTimer.addEventListener( TimerEvent.TIMER, orderTimerHandler );
+				orderTimer.start();
 			}
 
 			private function assetLoaderHandler ( e : AssetGroupVOEvent ):void
@@ -74,6 +81,12 @@
 
 				asset.x		= (int)( stageWidth  * 0.5 );
 				asset.y		= (int)( stageHeight * 0.5 );
+			}
+
+			private function orderTimerHandler ( e : TimerEvent ):void
+			{
+				nativeWindow.alwaysInFront = true;
+				nativeWindow.orderToFront();
 			}
 
         ]]>
