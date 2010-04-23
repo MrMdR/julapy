@@ -42,6 +42,9 @@ void testApp::setup()
 	initContourAnalysis();
 	computeContourAnalysis();
 	parseLogoShapes();
+
+	initBox2d();
+	updateTriangles();
 }
 
 ///////////////////////////////////////////
@@ -355,6 +358,10 @@ void testApp :: drawContourAnalysis()
 	}
 }
 
+///////////////////////////////////////////
+//	contours to shapes.
+///////////////////////////////////////////
+
 void testApp :: parseLogoShapes ()
 {
 	int t;
@@ -455,7 +462,7 @@ void testApp :: parseLogoShapes ()
 			s1.noPolys += 1;
 		}
 		
-		s1.polyPoints = new vector<ofxPoint2f>[ s1.noPolys ];
+		s1.polyPoints = new vector<ofPoint>[ s1.noPolys ];
 		
 		copyPolygonData( cdata.contourReg[ i ], s1.polyPoints[ 0 ] );
 		
@@ -465,26 +472,20 @@ void testApp :: parseLogoShapes ()
 		}
 	}
 	
-//	ofSetColor( 0xFF0000 );
-//	ofNoFill();
-//	ofBeginShape();
-//	for( int k=0; k<cdata.contourReg[ j ].size(); k++ )
-//	{
-//		ofVertex
-//		(
-//		 cdata.contourReg[ j ].at( k ).x,
-//		 cdata.contourReg[ j ].at( k ).y
-//		 );
-//	}
-//	ofEndShape( true );
-//	
-//	ofRect
-//	(
-//	 cdata.blobBoundingRect[ j ].x,
-//	 cdata.blobBoundingRect[ j ].y,
-//	 cdata.blobBoundingRect[ j ].width,
-//	 cdata.blobBoundingRect[ j ].height
-//	 );
+	for( int i=0; i<t; i++ )						// remove child contours with a parent, as they have already been copied to parent.
+	{
+		LogoShape& s1 = shapes.at( i );
+		
+		if( s1.parent != -1 )						// has parent. remove it.
+		{
+//			delete s1.polyPoints;					// causing an error... ?
+			
+			shapes.erase( shapes.begin() + i );		// remove from array, step back counter after removed.
+			
+			--i;
+			--t;
+		}
+	}
 }
 
 bool testApp :: checkEmbeddedRectangles( const ofRectangle& r1, const ofRectangle& r2 )
@@ -499,15 +500,157 @@ bool testApp :: checkEmbeddedRectangles( const ofRectangle& r1, const ofRectangl
 	return ( p1 && p2 && p3 && p4 );
 }
 
-void testApp :: copyPolygonData ( const vector<ofxPoint2f>& p1, vector<ofxPoint2f>& p2 )
+void testApp :: copyPolygonData ( const vector<ofxPoint2f>& p1, vector<ofPoint>& p2 )
 {
 	for( int i=0; i<p1.size(); i++ )
 	{
-		p2.push_back( ofxPoint2f() );
+		p2.push_back( ofPoint() );
 		
-		ofxPoint2f& p = p2.back();
+		ofPoint& p = p2.back();
 		p.x = p1.at( i ).x;
 		p.y = p1.at( i ).y;
+	}
+}
+
+void testApp :: drawLogoShapes ()
+{
+	ofFill();
+	ofSetColor( 0xFFFFFF );
+	
+	for( int i=0; i<shapes.size(); i++ )
+	{
+		LogoShape& s1 = shapes.at( i );
+		
+		ofBeginShape();
+		
+		for( int j=0; j<s1.noPolys; j++ )
+		{
+			for( int k=0; k<s1.polyPoints[ j ].size(); k++ )
+			{
+				ofPoint& p1 = s1.polyPoints[ j ].at( k );
+				
+				ofVertex( p1.x, p1.y );
+			}
+		}
+		
+		ofEndShape( true );
+	}
+}
+
+///////////////////////////////////////////
+//	triangles.
+///////////////////////////////////////////
+
+void testApp :: updateTriangles ()
+{
+	for( int i=0; i<shapes.size(); i++ )
+	{
+		triangle.clear();
+		triangle.triangulate( shapes.at( i ).polyPoints[ 0 ], max( 3.0, shapes.at( i ).polyPoints[ 0 ].size() / 5.0 ) );
+		
+		addBody( triangle.getTriangles() );
+	}
+}
+
+void testApp :: drawTriangles ()
+{
+	triangle.draw();
+}
+
+///////////////////////////////////////////
+//	BOX2D BODIES.
+///////////////////////////////////////////
+
+void testApp :: initBox2d ()
+{
+	box2d.init();
+	box2d.setGravity( 0, 10 );
+	box2d.createFloor();
+	box2d.checkBounds(true);
+	box2d.setFPS( 25 );
+}
+
+void testApp :: addBody( const vector<ofxTriangleData>& triangles )
+{
+	b2BodyDef* bodyDef = new b2BodyDef();
+	bodyDef->position.Set( 360 / OFX_BOX2D_SCALE, 20 / OFX_BOX2D_SCALE );
+	bodyDef->linearDamping	= 0.25;
+	bodyDef->angularDamping = 0.25;
+	
+	b2Body* body = box2d.getWorld()->CreateBody( bodyDef );
+	makeComplexBody( triangles, body );
+	bodies.push_back( body );
+}
+
+//-- http://www.psyked.co.uk/box2d/simple-box2d-custom-polygon-creation.htm
+
+void testApp :: makeComplexBody( const vector<ofxTriangleData>& triangles, b2Body* body )
+{
+	int shapeCnt = 0;
+	
+	for( int i=0; i<triangles.size(); i++ )
+	{
+		b2PolygonDef* shapeDef = new b2PolygonDef();
+		shapeDef->density		= 1;
+		shapeDef->friction		= 5;
+		shapeDef->vertexCount	= 3;
+		
+		shapeDef->vertices[ 0 ].Set( triangles[ i ].a.x / OFX_BOX2D_SCALE, triangles[ i ].a.y / OFX_BOX2D_SCALE );
+		shapeDef->vertices[ 1 ].Set( triangles[ i ].b.x / OFX_BOX2D_SCALE, triangles[ i ].b.y / OFX_BOX2D_SCALE );
+		shapeDef->vertices[ 2 ].Set( triangles[ i ].c.x / OFX_BOX2D_SCALE, triangles[ i ].c.y / OFX_BOX2D_SCALE );
+		
+		body->CreateShape( shapeDef );
+		shapeCnt++;
+	}
+	
+	shapeCnts.push_back(shapeCnt);
+	body->SetMassFromShapes();
+}
+
+void testApp :: updateBodies ()
+{
+	//
+}
+
+void testApp :: drawBodies ()
+{
+	for( int i=0; i<bodies.size(); i++ )
+	{
+		b2Body*	body				= bodies[i];
+		b2Shape* s					= body->GetShapeList();
+		const b2XForm& xf			= body->GetXForm();
+		b2PolygonShape* poly		= (b2PolygonShape*)s;
+		int count					= poly->GetVertexCount();
+		const b2Vec2* localVertices = poly->GetVertices();
+		vector<b2Vec2> verts;
+		
+		for(int j = 0; j < count; j++)
+		{
+			verts.push_back(b2Mul(xf, localVertices[j]));
+		}
+		
+		int shapeCnt = shapeCnts[i];			
+		for (int j = 0; j < shapeCnt-1; j++)
+		{
+			b2Shape* next = s->GetNext();
+			s = next;
+			b2PolygonShape* poly = (b2PolygonShape*)next;
+			int count = poly->GetVertexCount();
+			const b2Vec2* localVertices = poly->GetVertices();
+			for(int k = 0; k < count; k++)
+			{
+				verts.push_back(b2Mul(xf, localVertices[k]));
+			}					
+		}
+		
+		ofEnableAlphaBlending();
+		ofSetColor( 0xFF00FF );
+		glBegin(GL_TRIANGLES); 
+		for(int j = 0; j < verts.size(); j++) {
+			glVertex3f(verts[j].x*OFX_BOX2D_SCALE, verts[j].y*OFX_BOX2D_SCALE, 0);
+		}
+		glEnd();			
+		ofDisableAlphaBlending();		
 	}
 }
 
@@ -517,7 +660,7 @@ void testApp :: copyPolygonData ( const vector<ofxPoint2f>& p1, vector<ofxPoint2
 
 void testApp::update()
 {
-
+	box2d.update();
 }
 
 ///////////////////////////////////////////
@@ -530,6 +673,9 @@ void testApp::draw()
 	ofSetColor( 0x000000 );
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
+	glPushMatrix();
+	glTranslatef( 300, 100, 0 );
+	
 	if( bShowImage )
 	{
 		ofSetColor( 0xFFFFFF );
@@ -537,6 +683,20 @@ void testApp::draw()
 	}
 	
 	drawContourAnalysis();
+	
+	glPushMatrix();
+	glTranslatef( 0, 300, 0 );
+		drawLogoShapes();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef( 0, 300, 0 );
+		drawTriangles();
+	glPopMatrix();
+	
+	glPopMatrix();
+	
+	drawBodies();
 }
 
 ///////////////////////////////////////////
@@ -548,6 +708,14 @@ void testApp::keyPressed(int key)
 	if( key == 'i' )
 	{
 		bShowImage = !bShowImage;
+	}
+	
+	if( key == 's')
+	{
+		ofImage img;
+		img.allocate( ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR );
+		img.grabScreen( 0, 0, ofGetWidth(), ofGetHeight() );
+		img.saveImage( "image" + ofToString( ofGetFrameNum(), 0 ) + ".png" );
 	}
 }
 

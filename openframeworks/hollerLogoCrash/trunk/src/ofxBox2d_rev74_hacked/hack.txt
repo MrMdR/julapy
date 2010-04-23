@@ -1,0 +1,4 @@
+http://www.openframeworks.cc/forum/viewtopic.php?f=10&t=3386
+
+In this experiment, i did some awkward hack to stop box2d assertion.
+At b2Settings.h, before #include <assert.h>, place #define NDEBUG.
