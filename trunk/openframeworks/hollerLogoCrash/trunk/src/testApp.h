@@ -7,6 +7,8 @@
 #include "ofxOpenCv.h"
 #include "ofxBox2d.h"
 #include "contourSimplify.h"
+#include "ofxTriangle.h"
+#include "ofxBox2d.h"
 
 struct ContourData
 {
@@ -33,7 +35,7 @@ struct LogoShape
 	int						child;
 	
 	int						noPolys;
-	vector<ofxPoint2f>		*polyPoints;
+	vector<ofPoint>			*polyPoints;
 };
 
 class testApp : public ofBaseApp
@@ -50,7 +52,17 @@ public:
 	
 	void parseLogoShapes			();
 	bool checkEmbeddedRectangles	( const ofRectangle& r1, const ofRectangle& r2 );
-	void copyPolygonData			( const vector<ofxPoint2f>& p1, vector<ofxPoint2f>& p2 );
+	void copyPolygonData			( const vector<ofxPoint2f>& p1, vector<ofPoint>& p2 );
+	void drawLogoShapes				();
+	
+	void updateTriangles			();
+	void drawTriangles				();
+	
+	void initBox2d					();
+	void addBody					( const vector<ofxTriangleData>& triangles );
+	void makeComplexBody			( const vector<ofxTriangleData>& triangles, b2Body* body );
+	void updateBodies				();
+	void drawBodies					();
 
 	void keyPressed		( int key );
 	void keyReleased	( int key );
@@ -66,13 +78,18 @@ public:
 	ofxCvGrayscaleImage		logoBW;
 	unsigned char*			logoBWPixles;
 	
-	ofxBox2d				box2d;
 	ContourData				cdata;
 	
 	vector<LogoShape>		shapes;
 	
 	ofxCvContourFinder		contourFinder;
 	contourSimplify			contourS;
+	
+	ofxTriangle             triangle;
+	
+	ofxBox2d				box2d;
+	vector<b2Body*>			bodies;
+	vector<int>				shapeCnts;
 	
 	int						maxContoursToFind;
 	

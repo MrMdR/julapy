@@ -1,0 +1,600 @@
+// !$*UTF8*$!
+{
+	B22F705311816B5400FA4525 /* Box2D.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = Box2D.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/lib/Box2D/Include/Box2D.h;
+		sourceTree = "<absolute>";
+	};
+	B22F706F11816B5500FA4525 /* b2Settings.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = b2Settings.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/lib/Box2D/Source/Common/b2Settings.h;
+		sourceTree = "<absolute>";
+	};
+	B22F707511816B5500FA4525 /* b2Body.cpp */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = b2Body.cpp;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/lib/Box2D/Source/Dynamics/b2Body.cpp;
+		sourceTree = "<absolute>";
+	};
+	B22F70AD11816B5500FA4525 /* ofxBox2d.cpp */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = ofxBox2d.cpp;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2d.cpp;
+		sourceTree = "<absolute>";
+	};
+	B22F70AE11816B5500FA4525 /* ofxBox2d.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2d.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2d.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70AF11816B5500FA4525 /* ofxBox2dBaseShape.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dBaseShape.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dBaseShape.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B011816B5500FA4525 /* ofxBox2dCircle.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dCircle.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dCircle.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B111816B5500FA4525 /* ofxBox2dContactListener.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dContactListener.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dContactListener.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B211816B5500FA4525 /* ofxBox2dJoint.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dJoint.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dJoint.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B311816B5500FA4525 /* ofxBox2dLine.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dLine.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dLine.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B411816B5500FA4525 /* ofxBox2dPolygon.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dPolygon.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dPolygon.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B511816B5500FA4525 /* ofxBox2dRect.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dRect.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dRect.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B611816B5500FA4525 /* ofxBox2dRender.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dRender.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dRender.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B711816B5500FA4525 /* ofxBox2dSoftBody.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dSoftBody.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dSoftBody.h;
+		sourceTree = "<absolute>";
+	};
+	B22F70B811816B5500FA4525 /* ofxBox2dUtils.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofxBox2dUtils.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/ofxBox2dUtils.h;
+		sourceTree = "<absolute>";
+	};
+	B22F712511817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B811816B5500FA4525 /* ofxBox2dUtils.h */;
+		name = "ofxBox2dUtils.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 154;
+		vrLoc = 0;
+	};
+	B22F712611817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B611816B5500FA4525 /* ofxBox2dRender.h */;
+		name = "ofxBox2dRender.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1269;
+		vrLoc = 0;
+	};
+	B22F712711817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B711816B5500FA4525 /* ofxBox2dSoftBody.h */;
+		name = "ofxBox2dSoftBody.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 955;
+		vrLoc = 0;
+	};
+	B22F712811817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B511816B5500FA4525 /* ofxBox2dRect.h */;
+		name = "ofxBox2dRect.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 929;
+		vrLoc = 0;
+	};
+	B22F712911817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B411816B5500FA4525 /* ofxBox2dPolygon.h */;
+		name = "ofxBox2dPolygon.h: 66";
+		rLen = 11;
+		rLoc = 1531;
+		rType = 0;
+		vrLen = 1153;
+		vrLoc = 678;
+	};
+	B22F712A11817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B311816B5500FA4525 /* ofxBox2dLine.h */;
+		name = "ofxBox2dLine.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 969;
+		vrLoc = 0;
+	};
+	B22F712B11817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B211816B5500FA4525 /* ofxBox2dJoint.h */;
+		name = "ofxBox2dJoint.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 780;
+		vrLoc = 0;
+	};
+	B22F712C11817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B111816B5500FA4525 /* ofxBox2dContactListener.h */;
+		name = "ofxBox2dContactListener.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 720;
+		vrLoc = 0;
+	};
+	B22F712D11817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70B011816B5500FA4525 /* ofxBox2dCircle.h */;
+		name = "ofxBox2dCircle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1018;
+		vrLoc = 0;
+	};
+	B22F712E11817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70AF11816B5500FA4525 /* ofxBox2dBaseShape.h */;
+		name = "ofxBox2dBaseShape.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 763;
+		vrLoc = 0;
+	};
+	B22F712F11817B2900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70AE11816B5500FA4525 /* ofxBox2d.h */;
+		name = "ofxBox2d.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1210;
+		vrLoc = 405;
+	};
+	B22F714311817CC900FA4525 /* b2Body.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = b2Body.cpp;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev72/scr/lib/Box2D/Source/Dynamics/b2Body.cpp;
+		sourceTree = "<absolute>";
+	};
+	B22F715211817D1900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F714311817CC900FA4525 /* b2Body.cpp */;
+		name = "b2Body.cpp: 129";
+		rLen = 0;
+		rLoc = 3154;
+		rType = 0;
+		vrLen = 1403;
+		vrLoc = 2798;
+	};
+	B22F715311817D1900FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F70AD11816B5500FA4525 /* ofxBox2d.cpp */;
+		name = "ofxBox2d.cpp: 158";
+		rLen = 0;
+		rLoc = 3895;
+		rType = 0;
+		vrLen = 1298;
+		vrLoc = 3267;
+	};
+	B22F715E11817DC700FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
+		name = "testApp.h: 61";
+		rLen = 0;
+		rLoc = 1182;
+		rType = 0;
+		vrLen = 1279;
+		vrLoc = 770;
+	};
+	B22F716011817DC700FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F705311816B5400FA4525 /* Box2D.h */;
+		name = "Box2D.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1673;
+		vrLoc = 659;
+	};
+	B22F716411817DD900FA4525 /* b2Body.cpp:135 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = B23BEA871181808200DA6EE3 /* b2Body.cpp */;
+		functionName = "b2Body::CreateShape(const b2ShapeDef* def)";
+		hitCount = 0;
+		ignoreCount = 0;
+		lineNumber = 135;
+		location = emptyExampleDebug;
+		modificationTime = 293699808.618767;
+		originalNumberOfMultipleMatches = 1;
+		state = 2;
+	};
+	B22F717011817E0D00FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F707511816B5500FA4525 /* b2Body.cpp */;
+		name = "b2Body.cpp: 135";
+		rLen = 0;
+		rLoc = 3278;
+		rType = 0;
+		vrLen = 908;
+		vrLoc = 4498;
+	};
+	B22F717111817E0D00FA4525 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B22F706F11816B5500FA4525 /* b2Settings.h */;
+		name = "b2Settings.h: 22";
+		rLen = 0;
+		rLoc = 946;
+		rType = 0;
+		vrLen = 1060;
+		vrLoc = 659;
+	};
+	B23BEA4811817F9B00DA6EE3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2A3DA6711815C8000280516 /* del_interface.hpp */;
+		name = "del_interface.hpp: 152";
+		rLen = 6;
+		rLoc = 4178;
+		rType = 0;
+		vrLen = 1198;
+		vrLoc = 5960;
+	};
+	B23BEA4911817F9B00DA6EE3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2A3DA7011815C8000280516 /* ofxTriangle.h */;
+		name = "ofxTriangle.h: 19";
+		rLen = 0;
+		rLoc = 401;
+		rType = 0;
+		vrLen = 880;
+		vrLoc = 126;
+	};
+	B23BEA4A11817F9B00DA6EE3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2A3DA6F11815C8000280516 /* ofxTriangle.cpp */;
+		name = "ofxTriangle.cpp: 34";
+		rLen = 0;
+		rLoc = 554;
+		rType = 0;
+		vrLen = 935;
+		vrLoc = 0;
+	};
+	B23BEA871181808200DA6EE3 /* b2Body.cpp */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = b2Body.cpp;
+		path = /Users/lukasz/Documents/workspace/of_0061/apps/julapy/hollerLogoCrash/src/ofxBox2d_rev74/scr/lib/Box2D/Source/Dynamics/b2Body.cpp;
+		sourceTree = "<absolute>";
+	};
+	B23BEAFB118180C300DA6EE3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 637";
+		rLen = 0;
+		rLoc = 14393;
+		rType = 0;
+		vrLen = 1187;
+		vrLoc = 13919;
+	};
+	B23BEAFC118180C300DA6EE3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B23BEAFD118180C300DA6EE3 /* b2Settings.cpp */;
+		name = "b2Settings.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1449;
+		vrLoc = 0;
+	};
+	B23BEAFD118180C300DA6EE3 /* b2Settings.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = b2Settings.cpp;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/lib/Box2D/Source/Common/b2Settings.cpp;
+		sourceTree = "<absolute>";
+	};
+	B23BEAFE118180C300DA6EE3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B23BEAFF118180C300DA6EE3 /* b2Settings.h */;
+		name = "b2Settings.h: 22";
+		rLen = 0;
+		rLoc = 965;
+		rType = 0;
+		vrLen = 1073;
+		vrLoc = 659;
+	};
+	B23BEAFF118180C300DA6EE3 /* b2Settings.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = b2Settings.h;
+		path = /Users/lukasz/Documents/workspace/of_0061/addons/ofxBox2d_rev74/scr/lib/Box2D/Source/Common/b2Settings.h;
+		sourceTree = "<absolute>";
+	};
+	B2A3D88B118116D700280516 /* emptyExample */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = emptyExample;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		variableFormatDictionary = {
+		};
+	};
+	B2A3D8AC118116F700280516 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	B2A3D8AD118116F700280516 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	B2A3DA3F11815A7100280516 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */;
+		name = "main.cpp: 9";
+		rLen = 0;
+		rLoc = 221;
+		rType = 0;
+		vrLen = 415;
+		vrLoc = 0;
+	};
+	B2A3DA6711815C8000280516 /* del_interface.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {956, 6747}}";
+			sepNavSelRange = "{4178, 6}";
+			sepNavVisRange = "{5960, 1198}";
+		};
+	};
+	B2A3DA6F11815C8000280516 /* ofxTriangle.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {956, 1924}}";
+			sepNavSelRange = "{554, 0}";
+			sepNavVisRange = "{0, 935}";
+		};
+	};
+	B2A3DA7011815C8000280516 /* ofxTriangle.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {992, 715}}";
+			sepNavSelRange = "{401, 0}";
+			sepNavVisRange = "{126, 880}";
+		};
+	};
+	E4B69B4C0A3A1720003C02F2 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = B2A3D88B118116D700280516 /* emptyExample */;
+		activeSDKPreference = macosx10.6;
+		activeTarget = E4B69B5A0A3A1756003C02F2 /* emptyExample */;
+		addToTargets = (
+			E4B69B5A0A3A1756003C02F2 /* emptyExample */,
+		);
+		breakpoints = (
+			B22F716411817DD900FA4525 /* b2Body.cpp:135 */,
+		);
+		codeSenseManager = B2A3D8AD118116F700280516 /* Code sense */;
+		executables = (
+			B2A3D88B118116D700280516 /* emptyExample */,
+		);
+		perUserDictionary = {
+			"PBXConfiguration.PBXBreakpointsDataSource.v1:1CA1AED706398EBD00589147" = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXBreakpointsDataSource_BreakpointID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					20,
+					198,
+					20,
+					99,
+					99,
+					29,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXBreakpointsDataSource_ActionID,
+					PBXBreakpointsDataSource_TypeID,
+					PBXBreakpointsDataSource_BreakpointID,
+					PBXBreakpointsDataSource_UseID,
+					PBXBreakpointsDataSource_LocationID,
+					PBXBreakpointsDataSource_ConditionID,
+					PBXBreakpointsDataSource_IgnoreCountID,
+					PBXBreakpointsDataSource_ContinueID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					778,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 293699808;
+			PBXWorkspaceStateSaveDate = 293699808;
+		};
+		perUserProjectItems = {
+			B22F712511817B2900FA4525 = B22F712511817B2900FA4525 /* PBXTextBookmark */;
+			B22F712611817B2900FA4525 = B22F712611817B2900FA4525 /* PBXTextBookmark */;
+			B22F712711817B2900FA4525 = B22F712711817B2900FA4525 /* PBXTextBookmark */;
+			B22F712811817B2900FA4525 = B22F712811817B2900FA4525 /* PBXTextBookmark */;
+			B22F712911817B2900FA4525 = B22F712911817B2900FA4525 /* PBXTextBookmark */;
+			B22F712A11817B2900FA4525 = B22F712A11817B2900FA4525 /* PBXTextBookmark */;
+			B22F712B11817B2900FA4525 = B22F712B11817B2900FA4525 /* PBXTextBookmark */;
+			B22F712C11817B2900FA4525 = B22F712C11817B2900FA4525 /* PBXTextBookmark */;
+			B22F712D11817B2900FA4525 = B22F712D11817B2900FA4525 /* PBXTextBookmark */;
+			B22F712E11817B2900FA4525 = B22F712E11817B2900FA4525 /* PBXTextBookmark */;
+			B22F712F11817B2900FA4525 = B22F712F11817B2900FA4525 /* PBXTextBookmark */;
+			B22F715211817D1900FA4525 = B22F715211817D1900FA4525 /* PBXTextBookmark */;
+			B22F715311817D1900FA4525 = B22F715311817D1900FA4525 /* PBXTextBookmark */;
+			B22F715E11817DC700FA4525 = B22F715E11817DC700FA4525 /* PBXTextBookmark */;
+			B22F716011817DC700FA4525 = B22F716011817DC700FA4525 /* PBXTextBookmark */;
+			B22F717011817E0D00FA4525 = B22F717011817E0D00FA4525 /* PBXTextBookmark */;
+			B22F717111817E0D00FA4525 = B22F717111817E0D00FA4525 /* PBXTextBookmark */;
+			B23BEA4811817F9B00DA6EE3 = B23BEA4811817F9B00DA6EE3 /* PBXTextBookmark */;
+			B23BEA4911817F9B00DA6EE3 = B23BEA4911817F9B00DA6EE3 /* PBXTextBookmark */;
+			B23BEA4A11817F9B00DA6EE3 = B23BEA4A11817F9B00DA6EE3 /* PBXTextBookmark */;
+			B23BEAFB118180C300DA6EE3 = B23BEAFB118180C300DA6EE3 /* PBXTextBookmark */;
+			B23BEAFC118180C300DA6EE3 = B23BEAFC118180C300DA6EE3 /* PBXTextBookmark */;
+			B23BEAFE118180C300DA6EE3 = B23BEAFE118180C300DA6EE3 /* PBXTextBookmark */;
+			B2A3DA3F11815A7100280516 = B2A3DA3F11815A7100280516 /* PBXTextBookmark */;
+		};
+		sourceControlManager = B2A3D8AC118116F700280516 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	E4B69B5A0A3A1756003C02F2 /* emptyExample */ = {
+		activeExec = 0;
+		executables = (
+			B2A3D88B118116D700280516 /* emptyExample */,
+		);
+	};
+	E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1034, 643}}";
+			sepNavSelRange = "{221, 0}";
+			sepNavVisRange = "{0, 415}";
+		};
+	};
+	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {956, 9464}}";
+			sepNavSelRange = "{14393, 0}";
+			sepNavVisRange = "{13919, 1187}";
+			sepNavWindowFrame = "{{15, 243}, {1021, 930}}";
+		};
+	};
+	E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {956, 1404}}";
+			sepNavSelRange = "{1182, 0}";
+			sepNavVisRange = "{770, 1279}";
+		};
+	};
+}
