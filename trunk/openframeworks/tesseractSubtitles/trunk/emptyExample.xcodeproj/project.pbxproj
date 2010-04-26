@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15CC19E51185B32700D0D549 /* ofxColorMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19D51185B32700D0D549 /* ofxColorMap.cpp */; };
+		15CC19E61185B32700D0D549 /* ofxColorUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19D71185B32700D0D549 /* ofxColorUtils.cpp */; };
+		15CC19E71185B32700D0D549 /* ofxDataNormaliser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19D91185B32700D0D549 /* ofxDataNormaliser.cpp */; };
+		15CC19E81185B32700D0D549 /* ofxJulapyApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19DB1185B32700D0D549 /* ofxJulapyApp.cpp */; };
+		15CC19E91185B32700D0D549 /* ofxResizeUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19DD1185B32700D0D549 /* ofxResizeUtil.cpp */; };
+		15CC19EA1185B32700D0D549 /* ofxScreenGrabUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19DF1185B32700D0D549 /* ofxScreenGrabUtil.cpp */; };
+		15CC19EB1185B32700D0D549 /* ofxTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19E11185B32700D0D549 /* ofxTrigger.cpp */; };
+		15CC19EC1185B32700D0D549 /* ofxTrigLUT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CC19E31185B32700D0D549 /* ofxTrigLUT.cpp */; };
 		B277B24B11804526009F5DC9 /* libtesseract_full.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B277B24711804526009F5DC9 /* libtesseract_full.a */; };
 		B277B24C11804526009F5DC9 /* ofxTesseract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B277B24911804526009F5DC9 /* ofxTesseract.cpp */; };
 		B2D5B67C117E957A0087AA1C /* openCV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2D5B66A117E957A0087AA1C /* openCV.a */; };
@@ -107,6 +115,23 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		15CC19D41185B32700D0D549 /* ofxBounce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBounce.h; path = ../../../addons/ofxJulapyUtils/ofxBounce.h; sourceTree = SOURCE_ROOT; };
+		15CC19D51185B32700D0D549 /* ofxColorMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColorMap.cpp; path = ../../../addons/ofxJulapyUtils/ofxColorMap.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19D61185B32700D0D549 /* ofxColorMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColorMap.h; path = ../../../addons/ofxJulapyUtils/ofxColorMap.h; sourceTree = SOURCE_ROOT; };
+		15CC19D71185B32700D0D549 /* ofxColorUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColorUtils.cpp; path = ../../../addons/ofxJulapyUtils/ofxColorUtils.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19D81185B32700D0D549 /* ofxColorUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColorUtils.h; path = ../../../addons/ofxJulapyUtils/ofxColorUtils.h; sourceTree = SOURCE_ROOT; };
+		15CC19D91185B32700D0D549 /* ofxDataNormaliser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDataNormaliser.cpp; path = ../../../addons/ofxJulapyUtils/ofxDataNormaliser.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19DA1185B32700D0D549 /* ofxDataNormaliser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxDataNormaliser.h; path = ../../../addons/ofxJulapyUtils/ofxDataNormaliser.h; sourceTree = SOURCE_ROOT; };
+		15CC19DB1185B32700D0D549 /* ofxJulapyApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxJulapyApp.cpp; path = ../../../addons/ofxJulapyUtils/ofxJulapyApp.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19DC1185B32700D0D549 /* ofxJulapyApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxJulapyApp.h; path = ../../../addons/ofxJulapyUtils/ofxJulapyApp.h; sourceTree = SOURCE_ROOT; };
+		15CC19DD1185B32700D0D549 /* ofxResizeUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxResizeUtil.cpp; path = ../../../addons/ofxJulapyUtils/ofxResizeUtil.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19DE1185B32700D0D549 /* ofxResizeUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxResizeUtil.h; path = ../../../addons/ofxJulapyUtils/ofxResizeUtil.h; sourceTree = SOURCE_ROOT; };
+		15CC19DF1185B32700D0D549 /* ofxScreenGrabUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxScreenGrabUtil.cpp; path = ../../../addons/ofxJulapyUtils/ofxScreenGrabUtil.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19E01185B32700D0D549 /* ofxScreenGrabUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxScreenGrabUtil.h; path = ../../../addons/ofxJulapyUtils/ofxScreenGrabUtil.h; sourceTree = SOURCE_ROOT; };
+		15CC19E11185B32700D0D549 /* ofxTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTrigger.cpp; path = ../../../addons/ofxJulapyUtils/ofxTrigger.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19E21185B32700D0D549 /* ofxTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTrigger.h; path = ../../../addons/ofxJulapyUtils/ofxTrigger.h; sourceTree = SOURCE_ROOT; };
+		15CC19E31185B32700D0D549 /* ofxTrigLUT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTrigLUT.cpp; path = ../../../addons/ofxJulapyUtils/ofxTrigLUT.cpp; sourceTree = SOURCE_ROOT; };
+		15CC19E41185B32700D0D549 /* ofxTrigLUT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTrigLUT.h; path = ../../../addons/ofxJulapyUtils/ofxTrigLUT.h; sourceTree = SOURCE_ROOT; };
 		B277B24511804526009F5DC9 /* baseapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = baseapi.h; path = ../../../addons/ofxTesseract/libs/tesseract/include/baseapi.h; sourceTree = SOURCE_ROOT; };
 		B277B24711804526009F5DC9 /* libtesseract_full.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtesseract_full.a; path = ../../../addons/ofxTesseract/libs/tesseract/lib/libtesseract_full.a; sourceTree = SOURCE_ROOT; };
 		B277B24911804526009F5DC9 /* ofxTesseract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTesseract.cpp; path = ../../../addons/ofxTesseract/src/ofxTesseract.cpp; sourceTree = SOURCE_ROOT; };
@@ -264,6 +289,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		15CC19D31185B32700D0D549 /* ofxJulapyUtils */ = {
+			isa = PBXGroup;
+			children = (
+				15CC19D41185B32700D0D549 /* ofxBounce.h */,
+				15CC19D51185B32700D0D549 /* ofxColorMap.cpp */,
+				15CC19D61185B32700D0D549 /* ofxColorMap.h */,
+				15CC19D71185B32700D0D549 /* ofxColorUtils.cpp */,
+				15CC19D81185B32700D0D549 /* ofxColorUtils.h */,
+				15CC19D91185B32700D0D549 /* ofxDataNormaliser.cpp */,
+				15CC19DA1185B32700D0D549 /* ofxDataNormaliser.h */,
+				15CC19DB1185B32700D0D549 /* ofxJulapyApp.cpp */,
+				15CC19DC1185B32700D0D549 /* ofxJulapyApp.h */,
+				15CC19DD1185B32700D0D549 /* ofxResizeUtil.cpp */,
+				15CC19DE1185B32700D0D549 /* ofxResizeUtil.h */,
+				15CC19DF1185B32700D0D549 /* ofxScreenGrabUtil.cpp */,
+				15CC19E01185B32700D0D549 /* ofxScreenGrabUtil.h */,
+				15CC19E11185B32700D0D549 /* ofxTrigger.cpp */,
+				15CC19E21185B32700D0D549 /* ofxTrigger.h */,
+				15CC19E31185B32700D0D549 /* ofxTrigLUT.cpp */,
+				15CC19E41185B32700D0D549 /* ofxTrigLUT.h */,
+			);
+			name = ofxJulapyUtils;
+			path = ../../../addons/ofxJulapyUtils;
+			sourceTree = SOURCE_ROOT;
+		};
 		B2147CAA117FDF7600577786 /* resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -279,6 +329,7 @@
 				B2D5B6C5117EB5950087AA1C /* ofxSimpleGuiToo_rev197 */,
 				B2D5B654117E957A0087AA1C /* ofxOpenCv */,
 				B277B24111804526009F5DC9 /* ofxTesseract */,
+				15CC19D31185B32700D0D549 /* ofxJulapyUtils */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -936,6 +987,14 @@
 				B2D5B704117EB5BD0087AA1C /* tinyxmlparser.cpp in Sources */,
 				B2D5B705117EB5BD0087AA1C /* ofxXmlSettings.cpp in Sources */,
 				B277B24C11804526009F5DC9 /* ofxTesseract.cpp in Sources */,
+				15CC19E51185B32700D0D549 /* ofxColorMap.cpp in Sources */,
+				15CC19E61185B32700D0D549 /* ofxColorUtils.cpp in Sources */,
+				15CC19E71185B32700D0D549 /* ofxDataNormaliser.cpp in Sources */,
+				15CC19E81185B32700D0D549 /* ofxJulapyApp.cpp in Sources */,
+				15CC19E91185B32700D0D549 /* ofxResizeUtil.cpp in Sources */,
+				15CC19EA1185B32700D0D549 /* ofxScreenGrabUtil.cpp in Sources */,
+				15CC19EB1185B32700D0D549 /* ofxTrigger.cpp in Sources */,
+				15CC19EC1185B32700D0D549 /* ofxTrigLUT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

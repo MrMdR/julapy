@@ -7,28 +7,52 @@
 #include "ofxSimpleGuiToo.h"
 #include "ofxOpenCv.h"
 #include "ofxTesseract.h"
+#include "ofxScreenGrabUtil.h"
+#include <fstream>
+
+struct HSVData
+{
+	float	hue, sat, val;
+	float	hueRange, satRange, valRange;
+	
+	int		minHue, maxHue;
+	int		minSat, maxSat;
+	int		minVal, maxVal;
+};
 
 class testApp : public ofBaseApp{
 
 public:
 
-	void setup();
-	void update();
-	void draw();
+	void setup		();
+	void update		();
+	void draw		();
 	
-	void initGui ();
-	void parseTesseractString ( string &str );
+	void initImage		();
+	void initHSV		();
+	void initMotionSub	();
+	void initBlobs		();
+	void initGui		();
+
+	void checkHSV				();
+	void checkMotionSub			();
+	void checkBlobs				();
+	void checkForCommonFill		( ofxCvGrayscaleImage& imageOut, ofxCvGrayscaleImage& image1, ofxCvGrayscaleImage& image2 );
+	void checkImageChange		();
 	
-	void findTextinStaticImage();
-	void findTextInCameraImage();
+	void parseTesseractString	( string &str );
 	
 	void drawSourceImage		();
-	void drawProcessedImage		();
-	void drawProcessedCropImage	();
-	void drawVideoSource		();
-	void drawVideoProcessed		();
+	void drawHSV				();
+	void drawMotionImage		();
+	void drawBlobs				();
+	void drawFinal				();
+	void drawBorder				( ofxCvImage& img, int color, int thickness );
 	void drawROI				();
 	void drawTesseractText		();
+	
+	void writeToFile	( string filename = "config" );
+	void loadFromFile	( string filename = "config" );
 
 	void keyPressed  (int key);
 	void keyReleased(int key);
@@ -38,29 +62,50 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 	
+	ofxScreenGrabUtil		screenGrab;
+	
+	bool					bCheckImage;
+	bool					bImageChanged;
+	
 	ofTrueTypeFont			fontVerdana;
 	ofTrueTypeFont			fontCooperBlack;
 
-	int						threshold_1;
-	int						blur_1;
-	int						threshold_2;
-	bool					bShowFullImage;
-	
 	ofRectangle				roi;
-	
-	ofImage					image;
-	ofxCvColorImage			imageColor;
-	ofxCvGrayscaleImage		imageGray;
-	ofxCvGrayscaleImage		imageGrayCrop;
-	
-	ofVideoGrabber			camera;
-	bool					bCheckCameraImage;
-	ofxCvColorImage			cameraColorImage;
-	ofxCvGrayscaleImage		cameraGrayImage;
 	
 	ofxTesseract			tess;
 	string					tessStr;
 	
+	ofVideoPlayer			image;
+	ofRectangle				imageRect;
+	ofxCvColorImage			imageColor;
+	
+	HSVData					hsv;
+	ofxCvColorImage		    hsvSourceImg;
+	ofxCvGrayscaleImage		hsvHueImg;
+	ofxCvGrayscaleImage		hsvSatImg;
+	ofxCvGrayscaleImage		hsvValImg;
+	ofxCvGrayscaleImage		hsvProcessedImg;
+	unsigned char *         hsvProcessedImgPixels;
+	
+	ofxCvGrayscaleImage		motionImg;
+	
+	ofxCvGrayscaleImage		blobImg;
+	ofxCvContourFinder		contourFinder;
+	
+	ofxCvGrayscaleImage		finalImg;
+	ofxCvGrayscaleImage		finalImgCopy;
+	ofxCvGrayscaleImage		finalImgDiff;
+
+	float					screenScale;
+	bool					bIsPlaying;
+	float					videoPosition;
+	
+	float					hsvDiffThreshold;
+	int						hsvBlur;
+	int						hsvBlurThreshold;
+	
+	ofRectangle				minBlobSize;
+	ofRectangle				maxBlobSize;
 };
 
 #endif
