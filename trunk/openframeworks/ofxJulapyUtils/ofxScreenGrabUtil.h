@@ -7,27 +7,31 @@
  *
  */
 
+#include "ofMain.h"
+
 class ofxScreenGrabUtil
 {
 public :
-	ofxScreenGrabUtil();
+	
+	 ofxScreenGrabUtil();
 	~ofxScreenGrabUtil();
 	
-	void setup( string name = "", ofRectangle *rect = NULL );
-	void start();
-	void save();
-	void stop();
-	bool isRecording();
-	
-	void setArea( ofRectangle *rect );
+	void setup			();
+	void setup			( string path );
+	void setup			( string path, const ofRectangle& rect );
+
+	void save			();
+	void setPause		( bool value );
+	void togglePause	();
+	void reset			();
+	bool isRecording	();
 	
 private :
 	
-	ofImage image;
-	
-	string fileName;
-	bool recording;
-	int counter;
-
+	ofImage		image;
 	ofRectangle saveArea;
+	
+	string		fileName;
+	bool		recording;
+	int			counter;
 };
