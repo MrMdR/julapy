@@ -70,7 +70,7 @@ void ofxTriangle :: triangulate( vector<ofPoint>& polygon, int resolution )
 	delete delobject;
 }
 
-const vector<ofxTriangleData>& ofxTriangle :: getTriangles()
+vector<ofxTriangleData>& ofxTriangle :: getTriangles()
 {
 	return triangles;
 }
