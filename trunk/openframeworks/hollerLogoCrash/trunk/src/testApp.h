@@ -9,6 +9,8 @@
 #include "contourSimplify.h"
 #include "ofxTriangle.h"
 #include "ofxBox2d.h"
+#include "ofxBox2dPolygonCustom.h"
+#include "ofxScreenGrabUtil.h"
 
 struct ContourData
 {
@@ -56,7 +58,9 @@ public:
 	void drawLogoShapes				();
 	
 	void updateTriangles			();
+	void updateBox2dTriangles		();
 	void drawTriangles				();
+	void drawBox2dTriangles			();
 	
 	void initBox2d					();
 	void addBody					( const vector<ofxTriangleData>& triangles );
@@ -72,6 +76,8 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 
+	ofxScreenGrabUtil		screenGrab;
+	
 	ofImage					logo;
 	unsigned char*			logoPixles;
 	
@@ -87,9 +93,11 @@ public:
 	
 	ofxTriangle             triangle;
 	
-	ofxBox2d				box2d;
-	vector<b2Body*>			bodies;
-	vector<int>				shapeCnts;
+	ofxBox2d						box2d;
+	vector<ofxBox2dPolygonCustom>	box2dTriangles;
+	
+	vector<b2Body*>					bodies;
+	vector<int>						shapeCnts;
 	
 	int						maxContoursToFind;
 	
