@@ -468,7 +468,8 @@ void testApp :: parseLogoShapes ()
 		
 		if( hasChild )
 		{
-			copyPolygonData( cdata.contourReg[ s1.child ], s1.polyPoints[ 1 ] );
+//			copyPolygonData( cdata.contourReg[ s1.child ], s1.polyPoints[ 1 ] );
+			copyPolygonData( cdata.contourReg[ s1.child ], s1.polyPoints[ 0 ] );
 		}
 	}
 	
@@ -523,7 +524,7 @@ void testApp :: drawLogoShapes ()
 		
 		ofBeginShape();
 		
-		for( int j=0; j<s1.noPolys; j++ )
+		for( int j=0; j<1; j++ )
 		{
 			for( int k=0; k<s1.polyPoints[ j ].size(); k++ )
 			{
@@ -543,18 +544,41 @@ void testApp :: drawLogoShapes ()
 
 void testApp :: updateTriangles ()
 {
+	triangle.clear();
+	
 	for( int i=0; i<shapes.size(); i++ )
 	{
-		triangle.clear();
-		triangle.triangulate( shapes.at( i ).polyPoints[ 0 ], max( 3.0, shapes.at( i ).polyPoints[ 0 ].size() / 5.0 ) );
+		int resolution;
+//		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() / 10.0 );
+		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() / 5.0 );
+//		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() );
 		
-		addBody( triangle.getTriangles() );
+		triangle.triangulate( shapes.at( i ).polyPoints[ 0 ], resolution );
+		
+//		addBody( triangle.getTriangles() );
 	}
 }
 
 void testApp :: drawTriangles ()
 {
-	triangle.draw();
+	ofFill();
+	ofSetColor( 0xFFFFFF );
+	
+	vector<ofxTriangleData>& triangles = triangle.getTriangles();
+	
+	for( int i=0; i<triangles.size(); i++ )
+	{
+		ofxTriangleData& tr = triangles.at( i );
+		
+		ofTriangle
+		(
+			tr.a.x, tr.a.y,
+			tr.b.x, tr.b.y,
+			tr.c.x, tr.c.y
+		);
+	}
+	
+//	triangle.draw();
 }
 
 ///////////////////////////////////////////
@@ -684,10 +708,10 @@ void testApp::draw()
 	
 	drawContourAnalysis();
 	
-	glPushMatrix();
-	glTranslatef( 0, 300, 0 );
-		drawLogoShapes();
-	glPopMatrix();
+//	glPushMatrix();
+//	glTranslatef( 0, 300, 0 );
+//		drawLogoShapes();
+//	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef( 0, 300, 0 );

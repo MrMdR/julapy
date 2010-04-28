@@ -40,7 +40,7 @@ public :
 	bool	isPointInsidePolygon	( const vector<ofPoint>& polygon, ofPoint p );
 	ofPoint getTriangleCenter		( ofPoint *tr );
 	
-	const vector<ofxTriangleData>&	getTriangles();			// const will make sure the data can not be tempered with outside of this class.
+	vector<ofxTriangleData>&		getTriangles();			// const will make sure the data can not be tempered with outside of this class.
 
 	void clear	();
 	
