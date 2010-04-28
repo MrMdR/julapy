@@ -9,7 +9,10 @@ void testApp::setup()
 	ofSetVerticalSync( true );
 	ofSetFrameRate( 25 );
 	
-	logo.loadImage( "holler_logo.png" );
+	screenGrab.setup( "movies/" );
+	screenGrab.setPause( false );
+	
+	logo.loadImage( "holler_logo_med.png" );
 	logo.setImageType( OF_IMAGE_GRAYSCALE );
 	
 	logoPixles = logo.getPixels();
@@ -24,7 +27,7 @@ void testApp::setup()
 	
 	for( int i=0; i<logoPixelsTotal; i++ )		// clean up image.
 	{
-		if( logoPixles[ i ] < (int)( pixelThreshold * 255 ) )
+		if( logoPixles[ i ] > (int)( pixelThreshold * 255 ) )
 		{
 			logoBWPixles[ i ] = 255;
 		}
@@ -45,6 +48,7 @@ void testApp::setup()
 
 	initBox2d();
 	updateTriangles();
+	updateBox2dTriangles();
 }
 
 ///////////////////////////////////////////
@@ -549,13 +553,49 @@ void testApp :: updateTriangles ()
 	for( int i=0; i<shapes.size(); i++ )
 	{
 		int resolution;
-//		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() / 10.0 );
-		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() / 5.0 );
-//		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() );
+		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() * 0.1 );
+//		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() * 0.2 );
+//		resolution = MAX( 3.0, shapes.at( i ).polyPoints[ 0 ].size() * 0.3 );
 		
 		triangle.triangulate( shapes.at( i ).polyPoints[ 0 ], resolution );
 		
 //		addBody( triangle.getTriangles() );
+	}
+}
+
+void testApp :: updateBox2dTriangles ()
+{
+	box2dTriangles.clear();
+	
+	for( int i=0; i<triangle.getTriangles().size(); i++ )
+	{
+		ofxTriangleData& triData = triangle.getTriangles().at( i );
+		
+		ofPoint triPos;
+		triPos = triangle.getTriangleCenter( triData );
+
+		ofPoint ta, tb, tc;
+		ta = triData.a - triPos;
+		tb = triData.b - triPos;
+		tc = triData.c - triPos;
+		
+		ofxBox2dPolygonCustom tri;
+//		tri.setPhysics( 1.0, 0.5, 0.3 );
+		tri.setPhysics
+		(
+			1.0,							// mass.
+			ofRandom( 0.5, 0.8 ),			// bouce.
+			ofRandom( 0.1, 0.3 )			// friction.
+		);
+		tri.addVertex( ta );
+		tri.addVertex( tb );
+		tri.addVertex( tc );
+		tri.createShape( box2d.getWorld(), triPos.x, triPos.y );
+		
+		float vel = 0.5;
+		tri.setVelocity( ofRandom( -vel, vel ), ofRandom( -vel, vel ) );
+		
+		box2dTriangles.push_back( tri );
 	}
 }
 
@@ -578,7 +618,18 @@ void testApp :: drawTriangles ()
 		);
 	}
 	
-//	triangle.draw();
+	triangle.draw();
+}
+
+void testApp :: drawBox2dTriangles ()
+{
+//	box2d.draw();
+	
+	for( int i=0; i<box2dTriangles.size(); i++ )
+	{
+		box2dTriangles[ i ].draw();
+	}
+	
 }
 
 ///////////////////////////////////////////
@@ -588,10 +639,31 @@ void testApp :: drawTriangles ()
 void testApp :: initBox2d ()
 {
 	box2d.init();
-	box2d.setGravity( 0, 10 );
-	box2d.createFloor();
-	box2d.checkBounds(true);
+	box2d.setGravity( 0, 5 );
 	box2d.setFPS( 25 );
+	
+	int thick;
+	thick = 1;
+	
+	float wallMass		= 1.0;
+	float wallBounce	= 0.5;
+	float wallFriction	= 0.3;
+	
+	ofxBox2dRect floor;
+	floor.setPhysics( wallMass, wallBounce, wallFriction );
+	floor.setup( box2d.getWorld(), 0, ofGetHeight(), ofGetWidth(), thick, true );
+	
+	ofxBox2dRect ceil;
+	ceil.setPhysics( wallMass, wallBounce, wallFriction );
+	ceil.setup( box2d.getWorld(), 0, 0, ofGetWidth(), thick, true );
+	
+	ofxBox2dRect left;
+	left.setPhysics( wallMass, wallBounce, wallFriction );
+	left.setup( box2d.getWorld(), 0, 0, thick, ofGetHeight(), true );
+	
+	ofxBox2dRect right;
+	right.setPhysics( wallMass, wallBounce, wallFriction );
+	right.setup( box2d.getWorld(), ofGetWidth(), 0, thick, ofGetHeight(), true );
 }
 
 void testApp :: addBody( const vector<ofxTriangleData>& triangles )
@@ -697,30 +769,19 @@ void testApp::draw()
 	ofSetColor( 0x000000 );
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
-	glPushMatrix();
-	glTranslatef( 300, 100, 0 );
+	ofSetColor( 0xFFFFFF );
+	logo.draw( 0, 0 );
 	
-	if( bShowImage )
-	{
-		ofSetColor( 0xFFFFFF );
-		logoBW.draw( 0, 0 );
-	}
+//	drawContourAnalysis();
 	
-	drawContourAnalysis();
-	
-//	glPushMatrix();
-//	glTranslatef( 0, 300, 0 );
-//		drawLogoShapes();
-//	glPopMatrix();
+//	drawLogoShapes();
 
-	glPushMatrix();
-	glTranslatef( 0, 300, 0 );
-		drawTriangles();
-	glPopMatrix();
+//	drawTriangles();
 	
-	glPopMatrix();
+	drawBox2dTriangles();
+//	drawBodies();
 	
-	drawBodies();
+	screenGrab.save();
 }
 
 ///////////////////////////////////////////
@@ -736,10 +797,7 @@ void testApp::keyPressed(int key)
 	
 	if( key == 's')
 	{
-		ofImage img;
-		img.allocate( ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR );
-		img.grabScreen( 0, 0, ofGetWidth(), ofGetHeight() );
-		img.saveImage( "image" + ofToString( ofGetFrameNum(), 0 ) + ".png" );
+		screenGrab.togglePause();
 	}
 }
 

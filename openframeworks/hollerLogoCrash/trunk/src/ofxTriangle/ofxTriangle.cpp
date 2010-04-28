@@ -49,19 +49,19 @@ void ofxTriangle :: triangulate( vector<ofPoint>& polygon, int resolution )
 		int ptb_id = (int)( ( ptb / (float)resolution ) * polygon.size() );
 		int ptc_id = (int)( ( ptc / (float)resolution ) * polygon.size() );
 		
-		ofPoint tr[ 3 ];
-		tr[ 0 ] = ofPoint( polygon.at( pta_id ).x, polygon.at( pta_id ).y );
-		tr[ 1 ] = ofPoint( polygon.at( ptb_id ).x, polygon.at( ptb_id ).y );
-		tr[ 2 ] = ofPoint( polygon.at( ptc_id ).x, polygon.at( ptc_id ).y );
+		ofxTriangleData tr;
+		tr.a = ofPoint( polygon.at( pta_id ).x, polygon.at( pta_id ).y );
+		tr.b = ofPoint( polygon.at( ptb_id ).x, polygon.at( ptb_id ).y );
+		tr.c = ofPoint( polygon.at( ptc_id ).x, polygon.at( ptc_id ).y );
 		
 		if( isPointInsidePolygon( polygon, getTriangleCenter( tr ) ) )
         {
 			triangles.push_back( ofxTriangleData() );
 			ofxTriangleData& td = triangles.back();
 			
-			td.a	= ofPoint( tr[ 0 ].x, tr[ 0 ].y );
-			td.b	= ofPoint( tr[ 1 ].x, tr[ 1 ].y );
-			td.c	= ofPoint( tr[ 2 ].x, tr[ 2 ].y );
+			td.a	= ofPoint( tr.a.x, tr.a.y );
+			td.b	= ofPoint( tr.b.x, tr.b.y );
+			td.c	= ofPoint( tr.c.x, tr.c.y );
 			
 			td.area = delobject->area( fit );
 		}
@@ -80,10 +80,10 @@ void ofxTriangle :: clear()
     triangles.clear();
 }
 
-ofPoint ofxTriangle :: getTriangleCenter( ofPoint *tr )
+ofPoint ofxTriangle :: getTriangleCenter( const ofxTriangleData& tr )
 {
-	float cx = ( tr[ 0 ].x + tr[ 1 ].x + tr[ 2 ].x ) / 3.0;
-	float cy = ( tr[ 0 ].y + tr[ 1 ].y + tr[ 2 ].y ) / 3.0;
+	float cx = ( tr.a.x + tr.b.x + tr.c.x ) / 3.0;
+	float cy = ( tr.a.y + tr.b.y + tr.c.y ) / 3.0;
 
 	return ofPoint( cx, cy );
 }
