@@ -49,6 +49,8 @@ public:
 	void update	();
 	void draw	();
 	
+	void initColors					();
+	
 	void initContourAnalysis		();
 	void computeContourAnalysis		();
 	void drawContourAnalysis		();
@@ -57,9 +59,11 @@ public:
 	bool checkEmbeddedRectangles	( const ofRectangle& r1, const ofRectangle& r2 );
 	void copyPolygonData			( const vector<ofxPoint2f>& p1, vector<ofPoint>& p2 );
 	void drawLogoShapes				();
+	void drawLogoShape				( const LogoShape& shape );
 	
 	void updateTriangles			();
 	void updateBox2dTriangles		();
+	void setPhysicsForAllTriangles	( float mass, float bounce, float friction );
 	void drawTriangles				();
 	void drawBox2dTriangles			();
 	
@@ -101,6 +105,13 @@ public:
 	vector<ofxBox2dPolygonCustom>	box2dTriangles;
 	vector<ofxBox2dCircleCustom>	box2dCircles;
 	
+	ofxBox2dRect					floor;
+	ofxBox2dRect					ceil;
+	ofxBox2dRect					left;
+	ofxBox2dRect					right;
+	
+	vector<int>						colors;
+	
 	vector<b2Body*>					bodies;
 	vector<int>						shapeCnts;
 	
@@ -118,6 +129,9 @@ public:
 	bool					bShowEllipse;
 	bool					bShowAngle;
 	bool					bShowLines;
+	
+	bool					bAddCircle;
+	bool					bUseFloor;
 };
 
 #endif
