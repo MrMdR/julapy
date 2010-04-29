@@ -17,6 +17,26 @@ class ofxBox2dPolygonCustom : public ofxBox2dPolygon
 
 public :
 	
+	virtual void setPhysicsClean( float mass, float bounce, float friction )
+	{
+		for(b2Shape* s=body->GetShapeList(); s; s=s->GetNext()) {
+			body->DestroyShape(s);
+		}
+		
+		ofPoint pos;
+		pos.x = getPosition().x;
+		pos.y = getPosition().y;
+		
+		poly.density	  = mass;
+		poly.restitution  = bounce;
+		poly.friction	  = friction;
+		
+		bodyDef.position.Set( pos.x / OFX_BOX2D_SCALE, pos.y / OFX_BOX2D_SCALE );
+		body = world->CreateBody( &bodyDef );
+		body->CreateShape( &poly );
+		body->SetMassFromShapes();
+	}
+	
 	virtual void draw() 
 	{
 		if(body != NULL ) {

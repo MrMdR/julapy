@@ -14,12 +14,14 @@ class ofxBox2dCircleCustom : public ofxBox2dCircle
 
 public :
 	
+	int color;
+	
 	virtual void draw() {
 		if(dead && !body) return;
 		
 		float radius;
 		radius = getRadius();
-		radius *= 0.8;			// smaller for extra space between objects.
+		radius *= 0.9;			// smaller for extra space between objects.
 		
 		glPushMatrix();
 		glTranslatef(getPosition().x, getPosition().y, 0);
@@ -27,11 +29,13 @@ public :
 		ofEnableSmoothing();
 		
 		ofFill();
-		ofSetColor( 255, 255, 255 );
+		ofSetColor( color );
+		
 		ofCircle( 0, 0, radius );
 		
 		ofNoFill();
-		ofSetColor( 255, 255, 255 );
+		ofSetColor( color );
+
 		ofCircle( 0, 0, radius );
 		
 		ofDisableSmoothing();
