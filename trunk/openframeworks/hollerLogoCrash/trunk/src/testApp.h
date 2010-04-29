@@ -10,6 +10,7 @@
 #include "ofxTriangle.h"
 #include "ofxBox2d.h"
 #include "ofxBox2dPolygonCustom.h"
+#include "ofxBox2dCircleCustom.h"
 #include "ofxScreenGrabUtil.h"
 
 struct ContourData
@@ -62,6 +63,9 @@ public:
 	void drawTriangles				();
 	void drawBox2dTriangles			();
 	
+	void addBox2dCircle				( ofPoint& pos, ofPoint& vel, float size = 10, float mass = 1.0, float bounce = 0.5, float friction = 0.3 );
+	void drawBox2dCircles			();
+	
 	void initBox2d					();
 	void addBody					( const vector<ofxTriangleData>& triangles );
 	void makeComplexBody			( const vector<ofxTriangleData>& triangles, b2Body* body );
@@ -95,6 +99,7 @@ public:
 	
 	ofxBox2d						box2d;
 	vector<ofxBox2dPolygonCustom>	box2dTriangles;
+	vector<ofxBox2dCircleCustom>	box2dCircles;
 	
 	vector<b2Body*>					bodies;
 	vector<int>						shapeCnts;

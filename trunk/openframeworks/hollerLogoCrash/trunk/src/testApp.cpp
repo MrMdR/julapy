@@ -10,7 +10,7 @@ void testApp::setup()
 	ofSetFrameRate( 25 );
 	
 	screenGrab.setup( "movies/" );
-	screenGrab.setPause( false );
+//	screenGrab.setPause( false );
 	
 	logo.loadImage( "holler_logo_med.png" );
 	logo.setImageType( OF_IMAGE_GRAYSCALE );
@@ -580,20 +580,28 @@ void testApp :: updateBox2dTriangles ()
 		tc = triData.c - triPos;
 		
 		ofxBox2dPolygonCustom tri;
-//		tri.setPhysics( 1.0, 0.5, 0.3 );
-		tri.setPhysics
-		(
-			1.0,							// mass.
-			ofRandom( 0.5, 0.8 ),			// bouce.
-			ofRandom( 0.1, 0.3 )			// friction.
-		);
+		tri.setPhysics( 0, 0, 0 );			// fixed.
+//		tri.setPhysics
+//		(
+//			1.0,							// mass.
+//			ofRandom( 0.5, 0.8 ),			// bouce.
+//			ofRandom( 0.1, 0.7 )			// friction.
+//		);
 		tri.addVertex( ta );
 		tri.addVertex( tb );
 		tri.addVertex( tc );
 		tri.createShape( box2d.getWorld(), triPos.x, triPos.y );
 		
-		float vel = 0.5;
-		tri.setVelocity( ofRandom( -vel, vel ), ofRandom( -vel, vel ) );
+//		ofxVec2f vel;
+//		vel.x = triPos.x - ofGetWidth()  * 0.5;
+//		vel.y = triPos.y - ofGetHeight() * 0.5;
+//		vel.normalize();
+//		vel		*= ofRandom(  0.3, 0.8 );
+//		vel.x	+= ofRandom( -0.5, 0.5 );
+//		vel.y	+= ofRandom( -0.5, 0.5 );
+//		vel.y	*= 0.5;
+//		
+//		tri.setVelocity( vel.x, vel.y );
 		
 		box2dTriangles.push_back( tri );
 	}
@@ -623,13 +631,33 @@ void testApp :: drawTriangles ()
 
 void testApp :: drawBox2dTriangles ()
 {
-//	box2d.draw();
-	
 	for( int i=0; i<box2dTriangles.size(); i++ )
 	{
 		box2dTriangles[ i ].draw();
 	}
+}
+
+///////////////////////////////////////////
+//	BOX2D BODIES.
+///////////////////////////////////////////
+
+void testApp :: addBox2dCircle ( ofPoint& position, ofPoint& velocity, float size, float mass, float bounce, float friction )
+{
+	ofxBox2dCircleCustom circle;
 	
+	circle.setPhysics( 1000, 0, 0 );
+	circle.setup( box2d.getWorld(), position.x, position.y, size, false );
+	circle.setVelocity( velocity.x, velocity.y );
+	
+	box2dCircles.push_back( circle );
+}
+
+void testApp :: drawBox2dCircles ()
+{
+	for( int i=0; i<box2dCircles.size(); i++ )
+	{
+		box2dCircles[ i ].draw();
+	}
 }
 
 ///////////////////////////////////////////
@@ -639,8 +667,8 @@ void testApp :: drawBox2dTriangles ()
 void testApp :: initBox2d ()
 {
 	box2d.init();
-	box2d.setGravity( 0, 5 );
-	box2d.setFPS( 25 );
+	box2d.setGravity( 0, 0 );
+	box2d.setFPS( 20 );
 	
 	int thick;
 	thick = 1;
@@ -664,6 +692,13 @@ void testApp :: initBox2d ()
 	ofxBox2dRect right;
 	right.setPhysics( wallMass, wallBounce, wallFriction );
 	right.setup( box2d.getWorld(), ofGetWidth(), 0, thick, ofGetHeight(), true );
+	
+	ofPoint p, v;
+	p.x = 40;
+	p.y = ofGetHeight() * 0.5;
+	v.x = 10;
+	v.y = 0;
+	addBox2dCircle( p, v, 20, 1000 );
 }
 
 void testApp :: addBody( const vector<ofxTriangleData>& triangles )
@@ -756,6 +791,8 @@ void testApp :: drawBodies ()
 
 void testApp::update()
 {
+	box2dCircles[ 0 ].setVelocity( 10, 0 );
+	
 	box2d.update();
 }
 
@@ -779,6 +816,7 @@ void testApp::draw()
 //	drawTriangles();
 	
 	drawBox2dTriangles();
+	drawBox2dCircles();
 //	drawBodies();
 	
 	screenGrab.save();
