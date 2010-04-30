@@ -11,7 +11,12 @@ void testApp::setup()
 	ofSetCircleResolution( 100 );
 	
 	screenGrab.setup( "movies/" );
-	screenGrab.setPause( false );
+//	screenGrab.setPause( false );
+	
+	circleLayer1.loadImage( "circle_layer_1.png" );
+	circleLayer2.loadImage( "circle_layer_2.png" );
+	circleLayer3.loadImage( "circle_layer_3.png" );
+	circleLayer4.loadImage( "circle_layer_4.png" );
 	
 //	logo.loadImage( "holler_logo_med_fat.png" );
 	logo.loadImage( "holler_logo_med.png" );
@@ -44,9 +49,10 @@ void testApp::setup()
 	
 	logo.loadImage( "holler_logo_med.png" );
 	
-	bShowImage	= true;
-	bUseFloor	= true;
-	bAddCircle	= false;
+	bShowImage		= true;
+	bUseFloor		= true;
+	bAddCircle		= false;
+	bDrawTriangles	= false;
 	
 	initColors();
 	initContourAnalysis();
@@ -68,21 +74,21 @@ void testApp :: initColors ()
 //		0xC9CB5C,0x6A5571
 //	};
 
-//	int colorArray[] =			// image 2
-//	{
-//		0xE9589F,0x15105E,0x571661,0x981E63,0x16238E,0x5F2A8E,0xA749A5,0x972E8D,0x3DA1F9,0x1A5EE4,
-//		0x56052B,0x6148AE,0x6362DF,0xB29DFA,0x9D62D9,0x100020,0xE46ACF,0x1C47B2,0x8032F0,0xD9467F,
-//		0xC32E6A,0x8A1036,0x2A0535,0x132DC7,0x30000B,0xC53893,0xB03C7A,0x5A35C8,0x963CC8,0xC2253F,
-//		0x653879,0x193778
-//	};
-
-	int colorArray[] =			// image 3
+	int colorArray[] =			// image 2
 	{
-		0xFF00FF,0x00FFFF,0xFFFF00,0xFFFFFF
+		0xE9589F,0x15105E,0x571661,0x981E63,0x16238E,0x5F2A8E,0xA749A5,0x972E8D,0x3DA1F9,0x1A5EE4,
+		0x56052B,0x6148AE,0x6362DF,0xB29DFA,0x9D62D9,0x100020,0xE46ACF,0x1C47B2,0x8032F0,0xD9467F,
+		0xC32E6A,0x8A1036,0x2A0535,0x132DC7,0x30000B,0xC53893,0xB03C7A,0x5A35C8,0x963CC8,0xC2253F,
+		0x653879,0x193778
 	};
+
+//	int colorArray[] =			// image 3
+//	{
+//		0xFF00FF,0x00FFFF,0xFFFF00
+//	};
 	
 	int colorSize;
-	colorSize = 4;
+	colorSize = 32;
 	
 	colors.resize( colorSize );
 	copy( colorArray, colorArray + colorSize, colors.begin() );
@@ -652,14 +658,13 @@ void testApp :: updateBox2dTriangles ()
 		tri.createShape( box2d.getWorld(), tsp.x, tsp.y );
 		
 //		ofxVec2f vel;
-//		vel.x = triPos.x - ofGetWidth()  * 0.5;
-//		vel.y = triPos.y - ofGetHeight() * 0.5;
+//		vel.x = tsp.x - ofGetWidth()  * 0.5;
+//		vel.y = tsp.y - ofGetHeight() * 0.5;
 //		vel.normalize();
 //		vel		*= ofRandom(  0.3, 0.8 );
 //		vel.x	+= ofRandom( -0.5, 0.5 );
 //		vel.y	+= ofRandom( -0.5, 0.5 );
 //		vel.y	*= 0.5;
-//		
 //		tri.setVelocity( vel.x, vel.y );
 		
 		box2dTriangles.push_back( tri );
@@ -726,6 +731,8 @@ void testApp :: addBox2dCircle ( ofPoint& position, ofPoint& velocity, float siz
 	circle.setVelocity( velocity.x, velocity.y );
 	circle.color = colors[ (int)( colors.size() * ofRandom( 0.0, 1.0 ) ) ];
 	
+	circle.setImages( &circleLayer1, &circleLayer2, &circleLayer3, &circleLayer4 );
+	
 	box2dCircles.push_back( circle );
 }
 
@@ -733,7 +740,8 @@ void testApp :: drawBox2dCircles ()
 {
 	for( int i=0; i<box2dCircles.size(); i++ )
 	{
-		box2dCircles[ i ].draw();
+//		box2dCircles[ i ].draw();
+		box2dCircles[ i ].drawImage();
 	}
 }
 
@@ -757,7 +765,6 @@ void testApp :: initBox2d ()
 	floor.setPhysics( wallMass, wallBounce, wallFriction );
 	floor.setup( box2d.getWorld(), 0, ofGetHeight(), ofGetWidth(), thick, true );
 	floor.destroyShape();
-	
 	bUseFloor = false;
 	
 //	ceil.setPhysics( wallMass, wallBounce, wallFriction );
@@ -769,13 +776,13 @@ void testApp :: initBox2d ()
 //	right.setPhysics( wallMass, wallBounce, wallFriction );
 //	right.setup( box2d.getWorld(), ofGetWidth(), 0, thick, ofGetHeight(), true );
 	
-	ofxBox2dCircleCustom circle;
-	circle.setPhysics( 1000, 0.5, 0.2 );
-	circle.setup( box2d.getWorld(), -100, ofGetHeight() * 0.5, 30, false );
-	circle.setVelocity( 10, 0 );
-	circle.color = 0xFF00FF;
-	
-	box2dCircles.push_back( circle );
+//	ofxBox2dCircleCustom circle;
+//	circle.setPhysics( 1000, 0.5, 0.2 );
+//	circle.setup( box2d.getWorld(), -100, ofGetHeight() * 0.5, 30, false );
+//	circle.setVelocity( 10, 0 );
+//	circle.color = 0xFF00FF;
+//	
+//	box2dCircles.push_back( circle );
 }
 
 void testApp :: addBody( const vector<ofxTriangleData>& triangles )
@@ -870,7 +877,7 @@ void testApp::update()
 {
 	if( bAddCircle )
 	{
-		for( int i=0; i<5; i++ )
+		for( int i=0; i<1; i++ )
 		{
 			if( ofRandom( 0, 1.0 ) < 0.2 )
 				continue;
@@ -880,13 +887,53 @@ void testApp::update()
 			p.y = -ofGetHeight() * ofRandom( 0.0, 1.0 ) - 50;
 			
 			float r;
-			r = ofRandom( 3, 6 );
+			r = ofRandom( 20, 40 );
 			
 			addBox2dCircle( p, v, r );
 		}
 	}
-	
+
 	box2d.update();
+	
+	if( ofGetFrameNum() == 8 )
+	{
+		for( int i=0; i<box2dTriangles.size(); i++ )
+		{
+			ofxVec2f vel;
+
+			vel.x = box2dTriangles[ i ].getPosition().x - ofGetWidth()  * 0.5;
+			vel.y = box2dTriangles[ i ].getPosition().y - ofGetHeight() * 0.5;
+			vel.normalize();
+			vel		*= ofRandom(  5, 10 );
+			vel.x	+= ofRandom( -0.5, 0.5 );
+			vel.y	+= ofRandom( -0.5, 0.5 );
+//			vel.y	*= 0.8;
+			
+			box2dTrianglesVel.push_back( vel );
+			
+			box2dTriangles[ i ].setVelocity( vel.x, vel.y );
+		}
+		
+		bounce.springconst( 0.01 );
+		bounce.inertia( 0.2 );
+		bounce.position( 0 );
+		bounce.velocity( 10 );
+//		bounce.velocity( 10 );
+		
+		logo.clear();
+		
+		bDrawTriangles = true;
+	}
+	
+	if( ofGetFrameNum() >= 8 )
+	{
+		bounce.update();
+		
+		for( int i=0; i<box2dTriangles.size(); i++ )
+		{
+			box2dTriangles[ i ].setVelocity( box2dTrianglesVel[ i ] * bounce.position() );
+		}
+	}
 }
 
 ///////////////////////////////////////////
@@ -908,7 +955,9 @@ void testApp::draw()
 
 //	drawTriangles();
 	
-	drawBox2dTriangles();
+	if( bDrawTriangles )
+		drawBox2dTriangles();
+	
 	drawBox2dCircles();
 //	drawBodies();
 	
@@ -951,6 +1000,11 @@ void testApp::keyPressed(int key)
 		{
 			box2dCircles[ i ].setVelocity( ofRandom( -4, 4 ), ofRandom( -4, 4 ) );
 		}
+	}
+	
+	if( key == 't' )
+	{
+		bDrawTriangles != bDrawTriangles;
 	}
 }
 

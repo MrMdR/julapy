@@ -50,7 +50,7 @@ public :
 				ofEnableAlphaBlending();
 				
 				ofFill();
-				ofSetColor( 255, 255, 255, 220 );
+				ofSetColor( 255, 255, 255, 255 );
 				ofBeginShape();
 				for(int j=0; j<count; j++) {
 					b2Vec2 pt = b2Mul(xf, verts[j]);
@@ -59,7 +59,7 @@ public :
 				ofEndShape(true);
 				
 				ofNoFill();
-				ofSetColor( 0, 0, 0, 100 );
+				ofSetColor( 255, 255, 255, 255 );
 				ofBeginShape();
 				for(int j=0; j<count; j++)
 				{

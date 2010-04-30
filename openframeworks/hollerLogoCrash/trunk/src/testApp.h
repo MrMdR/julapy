@@ -12,6 +12,7 @@
 #include "ofxBox2dPolygonCustom.h"
 #include "ofxBox2dCircleCustom.h"
 #include "ofxScreenGrabUtil.h"
+#include "ofxBounce.h"
 
 struct ContourData
 {
@@ -89,6 +90,11 @@ public:
 	ofImage					logo;
 	unsigned char*			logoPixles;
 	
+	ofImage					circleLayer1;
+	ofImage					circleLayer2;
+	ofImage					circleLayer3;
+	ofImage					circleLayer4;
+	
 	ofxCvGrayscaleImage		logoBW;
 	unsigned char*			logoBWPixles;
 	
@@ -105,10 +111,14 @@ public:
 	vector<ofxBox2dPolygonCustom>	box2dTriangles;
 	vector<ofxBox2dCircleCustom>	box2dCircles;
 	
+	vector<ofxVec2f>				box2dTrianglesVel;
+	
 	ofxBox2dRect					floor;
 	ofxBox2dRect					ceil;
 	ofxBox2dRect					left;
 	ofxBox2dRect					right;
+	
+	ofxBounce						bounce;
 	
 	vector<int>						colors;
 	
@@ -132,6 +142,7 @@ public:
 	
 	bool					bAddCircle;
 	bool					bUseFloor;
+	bool					bDrawTriangles;
 };
 
 #endif
