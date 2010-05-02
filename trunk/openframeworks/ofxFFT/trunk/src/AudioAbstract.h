@@ -7,52 +7,85 @@
  *
  */
 
-#ifndef _AUDIO_ABSTRACT_H_
-#define _AUDIO_ABSTRACT_H_
+#ifndef AUDIO_ABSTRACT_H
+#define AUDIO_ABSTRACT_H
 
 #include "ofMain.h"
-#include "DataNormaliser.h"
 #include "fft.h"
+
+#define AUDIO_ABSTRACT_DEFAULT_RENDER_WIDTH		512
+#define AUDIO_ABSTRACT_DEFAULT_RENDER_HEIGHT	256
+#define AUDIO_ABSTRACT_DEFAULT_NO_OF_BANDS		128
+
+struct AudioData
+{
+	int				size;
+	
+	vector<float>	data;
+	vector<float>	dataNorm;
+	vector<float>	dataMax;
+	vector<float>	dataPeak;
+	vector<int>		dataCut;
+	
+	float			maxDecay;
+	float			peakDecay;
+	float			peakAverage;
+	float			cutThreshold;
+	
+	float			linearEQIntercept;
+	float			linearEQSlope;
+};
 
 class AudioAbstract : public ofBaseApp
 {
 
 public :
 	
-	AudioAbstract();
+	 AudioAbstract();
 	~AudioAbstract();
 	
-	virtual void  init( string fileName = NULL );
-	virtual void  update();
-	virtual void  draw( int width=0, int height=0 );
+	virtual void  init				( );
+	virtual void  update			( );
 	
-	virtual void  resetFFT();
+	virtual void  draw				( int x, int y, int w, int h );
+	virtual void  draw				( int w = AUDIO_ABSTRACT_DEFAULT_RENDER_WIDTH, int h = AUDIO_ABSTRACT_DEFAULT_RENDER_HEIGHT );
 	
-	virtual void  setNoOfBands( int value );
-	virtual int   getNoOfBands();
-	virtual void  setFrameRateSync( bool b );
-	virtual void  setThreshold( float value );
-	virtual float getThreshold();
-	virtual float getAveragePeak();
-	virtual float getAveragePeakNorm();
-	virtual void  setPeakDecay ( float value );
-	virtual float getPeakDecay ();
-	virtual void  setMaxDecay ( float value );
-	virtual float getMaxDecay ();
+	virtual void  drawData			( const AudioData &audioData, int w, int h );
+	virtual void  drawBg			( const AudioData &audioData, int w, int h );
+	virtual void  drawGlitchData	( const AudioData &audioData, int w, int h );
+	virtual void  drawFftData		( const AudioData &audioData, int w, int h );
+	virtual void  drawFftNormData	( const AudioData &audioData, int w, int h );	
+	virtual void  drawFftPeakData	( const AudioData &audioData, int w, int h );
+	virtual void  drawThresholdLine ( const AudioData &audioData, int w, int h );
 	
-	virtual void  getFftData ( float *data, int length );
-	virtual void  getFftPeakData ( float *data, int length );
-	virtual void  getGlitchData( int *data, int length );
+	virtual void  initFFT			( );
+	virtual void  resetFFT			( );
 	
-	virtual	void  setPosition( float value );
-	virtual float getPosition();
+	virtual void  initAudioData		( AudioData &audioData, int dataSize );
+	virtual void  updateAudioData	( AudioData &audioData, float *dataNew );
+	virtual void  mirrorAudioData	( AudioData &audioData );
+	virtual void  resetAudioData	( AudioData &audioData );
 	
-	virtual void  setVolume( float value );
-	virtual float getVolume( );
+	virtual void  setNoOfBands		( int value );
+	virtual int   getNoOfBands		( );
+	virtual void  setThreshold		( float value );
+	virtual float getThreshold		( );
+	virtual float getAveragePeak	( );
+	virtual void  setPeakDecay		( float value );
+	virtual float getPeakDecay		( );
+	virtual void  setMaxDecay		( float value );
+	virtual float getMaxDecay		( );
+	virtual void  setMirrorData		( bool value );
+	virtual void  setUseFftData		( bool value );
 	
-	int audioTotalFrames;
-	int audioNoOfBands;
-	int audioNoOfBandsHalf;
+	virtual void  getFftData		( float *data, int length );
+	virtual void  getFftPeakData	( float *data, int length );
+	virtual void  getGlitchData		( int   *data, int length );
+	
+protected :	
+	
+	int		audioNoOfBands;
+	int		audioNoOfBandsHalf;
 	
 	float	*specData;
 	
@@ -61,28 +94,18 @@ public :
 	float	*fftPhase;
 	float	*fftPower;
 	float	*fftFreq;
-	
-	float	*fftData;
-	float	*fftDataMax;
-	float	*fftDataPeak;
-	int		*fftDataSwitch;
-	
 	float	fftAveragePower;
-	float	fftDataPeakDecay;
-	float	fftDataMaxDecay;
-	float	fftAveragePeak;
-	DataNormaliser fftAveragePeakNorm;
 	
-	float	threshold;
+	bool	bMirrorData;
+	bool	bUseFftData;
 	
-	bool frameRateSync;
-	int  frameStart;
+	AudioData	rawData;
+	AudioData	fftData;
 	
-	float linearEQIntercept;
-	float linearEQSlope;
+	//-- render bits.
 	
-	int defaultRenderWidth;
-	int defaultRenderHeight;
+	int		renderBorder;
+	int		renderSingleBandWidth;
 	
 };
 

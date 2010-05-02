@@ -19,21 +19,25 @@ AudioLiveSpectrum :: ~AudioLiveSpectrum()
 	//
 }
 
-void AudioLiveSpectrum :: init( string fileName )
+void AudioLiveSpectrum :: init ()
 {
-	AudioAbstract :: init( "" );
+	AudioAbstract :: init();
 	
-	setNoOfBands( 128 );
-	
-	ofSoundStreamSetup( 0, 2, this, 44100, getNoOfBands() * 2, 4 );
+	ofSoundStreamSetup
+	(
+		0,						// nOutputChannels
+		2,						// nInputChannels
+		this,					// ofBaseApp * OFSA
+		44100,					// sampleRate
+		getNoOfBands(),			// bufferSize
+		4						// nBuffers
+	);
 }
 
 void AudioLiveSpectrum :: audioReceived( float *data, int bufferSize, int nChannels )
 {
-	for( int i=0; i<bufferSize; i++)
+	for( int i=0; i<getNoOfBands(); i++)
 	{
-		specData[ i ] = data[ i * 2 ];		// only using the left channel.
+		specData[ i ] = data[ i * 2 ];		// samples are "interleaved", so left channel data is every second one.
 	}
-	
-	update();
 }

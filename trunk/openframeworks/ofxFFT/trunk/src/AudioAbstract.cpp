@@ -9,158 +9,59 @@
 
 #include "AudioAbstract.h"
 
-AudioAbstract :: AudioAbstract() {};
+AudioAbstract ::  AudioAbstract() {};
 AudioAbstract :: ~AudioAbstract() {};
 
-void  AudioAbstract :: init( string fileName ) 
+void AudioAbstract :: init()
 {
-	setNoOfBands( 128 );
-	setFrameRateSync( false );
+	audioNoOfBands		= AUDIO_ABSTRACT_DEFAULT_NO_OF_BANDS;
+	audioNoOfBandsHalf	= (int)( audioNoOfBands * 0.5 );
+	
+	initFFT();
+	initAudioData( rawData, getNoOfBands() );
+	initAudioData( fftData, getNoOfBands() );
+	
 	setThreshold( 0.5 );
 	setPeakDecay( 0.96 );
 	setMaxDecay( 1.0 );
+	setMirrorData( false );
+	setUseFftData( true );
 	
-	linearEQIntercept	= 0.9;
-	linearEQSlope		= 1.0;
-	
-	defaultRenderWidth	= 200;
-	defaultRenderHeight = 100;
-	
-	fftAveragePeakNorm.setUseBuffer( false );
-	
-	fftAveragePower = 0;
-	fftAveragePeak	= 0;
-	
-	resetFFT();
+	renderBorder = 1;
 }
 
-void  AudioAbstract :: update() 
+void AudioAbstract :: update() 
 {
 	myfft.powerSpectrum( 0, audioNoOfBandsHalf, specData, audioNoOfBands, fftMagnitude, fftPhase, fftPower, &fftAveragePower );
 	
-	for( int i=0; i<audioNoOfBandsHalf; i++ )
+	if( bUseFftData )
 	{
-		float p = i / (float)( audioNoOfBands - 1 );
-		int j	= audioNoOfBands - 1;
-		
-		float fftDataVal;
-		fftDataVal = fftMagnitude[ i ];								// use magnitude for fft data.
-		fftDataVal *= linearEQIntercept + p * linearEQSlope;		// scale value.
-		
-		float fftDataMaxVal;
-		fftDataMaxVal = fftDataMax[ i ];
-
-		if( fftDataMaxVal < fftDataVal )
+		updateAudioData( fftData, fftMagnitude );
+	}
+	else
+	{
+		updateAudioData( rawData, specData );
+	}
+	
+	if( bMirrorData )
+	{
+		if( bUseFftData )
 		{
-			fftDataMaxVal = fftDataVal;
+			mirrorAudioData( fftData );
 		}
-		
-		float fftDataNormVal;
-		fftDataNormVal = 0;
-		if( fftDataMaxVal > 0 )
-			fftDataNormVal = fftDataVal / fftDataMaxVal;			// normalise data between 0 and 1.
-		
-		fftDataMaxVal *= fftDataMaxDecay;							// decay the max value.
-		
-		fftData[ i ]			= fftDataNormVal;
-		fftData[ j - i ]		= fftDataNormVal;					// mirror arrays.
-		
-		fftDataMax[ i ]			= fftDataMaxVal;
-		fftDataMax[ j - i ]		= fftDataMaxVal;					// mirror arrays.
-		
-		float fftDataPeakVal;
-		fftDataPeakVal = fftDataPeak[ i ];
-		fftDataPeakVal *= fftDataPeakDecay;							// decay peak value.
-		
-		if( fftDataPeakVal < fftDataNormVal )						// check if new peak.
-			fftDataPeakVal = fftDataNormVal;
-		
-		fftDataPeak[ i ]		= fftDataPeakVal;
-		fftDataPeak[ j - i ]	= fftDataPeakVal;
-		
-		fftAveragePeak			+= fftDataPeakVal;					// sum of all peaks.
-		
-		int fftDataSwitchVal;										// switch data (on/off).
-		if( fftDataPeakVal < threshold )
-			fftDataSwitchVal = 1;
 		else
-			fftDataSwitchVal = 0;
-		
-		fftDataSwitch[ i ]		= fftDataSwitchVal;
-		fftDataSwitch[ j - i ]	= fftDataSwitchVal;
+		{
+			mirrorAudioData( rawData );
+		}
 	}
-	
-	fftAveragePeak /= audioNoOfBandsHalf;
-	
-	fftAveragePeakNorm.addValue( fftAveragePeak );
 }
 
-void  AudioAbstract :: draw( int width, int height ) 
-{
-	if( width <= 0 )
-		width = defaultRenderWidth;
-	
-	if( height <= 0 )
-		height = defaultRenderHeight;
-	
-	int bx, by;		// border.
-	bx =  by = 1;
-	
-	ofFill();
-	
-	ofSetColor( 113, 113, 113 );
-	ofRect( 0, 0, width + bx * 2, height + by * 2 );
-	
-	ofSetColor( 232, 232, 232 );
-	ofRect( bx, by, width, height );
-	
-	float singleBandWidth = width / (float)audioNoOfBands;
-	
-	for( int i=0; i<audioNoOfBands; i++ )
-	{
-		ofFill();
-		ofSetColor( 0, 0, 255 );
-		ofRect( i * singleBandWidth + bx, height + by, singleBandWidth, -fftDataSwitch[ i ] * height );
-	}
-	
-	for( int i=0; i<audioNoOfBands; i++ )
-	{
-		ofFill();
-		ofSetColor( 50, 50, 50 );
-		ofRect( i * singleBandWidth + bx, height + by, singleBandWidth, -fftData[ i ] * height );
-		
-		ofNoFill();
-		ofSetColor( 232, 232, 232 );
-		ofRect( i * singleBandWidth + bx, height + by, singleBandWidth, -fftData[ i ] * height );
-	}
-	
-	for( int i=0; i<audioNoOfBands; i++ )
-	{
-		ofFill();
-		ofSetColor( 255, 0, 0 );
-		ofRect( i * singleBandWidth + bx, ( 1 - fftDataPeak[ i ] ) * height + by, singleBandWidth, 2 );
-	}
-	
-	ofNoFill();
-	ofSetColor( 255, 0, 255 );
-	ofLine( bx, ( 1 - threshold ) * height + by, width + bx, ( 1 - threshold ) * height + by );
-	
-	ofNoFill();
-	ofSetColor( 0, 255, 255 );
-	ofLine( bx, ( 1 - fftAveragePeakNorm.getNormalisedValue() ) * height + by, width + bx, ( 1 - fftAveragePeakNorm.getNormalisedValue() ) * height + by );
-}
+//////////////////////////////////////////////////////
+//	FFT.
+//////////////////////////////////////////////////////
 
-void  AudioAbstract :: resetFFT() 
+void AudioAbstract :: initFFT ()
 {
-	delete[] specData;
-	delete[] fftMagnitude;
-	delete[] fftPhase;
-	delete[] fftPower;
-	delete[] fftFreq;
-	delete[] fftData;
-	delete[] fftDataMax;
-	delete[] fftDataPeak;
-	
 	specData		= new float[ audioNoOfBands ];
 	
 	fftMagnitude	= new float[ audioNoOfBands ];
@@ -168,25 +69,153 @@ void  AudioAbstract :: resetFFT()
 	fftPower		= new float[ audioNoOfBands ];
 	fftFreq			= new float[ audioNoOfBandsHalf ];
 	
-	fftData         = new float[ audioNoOfBands ];
-	fftDataMax		= new float[ audioNoOfBands ];
-	fftDataPeak		= new float[ audioNoOfBands ];
-	fftDataSwitch	= new int[ audioNoOfBands ];
-	
 	for( int i=0; i<audioNoOfBands; i++ )
 	{
-		fftData[ i ]	 = 0.0;
-		fftDataMax[ i ]	 = 0.0;
-		fftDataPeak[ i ] = 0.0;
+		specData[ i ]		= 0;
+		fftMagnitude[ i ]	= 0;
+		fftPhase[ i ]		= 0;
+		fftPower[ i ]		= 0;
+		
+		if( i < audioNoOfBandsHalf )
+			fftFreq[ i ]	= 0;
 	}
 }
 
+void AudioAbstract :: resetFFT() 
+{
+	delete[] specData;
+	delete[] fftMagnitude;
+	delete[] fftPhase;
+	delete[] fftPower;
+	delete[] fftFreq;
+}
+
+//////////////////////////////////////////////////////
+//	AUDIO DATA.
+//////////////////////////////////////////////////////
+
+void AudioAbstract :: initAudioData	( AudioData &audioData, int dataSize )
+{
+	audioData.size				= dataSize;
+	
+	audioData.data.resize( dataSize );
+	audioData.dataNorm.resize( dataSize );
+	audioData.dataMax.resize( dataSize );
+	audioData.dataPeak.resize( dataSize );
+	audioData.dataCut.resize( dataSize );
+	
+	audioData.linearEQIntercept	= 0.9;
+	audioData.linearEQSlope		= 1.0;
+}
+
+void AudioAbstract :: updateAudioData ( AudioData &audioData, float *dataNew )
+{
+	audioData.data.clear();
+	audioData.data.resize( audioData.size );
+	
+	copy( dataNew, dataNew + audioData.size, audioData.data.begin() );
+	
+	audioData.peakAverage = 0;
+	
+	for( int i=0; i<audioData.size; i++ )
+	{
+		float p = i / (float)( audioData.size - 1 );
+		
+		float dataVal;
+		dataVal  = audioData.data[ i ];												// use magnitude for fft data.
+		dataVal *= audioData.linearEQIntercept + p * audioData.linearEQSlope;		// scale value.
+		
+		float dataMaxVal;
+		dataMaxVal = audioData.dataMax[ i ];
+		
+		if( dataMaxVal < dataVal )
+		{
+			dataMaxVal = dataVal;
+		}
+		
+		float dataNormVal;
+		dataNormVal = 0;
+		if( dataMaxVal > 0 )
+			dataNormVal = dataVal / dataMaxVal;						// normalise data between 0 and 1.
+		
+		dataMaxVal *= audioData.maxDecay;							// decay the max value.
+		
+		audioData.dataNorm[ i ]		= dataNormVal;
+		
+		audioData.dataMax[ i ]		= dataMaxVal;
+		
+		float dataPeakVal;
+		dataPeakVal  = audioData.dataPeak[ i ];
+		dataPeakVal *= audioData.peakDecay;							// decay peak value.
+		
+		if( dataPeakVal < dataNormVal )								// check if new peak.
+			dataPeakVal = dataNormVal;
+		
+		audioData.dataPeak[ i ]		= dataPeakVal;
+		
+		audioData.peakAverage		+= dataPeakVal;					// sum of all peaks.
+		
+		int dataCutVal;												// switch data (on/off).
+		if( dataPeakVal < audioData.cutThreshold )
+			dataCutVal = 1;
+		else
+			dataCutVal = 0;
+		
+		audioData.dataCut[ i ]		= dataCutVal;
+	}
+	
+	audioData.peakAverage /= audioData.size;
+}
+
+void AudioAbstract :: mirrorAudioData ( AudioData &audioData )
+{
+	audioData.peakAverage = 0;
+	
+	int audioDataSizeHalf;
+	audioDataSizeHalf = (int)( audioData.size * 0.5 );
+	
+	for( int i=0; i<audioDataSizeHalf; i++ )
+	{
+		int j = audioData.size - 1;
+		
+		audioData.dataNorm[ j - i ] = audioData.dataNorm[ i ];
+		audioData.dataMax[ j - i ]	= audioData.dataMax[ i ];
+		audioData.dataPeak[ j - i ]	= audioData.dataPeak[ i ];
+		audioData.dataCut[ j - i ]	= audioData.dataCut[ i ];
+	}
+	
+	audioData.peakAverage /= audioDataSizeHalf;
+}
+
+void AudioAbstract :: resetAudioData ( AudioData &audioData )
+{
+	audioData.data.resize( audioData.size );
+	audioData.dataNorm.resize( audioData.size );
+	audioData.dataMax.resize( audioData.size );
+	audioData.dataPeak.resize( audioData.size );
+	audioData.dataCut.resize( audioData.size );
+}
+
+//////////////////////////////////////////////////////
+//	SETTERS / GETTERS.
+//////////////////////////////////////////////////////
+
 void AudioAbstract :: setNoOfBands( int value )
 {
-	audioNoOfBands		= ofNextPow2( value );
+	int audioNoOfBandsNew;
+	audioNoOfBandsNew	= ofNextPow2( value );
+	
+	if( audioNoOfBands == audioNoOfBandsNew )
+		return;
+	
+	audioNoOfBands		= audioNoOfBandsNew;
 	audioNoOfBandsHalf	= (int)( audioNoOfBands * 0.5 );
 	
 	resetFFT();
+	initFFT();
+	
+	resetAudioData( rawData );
+	resetAudioData( fftData );
 }
 
 int AudioAbstract :: getNoOfBands()
@@ -194,53 +223,59 @@ int AudioAbstract :: getNoOfBands()
 	return audioNoOfBands;
 }
 
-void AudioAbstract :: setFrameRateSync( bool b )
-{
-	frameRateSync = b;
-	
-	frameStart = ofGetFrameNum();
-}
-
 void AudioAbstract :: setThreshold( float value )
 {
-	threshold = MIN( 1, MAX( 0, value ) );
+	float cutThreshold;
+	cutThreshold = cutThreshold = MIN( 1, MAX( 0, value ) );
+	
+	rawData.cutThreshold = cutThreshold;
+	fftData.cutThreshold = cutThreshold;
 }
 
 float AudioAbstract :: getThreshold()
 {
-	return threshold;
+	return fftData.cutThreshold;
 }
 
 float AudioAbstract :: getAveragePeak()
 {
-	return fftAveragePeak;
-}
-
-float AudioAbstract :: getAveragePeakNorm()
-{
-	return fftAveragePeakNorm.getNormalisedValue();
+	return fftData.peakAverage;
 }
 
 void AudioAbstract :: setPeakDecay ( float value )
 {
 	value = MIN( 1, MAX( 0, value ) );
 	
-	fftDataPeakDecay = value;
+	rawData.peakDecay = value;
+	fftData.peakDecay = value;
 }
 
 float AudioAbstract :: getPeakDecay ()
 {
-	return fftDataPeakDecay;
+	return fftData.peakDecay;
 }
 
 void AudioAbstract :: setMaxDecay ( float value )
 {
-	fftDataMaxDecay = value;
+	value = MIN( 1, MAX( 0, value ) );
+	
+	rawData.maxDecay = value;
+	fftData.maxDecay = value;
 }
 
 float AudioAbstract :: getMaxDecay ()
 {
-	return fftDataMaxDecay;
+	return fftData.maxDecay;
+}
+
+void AudioAbstract :: setMirrorData ( bool value )
+{
+	bMirrorData = value;
+}
+
+void AudioAbstract :: setUseFftData ( bool value )
+{
+	bUseFftData = value;
 }
 
 //////////////////////////////////////////////////////
@@ -252,7 +287,7 @@ void AudioAbstract :: getFftData ( float *data, int length )
 	for( int i=0; i<length; i++ )
 	{
 		int j		= (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
-		float v		= fftData[ j ];
+		float v		= fftData.dataNorm[ j ];
 		data[ i ]	= v;
 	}
 }
@@ -262,7 +297,7 @@ void AudioAbstract :: getFftPeakData ( float *data, int length )
 	for( int i=0; i<length; i++ )
 	{
 		int j		= (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
-		float v		= fftDataPeak[ j ];
+		float v		= fftData.dataPeak[ j ];
 		data[ i ]	= v;
 	}
 }
@@ -272,17 +307,135 @@ void AudioAbstract :: getGlitchData( int *data, int length )
 	for( int i=0; i<length; i++ )
 	{
 		int j		= (int)( ( i / (float)( length - 1 ) ) * ( audioNoOfBands - 1 ) );
-		float v		= fftDataSwitch[ j ];
+		float v		= fftData.dataCut[ j ];
 		data[ i ]	= v;
 	}
 }
 
 //////////////////////////////////////////////////////
-//	
+//	DRAW.
 //////////////////////////////////////////////////////
 
-void  AudioAbstract :: setPosition( float value ) {};
-float AudioAbstract :: getPosition() { return 0; };
+void AudioAbstract :: draw( int x, int y, int w, int h ) 
+{
+	glPushMatrix();
+	glTranslatef( x, y, 0 );
+	
+		draw( w, h );
+	
+	glPopMatrix();
+}
 
-void  AudioAbstract :: setVolume( float value ) {};
-float AudioAbstract :: getVolume() { return 0; };
+void AudioAbstract :: draw( int width, int height )
+{
+	renderSingleBandWidth = width / (float)audioNoOfBands;
+	
+	if( bUseFftData )
+	{
+		drawData( fftData, width, height );
+	}
+	else
+	{
+		drawData( rawData, width, height );
+	}
+}
+
+void AudioAbstract :: drawData ( const AudioData &audioData, int width, int height )
+{
+	drawBg( audioData, width, height );
+	drawGlitchData( audioData, width, height );
+//	drawFftData( audioData, width, height );			// this is audio data before its been normalised, good for debugging.
+	drawFftNormData( audioData, width, height );
+	drawFftPeakData( audioData, width, height );
+	drawThresholdLine( audioData, width, height );
+}
+
+void AudioAbstract :: drawBg ( const AudioData &audioData, int w, int h )
+{
+	int bx, by;		// border.
+	bx =  by = renderBorder;
+	
+	ofFill();
+	
+	ofSetColor( 113, 113, 113 );
+	ofRect( 0, 0, w + bx * 2, h + by * 2 );
+	
+	ofSetColor( 232, 232, 232 );
+	ofRect( bx, by, w, h );
+}
+
+void AudioAbstract :: drawGlitchData ( const AudioData &audioData, int w, int h )
+{
+	int bx, by;		// border.
+	bx =  by = renderBorder;
+	
+	for( int i=0; i<audioNoOfBands; i++ )
+	{
+		ofFill();
+		ofSetColor( 0, 255, 255 );
+		ofRect
+		(
+			i * renderSingleBandWidth + bx,
+			h + by,
+			renderSingleBandWidth,
+			-audioData.dataCut[ i ] * h
+		);
+	}
+}
+
+void AudioAbstract :: drawFftData ( const AudioData &audioData, int w, int h )
+{
+	int bx, by;		// border.
+	bx =  by = renderBorder;
+	
+	for( int i=0; i<audioNoOfBands; i++ )
+	{
+		ofFill();
+		ofSetColor( 50, 50, 50 );
+		ofRect( i * renderSingleBandWidth + bx, h + by, renderSingleBandWidth, -audioData.data[ i ] * h );
+		
+		ofNoFill();
+		ofSetColor( 232, 232, 232 );
+		ofRect( i * renderSingleBandWidth + bx, h + by, renderSingleBandWidth, -audioData.data[ i ] * h );
+	}
+}
+
+void AudioAbstract :: drawFftNormData ( const AudioData &audioData, int w, int h )
+{
+	int bx, by;		// border.
+	bx =  by = renderBorder;
+	
+	for( int i=0; i<audioNoOfBands; i++ )
+	{
+		ofFill();
+		ofSetColor( 50, 50, 50 );
+		ofRect( i * renderSingleBandWidth + bx, h + by, renderSingleBandWidth, -audioData.dataNorm[ i ] * h );
+		
+		ofNoFill();
+		ofSetColor( 232, 232, 232 );
+		ofRect( i * renderSingleBandWidth + bx, h + by, renderSingleBandWidth, -audioData.dataNorm[ i ] * h );
+	}
+}
+
+void AudioAbstract :: drawFftPeakData ( const AudioData &audioData, int w, int h )
+{
+	int bx, by;		// border.
+	bx =  by = renderBorder;
+	
+	for( int i=0; i<audioNoOfBands; i++ )
+	{
+		ofFill();
+		ofSetColor( 0, 0, 255 );
+		ofRect( i * renderSingleBandWidth + bx, ( 1 - audioData.dataPeak[ i ] ) * h + by, renderSingleBandWidth, 2 );
+	}
+}
+
+void AudioAbstract :: drawThresholdLine ( const AudioData &audioData, int w, int h )
+{
+	int bx, by;		// border.
+	bx =  by = renderBorder;
+	
+	ofNoFill();
+	ofSetColor( 255, 0, 255 );
+	ofLine( bx, ( 1 - audioData.cutThreshold ) * h + by, w + bx, ( 1 - audioData.cutThreshold ) * h + by );
+}

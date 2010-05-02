@@ -18,19 +18,26 @@ class AudioFileSpectrum : public AudioAbstract
 
 public :
 	
-	AudioFileSpectrum();
+	 AudioFileSpectrum();
 	~AudioFileSpectrum();
 	
-	void init( string fileName );
-	void update();
+	void  init				( string fileName );
+	void  init				( ofSoundPlayer *audio );
 	
-	void  setPosition( float value );
-	float getPosition();
+	void  update			( );
 	
-	void  setVolume( float value );
-	float getVolume( );
+	void  setFrameRateSync	( bool b );
 	
-	ofSoundPlayer audio;
+	ofSoundPlayer*			audio;
+	
+private :
+	
+	void init				();
+	
+	int						audioTotalFrames;
+	bool					frameRateSync;
+	int						frameStart;
+	
 	
 };
 
