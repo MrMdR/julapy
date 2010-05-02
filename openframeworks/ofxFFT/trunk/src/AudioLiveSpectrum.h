@@ -18,11 +18,11 @@ class AudioLiveSpectrum : public AudioAbstract
 		
 public :
 		
-	AudioLiveSpectrum();
+	 AudioLiveSpectrum();
 	~AudioLiveSpectrum();
 		
-	void init( string fileName = NULL );
-	void  audioReceived( float *data, int bufferSize, int nChannels );
+	void init			( );
+	void audioReceived	( float *data, int bufferSize, int nChannels );
 };
 
 #endif
