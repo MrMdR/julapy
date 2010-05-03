@@ -9,24 +9,15 @@
 
 #include "ofxCvHaarTracker.h"
 
-ofxCvHaarTracker :: ofxCvHaarTracker()
-{
-	haarItemIndex			= 0;
-	haarItemIteratorIndex	= 0;
-	
-	haarItemIDCounter		= 10;
-	haarItemIDCounterLimit	= 99;
-}
-
-ofxCvHaarTracker :: ~ofxCvHaarTracker()
-{
-	
-}
+ofxCvHaarTracker ::  ofxCvHaarTracker()	{ }
+ofxCvHaarTracker :: ~ofxCvHaarTracker()	{ }
 
 ofxCvHaarFinder* ofxCvHaarTracker :: setup( string haarFile )
 {
 	haarFinder = new ofxCvHaarFinder();
 	haarFinder->setup( haarFile );
+	
+	init();
 	
 	return haarFinder;
 }
@@ -35,7 +26,18 @@ ofxCvHaarFinder* ofxCvHaarTracker :: setup( ofxCvHaarFinder* hf )
 {
 	haarFinder = hf;
 	
+	init();
+	
 	return haarFinder;
+}
+
+void ofxCvHaarTracker :: init ()
+{
+	haarItemIndex			= 0;
+	haarItemIteratorIndex	= 0;
+	
+	haarItemIDCounter		= 10;
+	haarItemIDCounterLimit	= 99;
 }
 
 void ofxCvHaarTracker :: findHaarObjects( ofxCvGrayscaleImage &image )
@@ -44,10 +46,12 @@ void ofxCvHaarTracker :: findHaarObjects( ofxCvGrayscaleImage &image )
 	
 	for( int i=0; i<haarFinder->blobs.size(); i++ )
 	{
-		float x		= haarFinder->blobs[i].boundingRect.x;
-		float y		= haarFinder->blobs[i].boundingRect.y;
-		float w		= haarFinder->blobs[i].boundingRect.width;
-		float h		= haarFinder->blobs[i].boundingRect.height;
+		ofRectangle haarRect;
+		
+		haarRect.x		= haarFinder->blobs[ i ].boundingRect.x;
+		haarRect.y		= haarFinder->blobs[ i ].boundingRect.y;
+		haarRect.width	= haarFinder->blobs[ i ].boundingRect.width;
+		haarRect.height = haarFinder->blobs[ i ].boundingRect.height;
 		
 		bool isMatch = false;
 		
@@ -60,20 +64,22 @@ void ofxCvHaarTracker :: findHaarObjects( ofxCvGrayscaleImage &image )
 				
 			if( !haarItems[ j ].hasBeenMatched() )
 			{
-				isMatch = haarItems[ j ].checkItem( x, y, w, h );
+				isMatch = haarItems[ j ].checkItem( haarRect );
 				
 				if( isMatch )
 				{
-					haarItems[ j ].add( x, y, w, h );
+					haarItems[ j ].add( haarRect );
 				}
 			}
 		}
 		
 		if( !isMatch )
 		{
-			haarItems.push_back( ofxCvHaarTrackerItem() );
-			haarItems.back().set( x, y, w, h );
-			haarItems.back().setID( haarItemIDCounter );
+			ofxCvHaarTrackerItem haarItem = ofxCvHaarTrackerItem();
+			haarItem.set( haarRect );
+			haarItem.setID( haarItemIDCounter );
+			
+			haarItems.push_back( haarItem );
 		}
 		
 		++haarItemIDCounter;
@@ -128,20 +134,20 @@ int ofxCvHaarTracker :: getHaarItemID ()
 	return haarItems[ haarItemIndex ].getID();
 }
 
-void ofxCvHaarTracker :: getHaarItemProperties( float *x, float *y, float *w, float *h )
+void ofxCvHaarTracker :: getHaarItemRect ( ofRectangle& haarRect )
 {
-	*x	= haarItems[ haarItemIndex ].rect.x;
-	*y	= haarItems[ haarItemIndex ].rect.y;
-	*w	= haarItems[ haarItemIndex ].rect.width;
-	*h	= haarItems[ haarItemIndex ].rect.height;
+	haarRect.x		= haarItems[ haarItemIndex ].rect.x;
+	haarRect.y		= haarItems[ haarItemIndex ].rect.y;
+	haarRect.width	= haarItems[ haarItemIndex ].rect.width;
+	haarRect.height	= haarItems[ haarItemIndex ].rect.height;
 }
 
-void ofxCvHaarTracker :: getHaarItemPropertiesEased( float *x, float *y, float *w, float *h )
+void ofxCvHaarTracker :: getHaarItemRectEased ( ofRectangle& haarRect )
 {
-	*x	= haarItems[ haarItemIndex ].rectEase.x;
-	*y	= haarItems[ haarItemIndex ].rectEase.y;
-	*w	= haarItems[ haarItemIndex ].rectEase.width;
-	*h	= haarItems[ haarItemIndex ].rectEase.height;
+	haarRect.x		= haarItems[ haarItemIndex ].rectEase.x;
+	haarRect.y		= haarItems[ haarItemIndex ].rectEase.y;
+	haarRect.width	= haarItems[ haarItemIndex ].rectEase.width;
+	haarRect.height	= haarItems[ haarItemIndex ].rectEase.height;
 }
 
 void ofxCvHaarTracker :: clearHaarItems ()

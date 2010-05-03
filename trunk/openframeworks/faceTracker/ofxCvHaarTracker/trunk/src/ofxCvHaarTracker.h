@@ -7,8 +7,10 @@
  *
  */
 
-#pragma once
+#ifndef OFX_CV_HAAR_TRACKER
+#define OFX_CV_HAAR_TRACKER
 
+#include "ofMain.h"
 #include "ofxCvMain.h"
 #include "ofxCvHaarFinder.h"
 #include "ofxCvHaarTrackerItem.h"
@@ -21,20 +23,21 @@ public :
 	ofxCvHaarTracker();
 	~ofxCvHaarTracker();
 	
-	ofxCvHaarFinder*	setup( string haarFile );
-	ofxCvHaarFinder*	setup( ofxCvHaarFinder* hf );
+	ofxCvHaarFinder* setup		( string haarFile );
+	ofxCvHaarFinder* setup		( ofxCvHaarFinder* hf );
 	
+	void findHaarObjects		( ofxCvGrayscaleImage &image );
+	bool hasNextHaarItem		();
+	int	 getHaarItemID			();
+	void getHaarItemRect		( ofRectangle& haarRect );
+	void getHaarItemRectEased	( ofRectangle& haarRect );
+	void clearHaarItems			();
 	
-	void		findHaarObjects( ofxCvGrayscaleImage &image );
-	bool		hasNextHaarItem();
-	int			getHaarItemID();
-	void		getHaarItemProperties( float *x, float *y, float *w, float *h );
-	void		getHaarItemPropertiesEased( float *x, float *y, float *w, float *h );
-	void		clearHaarItems();
+	ofxCvHaarFinder	*haarFinder;
 	
-	ofxCvHaarFinder		*haarFinder;
+protected :	
 	
-private :	
+	void init ();
 	
 	vector<ofxCvHaarTrackerItem>		haarItems;
 	int									haarItemIndex;
@@ -44,3 +47,5 @@ private :
 	int									haarItemIDCounterLimit;
 	
 };
+
+#endif

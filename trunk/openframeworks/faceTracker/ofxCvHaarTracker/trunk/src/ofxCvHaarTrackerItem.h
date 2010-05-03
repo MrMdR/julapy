@@ -22,13 +22,13 @@ public :
 	void setID( int hid );
 	int  getID();
 	
-	void set( float x, float y, float w, float h );
-	void add( float x, float y, float w, float h );
+	void set			( const ofRectangle& haarRect );
+	void add			( const ofRectangle& haarRect );
 	
-	bool checkItem( float x, float y, float w, float h );
-	bool hasBeenMatched();
-	bool isItemIdle();
-	bool isValid();
+	bool checkItem		( const ofRectangle& haarRect );
+	bool hasBeenMatched	();
+	bool isItemIdle		();
+	bool isValid		();
 	
 	void update();
 	void easeItemSize( float easeScale );
