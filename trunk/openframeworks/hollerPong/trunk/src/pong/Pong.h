@@ -36,6 +36,9 @@ public :
 	void reset			();
 	bool checkReset		();
 	
+	void setBallPosition	( const ofPoint& p );
+	ofPoint getBallPosition	();
+	
 	void drawBackdrop			();
 	void drawBackdropDivider	();
 	void drawBackdropStars		();
