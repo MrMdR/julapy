@@ -10,6 +10,11 @@ void testApp::setup()
 	ofSetVerticalSync( true );
 	ofEnableSmoothing();
 	
+	haarFinderImage.allocate( 160, 120 );
+	haarFaceImage.allocate( 80, 80 );
+	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
+	bHaarFaceFound	= false;
+	
 	bShowDebug		= false;
 	bUseMouse		= false;
 	
@@ -33,6 +38,11 @@ void testApp::update()
 {
 	ct.update();
 	
+	if( ct.video.isFrameNew() )
+	{
+		updateHaarFinder( ct.colImg );
+	}
+	
 	const ColorTrackerData* data;
 	data = ct.getTrackerData();
 
@@ -42,6 +52,52 @@ void testApp::update()
 	updatePongReset( data[ 3 ].active );
 		
 	pong.update();
+}
+
+void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
+{
+	ofxCvGrayscaleImage grayImg;
+	grayImg.allocate( colImg.width, colImg.height );
+	grayImg = colImg;
+	
+	float haarScale;
+	haarScale = ct.videoRect.width / (float)haarFinderImage.width;
+	
+	haarFinderImage.scaleIntoMe( grayImg );
+	haarFinder.findHaarObjects( haarFinderImage );
+
+	int noHaarBlobs;
+	noHaarBlobs = haarFinder.blobs.size();
+	
+	bHaarFaceFound = ( noHaarBlobs > 0 );
+	
+	if( bHaarFaceFound )
+	{
+		int i;
+		i= (int)( ofRandom( 0, noHaarBlobs ) );
+		
+		haarRect.x		= haarFinder.blobs[ i ].boundingRect.x;
+		haarRect.y		= haarFinder.blobs[ i ].boundingRect.y;
+		haarRect.width	= haarFinder.blobs[ i ].boundingRect.width;
+		haarRect.height = haarFinder.blobs[ i ].boundingRect.height;
+		
+		ofRectangle haarRectScaled;
+		haarRectScaled.x		= haarRect.x * haarScale;
+		haarRectScaled.y		= haarRect.y * haarScale;
+		haarRectScaled.width	= haarRect.width * haarScale;
+		haarRectScaled.height	= haarRect.height * haarScale;
+		
+		ofxCvColorImage imageCopy;							// have to copy image due to bug with roi.
+		imageCopy.allocate( colImg.width, colImg.height );
+		imageCopy = colImg;
+		imageCopy.setROI( haarRectScaled );
+		
+		ofxCvColorImage imageFace;
+		imageFace.allocate( haarRectScaled.width, haarRectScaled.height );
+		imageFace.setFromPixels( imageCopy.getRoiPixels(), haarRectScaled.width, haarRectScaled.height );
+		
+		haarFaceImage.scaleIntoMe( imageFace );
+	}
 }
 
 void testApp :: updatePongPaddles ( float p1y, float p2y )
@@ -111,6 +167,8 @@ void testApp::draw()
 	if( bShowDebug )
 	{
 		ct.draw();
+		
+		drawHaar();
 	}
 	else 
 	{
@@ -125,6 +183,15 @@ void testApp::draw()
 		pong.drawBackdropDivider();
 		pong.drawPaddles();
 		pong.drawBall();
+		
+		ofPoint p;
+		p = pong.getBallPosition();
+		haarFaceImage.draw
+		(
+			p.x - haarFaceImage.width  * 0.5,
+			p.y - haarFaceImage.height * 0.5
+		);
+		
 		pong.drawScore();
 		pong.drawPaused();
 		pong.drawReset();
@@ -133,6 +200,35 @@ void testApp::draw()
 		ofDrawBitmapString( "press 'd' for debug screen", 20, ofGetHeight() - 10 );
 		ofDrawBitmapString( "press 'f' for full screen", ofGetWidth() - 220, ofGetHeight() - 10 );
 	}
+}
+
+void testApp :: drawHaar ()
+{
+	if( !bHaarFaceFound )
+		return;
+	
+	float haarScale;
+	haarScale = ct.videoRect.width / (float)haarFinderImage.width;
+	
+	ofRectangle haarRectScaled;
+	haarRectScaled.x		= haarRect.x * haarScale;
+	haarRectScaled.y		= haarRect.y * haarScale;
+	haarRectScaled.width	= haarRect.width * haarScale;
+	haarRectScaled.height	= haarRect.height * haarScale;
+	
+	haarRectScaled.x += ct.videoRect.x;
+	haarRectScaled.y += ct.videoRect.y;
+	
+	ofNoFill();
+	ofSetLineWidth( 3 );
+	ofSetColor( 255, 0, 255 );
+	ofRect
+	(
+		haarRectScaled.x,
+		haarRectScaled.y,
+		haarRectScaled.width,
+		haarRectScaled.height
+	);
 }
 
 void testApp :: drawVideo ()

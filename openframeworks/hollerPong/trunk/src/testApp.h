@@ -3,6 +3,7 @@
 
 
 #include "ofMain.h"
+#include "ofxCvHaarFinder.h"
 #include "ColorTracker.h"
 #include "Pong.h"
 
@@ -15,6 +16,9 @@ public:
 	void draw	();
 	
 	void drawVideo	();
+	
+	void updateHaarFinder	( ofxCvColorImage& colImg );
+	void drawHaar			();
 	
 	void updatePongPaddles	( float p1y, float p2y );
 	void updatePongFlip		( float p1x, float p2x );
@@ -29,6 +33,12 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 
+	ofxCvHaarFinder			haarFinder;
+	ofxCvGrayscaleImage		haarFinderImage;
+	ofxCvColorImage			haarFaceImage;
+	ofRectangle				haarRect;
+	bool					bHaarFaceFound;
+	
 	ColorTracker	ct;
 	Pong			pong;
 	

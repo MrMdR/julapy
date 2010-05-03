@@ -50,6 +50,9 @@
 		153FF1F6116ADE0800EA31C2 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 153FF1CF116ADE0800EA31C2 /* tinyxmlparser.cpp */; };
 		153FF1F7116ADE0800EA31C2 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 153FF1D1116ADE0800EA31C2 /* ofxXmlSettings.cpp */; };
 		1588ED7F116C0FD100B44F0F /* Backdrop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1588ED7E116C0FD100B44F0F /* Backdrop.cpp */; };
+		B259A60C118E95390011EBD5 /* ofxCvHaarFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B259A606118E95390011EBD5 /* ofxCvHaarFinder.cpp */; };
+		B259A60D118E95390011EBD5 /* ofxCvHaarTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B259A608118E95390011EBD5 /* ofxCvHaarTracker.cpp */; };
+		B259A60E118E95390011EBD5 /* ofxCvHaarTrackerItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B259A60A118E95390011EBD5 /* ofxCvHaarTrackerItem.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -241,6 +244,12 @@
 		153FF1D2116ADE0800EA31C2 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../colorTracker/src/ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
 		1588ED7D116C0FD100B44F0F /* Backdrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Backdrop.h; sourceTree = "<group>"; };
 		1588ED7E116C0FD100B44F0F /* Backdrop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Backdrop.cpp; sourceTree = "<group>"; };
+		B259A606118E95390011EBD5 /* ofxCvHaarFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCvHaarFinder.cpp; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarFinder.cpp; sourceTree = SOURCE_ROOT; };
+		B259A607118E95390011EBD5 /* ofxCvHaarFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvHaarFinder.h; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarFinder.h; sourceTree = SOURCE_ROOT; };
+		B259A608118E95390011EBD5 /* ofxCvHaarTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCvHaarTracker.cpp; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTracker.cpp; sourceTree = SOURCE_ROOT; };
+		B259A609118E95390011EBD5 /* ofxCvHaarTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvHaarTracker.h; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTracker.h; sourceTree = SOURCE_ROOT; };
+		B259A60A118E95390011EBD5 /* ofxCvHaarTrackerItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCvHaarTrackerItem.cpp; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTrackerItem.cpp; sourceTree = SOURCE_ROOT; };
+		B259A60B118E95390011EBD5 /* ofxCvHaarTrackerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvHaarTrackerItem.h; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTrackerItem.h; sourceTree = SOURCE_ROOT; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -660,6 +669,7 @@
 				153FF15B116ADE0800EA31C2 /* ofxMSAInteractiveObject_rev186 */,
 				153FF15F116ADE0800EA31C2 /* ofxNetwork */,
 				153FF16A116ADE0800EA31C2 /* ofxOpenCv */,
+				B259A604118E95390011EBD5 /* ofxCvHaarTracker */,
 				153FF192116ADE0800EA31C2 /* ofxSimpleGuiToo_rev197 */,
 				153FF1B7116ADE0800EA31C2 /* ofxThread */,
 				153FF1BB116ADE0800EA31C2 /* ofxVectorMath */,
@@ -667,6 +677,29 @@
 			);
 			name = addons;
 			sourceTree = "<group>";
+		};
+		B259A604118E95390011EBD5 /* ofxCvHaarTracker */ = {
+			isa = PBXGroup;
+			children = (
+				B259A605118E95390011EBD5 /* src */,
+			);
+			name = ofxCvHaarTracker;
+			path = ../../../addons/ofxCvHaarTracker;
+			sourceTree = SOURCE_ROOT;
+		};
+		B259A605118E95390011EBD5 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B259A608118E95390011EBD5 /* ofxCvHaarTracker.cpp */,
+				B259A609118E95390011EBD5 /* ofxCvHaarTracker.h */,
+				B259A60A118E95390011EBD5 /* ofxCvHaarTrackerItem.cpp */,
+				B259A60B118E95390011EBD5 /* ofxCvHaarTrackerItem.h */,
+				B259A606118E95390011EBD5 /* ofxCvHaarFinder.cpp */,
+				B259A607118E95390011EBD5 /* ofxCvHaarFinder.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxCvHaarTracker/src;
+			sourceTree = SOURCE_ROOT;
 		};
 		E45BE0360E8CC5DE009D7055 /* libs */ = {
 			isa = PBXGroup;
@@ -1074,6 +1107,9 @@
 				153FF1F6116ADE0800EA31C2 /* tinyxmlparser.cpp in Sources */,
 				153FF1F7116ADE0800EA31C2 /* ofxXmlSettings.cpp in Sources */,
 				1588ED7F116C0FD100B44F0F /* Backdrop.cpp in Sources */,
+				B259A60C118E95390011EBD5 /* ofxCvHaarFinder.cpp in Sources */,
+				B259A60D118E95390011EBD5 /* ofxCvHaarTracker.cpp in Sources */,
+				B259A60E118E95390011EBD5 /* ofxCvHaarTrackerItem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
