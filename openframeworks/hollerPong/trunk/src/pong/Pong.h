@@ -14,6 +14,7 @@
 #include "Ball.h"
 #include "Score.h"
 #include "Backdrop.h"
+#include "PongConfig.h"
 
 class Pong
 {
@@ -38,10 +39,12 @@ public :
 	
 	void setBallPosition	( const ofPoint& p );
 	ofPoint getBallPosition	();
+	float	getBallRotation	();
 	
 	void drawBackdrop			();
 	void drawBackdropDivider	();
 	void drawBackdropStars		();
+	void drawBorder				();
 	void drawPaddles			();
 	void drawBall				();
 	void drawScore				();
@@ -80,6 +83,9 @@ private :
 	
 	int			resetCount;
 	int			resetCountLimit;
+	
+	int			border;
+	ofRectangle	screenRect;
 	
 };
 

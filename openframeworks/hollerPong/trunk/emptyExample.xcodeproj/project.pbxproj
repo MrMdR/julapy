@@ -250,6 +250,7 @@
 		B259A609118E95390011EBD5 /* ofxCvHaarTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvHaarTracker.h; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTracker.h; sourceTree = SOURCE_ROOT; };
 		B259A60A118E95390011EBD5 /* ofxCvHaarTrackerItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCvHaarTrackerItem.cpp; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTrackerItem.cpp; sourceTree = SOURCE_ROOT; };
 		B259A60B118E95390011EBD5 /* ofxCvHaarTrackerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvHaarTrackerItem.h; path = ../../../addons/ofxCvHaarTracker/src/ofxCvHaarTrackerItem.h; sourceTree = SOURCE_ROOT; };
+		B2B9F354118FF7C900A8B54C /* PongConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PongConfig.h; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -340,6 +341,7 @@
 				150304E4116AC88A003BE72F /* Paddle.h */,
 				150304E7116AC88A003BE72F /* Score.cpp */,
 				150304E8116AC88A003BE72F /* Score.h */,
+				B2B9F354118FF7C900A8B54C /* PongConfig.h */,
 			);
 			name = pong;
 			path = src/pong;

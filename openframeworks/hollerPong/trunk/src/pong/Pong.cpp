@@ -56,6 +56,12 @@ void Pong :: init ()
 	
 	resetCount		= 0;
 	resetCountLimit	= 15;
+	
+	border = PONG_BORDER_THICKNESS;
+	screenRect.x		= border;
+	screenRect.y		= border;
+	screenRect.width	= ofGetWidth()  - border * 2;
+	screenRect.height	= ofGetHeight() - border * 2;
 }
 
 ////////////////////////////////////////////////
@@ -155,6 +161,11 @@ ofPoint Pong :: getBallPosition ()
 	return p;
 }
 
+float Pong :: getBallRotation ()
+{
+	return ball.rotation;
+}
+
 ////////////////////////////////////////////////
 //	UPDATE.
 ////////////////////////////////////////////////
@@ -174,6 +185,11 @@ void Pong :: update ()
 
 	ball.vel.limit( pongVelLimit );
 	ball.update();
+	
+	screenRect.x		= border;
+	screenRect.y		= border;
+	screenRect.width	= ofGetWidth()  - border * 2;
+	screenRect.height	= ofGetHeight() - border * 2;
 	
 	checkBounds();
 	checkPaddleHit();
@@ -214,29 +230,31 @@ void Pong :: checkBounds ()
 	bool winP2;
 	winP2 = false;
 	
-	if( ball.loc.x < br )
+	if( ball.loc.x < screenRect.x + br )
 	{
 		ball.vel.x *= -1;
 		out		= true;
 		winP2	= true;
 	}
 	
-	if( ball.loc.x > ofGetWidth() - br )
+	if( ball.loc.x > screenRect.x + screenRect.width - br )
 	{
 		ball.vel.x *= -1;
 		out		= true;
 		winP1	= true;
 	}
 	
-	if( ball.loc.y < br )
+	if( ball.loc.y < screenRect.y + br )
 	{
 		ball.vel.y *= -1;
+		ball.toggleRotationDir();
 		out = true;
 	}
 	
-	if( ball.loc.y > ofGetHeight() - br )
+	if( ball.loc.y > screenRect.y + screenRect.height - br )
 	{
 		ball.vel.y *= -1;
+		ball.toggleRotationDir();
 		out = true;
 	}
 	
@@ -290,6 +308,7 @@ void Pong :: checkLeftPaddleHit ()
 	{
 		ball.vel.x	*= -1;
 		ball.vel	*= pongVelGain;
+		ball.toggleRotationDir();
 		ball.update();
 	}
 }
@@ -340,6 +359,7 @@ void Pong :: resetPoint ()
 void Pong :: draw ()
 {
 	drawBackdrop();
+	drawBorder();
 	drawPaddles();
 	drawBall();
 	drawScore();
@@ -362,6 +382,27 @@ void Pong :: drawBackdropDivider ()
 void Pong :: drawBackdropStars ()
 {
 	backdrop.drawStarLayers();
+}
+
+void Pong :: drawBorder ()
+{
+	int t;		// thickness.
+	t = border;
+	
+	int p;		// padding.
+	p = 0;
+	
+	int w, h;
+	w = ofGetWidth();
+	h = ofGetHeight();
+	
+	ofFill();
+	ofSetColor( 0xFFFFFF );
+	
+	ofRect( p, p, t, h - p * 2 );
+	ofRect( p, p, w - p * 2, t );
+	ofRect( w - t - p, p, t, h - p * 2 );
+	ofRect( p, h - t - p, w - p * 2, t );
 }
 
 void Pong :: drawPaddles ()

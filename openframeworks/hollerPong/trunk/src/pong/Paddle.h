@@ -11,6 +11,7 @@
 #define HOLLER_PONG_PADDLE
 
 #include "ofMain.h"
+#include "PongConfig.h"
 
 class Paddle
 {
