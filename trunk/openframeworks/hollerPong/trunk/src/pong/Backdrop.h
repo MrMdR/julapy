@@ -11,6 +11,7 @@
 #define HOLLER_PONG_BACKDROP
 
 #include "ofMain.h"
+#include "PongConfig.h"
 #include "ofxVectorMath.h"
 
 #define STAR_LAYERS_TOTAL	3

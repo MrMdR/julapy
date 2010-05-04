@@ -11,6 +11,7 @@
 #define HOLLER_PONG_SCORE
 
 #include "ofMain.h"
+#include "PongConfig.h"
 
 class Score
 {

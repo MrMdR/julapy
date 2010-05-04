@@ -17,8 +17,10 @@ public:
 	
 	void drawVideo	();
 	
+	void initHaar			();
 	void updateHaarFinder	( ofxCvColorImage& colImg );
 	void drawHaar			();
+	void drawHaarFace		();
 	
 	void updatePongPaddles	( float p1y, float p2y );
 	void updatePongFlip		( float p1x, float p2x );
@@ -33,13 +35,31 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 
+	//-- FACE FINDER.
+	
 	ofxCvHaarFinder			haarFinder;
 	ofxCvGrayscaleImage		haarFinderImage;
 	ofxCvColorImage			haarFaceImage;
+	ofImage					haarFaceMask;
+	ofTexture				haarFaceAlpha;
 	ofRectangle				haarRect;
+	
 	bool					bHaarFaceFound;
+	bool					bHaarFirstFaceFound;
+	bool					bHaarUpdateFace;
+	
+	int						haarTimeoutCount;
+	int						haarTimeoutTotal;
+	
+	
+	//-- COLOR TRACKER.
+	
 	
 	ColorTracker	ct;
+	
+	
+	//-- PONG.
+	
 	Pong			pong;
 	
 	float			p1;

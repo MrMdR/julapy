@@ -11,8 +11,10 @@
 
 Ball :: Ball()
 {
-	radius	= 20;
-	color	= 0xFFFFFF;
+	radius		= PONG_BALL_RADIUS;
+	rotation	= 0;
+	rotationDir	= 1;
+	color		= 0xFFFFFF;
 	
 	setPositon( 0, 0 );
 	setVelocity( 1, 1 );
@@ -30,9 +32,15 @@ void Ball :: setVelocity ( float x, float y )
 	vel.y = y;
 }
 
+void Ball :: toggleRotationDir ()
+{
+	rotationDir *= -1;
+}
+
 void Ball :: update ()
 {
-	loc += vel;
+	loc			+= vel;
+	rotation	+= rotationDir;
 }
 
 void Ball :: draw ()

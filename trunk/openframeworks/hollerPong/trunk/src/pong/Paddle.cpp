@@ -44,13 +44,16 @@ void Paddle :: draw ()
 	int pad;
 	pad = 20;
 	
+	int border;
+	border = PONG_BORDER_THICKNESS;
+	
 	if( side == 0 )
 		rect.x = pad;
 	
 	if( side == 1 )
 		rect.x = ofGetWidth() - rect.width - pad;
 	
-	rect.y = (int)( ( ofGetHeight() - rect.height ) * pos );
+	rect.y = (int)( border + ( ofGetHeight() - ( border * 2 ) - rect.height ) * pos );
 	
 	ofSetColor( color );
 	ofFill();

@@ -54,6 +54,9 @@ void Score :: draw ()
 	
 	ofSetColor( 0xFFFFFF );
 	
-	font.drawString( p1s, c - 140, 80 );
-	font.drawString( p2s, c +  30, 80 );
+	int border;
+	border = PONG_BORDER_THICKNESS;
+	
+	font.drawString( p1s, c - 140, 80 + border );
+	font.drawString( p2s, c +  30, 80 + border );
 }

@@ -9,11 +9,9 @@ void testApp::setup()
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	ofEnableSmoothing();
+	ofSetCircleResolution( 100 );
 	
-	haarFinderImage.allocate( 160, 120 );
-	haarFaceImage.allocate( 80, 80 );
-	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
-	bHaarFaceFound	= false;
+	initHaar();
 	
 	bShowDebug		= false;
 	bUseMouse		= false;
@@ -28,6 +26,25 @@ void testApp::setup()
 	
 	p1 = 0;
 	p2 = 0;
+}
+
+void testApp :: initHaar ()
+{
+	haarFinderImage.allocate( 160, 120 );
+	haarFaceImage.allocate( 80, 80 );
+	
+	haarFaceMask.loadImage( "assets/haar_face_mask.png" );
+	
+	haarFaceAlpha.allocate( haarFaceMask.width, haarFaceMask.height, GL_RGBA );
+	
+	haarFinder.setup( "haarXML/haarcascade_frontalface_default.xml" );
+	
+	bHaarFaceFound		= false;
+	bHaarFirstFaceFound	= false;
+	bHaarUpdateFace		= true;
+	
+	haarTimeoutCount	= 0;
+	haarTimeoutTotal	= 30 * 5;
 }
 
 ///////////////////////////////////////////
@@ -69,7 +86,8 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 	int noHaarBlobs;
 	noHaarBlobs = haarFinder.blobs.size();
 	
-	bHaarFaceFound = ( noHaarBlobs > 0 );
+	bHaarFaceFound		= ( noHaarBlobs > 0 );
+	bHaarFirstFaceFound	= ( bHaarFirstFaceFound || bHaarFaceFound );
 	
 	if( bHaarFaceFound )
 	{
@@ -81,11 +99,17 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 		haarRect.width	= haarFinder.blobs[ i ].boundingRect.width;
 		haarRect.height = haarFinder.blobs[ i ].boundingRect.height;
 		
+		float scale;
+		scale = 1.2;
+		
+		float haarSize;
+		haarSize = MAX( haarRect.width, haarRect.height );
+		
 		ofRectangle haarRectScaled;
-		haarRectScaled.x		= haarRect.x * haarScale;
-		haarRectScaled.y		= haarRect.y * haarScale;
-		haarRectScaled.width	= haarRect.width * haarScale;
-		haarRectScaled.height	= haarRect.height * haarScale;
+		haarRectScaled.width	= haarSize * haarScale * scale;
+		haarRectScaled.height	= haarSize * haarScale * scale;
+		haarRectScaled.x		= haarRect.x * haarScale - ( ( scale - 1 ) * 0.5 ) * haarSize;
+		haarRectScaled.y		= haarRect.y * haarScale - ( ( scale - 1 ) * 0.5 ) * haarSize;
 		
 		ofxCvColorImage imageCopy;							// have to copy image due to bug with roi.
 		imageCopy.allocate( colImg.width, colImg.height );
@@ -97,6 +121,57 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 		imageFace.setFromPixels( imageCopy.getRoiPixels(), haarRectScaled.width, haarRectScaled.height );
 		
 		haarFaceImage.scaleIntoMe( imageFace );
+	}
+
+	if( !bHaarFirstFaceFound )
+		return;						// no face found yet, do not update face, do not start timeouts.
+	
+	//-- face update with alpha mask.
+	
+	if( bHaarUpdateFace )
+	{
+		ofxCvColorImage haarFaceImageCopy;
+		haarFaceImageCopy.allocate( haarFaceImage.width, haarFaceImage.height );
+		haarFaceImageCopy = haarFaceImage;
+		
+		int w = haarFaceImageCopy.width;
+		int h = haarFaceImageCopy.height;
+		
+		unsigned char * haarFaceImagePixels		= new unsigned char[ w * h * 4 ];
+		unsigned char * haarFaceImageCopyPixels = haarFaceImageCopy.getPixels();
+		unsigned char * haarFaceMaskPixels		= haarFaceMask.getPixels();
+		
+		for( int i=0; i<w; i++ )
+		{
+			for( int j=0; j<h; j++ )
+			{
+				int p = ( j * w + i );
+				
+				haarFaceImagePixels[ p * 4     ] = haarFaceImageCopyPixels[ p * 3     ];
+				haarFaceImagePixels[ p * 4 + 1 ] = haarFaceImageCopyPixels[ p * 3 + 1 ];
+				haarFaceImagePixels[ p * 4 + 2 ] = haarFaceImageCopyPixels[ p * 3 + 2 ];
+				haarFaceImagePixels[ p * 4 + 3 ] = haarFaceMaskPixels[ p * 4 + 3 ];
+			}
+		}
+		
+		haarFaceAlpha.loadData( haarFaceImagePixels, w, h, GL_RGBA );
+		
+		delete [] haarFaceImagePixels;
+	}
+	
+	//-- haar timeout, wait for a number of frames before updating face image.
+	
+	if( bHaarUpdateFace )
+	{
+		haarTimeoutCount	= 0;
+		bHaarUpdateFace		= false;
+	}
+	else
+	{
+		if( ++haarTimeoutCount == haarTimeoutTotal )
+		{
+			bHaarUpdateFace	= true;
+		}
 	}
 }
 
@@ -181,24 +256,19 @@ void testApp::draw()
 		drawVideo();
 		
 		pong.drawBackdropDivider();
+		pong.drawBorder();
 		pong.drawPaddles();
 		pong.drawBall();
 		
-		ofPoint p;
-		p = pong.getBallPosition();
-		haarFaceImage.draw
-		(
-			p.x - haarFaceImage.width  * 0.5,
-			p.y - haarFaceImage.height * 0.5
-		);
+		drawHaarFace();
 		
 		pong.drawScore();
 		pong.drawPaused();
 		pong.drawReset();
 		
 		ofSetColor( 0xFFFFFF );
-		ofDrawBitmapString( "press 'd' for debug screen", 20, ofGetHeight() - 10 );
-		ofDrawBitmapString( "press 'f' for full screen", ofGetWidth() - 220, ofGetHeight() - 10 );
+		ofDrawBitmapString( "press 'd' for debug screen", 20, ofGetHeight() - 20 );
+		ofDrawBitmapString( "press 'f' for full screen", ofGetWidth() - 220, ofGetHeight() - 20 );
 	}
 }
 
@@ -229,6 +299,31 @@ void testApp :: drawHaar ()
 		haarRectScaled.width,
 		haarRectScaled.height
 	);
+}
+
+void testApp :: drawHaarFace ()
+{
+	if( !bHaarFirstFaceFound )
+		return;
+	
+	ofEnableAlphaBlending();
+	
+	ofPoint p;
+	p = pong.getBallPosition();
+	
+	glPushMatrix();
+	glTranslatef( p.x, p.y, 0 );
+	glRotatef( pong.getBallRotation(), 0, 0, 1 );
+	
+	int x, y;
+	x = -haarFaceImage.width  * 0.5;
+	y = -haarFaceImage.height * 0.5;
+	
+	haarFaceAlpha.draw( x, y );
+	
+	glPopMatrix();
+	
+	ofDisableAlphaBlending();
 }
 
 void testApp :: drawVideo ()
@@ -293,6 +388,14 @@ void testApp::keyPressed(int key)
 	if( key == 'p' )
 	{
 		pong.togglePause();
+	}
+	
+	if( key == 's' )
+	{
+		ofImage img;
+		img.allocate( ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR );
+		img.grabScreen( 0, 0, ofGetWidth(), ofGetHeight() );
+		img.saveImage( "image.png" );
 	}
 }
 
