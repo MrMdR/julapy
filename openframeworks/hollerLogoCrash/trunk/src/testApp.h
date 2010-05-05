@@ -5,7 +5,6 @@
 #include "ofMain.h"
 #include "ofxVectorMath.h"
 #include "ofxOpenCv.h"
-#include "ofxBox2d.h"
 #include "contourSimplify.h"
 #include "ofxTriangle.h"
 #include "ofxBox2d.h"
