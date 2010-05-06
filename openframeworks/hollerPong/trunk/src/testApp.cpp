@@ -21,6 +21,8 @@ void testApp::setup()
 	
 	ct.init( 4 );
 	ct.loadFromFile();
+	ct.blur			= 20;
+	ct.threshold	= 180;
 	
 	pong.init();
 	
@@ -83,6 +85,8 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 	haarFinderImage.scaleIntoMe( grayImg );
 	haarFinder.findHaarObjects( haarFinderImage );
 
+	grayImg.clear();
+	
 	int noHaarBlobs;
 	noHaarBlobs = haarFinder.blobs.size();
 	
@@ -92,7 +96,7 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 	if( bHaarFaceFound )
 	{
 		int i;
-		i= (int)( ofRandom( 0, noHaarBlobs ) );
+		i = (int)( ofRandom( 0, noHaarBlobs ) );
 		
 		haarRect.x		= haarFinder.blobs[ i ].boundingRect.x;
 		haarRect.y		= haarFinder.blobs[ i ].boundingRect.y;
@@ -118,9 +122,12 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 		
 		ofxCvColorImage imageFace;
 		imageFace.allocate( haarRectScaled.width, haarRectScaled.height );
-		imageFace.setFromPixels( imageCopy.getRoiPixels(), haarRectScaled.width, haarRectScaled.height );
+		imageFace.setFromPixels( imageCopy.getRoiPixels(), imageCopy.getROI().width, imageCopy.getROI().height );
 		
 		haarFaceImage.scaleIntoMe( imageFace );
+		
+		imageCopy.clear();
+		imageFace.clear();
 	}
 
 	if( !bHaarFirstFaceFound )
@@ -157,6 +164,7 @@ void testApp :: updateHaarFinder ( ofxCvColorImage& colImg )
 		haarFaceAlpha.loadData( haarFaceImagePixels, w, h, GL_RGBA );
 		
 		delete [] haarFaceImagePixels;
+		haarFaceImageCopy.clear();
 	}
 	
 	//-- haar timeout, wait for a number of frames before updating face image.
@@ -425,6 +433,9 @@ void testApp::mouseDragged(int x, int y, int button)
 
 void testApp::mousePressed(int x, int y, int button)
 {
+	if( !bShowDebug )
+		return;
+	
 	ct.mousePressed( x, y, button );
 }
 
