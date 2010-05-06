@@ -17,6 +17,8 @@ class ofxBox2dPolygonCustom : public ofxBox2dPolygon
 
 public :
 	
+	int color;
+	
 	virtual void setPhysicsClean( float mass, float bounce, float friction )
 	{
 		for(b2Shape* s=body->GetShapeList(); s; s=s->GetNext()) {
@@ -47,10 +49,10 @@ public :
 				const b2Vec2* verts = poly->GetVertices();
 
 				ofEnableSmoothing();
-				ofEnableAlphaBlending();
+//				ofEnableAlphaBlending();
 				
 				ofFill();
-				ofSetColor( 255, 255, 255, 220 );
+				ofSetColor( color );
 				ofBeginShape();
 				for(int j=0; j<count; j++) {
 					b2Vec2 pt = b2Mul(xf, verts[j]);
@@ -59,7 +61,7 @@ public :
 				ofEndShape(true);
 				
 				ofNoFill();
-				ofSetColor( 0, 0, 0, 50 );
+				ofSetColor( color );
 				ofBeginShape();
 				for(int j=0; j<count; j++)
 				{
@@ -74,7 +76,7 @@ public :
 				}
 				ofEndShape();
 
-				ofDisableAlphaBlending();
+//				ofDisableAlphaBlending();
 				ofDisableSmoothing();
 			}
 			
