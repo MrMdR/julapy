@@ -25,6 +25,9 @@
 		B23E2DBE11911CFE00E36C35 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23E2DB111911CFE00E36C35 /* ofxMatrix3x3.cpp */; };
 		B23E2DBF11911CFE00E36C35 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23E2DB311911CFE00E36C35 /* ofxMatrix4x4.cpp */; };
 		B23E2DC011911CFE00E36C35 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23E2DB811911CFE00E36C35 /* ofxQuaternion.cpp */; };
+		B2B92753119273D700B5F40C /* ofCvOpticalFlowBM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B9274D119273D700B5F40C /* ofCvOpticalFlowBM.cpp */; };
+		B2B92754119273D700B5F40C /* ofCvOpticalFlowLK.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B9274F119273D700B5F40C /* ofCvOpticalFlowLK.cpp */; };
+		B2B92755119273D700B5F40C /* OpticalField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B92751119273D700B5F40C /* OpticalField.cpp */; };
 		B2F0DA0811912374002D8CB2 /* assert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F0DA0411912374002D8CB2 /* assert.cpp */; };
 		B2F0DA0911912374002D8CB2 /* del_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F0DA0511912374002D8CB2 /* del_impl.cpp */; };
 		B2F0DA0A11912374002D8CB2 /* ofxTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F0DA0611912374002D8CB2 /* ofxTriangle.cpp */; };
@@ -205,6 +208,12 @@
 		B23E2DBB11911CFE00E36C35 /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec3f.h; path = ../../../addons/ofxVectorMath/src/ofxVec3f.h; sourceTree = SOURCE_ROOT; };
 		B23E2DBC11911CFE00E36C35 /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec4f.h; path = ../../../addons/ofxVectorMath/src/ofxVec4f.h; sourceTree = SOURCE_ROOT; };
 		B23E2DBD11911CFE00E36C35 /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVectorMath.h; path = ../../../addons/ofxVectorMath/src/ofxVectorMath.h; sourceTree = SOURCE_ROOT; };
+		B2B9274D119273D700B5F40C /* ofCvOpticalFlowBM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCvOpticalFlowBM.cpp; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowBM.cpp; sourceTree = SOURCE_ROOT; };
+		B2B9274E119273D700B5F40C /* ofCvOpticalFlowBM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCvOpticalFlowBM.h; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowBM.h; sourceTree = SOURCE_ROOT; };
+		B2B9274F119273D700B5F40C /* ofCvOpticalFlowLK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCvOpticalFlowLK.cpp; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowLK.cpp; sourceTree = SOURCE_ROOT; };
+		B2B92750119273D700B5F40C /* ofCvOpticalFlowLK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCvOpticalFlowLK.h; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowLK.h; sourceTree = SOURCE_ROOT; };
+		B2B92751119273D700B5F40C /* OpticalField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpticalField.cpp; path = ../../../addons/ofxOpticalField/src/OpticalField.cpp; sourceTree = SOURCE_ROOT; };
+		B2B92752119273D700B5F40C /* OpticalField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpticalField.h; path = ../../../addons/ofxOpticalField/src/OpticalField.h; sourceTree = SOURCE_ROOT; };
 		B2F0D9FD11912374002D8CB2 /* assert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = assert.hpp; path = ../../../addons/ofxTriangle/include/assert.hpp; sourceTree = SOURCE_ROOT; };
 		B2F0D9FE11912374002D8CB2 /* del_interface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = del_interface.hpp; path = ../../../addons/ofxTriangle/include/del_interface.hpp; sourceTree = SOURCE_ROOT; };
 		B2F0D9FF11912374002D8CB2 /* dpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = dpoint.hpp; path = ../../../addons/ofxTriangle/include/dpoint.hpp; sourceTree = SOURCE_ROOT; };
@@ -396,6 +405,7 @@
 				B2F0D9FB11912374002D8CB2 /* ofxTriangle */,
 				B2F0DBB711913017002D8CB2 /* ofxBox2d_rev74_hacked */,
 				B23E2CE41191036600E36C35 /* ofxJulapyUtils */,
+				B2B9274B119273D700B5F40C /* ofxOpticalField */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -549,6 +559,29 @@
 			);
 			name = src;
 			path = ../../../addons/ofxVectorMath/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2B9274B119273D700B5F40C /* ofxOpticalField */ = {
+			isa = PBXGroup;
+			children = (
+				B2B9274C119273D700B5F40C /* src */,
+			);
+			name = ofxOpticalField;
+			path = ../../../addons/ofxOpticalField;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2B9274C119273D700B5F40C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B2B9274D119273D700B5F40C /* ofCvOpticalFlowBM.cpp */,
+				B2B9274E119273D700B5F40C /* ofCvOpticalFlowBM.h */,
+				B2B9274F119273D700B5F40C /* ofCvOpticalFlowLK.cpp */,
+				B2B92750119273D700B5F40C /* ofCvOpticalFlowLK.h */,
+				B2B92751119273D700B5F40C /* OpticalField.cpp */,
+				B2B92752119273D700B5F40C /* OpticalField.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxOpticalField/src;
 			sourceTree = SOURCE_ROOT;
 		};
 		B2F0D9FB11912374002D8CB2 /* ofxTriangle */ = {
@@ -1232,6 +1265,9 @@
 				B2F0DC4A11913017002D8CB2 /* b2PulleyJoint.cpp in Sources */,
 				B2F0DC4B11913017002D8CB2 /* b2RevoluteJoint.cpp in Sources */,
 				B2F0DC4C11913017002D8CB2 /* ofxBox2d.cpp in Sources */,
+				B2B92753119273D700B5F40C /* ofCvOpticalFlowBM.cpp in Sources */,
+				B2B92754119273D700B5F40C /* ofCvOpticalFlowLK.cpp in Sources */,
+				B2B92755119273D700B5F40C /* OpticalField.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

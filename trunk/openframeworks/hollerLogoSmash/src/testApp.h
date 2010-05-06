@@ -11,6 +11,7 @@
 #include "ofxBox2dPolygonCustom.h"
 #include "ofxBox2dCircleCustom.h"
 #include "ofxScreenGrabUtil.h"
+#include "OpticalField.h"
 
 struct Shape
 {
@@ -28,15 +29,17 @@ public:
 	void update			();
 	void draw			();
 	
-	void initLogo		();
-	void initCamera		();
-	void initCv			();
-	void initContours	();
-	void initBox2d		();
+	void initColors			();
+	void initLogo			();
+	void initCamera			();
+	void initCv				();
+	void initContours		();
+	void initBox2d			();
+	void initOpticalField	();
 	
 	void updateCamera			();
 	void updateCv				( unsigned char *pixels );
-	void updateContours			();
+	int  updateContours			();
 	void updateTriangles		();
 	void addTrianglesToBox2d	();
 	
@@ -82,8 +85,6 @@ public:
 	
 	ofxCvGrayscaleImage		logoSmall;
 	ofxCvGrayscaleImage		logoSmallIntersect;
-	ofxCvGrayscaleImage		logoLargeIntersectCrop;
-	ofxCvGrayscaleImage		logoLargeIntersect;
 	
 	ofxCvContourFinder		contourFinder;
 	
@@ -95,6 +96,11 @@ public:
 	ofxBox2dPolygonCustom	floor;
 	
 	vector<ofxBox2dPolygonCustom>	triangles;
+	
+	OpticalField			opticalField;
+	ofRectangle				opticalFieldRect;
+	
+	vector<int>				colors;
 };
 
 #endif
