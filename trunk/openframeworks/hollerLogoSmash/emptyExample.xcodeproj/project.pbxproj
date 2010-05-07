@@ -25,6 +25,7 @@
 		B23E2DBE11911CFE00E36C35 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23E2DB111911CFE00E36C35 /* ofxMatrix3x3.cpp */; };
 		B23E2DBF11911CFE00E36C35 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23E2DB311911CFE00E36C35 /* ofxMatrix4x4.cpp */; };
 		B23E2DC011911CFE00E36C35 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23E2DB811911CFE00E36C35 /* ofxQuaternion.cpp */; };
+		B2A8D2221193978400476275 /* ofxColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A8D2201193978400476275 /* ofxColor.cpp */; };
 		B2B92753119273D700B5F40C /* ofCvOpticalFlowBM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B9274D119273D700B5F40C /* ofCvOpticalFlowBM.cpp */; };
 		B2B92754119273D700B5F40C /* ofCvOpticalFlowLK.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B9274F119273D700B5F40C /* ofCvOpticalFlowLK.cpp */; };
 		B2B92755119273D700B5F40C /* OpticalField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B92751119273D700B5F40C /* OpticalField.cpp */; };
@@ -208,6 +209,8 @@
 		B23E2DBB11911CFE00E36C35 /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec3f.h; path = ../../../addons/ofxVectorMath/src/ofxVec3f.h; sourceTree = SOURCE_ROOT; };
 		B23E2DBC11911CFE00E36C35 /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec4f.h; path = ../../../addons/ofxVectorMath/src/ofxVec4f.h; sourceTree = SOURCE_ROOT; };
 		B23E2DBD11911CFE00E36C35 /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVectorMath.h; path = ../../../addons/ofxVectorMath/src/ofxVectorMath.h; sourceTree = SOURCE_ROOT; };
+		B2A8D2201193978400476275 /* ofxColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColor.cpp; path = ../../../addons/ofxColor/ofxColor.cpp; sourceTree = SOURCE_ROOT; };
+		B2A8D2211193978400476275 /* ofxColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColor.h; path = ../../../addons/ofxColor/ofxColor.h; sourceTree = SOURCE_ROOT; };
 		B2B9274D119273D700B5F40C /* ofCvOpticalFlowBM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCvOpticalFlowBM.cpp; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowBM.cpp; sourceTree = SOURCE_ROOT; };
 		B2B9274E119273D700B5F40C /* ofCvOpticalFlowBM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCvOpticalFlowBM.h; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowBM.h; sourceTree = SOURCE_ROOT; };
 		B2B9274F119273D700B5F40C /* ofCvOpticalFlowLK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCvOpticalFlowLK.cpp; path = ../../../addons/ofxOpticalField/src/ofCvOpticalFlowLK.cpp; sourceTree = SOURCE_ROOT; };
@@ -400,6 +403,7 @@
 		B23E2C931190F86A00E36C35 /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				B2A8D21F1193978400476275 /* ofxColor */,
 				B23E2DAE11911CFE00E36C35 /* ofxVectorMath */,
 				B23E2C9C1190F99A00E36C35 /* ofxOpenCv */,
 				B2F0D9FB11912374002D8CB2 /* ofxTriangle */,
@@ -559,6 +563,16 @@
 			);
 			name = src;
 			path = ../../../addons/ofxVectorMath/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2A8D21F1193978400476275 /* ofxColor */ = {
+			isa = PBXGroup;
+			children = (
+				B2A8D2201193978400476275 /* ofxColor.cpp */,
+				B2A8D2211193978400476275 /* ofxColor.h */,
+			);
+			name = ofxColor;
+			path = ../../../addons/ofxColor;
 			sourceTree = SOURCE_ROOT;
 		};
 		B2B9274B119273D700B5F40C /* ofxOpticalField */ = {
@@ -1268,6 +1282,7 @@
 				B2B92753119273D700B5F40C /* ofCvOpticalFlowBM.cpp in Sources */,
 				B2B92754119273D700B5F40C /* ofCvOpticalFlowLK.cpp in Sources */,
 				B2B92755119273D700B5F40C /* OpticalField.cpp in Sources */,
+				B2A8D2221193978400476275 /* ofxColor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

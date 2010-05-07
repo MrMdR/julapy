@@ -3,13 +3,17 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
+//	frameRate = 25;
+	frameRate = 60;
+	
 	ofSetVerticalSync( true );
-//	ofSetFrameRate( 25 );
+	ofSetFrameRate( frameRate );
 	
 	screenGrab.setup( "movies/" );
 //	screenGrab.setPause( false );
 	
-	bUseCamera = true;
+	bDebug		= true;
+	bUseCamera	= true;
 	
 	initColors();
 	initCamera();
@@ -179,8 +183,10 @@ void testApp :: initContours ()
 void testApp :: initBox2d ()
 {
 	box2d.init();
+//	box2d.setGravity( 0, 40 );
+//	box2d.setFPS( 40 );
 	box2d.setGravity( 0, 10 );
-	box2d.setFPS( 30.0 );
+	box2d.setFPS( 30 );
 	
 	int thick;
 	thick = 1;
@@ -271,6 +277,8 @@ void testApp::update()
 		}
 	}
 	
+	updateTriangleShapes();
+	
 	box2d.update();
 }
 
@@ -286,7 +294,7 @@ void testApp :: updateCamera ()
 		if( screenGrab.isRecording() )
 		{
 			float t;
-			t = ofGetFrameNum() / 25.0;
+			t = ofGetFrameNum() / (float)frameRate;
 			
 			float p;
 			p = t / video.getDuration();
@@ -600,11 +608,14 @@ void testApp :: addTrianglesToBox2d ()
 			ofRandom( 0.1, 0.7 )			// friction.
 		);
 		
+		int color;
+		color = colors[ (int)( colors.size() * ofRandom( 0.0, 1.0 ) ) ];
+		
 		tri.addVertex( tsa );
 		tri.addVertex( tsb );
 		tri.addVertex( tsc );
 		tri.createShape( box2d.getWorld(), tsp.x, tsp.y );
-		tri.color = colors[ (int)( colors.size() * ofRandom( 0.0, 1.0 ) ) ];
+		tri.color = color;
 		
 		ofPoint opVel;
 		opticalField.getVelAtNorm( tspn.x, tspn.y, &opVel.x, &opVel.y );
@@ -621,6 +632,47 @@ void testApp :: addTrianglesToBox2d ()
 //		tri.setVelocity( vel.x, vel.y );
 		
 		triangles.push_back( tri );
+		
+		//--triangle shape.
+		
+		TriangleShape ts;
+		ts.vertex[ 0 ]	= tsa + tsp;
+		ts.vertex[ 1 ]	= tsb + tsp;
+		ts.vertex[ 2 ]	= tsc + tsp;
+		ts.colorFill	= color;
+		ts.colorBorder	= color;
+//		ts.colorFill	= 0xFFFFFF;
+//		ts.colorBorder	= 0x000000;
+		ts.count		= 0;
+		ts.countKill	= 90;
+		ts.fade			= 1.0;
+		ts.alpha		= 255;
+		
+		triangleShapes.push_back( ts );
+	}
+}
+
+void testApp :: updateTriangleShapes ()
+{
+	int i = 0;
+	int t = triangleShapes.size();
+	
+	for( i; i<t; i++ )
+	{
+		TriangleShape& ts = triangleShapes[ i ];
+		
+		if( ++ts.count == ts.countKill )
+		{
+			triangleShapes.erase( triangleShapes.begin() + i );
+			
+			--i;
+			--t;
+		}
+		else
+		{
+			ts.fade		= 1 - ( ts.count / (float)ts.countKill );
+			ts.alpha	= (int)( 255 * ts.fade );
+		}
 	}
 }
 
@@ -643,6 +695,22 @@ void testApp::draw()
 	logo.draw( 0, 0 );
 	ofDisableAlphaBlending();
 	
+	if( bDebug )
+	{
+		drawDebug();
+	}
+
+	drawTriangleShapes();
+	drawTriangles();
+	
+//	floor.draw();
+//	box2d.draw();
+	
+	screenGrab.save();
+}
+
+void testApp :: drawDebug ()
+{
 	ofRectangle smlRect;
 	smlRect.width	= 160;
 	smlRect.height	= 120;
@@ -655,7 +723,7 @@ void testApp::draw()
 	
 	drawBorder( smlRect );
 	cameraColorImage.draw( 0, 0, smlRect.width, smlRect.height );
-
+	
 	glTranslatef( 0, smlRect.height + pad, 0 );
 	
 	drawBorder( smlRect );
@@ -667,7 +735,7 @@ void testApp::draw()
 	logoSmall.draw( 0, 0, smlRect.width, smlRect.height );
 	
 	glTranslatef( 0, smlRect.height + pad, 0 );
-
+	
 	drawBorder( smlRect );
 	logoSmallIntersect.draw( 0, 0, smlRect.width, smlRect.height );
 	
@@ -685,12 +753,7 @@ void testApp::draw()
 //	drawShapes();
 	
 	glPopMatrix();
-
-	drawTriangles();
-//	floor.draw();
-//	box2d.draw();
 	
-	screenGrab.save();
 }
 
 void testApp :: drawBorder ( const ofRectangle& rect )
@@ -744,7 +807,48 @@ void testApp :: drawTriangles ()
 	}
 }
 
+void testApp :: drawTriangleShapes ()
+{
+	ofEnableSmoothing();
+	ofEnableAlphaBlending();
+	
+	for( int i=0; i<triangleShapes.size(); i++ )
+	{
+		TriangleShape& ts = triangleShapes[ i ];
+		
+		ofxColor cf = ofxColor( ts.colorFill );
+		ofxColor cb = ofxColor( ts.colorBorder );
+		
+		int cfr = cf.red   + (int)( ( 255 - cf.red   ) * ( 1 - ts.fade ) );
+		int cfg = cf.green + (int)( ( 255 - cf.green ) * ( 1 - ts.fade ) );
+		int cfb = cf.blue  + (int)( ( 255 - cf.blue  ) * ( 1 - ts.fade ) );
 
+		int cbr = cb.red   + (int)( ( 255 - cb.red   ) * ( 1 - ts.fade ) );
+		int cbg = cb.green + (int)( ( 255 - cb.green ) * ( 1 - ts.fade ) );
+		int cbb = cb.blue  + (int)( ( 255 - cb.blue  ) * ( 1 - ts.fade ) );
+		
+		ofFill();
+		ofSetColor( cfr, cfg, cfb, ts.alpha );
+		ofBeginShape();
+		ofVertex( ts.vertex[ 0 ].x, ts.vertex[ 0 ].y );
+		ofVertex( ts.vertex[ 1 ].x, ts.vertex[ 1 ].y );
+		ofVertex( ts.vertex[ 2 ].x, ts.vertex[ 2 ].y );
+		ofEndShape(true);
+		
+		ofNoFill();
+		ofSetColor( cbr, cbg, cbb, ts.alpha );
+		ofBeginShape();
+		ofVertex( ts.vertex[ 0 ].x, ts.vertex[ 0 ].y );
+		ofVertex( ts.vertex[ 1 ].x, ts.vertex[ 1 ].y );
+		ofVertex( ts.vertex[ 2 ].x, ts.vertex[ 2 ].y );
+		ofVertex( ts.vertex[ 0 ].x, ts.vertex[ 0 ].y );
+		ofEndShape(true);
+		ofEndShape();
+	}
+	
+	ofDisableSmoothing();
+	ofDisableAlphaBlending();
+}
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
@@ -752,8 +856,12 @@ void testApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){
-
+void testApp::keyReleased(int key)
+{
+	if( key == 'd' )
+	{
+		bDebug = !bDebug;
+	}
 }
 
 //--------------------------------------------------------------
