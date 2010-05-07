@@ -12,6 +12,7 @@
 #include "ofxBox2dCircleCustom.h"
 #include "ofxScreenGrabUtil.h"
 #include "OpticalField.h"
+#include "ofxColor.h"
 
 struct Shape
 {
@@ -19,6 +20,17 @@ struct Shape
 	int						child;
 	int						noPolys;
 	vector<ofPoint>			polyPoints;
+};
+
+struct TriangleShape
+{
+	ofPoint		vertex[ 3 ];
+	int			colorFill;
+	int			colorBorder;
+	float		fade;
+	int			alpha;
+	int			count;
+	int			countKill;
 };
 
 class testApp : public ofBaseApp{
@@ -42,6 +54,7 @@ public:
 	int  updateContours			();
 	void updateTriangles		();
 	void addTrianglesToBox2d	();
+	void updateTriangleShapes	();
 	
 	void parseShapes				();
 	void clearShapes				();
@@ -49,11 +62,12 @@ public:
 	void copyPolygonData			( const vector<ofPoint>& p1, vector<ofPoint>& p2 );
 	void copyPolygonData			( const vector<ofxPoint2f>& p1, vector<ofPoint>& p2 );
 	
-	void drawBorder		( const ofRectangle& rect );
-	
-	void drawShapes		();
-	void drawShape		( Shape& shape );
-	void drawTriangles	();
+	void drawDebug			();
+	void drawBorder			( const ofRectangle& rect );
+	void drawShapes			();
+	void drawShape			( Shape& shape );
+	void drawTriangles		();
+	void drawTriangleShapes	();
 
 	void keyPressed		(int key);
 	void keyReleased	(int key);
@@ -64,7 +78,10 @@ public:
 	void windowResized	(int w, int h);
 	
 	ofxScreenGrabUtil		screenGrab;
-		
+
+	bool					bDebug;
+	int						frameRate;
+	
 	ofImage					logo;
 	unsigned char*			logoPixles;
 
@@ -96,6 +113,7 @@ public:
 	ofxBox2dPolygonCustom	floor;
 	
 	vector<ofxBox2dPolygonCustom>	triangles;
+	vector<TriangleShape>			triangleShapes;
 	
 	OpticalField			opticalField;
 	ofRectangle				opticalFieldRect;
