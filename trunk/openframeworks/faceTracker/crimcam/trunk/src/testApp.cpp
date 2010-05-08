@@ -4,6 +4,8 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {	 
+	bFullScreen = true;
+	
 	vidGrabber.setVerbose(true);
 	vidGrabber.initGrabber( WIDTH, HEIGHT );
         
@@ -44,6 +46,11 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
+	if( ofGetFrameNum() == 2 )		// go full screen on second frame, work around applescript.
+	{
+		ofToggleFullscreen();
+	}
+	
 	ofBackground( 10, 10, 10 );
     
     bool bNewFrame = false;
@@ -474,6 +481,13 @@ void testApp::keyPressed  (int key){
 		case ' ':
 			vidGrabber.videoSettings();
 		break;
+	}
+	
+	if( key == 'f' )
+	{
+		bFullScreen = !bFullScreen;
+		
+		ofToggleFullscreen();
 	}
 }
 
