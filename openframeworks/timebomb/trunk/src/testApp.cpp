@@ -6,6 +6,13 @@ void testApp::setup()
 //	ofSetVerticalSync( true );
 	ofSetFrameRate( 30 );
 	
+	screenGrabUtil.setup( "movie/timebomb", &renderArea );
+	
+	bDebug					= false;
+	bRightMonitor			= false;
+	bMirror					= true;
+	bScaleUpToFullScreen	= true;
+	
 	initRenderArea();
 	initVideoGrabber();
 
@@ -23,14 +30,6 @@ void testApp::setup()
 	initTimeDistortionForVideo();
 	initFluidForVideo();
 	initGui();
-
-	screenGrabUtil.setup( "movie/timebomb", &renderArea );
-	
-	bDebug			= false;
-	bRightMonitor	= true;
-	
-	ofToggleFullscreen();
-	updateRenderArea();
 }
 
 void testApp :: initRenderArea()
@@ -113,7 +112,7 @@ void testApp :: initOpticalFieldForCameraInput ()
 {
 	opticalField.init( videoGrabberDstRect, videoGrabberDstRect );
 //	opticalField.setMirror( false, false );
-	opticalField.setMirror( false, true );
+	opticalField.setMirror( false, bMirror );
 	opticalField.setImageType( GL_LUMINANCE );
 	opticalField.showDifferenceImage	= true;
 	opticalField.opticalFlowScale		= 0.001f;
@@ -209,6 +208,12 @@ void testApp :: initGui ()
 
 void testApp::update()
 {
+	if( ofGetFrameNum() == 2 )		// go full screen on second frame. this is an applescript work around.
+	{
+		ofToggleFullscreen();
+		updateRenderArea();
+	}
+	
 	updateVideoGrabber();
 	
 #ifdef USE_VIDEO_INPUT
@@ -539,8 +544,19 @@ void testApp :: drawTimeDistortionFromVideoSourceFullScreen ()
 	float wRatio, hRatio, scale;
 	float scaleX, scaleY;
 	
-	bool scaleVideo				= false;
-	bool scaleToFitFullScreen	= false;
+	bool scaleVideo;
+	bool scaleToFitFullScreen;
+	
+	if( bScaleUpToFullScreen )
+	{
+		scaleVideo				= true;
+		scaleToFitFullScreen	= true;
+	}
+	else
+	{
+		scaleVideo				= false;
+		scaleToFitFullScreen	= false;
+	}
 	
 	wRatio = renderArea.width  / (float)videoPlayerWidth;
 	hRatio = renderArea.height / (float)videoPlayerHeight;
@@ -633,6 +649,11 @@ void testApp::keyPressed  (int key)
 	{
 		ofToggleFullscreen();
 		updateRenderArea();
+	}
+	
+	if( key == 'u' )
+	{
+		bScaleUpToFullScreen = !bScaleUpToFullScreen;
 	}
 	
 	if( key == 'm' )
