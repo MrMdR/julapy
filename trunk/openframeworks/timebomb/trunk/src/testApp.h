@@ -70,6 +70,8 @@ public:
 	
 	bool				bDebug;
 	bool				bRightMonitor;
+	bool				bMirror;
+	bool				bScaleUpToFullScreen;
 
 #ifdef USE_POINT_GREY_CAMERA
 	ofxVideoGrabber 	videoGrabber;
