@@ -18,6 +18,10 @@
 		156C92CA1172F2470007FCC8 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156C92BD1172F2470007FCC8 /* ofxMatrix3x3.cpp */; };
 		156C92CB1172F2470007FCC8 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156C92BF1172F2470007FCC8 /* ofxMatrix4x4.cpp */; };
 		156C92CC1172F2470007FCC8 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 156C92C41172F2470007FCC8 /* ofxQuaternion.cpp */; };
+		159D9E25118C360B002A1BE9 /* AudioAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D9E1D118C360B002A1BE9 /* AudioAbstract.cpp */; };
+		159D9E26118C360B002A1BE9 /* AudioFileSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D9E1F118C360B002A1BE9 /* AudioFileSpectrum.cpp */; };
+		159D9E27118C360B002A1BE9 /* AudioLiveSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D9E21118C360B002A1BE9 /* AudioLiveSpectrum.cpp */; };
+		159D9E28118C360B002A1BE9 /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D9E23118C360B002A1BE9 /* fft.cpp */; };
 		B23BEB78118180F000DA6EE3 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23BEB15118180F000DA6EE3 /* b2BroadPhase.cpp */; };
 		B23BEB79118180F000DA6EE3 /* b2CollideCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23BEB17118180F000DA6EE3 /* b2CollideCircle.cpp */; };
 		B23BEB7A118180F000DA6EE3 /* b2CollidePoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23BEB18118180F000DA6EE3 /* b2CollidePoly.cpp */; };
@@ -194,6 +198,14 @@
 		156C92C71172F2470007FCC8 /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec3f.h; path = ../../../addons/ofxVectorMath/src/ofxVec3f.h; sourceTree = SOURCE_ROOT; };
 		156C92C81172F2470007FCC8 /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec4f.h; path = ../../../addons/ofxVectorMath/src/ofxVec4f.h; sourceTree = SOURCE_ROOT; };
 		156C92C91172F2470007FCC8 /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVectorMath.h; path = ../../../addons/ofxVectorMath/src/ofxVectorMath.h; sourceTree = SOURCE_ROOT; };
+		159D9E1D118C360B002A1BE9 /* AudioAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioAbstract.cpp; path = ../../../addons/ofxFFT/src/AudioAbstract.cpp; sourceTree = SOURCE_ROOT; };
+		159D9E1E118C360B002A1BE9 /* AudioAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioAbstract.h; path = ../../../addons/ofxFFT/src/AudioAbstract.h; sourceTree = SOURCE_ROOT; };
+		159D9E1F118C360B002A1BE9 /* AudioFileSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioFileSpectrum.cpp; path = ../../../addons/ofxFFT/src/AudioFileSpectrum.cpp; sourceTree = SOURCE_ROOT; };
+		159D9E20118C360B002A1BE9 /* AudioFileSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioFileSpectrum.h; path = ../../../addons/ofxFFT/src/AudioFileSpectrum.h; sourceTree = SOURCE_ROOT; };
+		159D9E21118C360B002A1BE9 /* AudioLiveSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioLiveSpectrum.cpp; path = ../../../addons/ofxFFT/src/AudioLiveSpectrum.cpp; sourceTree = SOURCE_ROOT; };
+		159D9E22118C360B002A1BE9 /* AudioLiveSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioLiveSpectrum.h; path = ../../../addons/ofxFFT/src/AudioLiveSpectrum.h; sourceTree = SOURCE_ROOT; };
+		159D9E23118C360B002A1BE9 /* fft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fft.cpp; path = ../../../addons/ofxFFT/src/fft.cpp; sourceTree = SOURCE_ROOT; };
+		159D9E24118C360B002A1BE9 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fft.h; path = ../../../addons/ofxFFT/src/fft.h; sourceTree = SOURCE_ROOT; };
 		15DAA3E01188778E00EF6789 /* ofxBox2dCircleCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBox2dCircleCustom.h; sourceTree = "<group>"; };
 		B23BEB12118180F000DA6EE3 /* Box2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Box2D.h; path = src/ofxBox2d_rev74_hacked/scr/lib/Box2D/Include/Box2D.h; sourceTree = SOURCE_ROOT; };
 		B23BEB15118180F000DA6EE3 /* b2BroadPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = b2BroadPhase.cpp; path = src/ofxBox2d_rev74_hacked/scr/lib/Box2D/Source/Collision/b2BroadPhase.cpp; sourceTree = SOURCE_ROOT; };
@@ -532,6 +544,31 @@
 			path = ../../../addons/ofxVectorMath/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		159D9E1B118C360B002A1BE9 /* ofxFFT */ = {
+			isa = PBXGroup;
+			children = (
+				159D9E1C118C360B002A1BE9 /* src */,
+			);
+			name = ofxFFT;
+			path = ../../../addons/ofxFFT;
+			sourceTree = SOURCE_ROOT;
+		};
+		159D9E1C118C360B002A1BE9 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				159D9E1D118C360B002A1BE9 /* AudioAbstract.cpp */,
+				159D9E1E118C360B002A1BE9 /* AudioAbstract.h */,
+				159D9E1F118C360B002A1BE9 /* AudioFileSpectrum.cpp */,
+				159D9E20118C360B002A1BE9 /* AudioFileSpectrum.h */,
+				159D9E21118C360B002A1BE9 /* AudioLiveSpectrum.cpp */,
+				159D9E22118C360B002A1BE9 /* AudioLiveSpectrum.h */,
+				159D9E23118C360B002A1BE9 /* fft.cpp */,
+				159D9E24118C360B002A1BE9 /* fft.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxFFT/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		15C54ACA1164247B00FF3DF7 /* addons */ = {
 			isa = PBXGroup;
 			children = (
@@ -541,6 +578,7 @@
 				B23BEB0D118180F000DA6EE3 /* ofxBox2d_rev74_hacked */,
 				B2F0D9DE11912356002D8CB2 /* ofxTriangle */,
 				B24C3BF01187C4D300E16CAD /* ofxJulapyUtils */,
+				159D9E1B118C360B002A1BE9 /* ofxFFT */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1248,9 +1286,16 @@
 				B24C3C071187C4D300E16CAD /* ofxScreenGrabUtil.cpp in Sources */,
 				B24C3C081187C4D300E16CAD /* ofxTrigger.cpp in Sources */,
 				B24C3C091187C4D300E16CAD /* ofxTrigLUT.cpp in Sources */,
+<<<<<<< .mine
+				159D9E25118C360B002A1BE9 /* AudioAbstract.cpp in Sources */,
+				159D9E26118C360B002A1BE9 /* AudioFileSpectrum.cpp in Sources */,
+				159D9E27118C360B002A1BE9 /* AudioLiveSpectrum.cpp in Sources */,
+				159D9E28118C360B002A1BE9 /* fft.cpp in Sources */,
+=======
 				B2F0D9EB11912356002D8CB2 /* assert.cpp in Sources */,
 				B2F0D9EC11912356002D8CB2 /* del_impl.cpp in Sources */,
 				B2F0D9ED11912356002D8CB2 /* ofxTriangle.cpp in Sources */,
+>>>>>>> .r681
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

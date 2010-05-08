@@ -13,6 +13,12 @@
 #include "ofxScreenGrabUtil.h"
 #include "ofxBounce.h"
 
+#include "AudioAbstract.h"
+#include "AudioFileSpectrum.h"
+#include "AudioLiveSpectrum.h"
+#include "ofxDataNormaliser.h"
+
+
 struct ContourData
 {
 	int						nBlobs;
@@ -49,6 +55,7 @@ public:
 	void update	();
 	void draw	();
 	
+	void initAudio					();
 	void initColors					();
 	
 	void initContourAnalysis		();
@@ -142,6 +149,8 @@ public:
 	bool					bAddCircle;
 	bool					bUseFloor;
 	bool					bDrawTriangles;
+	
+	AudioAbstract			*audio;
 };
 
 #endif

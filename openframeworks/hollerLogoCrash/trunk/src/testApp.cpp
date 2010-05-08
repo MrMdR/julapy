@@ -54,6 +54,7 @@ void testApp::setup()
 	bAddCircle		= false;
 	bDrawTriangles	= false;
 	
+	initAudio();
 	initColors();
 	initContourAnalysis();
 	computeContourAnalysis();
@@ -62,6 +63,18 @@ void testApp::setup()
 	initBox2d();
 	updateTriangles();
 	updateBox2dTriangles();
+}
+
+void testApp :: initAudio()
+{
+	audio = new AudioFileSpectrum();
+//	audio = new AudioLiveSpectrum();
+	
+	audio->init( "audio/dat_politics_12_nude_Noodle.mp3" );
+	
+//	audio->setPosition( 0.0 );
+//	audio->setPeakDecay( 0.5 );
+//	audio->setMaxDecay( 0.99 );
 }
 
 void testApp :: initColors ()
@@ -875,6 +888,8 @@ void testApp :: drawBodies ()
 
 void testApp::update()
 {
+	audio->update();
+	
 	if( bAddCircle )
 	{
 		for( int i=0; i<1; i++ )
@@ -904,7 +919,7 @@ void testApp::update()
 			vel.x = box2dTriangles[ i ].getPosition().x - ofGetWidth()  * 0.5;
 			vel.y = box2dTriangles[ i ].getPosition().y - ofGetHeight() * 0.5;
 			vel.normalize();
-			vel		*= ofRandom(  5, 10 );
+			vel		*= ofRandom(  1, 2 );
 			vel.x	+= ofRandom( -0.5, 0.5 );
 			vel.y	+= ofRandom( -0.5, 0.5 );
 //			vel.y	*= 0.8;
@@ -914,10 +929,10 @@ void testApp::update()
 			box2dTriangles[ i ].setVelocity( vel.x, vel.y );
 		}
 		
-		bounce.springconst( 0.01 );
-		bounce.inertia( 0.2 );
+		bounce.springconst( 0.8 );
+		bounce.inertia( 0.93 );
 		bounce.position( 0 );
-		bounce.velocity( 10 );
+		bounce.velocity( 5 );
 //		bounce.velocity( 10 );
 		
 		logo.clear();
@@ -925,15 +940,15 @@ void testApp::update()
 		bDrawTriangles = true;
 	}
 	
-	if( ofGetFrameNum() >= 8 )
-	{
-		bounce.update();
-		
-		for( int i=0; i<box2dTriangles.size(); i++ )
-		{
-			box2dTriangles[ i ].setVelocity( box2dTrianglesVel[ i ] * bounce.position() );
-		}
-	}
+//	if( ofGetFrameNum() >= 8 )
+//	{
+//		bounce.update();
+//		
+//		for( int i=0; i<box2dTriangles.size(); i++ )
+//		{
+//			box2dTriangles[ i ].setVelocity( box2dTrianglesVel[ i ] * bounce.position() );
+//		}
+//	}
 }
 
 ///////////////////////////////////////////
@@ -947,6 +962,7 @@ void testApp::draw()
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
 	ofSetColor( 0xFFFFFF );
+	
 	logo.draw( 0, 0 );
 	
 //	drawContourAnalysis();
@@ -962,6 +978,8 @@ void testApp::draw()
 //	drawBodies();
 	
 	screenGrab.save();
+	
+	audio->draw( 512, 200 );
 }
 
 ///////////////////////////////////////////
