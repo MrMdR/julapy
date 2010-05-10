@@ -80,6 +80,7 @@ public:
 	ofxScreenGrabUtil		screenGrab;
 
 	bool					bDebug;
+	bool					bFullScreen;
 	int						frameRate;
 	
 	ofImage					logo;
