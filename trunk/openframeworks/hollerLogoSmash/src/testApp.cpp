@@ -12,7 +12,8 @@ void testApp::setup()
 	screenGrab.setup( "movies/" );
 //	screenGrab.setPause( false );
 	
-	bDebug		= true;
+	bDebug		= false;
+	bFullScreen	= false;
 	bUseCamera	= true;
 	
 	initColors();
@@ -861,6 +862,13 @@ void testApp::keyReleased(int key)
 	if( key == 'd' )
 	{
 		bDebug = !bDebug;
+	}
+	
+	if( key == 'f' )
+	{
+		bFullScreen = !bFullScreen;
+		
+		ofToggleFullscreen();
 	}
 }
 
