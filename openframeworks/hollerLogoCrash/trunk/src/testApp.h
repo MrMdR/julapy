@@ -150,7 +150,7 @@ public:
 	bool					bUseFloor;
 	bool					bDrawTriangles;
 	
-	AudioAbstract			*audio;
+	AudioFileSpectrum		*audio;
 };
 
 #endif
