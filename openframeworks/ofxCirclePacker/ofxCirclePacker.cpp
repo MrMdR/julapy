@@ -28,6 +28,14 @@ ofxCirclePacker :: ~ofxCirclePacker()
 	reset();
 }
 
+void ofxCirclePacker :: addCircles( int numOfCircles, int color )
+{
+	for( int i=0; i<numOfCircles; i++ )
+	{
+		addCircle( color );
+	}
+}
+
 void ofxCirclePacker :: addCircle( int color )
 {
 	if( bPaused )
@@ -172,9 +180,9 @@ void ofxCirclePacker :: loadFromFile ( string filename )
 //	GET CIRCLES.
 //////////////////////////////////////////
 
-vector<Circle> * ofxCirclePacker :: getCircles ()
+vector<Circle>& ofxCirclePacker :: getCircles ()
 {
-	return &circles;
+	return circles;
 }
 
 //////////////////////////////////////////
@@ -289,28 +297,28 @@ void ofxCirclePacker :: removeInvalidCircles ()
 //	SETTERS.
 //////////////////////////////////////////
 
-void ofxCirclePacker :: setColorBoundsImage ( ofImage *image, ofRectangle *imageRect )
+void ofxCirclePacker :: setColorBoundsImage ( ofImage *image, const ofRectangle& imageRect )
 {
 	circleColorBoundsImage				= image;
 	circleColorBoundsImagePixels		= circleColorBoundsImage->getPixels();
 	
-	circleColorBoundsImageRect.x		= imageRect->x;
-	circleColorBoundsImageRect.y		= imageRect->y;
-	circleColorBoundsImageRect.width	= imageRect->width;
-	circleColorBoundsImageRect.height	= imageRect->height;
+	circleColorBoundsImageRect.x		= imageRect.x;
+	circleColorBoundsImageRect.y		= imageRect.y;
+	circleColorBoundsImageRect.width	= imageRect.width;
+	circleColorBoundsImageRect.height	= imageRect.height;
 	
 	useCircleColorBoundsImage = true;
 }
 
-void ofxCirclePacker :: setColorMapImage ( ofImage *image, ofRectangle *imageRect )
+void ofxCirclePacker :: setColorMapImage ( ofImage *image, const ofRectangle& imageRect )
 {
 	circleColorMapImage				= image;
 	circleColorMapImagePixels		= circleColorMapImage->getPixels();
 	
-	circleColorMapImageRect.x		= imageRect->x;
-	circleColorMapImageRect.y		= imageRect->y;
-	circleColorMapImageRect.width	= imageRect->width;
-	circleColorMapImageRect.height	= imageRect->height;
+	circleColorMapImageRect.x		= imageRect.x;
+	circleColorMapImageRect.y		= imageRect.y;
+	circleColorMapImageRect.width	= imageRect.width;
+	circleColorMapImageRect.height	= imageRect.height;
 	
 	useCircleColorMapImage = true;
 }
