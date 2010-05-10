@@ -32,8 +32,8 @@ public :
 	 ofxCirclePacker ();
 	~ofxCirclePacker ();
 	
-	void setColorBoundsImage	( ofImage *image, ofRectangle *imageRect );
-	void setColorMapImage		( ofImage *image, ofRectangle *imageRect );
+	void setColorBoundsImage	( ofImage *image, const ofRectangle& imageRect );
+	void setColorMapImage		( ofImage *image, const ofRectangle& imageRect );
 	void setCircleRadiusMin		( float radiusMin );
 	void setCircleRadiusMax		( float radiusMax );
 	void setCircleGap			( float gap );
@@ -41,8 +41,10 @@ public :
 	void setCircleDeathColor	( int color );
 	void setCircleColorBounds	( bool useColorBounds );
 	void togglePause			();
-	
+
+	void addCircles		( int numOfCircles, int color = 0xFFFFFF );
 	void addCircle		( int color = 0xFFFFFF );
+	
 	void update			();
 	void draw			();
 	void reset			();
@@ -50,7 +52,7 @@ public :
 	void writeToFile	( string filename = "circle_data" );
 	void loadFromFile	( string filename = "circle_data" );
 	
-	vector<Circle> * getCircles	();
+	vector<Circle>&		getCircles();
 	
 private :
 
