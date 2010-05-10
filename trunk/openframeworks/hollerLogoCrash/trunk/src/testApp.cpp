@@ -67,10 +67,10 @@ void testApp::setup()
 
 void testApp :: initAudio()
 {
-	audio = new AudioFileSpectrum();
+//	audio = new AudioFileSpectrum();
 //	audio = new AudioLiveSpectrum();
 	
-	audio->init( "audio/dat_politics_12_nude_Noodle.mp3" );
+//	audio->init( "audio/dat_politics_12_nude_Noodle.mp3" );
 	
 //	audio->setPosition( 0.0 );
 //	audio->setPeakDecay( 0.5 );
@@ -888,7 +888,7 @@ void testApp :: drawBodies ()
 
 void testApp::update()
 {
-	audio->update();
+//	audio->update();
 	
 	if( bAddCircle )
 	{
@@ -979,7 +979,7 @@ void testApp::draw()
 	
 	screenGrab.save();
 	
-	audio->draw( 512, 200 );
+//	audio->draw( 512, 200 );
 }
 
 ///////////////////////////////////////////
