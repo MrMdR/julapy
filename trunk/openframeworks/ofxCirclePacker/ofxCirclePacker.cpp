@@ -18,6 +18,9 @@ ofxCirclePacker :: ofxCirclePacker()
 	setCircleDeathColor( 0x000000 );
 	setCircleColorBounds( false );
 	
+	circleIdCount	= 0;
+	circleIdLimit	= 10000;
+	
 	useCircleColorMapImage		= false;
 	useCircleColorBoundsImage	= false;
 	bPaused						= false;
@@ -42,21 +45,31 @@ void ofxCirclePacker :: addCircle( int color )
 		return;
 	
 	circles.push_back( Circle() );
+	Circle& circle = circles.back();
 	
-	Circle *circle;
-	circle = &circles.back();
+	int id;
+	id =  circleIdCount++;
+	id %= circleIdLimit;
 	
-	circle->loc.x		= ofRandom( circleColorBoundsImageRect.x, circleColorBoundsImageRect.x + circleColorBoundsImageRect.width  );
-	circle->loc.y		= ofRandom( circleColorBoundsImageRect.y, circleColorBoundsImageRect.y + circleColorBoundsImageRect.height );
-	circle->radius		= circleRadiusMin;
-	circle->alive		= true;
-	circle->growth		= ofRandom( 0.1, 0.5 );
-	circle->lifeCount	= 0;
+	circle.id				= id;
+	circle.loc.x			= ofRandom( (float)circleColorBoundsImageRect.x, (float)( circleColorBoundsImageRect.x + circleColorBoundsImageRect.width  ) );
+	circle.loc.y			= ofRandom( (float)circleColorBoundsImageRect.y, (float)( circleColorBoundsImageRect.y + circleColorBoundsImageRect.height ) );
+	circle.radius			= 0;
+	circle.alive			= true;
+	circle.bUnderMinRadius	= true;
+	circle.growth			= ofRandom( 0.1, 0.5 );
+	circle.lifeCount		= 0;
 	
 	if( useCircleColorMapImage )
-		circle->color	= getImageColor( (int)circle->loc.x, (int)circle->loc.y, circleColorMapImagePixels, &circleColorMapImageRect );
+	{
+		circle.color	= getImageColor( (int)circle.loc.x, (int)circle.loc.y, circleColorMapImagePixels, circleColorMapImageRect );
+	}
 	else
-		circle->color	= color;
+	{
+		circle.color	= color;
+	}
+	
+	checkForNeighbours( circle );
 }
 
 void ofxCirclePacker :: update()
@@ -70,23 +83,25 @@ void ofxCirclePacker :: update()
 	checkCircleCollision();
 	
 	if( useCircleColorBoundsImage )
+	{
 		checkCircleImage();
+	}
 	
 	removeInvalidCircles();
 	
 	for( int i=0; i<circles.size(); i++ )
 	{
-		if( circles[ i ].alive )
+		Circle& circle = circles[ i ];
+		
+		if( circle.alive || circle.bUnderMinRadius )
 		{
-			circles[ i ].radius		+= circles[ i ].growth;
-			circles[ i ].lifeCount	+= 1;
+			circle.radius			+= circle.growth;
+			circle.lifeCount		+= 1;
 			
-			if( circles[ i ].radius > circleRadiusMax )
-			{
-				circles[ i ].alive = false;
-			}
+			circle.bUnderMinRadius	= ( circles[ i ].radius < circleRadiusMin );
+			circle.alive			= ( circles[ i ].radius <= circleRadiusMax );
 		}
-	}
+ 	}
 }
 
 void ofxCirclePacker :: draw()
@@ -95,9 +110,6 @@ void ofxCirclePacker :: draw()
 	{
 		ofSetColor( circles[ i ].color );
 		
-		ofFill();
-		ofCircle( circles[ i ].loc.x, circles[ i ].loc.y, circles[ i ].radius );
-		ofNoFill();
 		ofCircle( circles[ i ].loc.x, circles[ i ].loc.y, circles[ i ].radius );
 	}
 }
@@ -108,109 +120,59 @@ void ofxCirclePacker :: reset ()
 }
 
 //////////////////////////////////////////
-//	SAVE / LOAD.
-//////////////////////////////////////////
-
-void ofxCirclePacker :: writeToFile ( string filename )
-{
-	ofstream fout;
-	fout.open( ofToDataPath( filename ).c_str() );
-	
-	for( int i=0; i<circles.size(); i++ )
-	{
-		string circleDataStr;
-		
-		circleDataStr = 
-			ofToString( circles[ i ].loc.x,		5 ) + " " +
-			ofToString( circles[ i ].loc.y,		5 ) + " " +
-			ofToString( circles[ i ].color,		0 ) + " " +
-			ofToString( circles[ i ].growth,	5 ) + " " +
-			ofToString( circles[ i ].alive,		0 ) + " " +
-			ofToString( circles[ i ].lifeCount,	0 ) + " " +
-			ofToString( circles[ i ].radius,	5 );
-		
-		fout << circleDataStr << endl;
-	}
-	
-	fout.close();
-}
-
-void ofxCirclePacker :: loadFromFile ( string filename )
-{
-	reset();
-	
-	bPaused = true;
-	
-	ifstream	circleDataFile;
-	string		circleDataStr;
-	
-	circleDataFile.open( ofToDataPath( filename ).c_str() );
-	
-	if( circleDataFile.is_open() )
-	{
-		while( !circleDataFile.eof() )
-		{
-			getline( circleDataFile, circleDataStr );
-			
-			if( circleDataStr == "" )
-				continue;
-			
-			vector<string> circleData;
-			circleData = ofSplitString( circleDataStr, " " );
-			
-			circles.push_back( Circle() );
-			
-			Circle *circle;
-			circle = &circles.back();
-			
-			circle->loc.x		= atof( circleData[ 0 ].c_str() );
-			circle->loc.y		= atof( circleData[ 1 ].c_str() );
-			circle->color		= atoi( circleData[ 2 ].c_str() );
-			circle->growth		= atof( circleData[ 3 ].c_str() );
-			circle->alive		= atoi( circleData[ 4 ].c_str() );
-			circle->lifeCount	= atoi( circleData[ 5 ].c_str() );
-			circle->radius		= atof( circleData[ 6 ].c_str() );
-		}
-	}
-	
-	circleDataFile.close();
-}
-
-//////////////////////////////////////////
-//	GET CIRCLES.
-//////////////////////////////////////////
-
-vector<Circle>& ofxCirclePacker :: getCircles ()
-{
-	return circles;
-}
-
-//////////////////////////////////////////
 //	CHECKS.
 //////////////////////////////////////////
 
+void ofxCirclePacker :: checkForNeighbours ( Circle& c1 )
+{
+	for( int i=0; i<circles.size(); i++ )
+	{
+		Circle& c2 = circles[ i ];
+		
+		if( c1.loc == c2.loc )		// same circle, skip.
+			continue;
+		
+		float d = distance( c1.loc, c2.loc );
+		
+		if( d < circleRadiusMax )		// we're neighbours!
+		{
+			c1.neighbours.push_back( &c2 );
+			c2.neighbours.push_back( &c1 );
+			
+			cout << "c_" << c1.id << " and " << "c_" << c2.id << " are neightbours." << endl;
+		}
+	}
+}
+
 void ofxCirclePacker :: checkCircleCollision ()
 {
-	for( int i=0; i<circles.size()-1; i++)
+	for( int i=0; i<circles.size(); i++)
 	{
-		for( int j=i+1; j<circles.size(); j++ )
+		Circle& c1 = circles[ i ];
+		
+		for( int j=0; j<c1.neighbours.size(); j++ )
 		{
-			if( !circles[ i ].alive && !circles[ j ].alive )
+			Circle& c2 = *c1.neighbours[ j ];
+			
+			if( !c1.alive && !c2.alive )
 				continue;
 			
-			if
-			( 
-				fastCircleCollision
-				(
-					circles[ i ].loc.x, circles[ i ].loc.y,
-					circles[ j ].loc.x, circles[ j ].loc.y,
-					circles[ i ].radius, 
-					circles[ j ].radius + circleGap
-				)
-			)
+			float r1 = ( c1.bUnderMinRadius ) ? circleRadiusMin : c1.radius;
+			float r2 = ( c2.bUnderMinRadius ) ? circleRadiusMin : c2.radius;
+			
+			bool bCollision;
+			bCollision = fastCircleCollision
+			(
+				c1.loc,
+				c2.loc,
+				r1 + circleGap * 0.5,
+				r2 + circleGap * 0.5
+			);
+			
+			if( bCollision )
 			{
-				circles[ i ].alive = false;
-				circles[ j ].alive = false;
+				c1.alive  = false;
+				c2.alive = false;
 			}
 		}
 	}
@@ -222,43 +184,46 @@ void ofxCirclePacker :: checkCircleImage()
 	
 	for( int i=0; i<circles.size(); i++)
 	{
-		if( !circles[ i ].alive )
+		Circle& circle = circles[ i ];
+		
+		if( !circle.alive )
 			continue;
+		
+		float radius = ( circle.bUnderMinRadius ) ? circleRadiusMin : circle.radius;
 		
 		//-- CHECK CIRCLE IS WITHIN IMAGE BOUNDS.
 		
-		if
-			(
-			 circles[ i ].loc.x - ( circles[ i ].radius + circleDeathGap ) < circleColorBoundsImageRect.x										||
-			 circles[ i ].loc.x + ( circles[ i ].radius + circleDeathGap ) > circleColorBoundsImageRect.x + circleColorBoundsImageRect.width	||
-			 circles[ i ].loc.y - ( circles[ i ].radius + circleDeathGap ) < circleColorBoundsImageRect.y										||
-			 circles[ i ].loc.y + ( circles[ i ].radius + circleDeathGap ) > circleColorBoundsImageRect.y + circleColorBoundsImageRect.height
-			)
+		bool lb = circle.loc.x - ( radius + circleDeathGap ) < circleColorBoundsImageRect.x;
+		bool rb = circle.loc.x + ( radius + circleDeathGap ) > circleColorBoundsImageRect.x + circleColorBoundsImageRect.width;
+		bool tb = circle.loc.y - ( radius + circleDeathGap ) < circleColorBoundsImageRect.y;
+		bool bb = circle.loc.y + ( radius + circleDeathGap ) > circleColorBoundsImageRect.y + circleColorBoundsImageRect.height;
+		
+		if( lb || rb || tb || bb )
 		{
-			circles[ i ].alive = false;
+			circle.alive = false;
 			
 			continue;
 		}
 		
 		//-- CHECK CIRCLE IS WITHIN IMAGE SHAPE.
 		
-		int cx = (int)( circles[ i ].loc.x - ( circles[ i ].radius + circleDeathGap ) );
-		int cy = (int)( circles[ i ].loc.y - ( circles[ i ].radius + circleDeathGap ) );
-		int cw = (int)( ( circles[ i ].radius + circleDeathGap ) * 2 );
-		int ch = (int)( ( circles[ i ].radius + circleDeathGap ) * 2 );
+		int cx = (int)( circle.loc.x - ( radius + circleDeathGap ) );
+		int cy = (int)( circle.loc.y - ( radius + circleDeathGap ) );
+		int cw = (int)( ( radius + circleDeathGap ) * 2 );
+		int ch = (int)( ( radius + circleDeathGap ) * 2 );
 		bool inBounds = true;
 		
 		for( int x=cx; x<=cx+cw; x++ )
 		{
 			for( int y=cy; y<=cy+ch; y++ )
 			{
-				int c = getImageColor( x, y, circleColorBoundsImagePixels, &circleColorBoundsImageRect );
+				int c = getImageColor( x, y, circleColorBoundsImagePixels, circleColorBoundsImageRect );
 				
 				if( circleColorBounds )
 				{
-					if( c != circles[ i ].color )
+					if( c != circle.color )
 					{
-						circles[ i ].alive = false;
+						circle.alive = false;
 						
 						inBounds = false;
 						
@@ -268,7 +233,7 @@ void ofxCirclePacker :: checkCircleImage()
 				
 				if( c == circleDeathColor )
 				{
-					circles[ i ].alive = false;
+					circle.alive = false;
 					
 					inBounds = false;
 					
@@ -284,13 +249,34 @@ void ofxCirclePacker :: checkCircleImage()
 
 void ofxCirclePacker :: removeInvalidCircles ()
 {
-	for( int i=0; i<circles.size(); i++)
+	int i = 0;
+	int t = circles.size();
+	
+	for( int i=0; i<t; i++)
 	{
-		if( circles[ i ].lifeCount == 0 && !circles[ i ].alive )
+		Circle& circle = circles[ i ];
+		
+		bool b1 = ( circle.lifeCount == 0 );
+		bool b2 = ( !circle.alive );
+		
+		if( b1 && b2 )
 		{
-			circles.erase( circles.begin() + i-- );
+			circle.neighbours.clear();
+			circles.erase( circles.begin() + i );
+			
+			--i;
+			--t;
 		}
 	}
+}
+
+//////////////////////////////////////////
+//	GET CIRCLES.
+//////////////////////////////////////////
+
+vector<Circle>& ofxCirclePacker :: getCircles ()
+{
+	return circles;
 }
 
 //////////////////////////////////////////
@@ -362,9 +348,9 @@ void ofxCirclePacker :: togglePause ()
 //	UTIL.
 //////////////////////////////////////////
 
-int ofxCirclePacker :: getImageColor ( int x, int y, unsigned char *pixels, ofRectangle *imageRect )
+int ofxCirclePacker :: getImageColor ( int x, int y, unsigned char *pixels, const ofRectangle& imageRect )
 {
-	int p = ( ( x - imageRect->x ) * 3 ) + ( ( y - imageRect->y ) * imageRect->width * 3 );
+	int p = ( ( x - imageRect.x ) * 3 ) + ( ( y - imageRect.y ) * imageRect.width * 3 );
 
 	unsigned char r = pixels[ p + 0 ];
 	unsigned char g = pixels[ p + 1 ];
@@ -377,19 +363,19 @@ int ofxCirclePacker :: getImageColor ( int x, int y, unsigned char *pixels, ofRe
 //	MATH.
 //////////////////////////////////////////
 
-float ofxCirclePacker :: distance( float x1, float y1, float x2, float y2 )
+float ofxCirclePacker :: distance( const ofPoint& p1, const ofPoint& p2 )
 {
-	return sqrtf( (x1-x2) * (x1-x2) + (y1-y2) * (y1-y2) );
+	return sqrtf( ( p1.x - p2.x ) * ( p1.x - p2.x ) + ( p1.y - p2.y ) * ( p1.y - p2.y ) );
 }
 
-float ofxCirclePacker :: fastDistance( float x1, float y1, float x2, float y2 )
+float ofxCirclePacker :: fastDistance( const ofPoint& p1, const ofPoint& p2 )
 {
-	return (x1-x2) * (x1-x2) + (y1-y2) * (y1-y2);
+	return ( p1.x - p2.x ) * ( p1.x - p2.x ) + ( p1.y - p2.y ) * ( p1.y - p2.y );
 }
 
-bool ofxCirclePacker :: circleCollision( float x1, float y1, float x2, float y2, float radius1, float radius2 )
+bool ofxCirclePacker :: circleCollision( const ofPoint& p1, const ofPoint& p2, float radius1, float radius2 )
 {
-	if ( distance( x1, y1, x2, y2 ) > radius1 + radius2 )
+	if ( distance( p1, p2 ) > radius1 + radius2 )
 	{
 		return false;
 	}
@@ -399,9 +385,9 @@ bool ofxCirclePacker :: circleCollision( float x1, float y1, float x2, float y2,
 	}
 }
 
-bool ofxCirclePacker :: fastCircleCollision( float x1, float y1, float x2, float y2, float radius1, float radius2 )
+bool ofxCirclePacker :: fastCircleCollision( const ofPoint& p1, const ofPoint& p2, float radius1, float radius2 )
 {
-	if ( fastDistance( x1, y1, x2, y2 ) > ( radius1 + radius2 ) * ( radius1 + radius2 ) )
+	if ( fastDistance( p1, p2 ) > ( radius1 + radius2 ) * ( radius1 + radius2 ) )
 	{
 		return false;
 	}
@@ -409,4 +395,72 @@ bool ofxCirclePacker :: fastCircleCollision( float x1, float y1, float x2, float
 	{
 		return true;
 	}
+}
+
+//////////////////////////////////////////
+//	SAVE / LOAD.
+//////////////////////////////////////////
+
+void ofxCirclePacker :: writeToFile ( string filename )
+{
+	ofstream fout;
+	fout.open( ofToDataPath( filename ).c_str() );
+	
+	for( int i=0; i<circles.size(); i++ )
+	{
+		string circleDataStr;
+		
+		circleDataStr = 
+		ofToString( circles[ i ].loc.x,		5 ) + " " +
+		ofToString( circles[ i ].loc.y,		5 ) + " " +
+		ofToString( circles[ i ].color,		0 ) + " " +
+		ofToString( circles[ i ].growth,	5 ) + " " +
+		ofToString( circles[ i ].alive,		0 ) + " " +
+		ofToString( circles[ i ].lifeCount,	0 ) + " " +
+		ofToString( circles[ i ].radius,	5 );
+		
+		fout << circleDataStr << endl;
+	}
+	
+	fout.close();
+}
+
+void ofxCirclePacker :: loadFromFile ( string filename )
+{
+	reset();
+	
+	bPaused = true;
+	
+	ifstream	circleDataFile;
+	string		circleDataStr;
+	
+	circleDataFile.open( ofToDataPath( filename ).c_str() );
+	
+	if( circleDataFile.is_open() )
+	{
+		while( !circleDataFile.eof() )
+		{
+			getline( circleDataFile, circleDataStr );
+			
+			if( circleDataStr == "" )
+				continue;
+			
+			vector<string> circleData;
+			circleData = ofSplitString( circleDataStr, " " );
+			
+			Circle circle;
+			
+			circle.loc.x		= atof( circleData[ 0 ].c_str() );
+			circle.loc.y		= atof( circleData[ 1 ].c_str() );
+			circle.color		= atoi( circleData[ 2 ].c_str() );
+			circle.growth		= atof( circleData[ 3 ].c_str() );
+			circle.alive		= atoi( circleData[ 4 ].c_str() );
+			circle.lifeCount	= atoi( circleData[ 5 ].c_str() );
+			circle.radius		= atof( circleData[ 6 ].c_str() );
+			
+			circles.push_back( circle );
+		}
+	}
+	
+	circleDataFile.close();
 }

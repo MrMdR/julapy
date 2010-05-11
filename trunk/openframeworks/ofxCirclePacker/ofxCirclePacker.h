@@ -16,12 +16,16 @@
 
 struct Circle 
 {
-	ofPoint		loc;
-	float		radius;
-	float		growth;
-	int			color;
-	int			lifeCount;
-	bool		alive;
+	int		id;
+	ofPoint	loc;
+	float	radius;
+	float	growth;
+	int		color;
+	int		lifeCount;
+	bool	alive;
+	bool	bUnderMinRadius;
+	
+	vector<Circle*>	neighbours;
 };
 
 class ofxCirclePacker
@@ -42,21 +46,24 @@ public :
 	void setCircleColorBounds	( bool useColorBounds );
 	void togglePause			();
 
-	void addCircles		( int numOfCircles, int color = 0xFFFFFF );
-	void addCircle		( int color = 0xFFFFFF );
+	void addCircles			( int numOfCircles, int color = 0xFFFFFF );
+	void addCircle			( int color = 0xFFFFFF );
 	
 	void update			();
 	void draw			();
 	void reset			();
 	
+	vector<Circle>&		getCircles();
+	
 	void writeToFile	( string filename = "circle_data" );
 	void loadFromFile	( string filename = "circle_data" );
-	
-	vector<Circle>&		getCircles();
 	
 private :
 
 	vector<Circle>	circles;
+	
+	int				circleIdCount;
+	int				circleIdLimit;
 	
 	ofImage			*circleColorBoundsImage;
 	unsigned char	*circleColorBoundsImagePixels;
@@ -77,16 +84,18 @@ private :
 	
 	bool			bPaused;
 	
+	void checkForNeighbours		( Circle& circle );
+	
 	void  checkCircleCollision	();
 	void  checkCircleImage		();
 	void  removeInvalidCircles	();
 	
-	int	  getImageColor			( int x, int y, unsigned char *pixels, ofRectangle *rect );
+	int	  getImageColor			( int x, int y, unsigned char *pixels, const ofRectangle& rect );
 	
-	float distance				( float x1, float y1, float x2, float y2 );
-	float fastDistance			( float x1, float y1, float x2, float y2 );
-	bool  circleCollision		( float x1, float y1, float x2, float y2, float radius1, float radius2 );
-	bool  fastCircleCollision	( float x1, float y1, float x2, float y2, float radius1, float radius2 );
+	float distance				( const ofPoint& p1, const ofPoint& p2 );
+	float fastDistance			( const ofPoint& p1, const ofPoint& p2 );
+	bool  circleCollision		( const ofPoint& p1, const ofPoint& p2, float radius1, float radius2 );
+	bool  fastCircleCollision	( const ofPoint& p1, const ofPoint& p2, float radius1, float radius2 );
 };
 
 #endif
