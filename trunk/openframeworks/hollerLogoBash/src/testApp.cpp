@@ -239,8 +239,8 @@ void testApp :: initCirclePacker ()
 	logoRect.height	= logoJpg.height;
 	
 	circlePacker.setColorBoundsImage( &logoJpg, logoRect );
-	circlePacker.setCircleRadiusMin( 1 );
-	circlePacker.setCircleRadiusMax( 40 );
+	circlePacker.setCircleRadiusMin( 2 );
+	circlePacker.setCircleRadiusMax( 20 );
 	circlePacker.setCircleGap( 2.0 );
 	circlePacker.setCircleDeathGap( 3.0 );
 //	circlePacker.setCircleColorBounds( true );
@@ -586,7 +586,7 @@ void testApp :: addCirclesToBox2d ()
 				b2dCircles.push_back( circ );
 				
 				int color;
-				color = colors[ (int)( colors.size() * ofRandom( 0.0, 1.0 ) ) ];
+				color = colors[ (int)( colors.size() * ofRandom( 0.0, 0.99 ) ) ];
 				
 				circ.color = color;
 				
