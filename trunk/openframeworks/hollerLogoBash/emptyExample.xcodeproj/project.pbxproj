@@ -325,7 +325,6 @@
 		B2CD5EA51197BA64008BFDCD /* ofxCirclePacker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCirclePacker.cpp; path = ../../../addons/ofxCirclePacker/ofxCirclePacker.cpp; sourceTree = SOURCE_ROOT; };
 		B2CD5EA61197BA64008BFDCD /* ofxCirclePacker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCirclePacker.h; path = ../../../addons/ofxCirclePacker/ofxCirclePacker.h; sourceTree = SOURCE_ROOT; };
 		B2CD5FFC1197E23F008BFDCD /* ofxBox2dCircleCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dCircleCustom.h; path = src/ofxBox2dCircleCustom.h; sourceTree = SOURCE_ROOT; };
-		B2CD5FFD1197E23F008BFDCD /* ofxBox2dPolygonCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dPolygonCustom.h; path = src/ofxBox2dPolygonCustom.h; sourceTree = SOURCE_ROOT; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -1063,7 +1062,6 @@
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				B2CD5FFC1197E23F008BFDCD /* ofxBox2dCircleCustom.h */,
-				B2CD5FFD1197E23F008BFDCD /* ofxBox2dPolygonCustom.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

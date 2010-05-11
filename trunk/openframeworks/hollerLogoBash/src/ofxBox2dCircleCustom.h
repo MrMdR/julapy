@@ -74,29 +74,20 @@ public :
 		glPopMatrix();
 	}
 	
-	virtual void draw() {
-		if(dead && !body) return;
+	virtual void draw()
+	{
+		if( dead && !body )
+			return;
 		
 		float radius;
 		radius = getRadius();
 		radius *= 0.9;			// smaller for extra space between objects.
 		
 		glPushMatrix();
-		glTranslatef(getPosition().x, getPosition().y, 0);
+		glTranslatef( getPosition().x, getPosition().y, 0 );
 		
-		ofEnableSmoothing();
-		
-		ofFill();
 		ofSetColor( color );
-		
 		ofCircle( 0, 0, radius );
-		
-		ofNoFill();
-		ofSetColor( color );
-
-		ofCircle( 0, 0, radius );
-		
-		ofDisableSmoothing();
 		
 		glPopMatrix();
 	}
