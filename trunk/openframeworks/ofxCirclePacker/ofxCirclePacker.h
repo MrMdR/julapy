@@ -84,11 +84,9 @@ private :
 	
 	bool			bPaused;
 	
-	void checkForNeighbours		( Circle& circle );
-	
-	void  checkCircleCollision	();
-	void  checkCircleImage		();
-	void  removeInvalidCircles	();
+	void  checkForNeighbours	( Circle& circle );
+	void  checkCircleCollision	( Circle& circle );
+	void  checkCircleImage		( Circle& circle );
 	
 	int	  getImageColor			( int x, int y, unsigned char *pixels, const ofRectangle& rect );
 	
