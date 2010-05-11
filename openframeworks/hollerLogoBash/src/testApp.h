@@ -8,7 +8,6 @@
 #include "ofxResizeUtil.h"
 #include "ofxTriangle.h"
 #include "ofxBox2d.h"
-#include "ofxBox2dPolygonCustom.h"
 #include "ofxBox2dCircleCustom.h"
 #include "ofxScreenGrabUtil.h"
 #include "OpticalField.h"
@@ -54,12 +53,10 @@ public:
 	void updateCamera			();
 	void updateCv				( unsigned char *pixels );
 	int  updateContours			();
-	void updateTriangles		();
-	void addTrianglesToBox2d	();
-	void updateTriangleShapes	();
 	void addCirclesToBox2d		();
 	void updateCirclePacker		();
 	void updateCircles			();
+	void killCircles			();
 	
 	void parseShapes				();
 	void scaleShapes				();
@@ -72,8 +69,6 @@ public:
 	void drawBorder			( const ofRectangle& rect );
 	void drawShapes			();
 	void drawShape			( Shape& shape );
-	void drawTriangles		();
-	void drawTriangleShapes	();
 	void drawCirclePacker	();
 	void drawCircles		();
 
@@ -89,6 +84,7 @@ public:
 
 	bool					bDebug;
 	bool					bFullScreen;
+	bool					bSmooth;
 	int						frameRate;
 	
 	ofImage					logo;
@@ -121,10 +117,6 @@ public:
 	ofxTriangle             triangle;
 	
 	ofxBox2d				box2d;
-	ofxBox2dPolygonCustom	floor;
-	
-	vector<ofxBox2dPolygonCustom>	triangles;
-	vector<TriangleShape>			triangleShapes;
 	
 	OpticalField			opticalField;
 	ofRectangle				opticalFieldRect;

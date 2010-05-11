@@ -14,6 +14,7 @@ void testApp::setup()
 	
 	bDebug		= true;
 	bFullScreen	= false;
+	bSmooth		= false;
 	bUseCamera	= true;
 	
 	initColors();
@@ -238,8 +239,8 @@ void testApp :: initCirclePacker ()
 	logoRect.height	= logoJpg.height;
 	
 	circlePacker.setColorBoundsImage( &logoJpg, logoRect );
-	circlePacker.setCircleRadiusMin( 2 );
-	circlePacker.setCircleRadiusMax( 100 );
+	circlePacker.setCircleRadiusMin( 1 );
+	circlePacker.setCircleRadiusMax( 40 );
 	circlePacker.setCircleGap( 2.0 );
 	circlePacker.setCircleDeathGap( 3.0 );
 //	circlePacker.setCircleColorBounds( true );
@@ -548,162 +549,6 @@ void testApp :: copyPolygonData ( const vector<ofxPoint2f>& p1, vector<ofPoint>&
 	}
 }
 
-void testApp :: updateTriangles ()
-{
-	triangle.clear();
-	
-	for( int i=0; i<shapes.size(); i++ )
-	{
-		int resolution;
-//		resolution = MAX( 3.0, shapes.at( i ).polyPoints.size() * 0.03 );
-		resolution = MAX( 3.0, shapes.at( i ).polyPoints.size() * 0.08 );
-//		resolution = MAX( 3.0, shapes.at( i ).polyPoints.size() * 0.2 );
-//		resolution = MAX( 3.0, shapes.at( i ).polyPoints.size() * 0.3 );
-		
-		triangle.triangulate( shapes.at( i ).polyPoints, resolution );
-	}
-	
-	int t;
-	t = triangles.size();
-	
-	for( int i=0; i<t; i++ )
-	{
-		ofxBox2dPolygonCustom& tri = triangles[ i ];
-		
-		ofPoint p = tri.getPosition();
-		
-		if			// check if off screen.
-		(
-			p.x < -100					||
-			p.x > ofGetWidth()  + 100	||
-			p.y > ofGetHeight() + 100
-		)
-		{
-			tri.destroyShape();
-			
-			triangles.erase( triangles.begin() + i );		// remove from array, step back counter after removed.
-			
-			--i;
-			--t;
-		}
-	}
-}
-
-void testApp :: addTrianglesToBox2d ()
-{
-	for( int i=0; i<triangle.getTriangles().size(); i++ )
-	{
-		ofxTriangleData& triData = triangle.getTriangles().at( i );
-		
-		float triScale;
-//		triScale = 1.0;
-		triScale = logoCropRect.width / (float)cameraRect.width;
-		
-		ofPoint tp;
-		tp = triangle.getTriangleCenter( triData );
-		
-		ofPoint ta, tb, tc;
-		ta = triData.a - tp;
-		tb = triData.b - tp;
-		tc = triData.c - tp;
-		
-		ofPoint tsa, tsb, tsc, tsp;
-		tsa	= ta * triScale;
-		tsb	= tb * triScale;
-		tsc	= tc * triScale;
-		tsp	= tp * triScale;
-
-		ofPoint tspn;		// triangle scaled point + normalised.
-		tspn.x = tsp.x / (float)logoCropRect.width;
-		tspn.y = tsp.y / (float)logoCropRect.height;
-		
-		tsa.x += logoCropRect.x * 0.5;
-		tsa.y += logoCropRect.y * 0.5;
-		tsb.x += logoCropRect.x * 0.5;
-		tsb.y += logoCropRect.y * 0.5;
-		tsc.x += logoCropRect.x * 0.5;
-		tsc.y += logoCropRect.y * 0.5;
-		tsp.x += logoCropRect.x * 0.5;
-		tsp.y += logoCropRect.y * 0.5;
-		
-		ofxBox2dPolygonCustom tri;
-		
-//		tri.setPhysics( 0, 0, 0 );			// fixed.
-		tri.setPhysics
-		(
-			1.0,							// mass.
-			ofRandom( 0.5, 0.8 ),			// bouce.
-			ofRandom( 0.1, 0.7 )			// friction.
-		);
-		
-		int color;
-		color = colors[ (int)( colors.size() * ofRandom( 0.0, 1.0 ) ) ];
-		
-		tri.addVertex( tsa );
-		tri.addVertex( tsb );
-		tri.addVertex( tsc );
-		tri.createShape( box2d.getWorld(), tsp.x, tsp.y );
-		tri.color = color;
-		
-		ofPoint opVel;
-		opticalField.getVelAtNorm( tspn.x, tspn.y, &opVel.x, &opVel.y );
-		opVel *= 2;
-		
-		tri.setVelocity( opVel.x, opVel.y );
-		
-//		float velMax;
-//		velMax = 1;
-//		
-//		ofxVec2f vel;
-//		vel.x	= ofRandom( -velMax, velMax );
-//		vel.y	= ofRandom( -velMax, velMax );
-//		tri.setVelocity( vel.x, vel.y );
-		
-		triangles.push_back( tri );
-		
-		//--triangle shape.
-		
-		TriangleShape ts;
-		ts.vertex[ 0 ]	= tsa + tsp;
-		ts.vertex[ 1 ]	= tsb + tsp;
-		ts.vertex[ 2 ]	= tsc + tsp;
-		ts.colorFill	= color;
-		ts.colorBorder	= color;
-//		ts.colorFill	= 0xFFFFFF;
-//		ts.colorBorder	= 0x000000;
-		ts.count		= 0;
-		ts.countKill	= 90;
-		ts.fade			= 1.0;
-		ts.alpha		= 255;
-		
-		triangleShapes.push_back( ts );
-	}
-}
-
-void testApp :: updateTriangleShapes ()
-{
-	int i = 0;
-	int t = triangleShapes.size();
-	
-	for( i; i<t; i++ )
-	{
-		TriangleShape& ts = triangleShapes[ i ];
-		
-		if( ++ts.count == ts.countKill )
-		{
-			triangleShapes.erase( triangleShapes.begin() + i );
-			
-			--i;
-			--t;
-		}
-		else
-		{
-			ts.fade		= 1 - ( ts.count / (float)ts.countKill );
-			ts.alpha	= (int)( 255 * ts.fade );
-		}
-	}
-}
-
 void testApp :: addCirclesToBox2d ()
 {
 	vector<Circle>& circles	= circlePacker.getCircles();
@@ -714,7 +559,11 @@ void testApp :: addCirclesToBox2d ()
 	for( i; i<t; i++ )
 	{
 		Circle& circle	= circles[ i ];
-		ofPoint p		= circle.loc;
+		
+		if( circle.bUnderMinRadius )
+			continue;
+		
+		ofPoint p = circle.loc;
 		
 		for( int j=0; j<shapes.size(); j++ )
 		{
@@ -750,12 +599,13 @@ void testApp :: addCirclesToBox2d ()
 				
 				ofPoint vo;
 				opticalField.getVelAtNorm( vn.x, vn.y, &vo.x, &vo.y );
-//				vo *= 1;
+				vo *= 2;
 				
 				circ.setVelocity( vo.x, vo.y );
 				
 				//-- remove from packer.
 				
+				circle.neighbours.clear();
 				circles.erase( circles.begin() + i );		// remove circle from packer.
 				
 				--i;
@@ -805,6 +655,16 @@ void testApp :: updateCircles ()
 	}
 }
 
+void testApp :: killCircles ()
+{
+	for( int i=0; i<b2dCircles.size(); i++ )
+	{
+		b2dCircles[ i ].destroyShape();
+	}
+	
+	b2dCircles.clear();
+}
+
 //--------------------------------------------------------------
 void testApp::draw()
 {
@@ -829,8 +689,6 @@ void testApp::draw()
 		drawDebug();
 	}
 
-	drawTriangleShapes();
-	drawTriangles();
 	drawCirclePacker();
 	drawCircles();
 	
@@ -932,61 +790,17 @@ void testApp :: drawShape ( Shape& shape )
 	ofEndShape( true );
 }
 
-void testApp :: drawTriangles ()
-{
-	for( int i=0; i<triangles.size(); i++ )
-	{
-		triangles[ i ].draw();
-	}
-}
-
-void testApp :: drawTriangleShapes ()
-{
-	ofEnableSmoothing();
-	ofEnableAlphaBlending();
-	
-	for( int i=0; i<triangleShapes.size(); i++ )
-	{
-		TriangleShape& ts = triangleShapes[ i ];
-		
-		ofxColor cf = ofxColor( ts.colorFill );
-		ofxColor cb = ofxColor( ts.colorBorder );
-		
-		int cfr = cf.red   + (int)( ( 255 - cf.red   ) * ( 1 - ts.fade ) );
-		int cfg = cf.green + (int)( ( 255 - cf.green ) * ( 1 - ts.fade ) );
-		int cfb = cf.blue  + (int)( ( 255 - cf.blue  ) * ( 1 - ts.fade ) );
-
-		int cbr = cb.red   + (int)( ( 255 - cb.red   ) * ( 1 - ts.fade ) );
-		int cbg = cb.green + (int)( ( 255 - cb.green ) * ( 1 - ts.fade ) );
-		int cbb = cb.blue  + (int)( ( 255 - cb.blue  ) * ( 1 - ts.fade ) );
-		
-		ofFill();
-		ofSetColor( cfr, cfg, cfb, ts.alpha );
-		ofBeginShape();
-		ofVertex( ts.vertex[ 0 ].x, ts.vertex[ 0 ].y );
-		ofVertex( ts.vertex[ 1 ].x, ts.vertex[ 1 ].y );
-		ofVertex( ts.vertex[ 2 ].x, ts.vertex[ 2 ].y );
-		ofEndShape(true);
-		
-		ofNoFill();
-		ofSetColor( cbr, cbg, cbb, ts.alpha );
-		ofBeginShape();
-		ofVertex( ts.vertex[ 0 ].x, ts.vertex[ 0 ].y );
-		ofVertex( ts.vertex[ 1 ].x, ts.vertex[ 1 ].y );
-		ofVertex( ts.vertex[ 2 ].x, ts.vertex[ 2 ].y );
-		ofVertex( ts.vertex[ 0 ].x, ts.vertex[ 0 ].y );
-		ofEndShape(true);
-		ofEndShape();
-	}
-	
-	ofDisableSmoothing();
-	ofDisableAlphaBlending();
-}
-
 void testApp :: drawCirclePacker ()
 {
+	ofFill();
+	circlePacker.draw();
+
+	if( !bSmooth )
+		return;
+
 	ofEnableSmoothing();
 	
+	ofNoFill();
 	circlePacker.draw();
 	
 	ofDisableSmoothing();
@@ -994,10 +808,25 @@ void testApp :: drawCirclePacker ()
 
 void testApp :: drawCircles ()
 {
+	ofFill();
+	
 	for( int i=0; i<b2dCircles.size(); i++ )
 	{
 		b2dCircles[ i ].draw();
 	}
+
+	if( !bSmooth )
+		return;
+	
+	ofEnableSmoothing();
+	ofNoFill();
+	
+	for( int i=0; i<b2dCircles.size(); i++ )
+	{
+		b2dCircles[ i ].draw();
+	}
+	
+	ofDisableSmoothing();
 }
 
 //--------------------------------------------------------------
@@ -1018,6 +847,16 @@ void testApp::keyReleased(int key)
 		bFullScreen = !bFullScreen;
 		
 		ofToggleFullscreen();
+	}
+	
+	if( key == 'k' )
+	{
+		killCircles();
+	}
+	
+	if( key == 's' )
+	{
+		bSmooth = !bSmooth;
 	}
 }
 
