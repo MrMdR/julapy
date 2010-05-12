@@ -19,11 +19,9 @@ ofxCirclePacker :: ofxCirclePacker()
 	setCircleColorBounds( false );
 	
 	circleIdCount	= 0;
-	circleIdLimit	= 10000;
 	
 	useCircleColorMapImage		= false;
 	useCircleColorBoundsImage	= false;
-	bPaused						= false;
 }
 
 ofxCirclePacker :: ~ofxCirclePacker()
@@ -41,24 +39,19 @@ void ofxCirclePacker :: addCircles( int numOfCircles, int color )
 
 void ofxCirclePacker :: addCircle( int color )
 {
-	if( bPaused )
-		return;
-	
 	circles.push_back( Circle() );
 	Circle& circle = circles.back();
 	
-	int id;
-	id =  circleIdCount++;
-	id %= circleIdLimit;
-	
-	circle.id				= id;
+	circle.id				= circleIdCount;
 	circle.loc.x			= ofRandom( (float)circleColorBoundsImageRect.x, (float)( circleColorBoundsImageRect.x + circleColorBoundsImageRect.width  ) );
 	circle.loc.y			= ofRandom( (float)circleColorBoundsImageRect.y, (float)( circleColorBoundsImageRect.y + circleColorBoundsImageRect.height ) );
+	circle.lifeCount		= 0;
+	circle.growth			= ofRandom( 0.1, 0.5 );
 	circle.radius			= 0;
+	circle.radiusNext		= circle.growth;
 	circle.alive			= true;
 	circle.bUnderMinRadius	= true;
-	circle.growth			= ofRandom( 0.1, 0.5 );
-	circle.lifeCount		= 0;
+	
 	
 	if( useCircleColorMapImage )
 	{
@@ -69,48 +62,59 @@ void ofxCirclePacker :: addCircle( int color )
 		circle.color	= color;
 	}
 	
-	checkForNeighbours( circle );
-
+	bool bValid;
+	bValid = true;
+	
 	if( useCircleColorBoundsImage )
 	{
-		checkCircleImage( circle );
+		bValid = bValid && checkCircleImage( circle );					// fits on image.
 	}
 	
-	checkCircleCollision( circle );
-	
-	if( !circle.alive )				// did not pass the first pass, remove from circles.
+	if( bValid )
 	{
-		circle.neighbours.clear();
-		circles.erase( circles.begin() + circles.size() - 1 );
+		bValid = bValid && !checkCircleCollisionWithAll( circle );		// no collision.
+	}
+	
+	if( bValid )									// circle is valid on first pass.
+	{
+		++circleIdCount;
+		
+		findNeighbours( circle );					// circle fits, find neighbours.
+	}
+	else											
+	{
+		circles.erase( circles.end() - 1 );			// did not fit, remove.
 	}
 }
 
 void ofxCirclePacker :: update()
 {
-	if( circles.size() == 0 )
-		return;
-	
-	if( bPaused )
-		return;
-	
 	for( int i=0; i<circles.size(); i++ )
 	{
 		Circle& circle = circles[ i ];
 
-		if( useCircleColorBoundsImage )
+		bool bValid;
+		bValid = circle.alive;
+		
+		if( bValid && useCircleColorBoundsImage )
 		{
-			checkCircleImage( circle );
+			bValid = bValid && checkCircleImage( circle );
 		}
 		
-		checkCircleCollision( circle );
+		if( bValid )
+		{
+//			bValid = bValid && !checkCircleCollisionWithNeighbours( circle );		// NOTE : partially working, some weird bug i can't figure out.
+			bValid = bValid && !checkCircleCollisionWithAll( circle );
+		}
 		
-		if( circle.alive || circle.bUnderMinRadius )
+		if( bValid || circle.bUnderMinRadius )					// circle is valid or is under min radius, increase in size.
 		{
 			circle.radius			+= circle.growth;
+			circle.radiusNext		+= circle.growth;
 			circle.lifeCount		+= 1;
 			
-			circle.bUnderMinRadius	= ( circles[ i ].radius < circleRadiusMin );
 			circle.alive			= ( circles[ i ].radius <= circleRadiusMax );
+			circle.bUnderMinRadius	= ( circles[ i ].radius < circleRadiusMin );
 		}
  	}
 }
@@ -134,62 +138,86 @@ void ofxCirclePacker :: reset ()
 //	CHECKS.
 //////////////////////////////////////////
 
-void ofxCirclePacker :: checkForNeighbours ( Circle& c1 )
+void ofxCirclePacker :: findNeighbours ( Circle& c1 )
 {
 	for( int i=0; i<circles.size(); i++ )
 	{
 		Circle& c2 = circles[ i ];
 		
-		if( c1.id == c2.id )		// same circle, skip.
+		if( c1.id == c2.id )					// same circle, skip.
 			continue;
 		
 		float d = distance( c1.loc, c2.loc );
 		
-		if( d < circleRadiusMax * 2 )		// we're neighbours!
+		if( d < circleRadiusMax * 2 )			// we're neighbours!
 		{
 			c1.neighbours.push_back( &c2 );
 			c2.neighbours.push_back( &c1 );
 			
-			cout << "c_" << c1.id << " and " << "c_" << c2.id << " are neightbours." << endl;
+//			cout << "c_" << c1.id << " and " << "c_" << c2.id << " are neightbours." << endl;
 		}
 	}
 }
 
-void ofxCirclePacker :: checkCircleCollision ( Circle& c1 )
+bool ofxCirclePacker :: checkCircleCollisionWithAll ( Circle& c1 )
+{
+	for( int i=0; i<circles.size(); i++ )
+	{
+		Circle& c2 = circles[ i ];
+		
+		if( checkCircleCollision( c1, c2 ) )
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool ofxCirclePacker :: checkCircleCollisionWithNeighbours ( Circle& c1 )
 {
 	for( int i=0; i<c1.neighbours.size(); i++ )
 	{
 		Circle& c2 = *c1.neighbours[ i ];
 		
-		if( !c1.alive && !c2.alive )
-			continue;
-		
-		float r1 = ( c1.bUnderMinRadius ) ? circleRadiusMin : c1.radius;
-		float r2 = ( c2.bUnderMinRadius ) ? circleRadiusMin : c2.radius;
-		
-		bool bCollision;
-		bCollision = fastCircleCollision
-		(
-			c1.loc,
-			c2.loc,
-			r1 + circleGap * 0.5,
-			r2 + circleGap * 0.5
-		);
-		
-		if( bCollision )
+		if( checkCircleCollision( c1, c2 ) )
 		{
-			c1.alive = false;
-			c2.alive = false;
+			return true;
 		}
 	}
+	
+	return false;
 }
 
-void ofxCirclePacker :: checkCircleImage ( Circle& circle )
+bool ofxCirclePacker :: checkCircleCollision( Circle& c1, Circle& c2 )
 {
-	if( !circle.alive )
-		return;
+	if( c1.id == c2.id )	// can't collide with itself.
+		return false;
 	
-	float radius = ( circle.bUnderMinRadius ) ? circleRadiusMin : circle.radius;
+	float r1 = ( c1.bUnderMinRadius ) ? circleRadiusMin : c1.radiusNext;
+	float r2 = ( c2.bUnderMinRadius ) ? circleRadiusMin : c2.radiusNext;
+	
+	bool bCollision;
+	bCollision = fastCircleCollision
+	(
+		c1.loc,
+		c2.loc,
+		r1 + circleGap * 0.5,
+		r2 + circleGap * 0.5
+	);
+	
+	if( bCollision )
+	{
+		c1.alive = false;
+		c2.alive = false;
+	}
+	
+	return bCollision;
+}
+
+bool ofxCirclePacker :: checkCircleImage ( Circle& circle )
+{
+	float radius = ( circle.bUnderMinRadius ) ? circleRadiusMin : circle.radiusNext;
 	
 	//-- CHECK CIRCLE IS WITHIN IMAGE BOUNDS.
 	
@@ -202,7 +230,7 @@ void ofxCirclePacker :: checkCircleImage ( Circle& circle )
 	{
 		circle.alive = false;
 		
-		return;
+		return false;
 	}
 	
 	//-- CHECK CIRCLE IS WITHIN IMAGE SHAPE.
@@ -211,7 +239,6 @@ void ofxCirclePacker :: checkCircleImage ( Circle& circle )
 	int cy = (int)( circle.loc.y - ( radius + circleDeathGap ) );
 	int cw = (int)( ( radius + circleDeathGap ) * 2 );
 	int ch = (int)( ( radius + circleDeathGap ) * 2 );
-	bool inBounds = true;
 	
 	for( int x=cx; x<=cx+cw; x++ )
 	{
@@ -225,9 +252,7 @@ void ofxCirclePacker :: checkCircleImage ( Circle& circle )
 				{
 					circle.alive = false;
 					
-					inBounds = false;
-					
-					break;
+					return false;
 				}
 			}
 			
@@ -235,15 +260,12 @@ void ofxCirclePacker :: checkCircleImage ( Circle& circle )
 			{
 				circle.alive = false;
 				
-				inBounds = false;
-				
-				break;
+				return false;
 			}
 		}
-		
-		if( !inBounds )
-			break;
 	}
+	
+	return true;
 }
 
 //////////////////////////////////////////
@@ -313,11 +335,6 @@ void ofxCirclePacker :: setCircleDeathColor	( int color )
 void ofxCirclePacker :: setCircleColorBounds ( bool useColorBounds )
 {
 	circleColorBounds = useColorBounds;
-}
-
-void ofxCirclePacker :: togglePause ()
-{
-	bPaused = !bPaused;
 }
 
 //////////////////////////////////////////
@@ -404,8 +421,6 @@ void ofxCirclePacker :: writeToFile ( string filename )
 void ofxCirclePacker :: loadFromFile ( string filename )
 {
 	reset();
-	
-	bPaused = true;
 	
 	ifstream	circleDataFile;
 	string		circleDataStr;
