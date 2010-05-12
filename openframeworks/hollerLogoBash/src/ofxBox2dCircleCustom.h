@@ -87,6 +87,9 @@ public :
 		glTranslatef( getPosition().x, getPosition().y, 0 );
 		
 		ofSetColor( color );
+		
+//		cout << color << endl;
+		
 		ofCircle( 0, 0, radius );
 		
 		glPopMatrix();
