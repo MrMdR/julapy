@@ -19,6 +19,7 @@ struct Circle
 	int		id;
 	ofPoint	loc;
 	float	radius;
+	float	radiusNext;
 	float	growth;
 	int		color;
 	int		lifeCount;
@@ -44,7 +45,6 @@ public :
 	void setCircleDeathGap		( float gap );
 	void setCircleDeathColor	( int color );
 	void setCircleColorBounds	( bool useColorBounds );
-	void togglePause			();
 
 	void addCircles			( int numOfCircles, int color = 0xFFFFFF );
 	void addCircle			( int color = 0xFFFFFF );
@@ -82,11 +82,11 @@ private :
 	int				circleDeathColor;
 	bool			circleColorBounds;
 	
-	bool			bPaused;
-	
-	void  checkForNeighbours	( Circle& circle );
-	void  checkCircleCollision	( Circle& circle );
-	void  checkCircleImage		( Circle& circle );
+	void  findNeighbours						( Circle& circle );
+	bool  checkCircleCollisionWithAll			( Circle& circle );
+	bool  checkCircleCollisionWithNeighbours	( Circle& circle );
+	bool  checkCircleCollision					( Circle& circle1, Circle& circle2 );
+	bool  checkCircleImage						( Circle& circle );
 	
 	int	  getImageColor			( int x, int y, unsigned char *pixels, const ofRectangle& rect );
 	
