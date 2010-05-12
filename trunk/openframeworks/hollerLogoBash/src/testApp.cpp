@@ -8,13 +8,14 @@ void testApp::setup()
 	
 	ofSetVerticalSync( true );
 	ofSetFrameRate( frameRate );
+	ofSetCircleResolution( 100 );
 	
 	screenGrab.setup( "movies/" );
 //	screenGrab.setPause( false );
 	
-	bDebug		= true;
+	bDebug		= false;
 	bFullScreen	= false;
-	bSmooth		= false;
+	bSmooth		= true;
 	bUseCamera	= true;
 	
 	initColors();
@@ -67,6 +68,15 @@ void testApp :: initColors ()
 //	};
 //	colorSize = 32;
 
+//	int colorArray[] =			// image 6
+//	{
+//		0x9F6255,0xE3A991,0x975E26,0x521D25,0xFFFFFE,0xF9C99E,0xCE9271,0xB58255,0xCA904E,0xCC9728,
+//		0xAC6681,0xB18220,0xDCA872,0xEDB784,0xBC7562,0x844056,0xD6A64C,0x803C20,0xFFF7D4,0xF5CA7C,
+//		0xE6AF53,0xFDD7B7,0xC48386,0xB47436,0x612269,0xDD9A7A,0xD8CBC1,0xDD994F,0xEBACAD,0xEEBD2D,
+//		0xF9DADF,0xD691A5
+//	};
+//	colorSize = 32;
+
 //	int colorArray[] =			// image 7
 //	{
 //		0xF4FAF2,0xFD7E5,0xC6597,0xCE2C43,0x6B5D3,0x242855,0x5ADEE6,0x290B6,0xA2E6EB,0xEFE7AA,
@@ -82,11 +92,37 @@ void testApp :: initColors ()
 //	};
 //	colorSize = 3;
 
-	int colorArray[] =			// custom.
+//	int colorArray[] =			// custom.
+//	{
+//		0xFF0000,0x0000FF,0xFF00FF
+//	};
+//	colorSize = 3;
+	
+	int colorArray[] =			// custom 1.
 	{
-		0xFF0000,0x0000FF,0xFF00FF
+		0x4C526B,0xB00347,0x306C73,0xC70146,0xEC2E2B,0x8A0B42,0xF98D10,0x188379,0xF77616,0xDA083C,
+		0x6C1444,0xF14823,0x692552,0x9E0644,0xE31635,0x5D2D55,0x760D3E,0x693661,0x4977F,0xF35520,
+		0x8A1E52,0xE02331,0x5F1843,0xF5631C,0x825053,0xAF1E44,0x5B4164,0xD04131,0x7B2A5B,0xAD4641,
+		0xEF3C27,0xD86426
 	};
-	colorSize = 3;
+	colorSize = 32;
+
+//	int colorArray[] =			// custom 2.
+//	{
+//		0xF5CA11,0xECD693,0xE9071B,0xE0AD18,0x469089,0x17289,0xEDCE5B,0xAAAD8D,0x115265,0x9C9866,
+//		0x5F5052,0xE59B6B,0x5C8F68,0xB49C22,0xF8E397,0xD8CB8E,0xD1B687,0xE9561E,0xA31727,0xE4624F,
+//		0x624A22,0x8A7057,0x917019,0xF9EFA3,0xB3C292,0xE30E20,0x97488,0xEDC319,0xE8D392
+//	};
+//	colorSize = 29;
+
+//	int colorArray[] =			// custom 2.
+//	{
+//		0x2B4098,0xDE4F9C,0x8A59,0xECE018,0xF4D2D8,0xB3DFE4,0xFAE85E,0xFFDC96,0xED89AD,0xEE6221,
+//		0x192570,0xF49822,0x7A1D1,0xECB3D0,0x2AD91,0xF45363,0x74CBDB,0xA5A6D5,0xE51B29,0xDB0C66,
+//		0xFA9D66,0x647ABE,0x73C797,0x40BA79,0xB3D452,0xB4DCAA,0xC0D832,0xA386C0,0x97298E,0x3BC0BD,
+//		0x98C536,0x66BF48
+//	};
+//	colorSize = 32;
 	
 	colors.resize( colorSize );
 	copy( colorArray, colorArray + colorSize, colors.begin() );
@@ -187,7 +223,7 @@ void testApp :: initContours ()
 void testApp :: initBox2d ()
 {
 	box2d.init();
-//	box2d.setGravity( 0, 40 );
+//	box2d.setGravity( 0, 50 );
 //	box2d.setFPS( 40 );
 	box2d.setGravity( 0, 10 );
 	box2d.setFPS( 30 );
@@ -241,8 +277,8 @@ void testApp :: initCirclePacker ()
 	circlePacker.setColorBoundsImage( &logoJpg, logoRect );
 	circlePacker.setCircleRadiusMin( 2 );
 	circlePacker.setCircleRadiusMax( 20 );
-	circlePacker.setCircleGap( 2.0 );
-	circlePacker.setCircleDeathGap( 3.0 );
+	circlePacker.setCircleGap( 1.0 );
+	circlePacker.setCircleDeathGap( 2.0 );
 //	circlePacker.setCircleColorBounds( true );
 //	circlePacker.setCircleDeathColor( 0x000000 );
 }
@@ -367,13 +403,12 @@ void testApp :: parseShapes ()
 	
 	for( int i=0; i<t; i++ )				// initialise shapes.
 	{
-		Shape s = Shape();
+		shapes.push_back( Shape() );
+		Shape& s = shapes.back();
 		
 		s.parent	= -1;
 		s.child		= -1;
 		s.noPolys	= 1;
-		
-		shapes.push_back( s );
 	}
 	
 	for( int i=0; i<t; i++ )				// check if shapes are embedded - left to right.
@@ -573,7 +608,9 @@ void testApp :: addCirclesToBox2d ()
 			{
 				//-- add to box2d.
 				
-				ofxBox2dCircleCustom circ;
+				
+				b2dCircles.push_back( ofxBox2dCircleCustom() );
+				ofxBox2dCircleCustom& circ = b2dCircles.back();
 				
 				circ.setPhysics
 				(
@@ -583,10 +620,8 @@ void testApp :: addCirclesToBox2d ()
 				);
 				circ.setup( box2d.getWorld(), p.x, p.y, circle.radius, false );
 				
-				b2dCircles.push_back( circ );
-				
 				int color;
-				color = colors[ (int)( colors.size() * ofRandom( 0.0, 0.99 ) ) ];
+				color = colors[ (int)( colors.size() * ofRandom( 0.0, 1.0 ) ) ];
 				
 				circ.color = color;
 				
@@ -619,11 +654,7 @@ void testApp :: addCirclesToBox2d ()
 
 void testApp :: updateCirclePacker ()
 {
-	for( int i=0; i<1; i++ )
-	{
-		circlePacker.addCircles( 20, 0xFFFFFF );
-	}
-	
+	circlePacker.addCircles( 40, 0xFFFFFF );
 	circlePacker.update();
 }
 
@@ -640,7 +671,7 @@ void testApp :: updateCircles ()
 		
 		if			// check if off screen.
 		(
-			p.x < -circle.getRadius() + 10							||
+			p.x < -circle.getRadius() - 10							||
 			p.x > ofGetWidth()  + circle.getRadius() + 10			||
 			p.y > ofGetHeight() + circle.getRadius() + 10
 		)
@@ -798,9 +829,9 @@ void testApp :: drawCirclePacker ()
 	if( !bSmooth )
 		return;
 
+	ofNoFill();
 	ofEnableSmoothing();
 	
-	ofNoFill();
 	circlePacker.draw();
 	
 	ofDisableSmoothing();
@@ -818,8 +849,8 @@ void testApp :: drawCircles ()
 	if( !bSmooth )
 		return;
 	
-	ofEnableSmoothing();
 	ofNoFill();
+	ofEnableSmoothing();
 	
 	for( int i=0; i<b2dCircles.size(); i++ )
 	{
