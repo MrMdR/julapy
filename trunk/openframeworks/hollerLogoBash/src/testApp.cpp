@@ -13,9 +13,13 @@ void testApp::setup()
 	screenGrab.setup( "movies/" );
 //	screenGrab.setPause( false );
 	
+	tileSaver.init( 10, 0, true );
+	
 	bDebug		= false;
 	bFullScreen	= false;
 	bSmooth		= true;
+	bDrawGhost	= true;
+	bPause		= false;
 	bUseCamera	= true;
 	
 	initColors();
@@ -287,6 +291,12 @@ void testApp :: initCirclePacker ()
 //--------------------------------------------------------------
 void testApp::update()
 {
+	if( tileSaver.bGoTiling )
+		return;
+	
+	if( bPause )
+		return;
+	
 	updateCamera();
 	
 	if( cameraNewFrame )
@@ -699,17 +709,22 @@ void testApp :: killCircles ()
 //--------------------------------------------------------------
 void testApp::draw()
 {
+	tileSaver.begin();
+	
 	ofFill();
 	ofSetColor( 0x000000 );
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 
 	ofSetColor( 0xFFFFFF );
 
-	ofEnableAlphaBlending();
-	ofSetColor( 255, 255, 255, 40 );
-	cameraGrayDiffImage.draw( logoCropRect.x, logoCropRect.y, logoCropRect.width, logoCropRect.height );
-	ofDisableAlphaBlending();
-	ofSetColor( 0xFFFFFF );
+	if( bDrawGhost )
+	{
+		ofEnableAlphaBlending();
+		ofSetColor( 255, 255, 255, 40 );
+		cameraGrayDiffImage.draw( logoCropRect.x, logoCropRect.y, logoCropRect.width, logoCropRect.height );
+		ofDisableAlphaBlending();
+		ofSetColor( 0xFFFFFF );
+	}
 	
 //	ofEnableAlphaBlending();
 //	logoAlpha.draw( 0, 0 );
@@ -725,6 +740,8 @@ void testApp::draw()
 	
 //	floor.draw();
 //	box2d.draw();
+	
+	tileSaver.end();
 	
 	screenGrab.save();
 	
@@ -888,6 +905,19 @@ void testApp::keyReleased(int key)
 	if( key == 's' )
 	{
 		bSmooth = !bSmooth;
+	}
+	
+	if( key == 't' )
+	{
+		char str[255];
+		sprintf( str, "image_%02d%02d%02d_%02d%02d%02d.png", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds() );
+		
+		tileSaver.finish( str, false );
+	}
+	
+	if( key == 'p' )
+	{
+		bPause = !bPause;
 	}
 }
 

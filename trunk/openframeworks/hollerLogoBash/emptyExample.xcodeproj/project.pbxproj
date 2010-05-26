@@ -146,6 +146,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		15B62A4411ACF198009E91EE /* ofxTileSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTileSaver.h; path = ../../../addons/ofxTileSaver/ofxTileSaver.h; sourceTree = SOURCE_ROOT; };
+		15B62A4511ACF198009E91EE /* ofxTileSaverImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTileSaverImage.h; path = ../../../addons/ofxTileSaver/ofxTileSaverImage.h; sourceTree = SOURCE_ROOT; };
 		B2CD5D8D1197A8EA008BFDCD /* ofxColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColor.cpp; path = ../../../addons/ofxColor/ofxColor.cpp; sourceTree = SOURCE_ROOT; };
 		B2CD5D8E1197A8EA008BFDCD /* ofxColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColor.h; path = ../../../addons/ofxColor/ofxColor.h; sourceTree = SOURCE_ROOT; };
 		B2CD5D911197A8F5008BFDCD /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = install.xml; path = ../../../addons/ofxVectorMath/install.xml; sourceTree = SOURCE_ROOT; };
@@ -402,6 +404,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		15B62A4311ACF198009E91EE /* ofxTileSaver */ = {
+			isa = PBXGroup;
+			children = (
+				15B62A4411ACF198009E91EE /* ofxTileSaver.h */,
+				15B62A4511ACF198009E91EE /* ofxTileSaverImage.h */,
+			);
+			name = ofxTileSaver;
+			path = ../../../addons/ofxTileSaver;
+			sourceTree = SOURCE_ROOT;
+		};
 		B2CD5D791197A8B4008BFDCD /* addons */ = {
 			isa = PBXGroup;
 			children = (
@@ -413,6 +425,7 @@
 				B2CD5DE21197A91E008BFDCD /* ofxJulapyUtils */,
 				B2CD5DFC1197A92C008BFDCD /* ofxOpticalField */,
 				B2CD5EA41197BA64008BFDCD /* ofxCirclePacker */,
+				15B62A4311ACF198009E91EE /* ofxTileSaver */,
 			);
 			name = addons;
 			sourceTree = "<group>";
