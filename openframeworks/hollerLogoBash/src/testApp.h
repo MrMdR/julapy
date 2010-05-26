@@ -13,6 +13,7 @@
 #include "OpticalField.h"
 #include "ofxColor.h"
 #include "ofxCirclePacker.h"
+#include "ofxTileSaver.h"
 
 struct Shape
 {
@@ -85,6 +86,8 @@ public:
 	bool					bDebug;
 	bool					bFullScreen;
 	bool					bSmooth;
+	bool					bDrawGhost;
+	bool					bPause;
 	int						frameRate;
 	
 	ofImage					logo;
@@ -101,6 +104,8 @@ public:
 	ofRectangle				cameraRect;
 	bool					cameraNewFrame;
 	bool					bUseCamera;
+	
+	ofxTileSaver			tileSaver;
 	
 	ofxCvColorImage			cameraColorImage;
 	ofxCvGrayscaleImage		cameraGrayImage;
