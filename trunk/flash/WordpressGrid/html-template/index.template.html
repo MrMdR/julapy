@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta name="DISPLAYTIMESECONDS" content="-1" />
+		<meta name="REFRESH" content="ALWAYS" />
+		<style type="text/css" media="screen">
+			html, body, #flashContent	{ height:100%; }
+			body						{ margin:0; padding:0; overflow:hidden; }
+			#alternativeContent		{ /* style alt content */ }
+		</style>
+		<script type="text/javascript" src="js/swfobject.js"></script>
+		<script type="text/javascript">
+			var flashvars = {"previewID":'-1', "locationID":'1'};
+			var params = {};
+			params.scale = "noscale";
+			params.wmode = "opaque";
+			params.allowFullScreen = "true";
+			var attributes = {};
+			attributes.id = "flashContent";
+			swfobject.embedSWF("${swf}.swf", "flashContent", "100%", "100%", "9.0.0", "swfs/expressInstall.swf", flashvars, params, attributes);
+		</script>
+	</head>
+	<body>
+		<div id="flashContent">
+			<div id="alternativeContent">
+				<p><a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /></a></p>
+			</div>
+		</div>
+	</body>
+</html>
