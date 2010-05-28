@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties version="1">
+  <includeClasses>
+    <classEntry path="com.absentdesign.core.webapis.NameValuePair"/>
+    <classEntry path="com.absentdesign.core.webapis.Service"/>
+    <classEntry path="com.absentdesign.core.webapis.ServiceRequest"/>
+    <classEntry path="com.absentdesign.core.webapis.events.ServiceEvent"/>
+    <classEntry path="com.absentdesign.core.webapis.methodgroups.MethodGroup"/>
+    <classEntry path="com.absentdesign.core.webapis.methodgroups.MethodGroupHelper"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Author"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Blog"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Category"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Comment"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.CommentCount"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.CommentStatusList"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.CustomField"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Page"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.PageStatusList"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.PageTemplate"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Post"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.PostStatusList"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.Tag"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.WPService"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.WPServiceRequest"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.WPStruct"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.events.WPServiceEvent"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Authors"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Blogs"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Categories"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Comments"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Pages"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Posts"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.Tags"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.WPMethodGroup"/>
+    <classEntry path="com.absentdesign.core.webapis.wordpress.methodgroups.WPMethodGroupHelper"/>
+    <classEntry path="com.adobe.serialization.json.JSON"/>
+    <classEntry path="com.adobe.serialization.json.JSONDecoder"/>
+    <classEntry path="com.adobe.serialization.json.JSONEncoder"/>
+    <classEntry path="com.adobe.serialization.json.JSONParseError"/>
+    <classEntry path="com.adobe.serialization.json.JSONToken"/>
+    <classEntry path="com.adobe.serialization.json.JSONTokenType"/>
+    <classEntry path="com.adobe.serialization.json.JSONTokenizer"/>
+    <classEntry path="com.ak33m.rpc.amf0.AMF0Connection"/>
+    <classEntry path="com.ak33m.rpc.amf0.AMF0Object"/>
+    <classEntry path="com.ak33m.rpc.core.AbstractRPCObject"/>
+    <classEntry path="com.ak33m.rpc.core.IRPCConnection"/>
+    <classEntry path="com.ak33m.rpc.core.IRPCObject"/>
+    <classEntry path="com.ak33m.rpc.core.Method"/>
+    <classEntry path="com.ak33m.rpc.core.RPCEvent"/>
+    <classEntry path="com.ak33m.rpc.core.RPCMessageCodes"/>
+    <classEntry path="com.ak33m.rpc.core.RPCResponder"/>
+    <classEntry path="com.ak33m.rpc.jsonrpc.JSONConnection"/>
+    <classEntry path="com.ak33m.rpc.jsonrpc.JSONRPCObject"/>
+    <classEntry path="com.ak33m.rpc.jsonrpc.JSONRPCSerializer"/>
+    <classEntry path="com.ak33m.rpc.xmlrpc.IXMLRPCStruct"/>
+    <classEntry path="com.ak33m.rpc.xmlrpc.XMLRPCConnection"/>
+    <classEntry path="com.ak33m.rpc.xmlrpc.XMLRPCObject"/>
+    <classEntry path="com.ak33m.rpc.xmlrpc.XMLRPCSerializer"/>
+    <classEntry path="com.terralever.util.Enumerator"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>
