@@ -10,6 +10,7 @@ package
 	import com.julapy.blog.view.PostHolder;
 	import com.julapy.stage.StageSize;
 	import com.julapy.stage.StageSizeEvent;
+	import com.pixelbreaker.ui.osx.MacMouseWheel;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -36,6 +37,8 @@ package
 		{
 			stage.scaleMode		= StageScaleMode.NO_SCALE;
 			stage.align			= StageAlign.TOP_LEFT;
+
+			MacMouseWheel.setup( stage );
 
 			stageSize.stage = stage;
 			stageSize.addEventListener( StageSizeEvent.RESIZE, resizeHandler );

@@ -15,7 +15,6 @@ package com.julapy.blog.view
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -34,10 +33,11 @@ package com.julapy.blog.view
 
 		private var bShow			: Boolean = false;
 		private var bDown			: Boolean = false;
+		private var bScroll			: Boolean = false;
 
 		private var assetPoint		: Point = new Point();
-		private var clickPoint		: Point = new Point();
 		private var movePoint		: Point = new Point();
+		private var scrollPoint		: Point = new Point();
 		private var dragPoint		: Point = new Point();
 		private var dragVel			: Point = new Point();
 		private var dragVelDecay	: Number = 0.8;
@@ -85,7 +85,7 @@ package com.julapy.blog.view
 
 		private function mouseScrollHandler ( e : MouseEvent ):void
 		{
-			trace( e.delta );
+			scroll( -e.delta * 4 );
 		}
 
 		//////////////////////////////////////////////////
@@ -94,13 +94,13 @@ package com.julapy.blog.view
 
 		private function startDrag ():void
 		{
-			bDown = true;
-
 			assetPoint.x = asset.mouseX;
 			assetPoint.y = asset.mouseY;
 
-			clickPoint.x = stageSize.stage.mouseX;
-			clickPoint.y = stageSize.stage.mouseY;
+			dragPoint.x = stageSize.stage.mouseX;
+			dragPoint.y = stageSize.stage.mouseY;
+
+			bDown = true;
 		}
 
 		private function stopDrag ():void
@@ -108,18 +108,41 @@ package com.julapy.blog.view
 			bDown = false;
 		}
 
+		private function scroll ( value : int ):void
+		{
+			scrollPoint.x = 0;
+			scrollPoint.y = value;
+
+			bScroll = true;
+		}
+
 		private function updateDrag ( e : Event = null ):void
 		{
-			if( bDown )
+			if( bDown || bScroll )
 			{
-				movePoint.x = stageSize.stage.mouseX;
-				movePoint.y = stageSize.stage.mouseY;
+				if( bScroll )
+				{
+					movePoint.x = dragPoint.x;
+					movePoint.y = dragPoint.y;
+
+					movePoint.x += scrollPoint.x;
+					movePoint.y += scrollPoint.y;
+
+					bScroll = false;
+				}
+				else
+				{
+					movePoint.x = stageSize.stage.mouseX;
+					movePoint.y = stageSize.stage.mouseY;
+				}
 
 				var dragPointLast : Point;
 				dragPointLast = new Point( dragPoint.x, dragPoint.y );
 
 				dragPoint.x += ( movePoint.x - dragPoint.x ) * dragEase;
 				dragPoint.y += ( movePoint.y - dragPoint.y ) * dragEase;
+
+				//-- store velocity.
 
 				dragVel.x = dragPoint.x - dragPointLast.x;
 				dragVel.y = dragPoint.y - dragPointLast.y;
@@ -133,19 +156,25 @@ package com.julapy.blog.view
 				dragPoint.y += dragVel.y;
 			}
 
+			dragPoint.x = Math.min( Math.max( dragPoint.x, 0 ), stageSize.stageWidth );
+			dragPoint.y = Math.min( Math.max( dragPoint.y, 0 ), stageSize.stageHeight );
+
 			var p : Number;
 			p = ( dragPoint.y - assetPoint.y ) / stageSize.stageHeight;
 
+			var dragH : int;
+			dragH = stageSize.stageHeight - asset.height;
+
 			var assetY : Number;
 			assetY = p * stageSize.stageHeight;
-			assetY = Math.min( Math.max( assetY, 0 ), stageSize.stageHeight - asset.height );
+			assetY = Math.min( Math.max( assetY, 0 ), dragH );
 
 			asset.y = (int)( assetY );
 
 			//-- update model.
 
 			var scrollPosition : Number;
-			scrollPosition = assetY / ( stageSize.stageHeight - asset.height );
+			scrollPosition = assetY / dragH;
 
 			config.postScrollPosition = scrollPosition;
 		}
