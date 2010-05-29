@@ -3,14 +3,21 @@ package com.julapy.blog.model
 	import com.absentdesign.core.webapis.wordpress.CustomField;
 	import com.absentdesign.core.webapis.wordpress.Post;
 	import com.absentdesign.core.webapis.wordpress.WPStruct;
+	import com.julapy.blog.event.PostHolderSizeEvent;
+	import com.julapy.blog.event.PostScrollPositionEvent;
 	import com.julapy.blog.vo.PostVO;
 
-	public class ConfigModel
+	import flash.events.EventDispatcher;
+	import flash.geom.Rectangle;
+
+	public class ConfigModel extends EventDispatcher
 	{
 		private static var instance : ConfigModel;
 
-		private var _wordpressData	: Array;
-		private var _postVOs 		: Array = new Array();
+		private var _wordpressData		: Array;
+		private var _postVOs 			: Array = new Array();
+		private var _postHolderSize		: Rectangle = new Rectangle();
+		private var _postScrollPosition	: Number = 0;
 
 		public function ConfigModel()
 		{
@@ -35,7 +42,8 @@ package com.julapy.blog.model
 
 		public function get blogURL ():String
 		{
-			return "http://www.julapy.com/blog/";
+//			return "http://www.julapy.com/blog/";
+			return "http://www.julapy.com/portfolio/";
 		}
 
 		public function get blogUser ():String
@@ -116,6 +124,36 @@ package com.julapy.blog.model
 			}
 
 			return "";
+		}
+
+		///////////////////////////////////////////////////
+		//	POST HOLDER SIZE.
+		///////////////////////////////////////////////////
+
+		public function set postHolderSize ( rect : Rectangle ):void
+		{
+			_postHolderSize = rect;
+
+			dispatchEvent( new PostHolderSizeEvent( _postHolderSize ) );
+		}
+
+		public function get postHolderSize ():Rectangle
+		{
+			return _postHolderSize;
+		}
+
+		//__
+
+		public function set postScrollPosition ( p : Number ):void
+		{
+			_postScrollPosition = p;
+
+			dispatchEvent( new PostScrollPositionEvent( _postScrollPosition ) );
+		}
+
+		public function get postScrollPosition ():Number
+		{
+			return _postScrollPosition;
 		}
 	}
 }
