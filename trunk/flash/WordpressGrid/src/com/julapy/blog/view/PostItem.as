@@ -17,6 +17,8 @@ package com.julapy.blog.view
 	import flash.events.MouseEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.TimerEvent;
+	import flash.filters.BitmapFilterQuality;
+	import flash.filters.BlurFilter;
 	import flash.geom.Point;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
@@ -85,6 +87,7 @@ package com.julapy.blog.view
 			mc.addEventListener( MouseEvent.MOUSE_OUT,	clickthruHandler );
 			mc.addEventListener( MouseEvent.MOUSE_DOWN,	clickthruHandler );
 			mc.addEventListener( MouseEvent.MOUSE_UP,	clickthruHandler );
+			mc.mouseChildren = false;
 			mc.buttonMode = true;
 		}
 
@@ -176,12 +179,88 @@ package com.julapy.blog.view
 
 		private function over ():void
 		{
+			overFlicker();
+//			overThumbBlur();
+		}
+
+		private function out ():void
+		{
+			outFlicker();
+//			outThumbBlur();
+		}
+
+		private function down ():void
+		{
+			downFlicker();
+		}
+
+		//////////////////////////////////////////////////
+		//	BLUR.
+		//////////////////////////////////////////////////
+
+		private var _thumbBlur : Number = 0;
+
+		public function set thumbBlur ( value : Number ):void
+		{
+			_thumbBlur = value;
+
+			updateThumbBlur();
+		}
+
+		public function get thumbBlur ():Number
+		{
+			return _thumbBlur;
+		}
+
+		private function overThumbBlur ():void
+		{
+			Tweener.addTween
+			(
+				this,
+				{
+					thumbBlur	: 1.0,
+					time		: 0.25,
+					transition	: Quadratic.easeOut
+				}
+			);
+		}
+
+		private function outThumbBlur ():void
+		{
+			Tweener.addTween
+			(
+				this,
+				{
+					thumbBlur	: 0.0,
+					time		: 0.25,
+					transition	: Quadratic.easeOut
+				}
+			);
+		}
+
+		private function updateThumbBlur ():void
+		{
+			var blurScale : Number;
+			blurScale = 1;
+
+			var blur : BlurFilter;
+			blur = new BlurFilter( thumbBlur * blurScale, thumbBlur * blurScale, BitmapFilterQuality.HIGH );
+
+			imageHolder.filters = [ blur ];
+		}
+
+		//////////////////////////////////////////////////
+		//	FLICKER.
+		//////////////////////////////////////////////////
+
+		private function overFlicker ():void
+		{
 			Tweener.removeTweens( overMc );
 
 			initFlickerTimer();
 		}
 
-		private function out ():void
+		private function outFlicker ():void
 		{
 			killFlickerTimer();
 
@@ -197,13 +276,12 @@ package com.julapy.blog.view
 					transition	: Quadratic.easeOut
 				}
 			);
+
 		}
 
-		private function down ():void
+		private function downFlicker ():void
 		{
 			killFlickerTimer();
-
-			overMc.alpha = outAlpha;
 
 			Tweener.addTween
 			(
@@ -215,6 +293,8 @@ package com.julapy.blog.view
 				}
 			);
 		}
+
+		//--
 
 		private function initFlickerTimer ():void
 		{

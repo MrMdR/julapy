@@ -12,6 +12,7 @@
 		</style>
 		<script type="text/javascript" src="js/swfobject.js"></script>
 		<script type="text/javascript" src="js/swfmacmousewheel2.js"></script>
+<!--	<script type="text/javascript" src="js/swfmacmousewheel.js"></script>  -->
 		<script type="text/javascript">
 			var flashvars = {};
 			var params = {};
@@ -23,6 +24,7 @@
 			attributes.id = "application";
 			swfobject.embedSWF("${swf}.swf", "flashContent", "100%", "100%", "9.0.0", "swfs/expressInstall.swf", flashvars, params, attributes);
 			swfmacmousewheel.registerObject( attributes.id );
+<!--		var macmousewheel = new SWFMacMouseWheel( so );	-->
 		</script>
 	</head>
 	<body scroll="no">

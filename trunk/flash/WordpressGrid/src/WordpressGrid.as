@@ -6,6 +6,7 @@ package
 	import com.holler.assets.AssetGroupVOEvent;
 	import com.holler.assets.AssetLoader;
 	import com.holler.assets.AssetVOEvent;
+	import com.julapy.blog.command.GetFlickrImages;
 	import com.julapy.blog.model.ConfigModel;
 	import com.julapy.blog.view.PostHolder;
 	import com.julapy.stage.StageSize;
@@ -44,6 +45,8 @@ package
 			stageSize.addEventListener( StageSizeEvent.RESIZE, resizeHandler );
 
 			stage.addChild( container );
+
+//			initFlickr();
 
 			loadAssets();
 		}
@@ -107,14 +110,21 @@ package
 		private function initWordpress ():void
 		{
 			service = new WPService( config.blogURL, config.blogUser, config.blogPass );
-			service.addEventListener( WPServiceEvent.GET_RECENT_POSTS, getRecentPostsHandler );
-			service.posts.getRecentPosts( 10 );
+			service.addEventListener( WPServiceEvent.GET_USERS_BLOGS,	getUsersBlogsHandler );
+			service.addEventListener( WPServiceEvent.GET_RECENT_POSTS,	getRecentPostsHandler );
+			service.posts.getRecentPosts( 30 );
 		}
 
-		protected function getRecentPostsHandler(event:ServiceEvent):void
+		private function getUsersBlogsHandler ( e : ServiceEvent ):void
 		{
-			config.wordpressData = event.data as Array;
-			config.parseWordpressData();
+			config.blogData = e.data as Array;
+			config.parseBlogData();
+		}
+
+		protected function getRecentPostsHandler( e : ServiceEvent ):void
+		{
+			config.postData = e.data as Array;
+			config.parsePostData();
 
 			hideLoader();
 			initPosts();
@@ -128,6 +138,16 @@ package
 		{
 			postHolder = new PostHolder( container );
 			postHolder.init();
+		}
+
+		//////////////////////////////////////////////////
+		//	FLICKR.
+		//////////////////////////////////////////////////
+
+		private function initFlickr ():void
+		{
+			var getFlickrImages : GetFlickrImages;
+			getFlickrImages = new GetFlickrImages();
 		}
 
 		//////////////////////////////////////////////////

@@ -1,10 +1,12 @@
 package com.julapy.blog.model
 {
+	import com.absentdesign.core.webapis.wordpress.Blog;
 	import com.absentdesign.core.webapis.wordpress.CustomField;
 	import com.absentdesign.core.webapis.wordpress.Post;
 	import com.absentdesign.core.webapis.wordpress.WPStruct;
 	import com.julapy.blog.event.PostHolderSizeEvent;
 	import com.julapy.blog.event.PostScrollPositionEvent;
+	import com.julapy.blog.vo.BlogVO;
 	import com.julapy.blog.vo.PostVO;
 
 	import flash.events.EventDispatcher;
@@ -14,7 +16,9 @@ package com.julapy.blog.model
 	{
 		private static var instance : ConfigModel;
 
-		private var _wordpressData		: Array;
+		private var _blogData			: Array;
+		private var _blogVO				: BlogVO;
+		private var _postData			: Array;
 		private var _postVOs 			: Array = new Array();
 		private var _postHolderSize		: Rectangle = new Rectangle();
 		private var _postScrollPosition	: Number = 0;
@@ -57,17 +61,47 @@ package com.julapy.blog.model
 		}
 
 		///////////////////////////////////////////////////
+		//	BLOG DATA.
+		///////////////////////////////////////////////////
+
+		public function set blogData ( a :Array ):void
+		{
+			_blogData = a;
+		}
+
+		public function get blogData ():Array
+		{
+			return _blogData;
+		}
+
+		public function parseBlogData ():void
+		{
+			var blog : Blog;
+			blog = _blogData[ 0 ] as Blog;
+
+			_blogVO = new BlogVO();
+			_blogVO.blogTitle	= blog.blog_name;
+			_blogVO.blogSubTitle	= "";		// TODO.
+			_blogVO.blogUrl		= blog.url;
+		}
+
+		public function get blogVO ():BlogVO
+		{
+			return _blogVO;
+		}
+
+		///////////////////////////////////////////////////
 		//	WORDPRESS DATA.
 		///////////////////////////////////////////////////
 
-		public function set wordpressData ( value : Array ):void
+		public function set postData ( value : Array ):void
 		{
-			_wordpressData = value;
+			_postData = value;
 		}
 
-		public function get wordpressData ():Array
+		public function get postData ():Array
 		{
-			return _wordpressData;
+			return _postData;
 		}
 
 		public function get postVOs ():Array
@@ -94,32 +128,32 @@ package com.julapy.blog.model
 			}
 		}
 
-		public function parseWordpressData ():void
+		public function parsePostData ():void
 		{
-			for( var i:int=0; i<wordpressData.length; i++ )
+			for( var i:int=0; i<postData.length; i++ )
 			{
 				var post : Post;
-				post = wordpressData[ i ] as Post;
+				post = postData[ i ] as Post;
 
 				var postVO : PostVO;
 				postVO = new PostVO();
 				postVO.title		= post.title;
-				postVO.link			= post.link;
 				postVO.excerpt		= post.mt_excerpt;
-				postVO.thumbPath	= parseThumbPath( post.custom_fields );
+				postVO.thumbPath	= parseCustomField( post.custom_fields, "thumbPath" );
+				postVO.link			= parseCustomField( post.custom_fields, "link" );
 
 				_postVOs.push( postVO );
 			}
 		}
 
-		private function parseThumbPath ( a : Array ):String
+		private function parseCustomField ( a : Array, key : String ):String
 		{
 			for( var i:int=0; i<a.length; i++ )
 			{
 				var customField : CustomField;
 				customField = a[ i ];
 
-				if( customField.key == "thumbPath" )
+				if( customField.key == key )
 					return customField.value;
 			}
 
