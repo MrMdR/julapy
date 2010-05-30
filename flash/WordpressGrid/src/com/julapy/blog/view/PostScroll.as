@@ -42,6 +42,7 @@ package com.julapy.blog.view
 		private var dragVel			: Point = new Point();
 		private var dragVelDecay	: Number = 0.8;
 		private var dragEase		: Number = 0.3;
+		private var scrollDelta		: Number = 0;
 
 		public function PostScroll( container : Sprite )
 		{
@@ -85,7 +86,9 @@ package com.julapy.blog.view
 
 		private function mouseScrollHandler ( e : MouseEvent ):void
 		{
-			scroll( -e.delta * 10 );
+			scrollDelta += ( -e.delta - scrollDelta ) * 0.3;
+
+			scroll( scrollDelta * 10 );
 		}
 
 		//////////////////////////////////////////////////
