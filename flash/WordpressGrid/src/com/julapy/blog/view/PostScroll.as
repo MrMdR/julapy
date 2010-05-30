@@ -85,7 +85,7 @@ package com.julapy.blog.view
 
 		private function mouseScrollHandler ( e : MouseEvent ):void
 		{
-			scroll( -e.delta * 4 );
+			scroll( -e.delta * 10 );
 		}
 
 		//////////////////////////////////////////////////

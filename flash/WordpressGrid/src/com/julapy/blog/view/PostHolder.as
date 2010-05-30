@@ -17,13 +17,18 @@ package com.julapy.blog.view
 		private var stageSize			: StageSize		= StageSize.getInstance();
 		private var container 			: Sprite;
 		private var postContainer		: Sprite = new Sprite();
+		private var headerContainer		: Sprite = new Sprite();
 
 		private var postItems			: Array = new Array();
 		private var postItemsLoadIndex	: int = 0;
 
-		private var postItemsPad		: int = 200;
+		private var postItemsXPad		: int = 200;
+		private var postItemsYPad		: int = 200;
 		private var postItemsGap		: int = 6;
+		private var postItemsXStart		: int = 0;
+		private var postItemsBtmH		: int = 100;
 
+		private var header				: Header;
 		private var postScroll			: PostScroll;
 
 		public function PostHolder( container : Sprite )
@@ -31,6 +36,7 @@ package com.julapy.blog.view
 			this.container = container;
 
 			container.addChild( postContainer );
+			postContainer.addChild( headerContainer );
 
 			postContainer.addEventListener( Event.ENTER_FRAME, enterFrameHandler );
 
@@ -46,6 +52,9 @@ package com.julapy.blog.view
 			playInPosts();
 			loadPostItems();
 			initPostScroll();
+
+			initHeader();
+			positionHeader();
 		}
 
 		//////////////////////////////////////////////////
@@ -68,8 +77,11 @@ package com.julapy.blog.view
 
 		private function positionPostsForTheFirstTime ():void
 		{
-			var pad : int;
-			pad = postItemsPad;
+			var padX : int;
+			padX = postItemsXPad;
+
+			var padY : int;
+			padY = postItemsYPad;
 
 			var gx : int;			// gap.
 			var gy : int;
@@ -78,19 +90,20 @@ package com.julapy.blog.view
 			gy = postItemsGap;
 
 			var ix : int;
-			ix = (int)( ( StageSize.getInstance().stageWidth - pad * 2 ) / ( PostItem.WIDTH + gx ) );
+			ix = (int)( ( StageSize.getInstance().stageWidth - padX * 2 ) / ( PostItem.WIDTH + gx ) );
 
 			var iw : int;
 			iw = ix * ( PostItem.WIDTH + gx );
 
 			var dx : int;
 			dx = (int)( ( StageSize.getInstance().stageWidth - iw ) * 0.5 );
+			postItemsXStart = dx;
 
 			var px : int;			// position.
 			var py : int;
 
 			px = dx;
-			py = gy;
+			py = padY;
 
 			for( var i:int=0; i<postItems.length; i++ )
 			{
@@ -114,7 +127,7 @@ package com.julapy.blog.view
 			}
 
 			var rect : Rectangle;
-			rect = new Rectangle( 0, 0, StageSize.getInstance().stageWidth, py + PostItem.HEIGHT );
+			rect = new Rectangle( 0, 0, StageSize.getInstance().stageWidth, py + PostItem.HEIGHT + postItemsBtmH );
 			config.postHolderSize = rect;
 		}
 
@@ -160,8 +173,11 @@ package com.julapy.blog.view
 
 		private function positionPosts ():void
 		{
-			var pad : int;
-			pad = postItemsPad;
+			var padX : int;
+			padX = postItemsXPad;
+
+			var padY : int;
+			padY = postItemsYPad;
 
 			var gx : int;			// gap.
 			var gy : int;
@@ -170,19 +186,20 @@ package com.julapy.blog.view
 			gy = postItemsGap;
 
 			var ix : int;
-			ix = (int)( ( StageSize.getInstance().stageWidth - pad * 2 ) / ( PostItem.WIDTH + gx ) );
+			ix = (int)( ( StageSize.getInstance().stageWidth - padX * 2 ) / ( PostItem.WIDTH + gx ) );
 
 			var iw : int;
 			iw = ix * ( PostItem.WIDTH + gx );
 
 			var dx : int;
 			dx = (int)( ( StageSize.getInstance().stageWidth - iw ) * 0.5 );
+			postItemsXStart = dx;
 
 			var px : int;			// position.
 			var py : int;
 
 			px = dx;
-			py = gy;
+			py = padY;
 
 			for( var i:int=0; i<postItems.length; i++ )
 			{
@@ -206,7 +223,7 @@ package com.julapy.blog.view
 			}
 
 			var rect : Rectangle;
-			rect = new Rectangle( 0, 0, StageSize.getInstance().stageWidth, py + PostItem.HEIGHT );
+			rect = new Rectangle( 0, 0, StageSize.getInstance().stageWidth, py + PostItem.HEIGHT + postItemsBtmH );
 			config.postHolderSize = rect;
 		}
 
@@ -231,12 +248,27 @@ package com.julapy.blog.view
 		}
 
 		//////////////////////////////////////////////////
+		//	HEADER.
+		//////////////////////////////////////////////////
+
+		private function initHeader ():void
+		{
+			header = new Header( headerContainer );
+		}
+
+		private function positionHeader ():void
+		{
+			headerContainer.x = (int)( postItemsXStart );
+		}
+
+		//////////////////////////////////////////////////
 		//	RESIZE.
 		//////////////////////////////////////////////////
 
 		private function resizeHandler ( e : Event ):void
 		{
 			positionPosts();
+			positionHeader();
 		}
 
 		private function enterFrameHandler ( e : Event ):void
