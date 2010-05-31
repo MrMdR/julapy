@@ -7,8 +7,6 @@ package com.julapy.blog.command
 	import com.adobe.webapis.flickr.methodgroups.PhotoSets;
 	import com.adobe.webapis.flickr.methodgroups.Photos;
 
-	import flash.events.Event;
-
 	public class GetFlickrImages
 	{
 		private var service 	: FlickrService = new FlickrService( "7ad48c160654958af2d031f8bcaab6b4" );
@@ -43,6 +41,11 @@ package com.julapy.blog.command
 			var photoCall : Photos;
 			photoCall = new Photos( service );
 			photoCall.getAllContexts( photo.id );
+		}
+
+		private function getPhotoURL ( photo : Photo ):String
+		{
+			return "http://static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_m.jpg";
 		}
 
 		private function handlePhoto ( e : FlickrResultEvent ):void
