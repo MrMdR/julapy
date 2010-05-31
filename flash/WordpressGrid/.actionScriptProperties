@@ -20,8 +20,8 @@
       </libraryPathEntry>
       <libraryPathEntry kind="3" linkType="1" path="/AS3HollerLib/bin/AS3HollerLib.swc" useDefaultLinkType="false"/>
       <libraryPathEntry kind="3" linkType="1" path="/Worpress_XML-RPC/bin/Worpress_XML-RPC.swc" useDefaultLinkType="false"/>
-      <libraryPathEntry kind="3" linkType="1" path="/AS3_julapy_lib/bin/AS3_julapy_lib.swc" useDefaultLinkType="false"/>
       <libraryPathEntry kind="3" linkType="1" path="/FlickrLib_v087/bin/FlickrLib_v087.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/AS3_julapy_lib/bin/AS3_julapy_lib.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>

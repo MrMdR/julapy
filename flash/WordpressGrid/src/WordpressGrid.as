@@ -46,7 +46,7 @@ package
 
 			stage.addChild( container );
 
-//			initFlickr();
+			initFlickr();
 
 			loadAssets();
 		}
