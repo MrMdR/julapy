@@ -9,9 +9,13 @@
 
 #include "BoidFood.h"
 
-BoidFood :: BoidFood ()
+BoidFood :: BoidFood ( float x, float y, float size, float reach, float magnitude )
 {
-	//
+	this->x			= x;
+	this->y			= y;
+	this->size		= size;
+	this->reach		= reach;
+	this->magnitude	= magnitude;
 }
 
 BoidFood :: ~BoidFood ()
@@ -19,21 +23,21 @@ BoidFood :: ~BoidFood ()
 	//
 }
 
-void BoidFood :: setPosition ( float x, float y )
+BoidForce BoidFood :: getForceOne ()					//-- first force :: attraction to food source from a far.
 {
-	pos.x = x;
-	pos.y = y;
+	return BoidForce( x, y, size, size * 3, 10 );
 }
 
-void BoidFood :: setRadius ( float r )
+BoidForce BoidFood :: getForceTwo ()					//-- second force :: sharp repulsion from food when contact is made.
 {
-	radius	= r;
-	aura	= r * 3;
+	return BoidForce( x, y, size, size, -20 );
 }
 
 void BoidFood :: draw ()
 {
-	ofFill();
-	ofSetColor( 100, 100, 100, 128 );
-	ofCircle( pos.x, pos.y, radius );
+	ofEnableAlphaBlending();
+	ofSetColor( 0, 255, 255, 128 );
+	ofCircle( x, y, size * 3 );
+	ofCircle( x, y, size );
+	ofDisableAlphaBlending();
 }

@@ -11,24 +11,20 @@
 #define BOID_FOOD_H
 
 #include "ofMain.h"
-#include "ofxVectorMath.h"
+#include "BoidForce.h"
 
-class BoidFood
+class BoidFood : public BoidForce
 {
 
 public :
 	
-	 BoidFood();
-	~BoidFood();
+	 BoidFood	( float x=0, float y=0, float size=0, float reach=0, float magnitude=0 );
+	~BoidFood	();
 	
-	void setPosition	( float x, float y );
-	void setRadius		( float r );
+	BoidForce getForceOne();
+	BoidForce getForceTwo();
 	
-	void draw			();
-
-	ofxVec2f			pos;
-	float				radius;
-	float				aura;
+	void draw	();
 	
 };
 
