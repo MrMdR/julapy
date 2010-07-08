@@ -3,8 +3,9 @@
 
 
 #include "ofMain.h"
-#include "Boid.h"
 #include "ofxSimpleGuiToo.h"
+
+#include "Flock.h"
 
 class testApp : public ofBaseApp
 {
@@ -19,6 +20,8 @@ public :
 	void updateBoids	();
 	void drawBoids		();
 	
+	void drawFood		();
+	
 	void initGui		();
 
 	void keyPressed		(int key);
@@ -31,18 +34,7 @@ public :
 	
 	bool				bDebug;
 	
-	int					boidsNum;
-	vector<Boid>		boids;
-	
-	float				boidSeperationWeight;
-	float				boidAlignmentWeight;
-	float				boidCohesionWeight;
-	
-	float				boidSeparationDist;
-	float				boidNeighbourDist;
-	float				boidMaxSpeed;
-	float				boidMaxForce;
-
+	Flock				flock;
 };
 
 #endif

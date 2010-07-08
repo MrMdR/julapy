@@ -13,13 +13,19 @@ Boid :: Boid()
 {
 	size			= 5.0;
 	separationDist	= 25.0;
-	neighbourDist	= 50.0;
+	perception		= 70;
 	maxSpeed		= 10.0;
-	maxForce		= 0.1;
+	maxForce		= 1.0;
 	
 	separationWeight	= 1.5;
 	alignmentWeight		= 1.0;
 	cohesionWeight		= 1.0;
+	
+	bContain				= true;
+	containerRect.x			= 0.0;
+	containerRect.y			= 0.0;
+	containerRect.width		= 1.0;
+	containerRect.height	= 1.0;
 	
 	boids			= NULL;
 }
@@ -36,6 +42,16 @@ Boid :: ~Boid()
 void Boid :: setBoids ( vector<Boid> *boidsPtr )
 {
 	boids = boidsPtr;
+}
+
+void Boid :: setForces ( vector<BoidForce> *forcesPtr )
+{
+	forces = forcesPtr;
+}
+
+void Boid :: setFoods ( vector<BoidFood> *foodsPtr )
+{
+	foods = foodsPtr;
 }
 
 void Boid :: setPosition ( float x, float y )
@@ -56,7 +72,7 @@ void Boid :: setVelocity ( float x, float y )
 
 void Boid :: update_acc ()
 {
-	ofxVec2f sep = separate( boids );
+	ofxVec2f sep = separate( boids );			//-- flocking forces.
 	ofxVec2f ali = align( boids );
 	ofxVec2f coh = cohesion( boids );
 	
@@ -64,27 +80,60 @@ void Boid :: update_acc ()
 	ali *= alignmentWeight;
 	coh *= cohesionWeight;
 	
+	ofxVec2f frc;								//-- point forces.
+	
+	for( int i=0; i<forces->size(); i++ )
+	{
+		BoidForce &force = forces->at( i );
+		frc += pointForce( force.x, force.y, force.reach, force.magnitude );
+	}
+	
 	accNew		= 0;
 	accNew		+= sep;
 	accNew		+= ali;
 	accNew		+= coh;
+	accNew		+= frc;
 }
 
 void Boid :: update_vel ()
 {
 	velNew		+= accNew;
-	velNew.x	= ofClamp( velNew.x, -maxSpeed, maxSpeed );
-	velNew.y	= ofClamp( velNew.y, -maxSpeed, maxSpeed );
+	velNew.limit( maxSpeed );
 }
 
 void Boid :: update_pos ()
 {
-	posNew		+= velNew;
+	if( bContain )
+	{
+		ofRectangle r;
+		r.x			= containerRect.x * ofGetWidth();
+		r.y			= containerRect.y * ofGetHeight();
+		r.width		= containerRect.width  * ofGetWidth();
+		r.height	= containerRect.height * ofGetHeight();
+		
+		float efficiency = .03;
+//		efficiency ~ 10 : boids immediately rejected
+//		efficiency ~ .1 : boids slowly change direction
+		
+		ofxVec2f v;
+		if( posNew.x <= r.x + perception )				v.x = ( r.x + perception - posNew.x ) * efficiency;
+		if( posNew.x >= r.x + r.width  - perception )	v.x = ( r.x + r.width  - perception - posNew.x ) * efficiency;
+		if( posNew.y <= r.y + perception)				v.y = ( r.y + perception - posNew.y ) * efficiency;
+		if( posNew.y >= r.y + r.height - perception )	v.y = ( r.y + r.height - perception - posNew.y ) * efficiency;
+		
+		velNew += v;
+	}
+	else
+	{
+		if( posNew.x < -size ) posNew.x = ofGetWidth()  + size;
+		if( posNew.y < -size ) posNew.y = ofGetHeight() + size;
+		if( posNew.x > ofGetWidth()  + size ) posNew.x = -size;
+		if( posNew.y > ofGetHeight() + size ) posNew.y = -size;
+	}
 	
-	if( posNew.x < -size ) posNew.x = ofGetWidth()  + size;
-	if( posNew.y < -size ) posNew.y = ofGetHeight() + size;
-	if( posNew.x > ofGetWidth()  + size ) posNew.x = -size;
-	if( posNew.y > ofGetHeight() + size ) posNew.y = -size;
+	//--
+
+	posNew += velNew;
 }
 
 void Boid :: update_final ()
@@ -109,13 +158,6 @@ void Boid :: draw ()
 /////////////////////////////////////////////
 //	BEHAVIOUR.
 /////////////////////////////////////////////
-
-/*
- *
- * Separation
- * Method checks for nearby boids and steers away
- *
- */
 
 ofxVec2f Boid :: separate( vector<Boid> *boids )
 {
@@ -147,26 +189,12 @@ ofxVec2f Boid :: separate( vector<Boid> *boids )
 		steer /= (float)count;
     }
 
-	float mag;
-	mag = steer.length();
-	
-    if( mag > 0 )						// Implement Reynolds: Steering = Desired - Velocity
-	{
-		steer.normalize();
-		steer *= maxSpeed;
-		steer -= vel;
-		steer.limit( maxForce );
-	}
+	steer = reynoldsLimit( steer );
 	
     return steer;
 }
 
-/*
- *
- * Alignment
- * For every nearby boid in the system, calculate the average velocity
- *
- */
+//--
 
 ofxVec2f Boid :: align ( vector<Boid> *boids )
 {
@@ -180,7 +208,7 @@ ofxVec2f Boid :: align ( vector<Boid> *boids )
 		float dist;
 		dist = ofDist( pos.x, pos.y, boid.pos.x, boid.pos.y );
 		
-		if( ( dist > 0 ) && ( dist < neighbourDist ) )
+		if( ( dist > 0 ) && ( dist < perception ) )
 		{
 			steer += boid.vel;
 			count++;
@@ -192,30 +220,16 @@ ofxVec2f Boid :: align ( vector<Boid> *boids )
 		steer /= (float)count;
 	}
 	
-	float mag;
-	mag = steer.length();
-	
-    if( mag > 0 )		// Implement Reynolds: Steering = Desired - Velocity
-	{
-		steer.normalize();
-		steer *= maxSpeed;
-		steer -= vel;
-		steer.limit( maxForce );
-    }
+	steer = reynoldsLimit( steer );
 	
     return steer;
 }
 
-/*
- *
- * Cohesion
- * For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
- *
- */
+//--
 
 ofxVec2f Boid :: cohesion( vector<Boid> *boids )
 {
-    ofxVec2f sum;
+    ofxVec2f center;
     int count = 0;
 	
 	for( int i=0; i<boids->size(); i++ )
@@ -225,56 +239,87 @@ ofxVec2f Boid :: cohesion( vector<Boid> *boids )
 		float dist;
 		dist = ofDist( pos.x, pos.y, boid.pos.x, boid.pos.y );
 		
-		if( ( dist > 0 ) && ( dist < neighbourDist ) )
+		if( ( dist > 0 ) && ( dist < perception ) )
 		{
-			sum += boid.vel;;						// Add location
+			center += boid.pos;			// add position.
 			count++;
 		}
 	}
     
 	if( count > 0 ) 
 	{
-		sum /= (float)count;
-		return moveTo( sum );						// Steer towards the location
+		center /= (float)count;			// old.
+		return moveTo( center );
+		
+//		center /= (float)count;			// new.
+//		center -= pos;
+//		center *= 0.001;
+//		return center;
     }
 	
-	return sum;
+	return center;
 }
 
-/*
- *
- * A method that calculates a steering vector towards a target
- * Takes a second argument, if true, it slows down as it approaches the target
- *
- */
+//--
 
-ofxVec2f Boid :: moveTo( ofxVec2f target, bool slowdown )
+ofxVec2f Boid :: moveTo( ofxVec2f &target, bool slowdown )
 {
     ofxVec2f steer;
-    ofxVec2f desired;
 	
-	desired = target - pos;
+	steer = target - pos;
 	
-	float dist;
-	dist = ofDist( target.x, target.y, pos.x, pos.y );		// Distance from the target is the magnitude of the vector
-    
-    if( dist > 0 )											// If the distance is greater than 0, calc steering (otherwise return zero vector)
-	{
-		desired /= dist;									// Normalize desired
-		
-		if( ( slowdown ) && ( dist < 100.0f ) )				// Two options for desired vector magnitude (1 -- based on distance, 2 -- maxspeed)
-		{
-			desired *= maxSpeed * ( dist / 100.0f );		// This damping is somewhat arbitrary
-		}
-		else
-		{
-			desired *= maxSpeed;
-		}
-		
-		steer = desired - vel;								// Steering = Desired minus Velocity
-		steer.x = ofClamp( steer.x, -maxForce, maxForce );	// Limit to maximum steering force
-		steer.y = ofClamp( steer.y, -maxForce, maxForce ); 
-	}
+	steer = reynoldsLimit( steer );
 	
 	return steer;
 }
+
+//--
+
+ofxVec2f Boid :: reynoldsLimit ( ofxVec2f &desired )		// implement Reynolds :: steering = desired minus velocity
+{
+	ofxVec2f steer;
+	
+	if( desired.length() > 0 )		
+	{
+		desired.normalize();				// work out desired direction.
+		desired *= maxSpeed;				// work out the fastest desired speed in that direction.
+		
+		steer = desired - vel;				// implement Reynolds :: steering = desired minus velocity
+		steer.limit( maxForce );			// limit to maximum steering force
+    }
+	
+	return steer;
+}
+
+//--
+
+ofxVec2f Boid :: pointForce( float x, float y, float reach, float magnitude )
+{
+	ofxVec2f v;
+	ofxVec2f p1;
+	ofxVec2f p2;
+	
+	p1.set( x, y );
+	p2.set( pos );
+	v = p1 - p2;
+	
+	float dist;
+	dist = v.length();
+	
+	if( dist < reach )
+	{
+		v.normalize();
+		
+		float p;
+		p = ( reach - dist ) / reach;		// between 0 - 1.
+		
+		v *= p;
+		v *= magnitude;
+		
+		return v;
+	}
+	
+	v.set( 0, 0 );
+	return v;
+}
+
