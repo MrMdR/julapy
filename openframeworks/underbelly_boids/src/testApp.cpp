@@ -9,22 +9,29 @@ void testApp :: setup ()
 	ofSetFrameRate( 25 );
 	ofSetVerticalSync( true );
 	
-	bDebug	= true;
+	bDebug			= true;
 	
 	initBoids();
 	initGui();
 }
 
+void testApp :: initBoids ()
+{
+	flock.init();
+}
+
 void testApp :: initGui ()
 {
 	gui.addTitle( "boids" );
-	gui.addSlider( "boidSeperationWeight ", boidSeperationWeight,	0, 10.0 );
-	gui.addSlider( "boidAlignmentWeight ",	boidAlignmentWeight,	0, 10.0 );
-	gui.addSlider( "boidCohesionWeight ",	boidCohesionWeight,		0, 10.0 );
-	gui.addSlider( "boidSeparationDist ",	boidSeparationDist,		0, 500.0 );
-	gui.addSlider( "boidNeighbourDist ",	boidNeighbourDist,		0, 500.0 );
-	gui.addSlider( "boidMaxSpeed ",			boidMaxSpeed,			0, 100.0 );
-	gui.addSlider( "boidMaxForce ",			boidMaxForce,			0, 10.0 );
+	gui.addSlider( "boidSeperationWeight ", flock.boidSeperationWeight,	0, 10.0  );
+	gui.addSlider( "boidAlignmentWeight ",	flock.boidAlignmentWeight,	0, 10.0  );
+	gui.addSlider( "boidCohesionWeight ",	flock.boidCohesionWeight,	0, 10.0  );
+	gui.addSlider( "boidSeparationDist ",	flock.boidSeparationDist,	0, 500.0 );
+	gui.addSlider( "boidPerception ",		flock.boidPerception,		0, 500.0 );
+	gui.addSlider( "boidMaxSpeed ",			flock.boidMaxSpeed,			0, 100.0 );
+	gui.addSlider( "boidMaxForce ",			flock.boidMaxForce,			0, 10.0  );
+	gui.addSlider( "mouseReach ",			flock.mouseReach,			0, 200.0 );
+	gui.addSlider( "mouseForce ",			flock.mouseForce,			-20.0, 0 );
 	
 	gui.addPage();
 	gui.addTitle( "contour analysis" );
@@ -36,107 +43,17 @@ void testApp :: initGui ()
 }
 
 ///////////////////////////////////////////////////
-//	BOIDS.
-///////////////////////////////////////////////////
-
-void testApp :: initBoids ()
-{
-	boidsNum = 50;
-	
-	for( int i=0; i<boidsNum; i++ )
-	{
-		boids.push_back( Boid() );
-		
-		Boid &boid = boids.back();
-		boid.setBoids( &boids );
-		boid.setPosition
-		(
-			ofRandom( 0, ofGetWidth()  ),
-			ofRandom( 0, ofGetHeight() )
-		);
-		boid.setVelocity
-		(
-			ofRandom( -2, 2 ),
-			ofRandom( -2, 2 )
-		);
-		
-		boid.trailCol.push_back( 0xFFFFFF );
-	}
-	
-	//--
-	
-	Boid &boid = boids[ 0 ];		// store the boid group setting based on the first boid.
-	
-	boidSeperationWeight	= boid.separationWeight;
-	boidAlignmentWeight		= boid.alignmentWeight;
-	boidCohesionWeight		= boid.cohesionWeight;
-	
-	boidSeparationDist		= boid.separationDist;
-	boidNeighbourDist		= boid.neighbourDist;
-	boidMaxSpeed			= boid.maxSpeed;
-	boidMaxForce			= boid.maxForce;
-}
-
-void testApp :: updateBoids ()
-{
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		
-		boid.separationWeight	= boidSeperationWeight;
-		boid.alignmentWeight	= boidAlignmentWeight;
-		boid.cohesionWeight		= boidCohesionWeight;
-		
-		boid.separationDist		= boidSeparationDist;
-		boid.neighbourDist		= boidNeighbourDist;
-		boid.maxSpeed			= boidMaxSpeed;
-		boid.maxForce			= boidMaxForce;
-	}
-		
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.update_acc();
-		boid.update_vel();
-		boid.update_pos();
-	}
-	
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.update_final();
-	}
-}
-
-void testApp :: drawBoids ()
-{
-	ofFill();
-	
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.draw();
-	}
-	
-	ofNoFill();
-	ofEnableSmoothing();
-	
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.draw();
-	}
-	
-	ofDisableSmoothing();
-}
-
-///////////////////////////////////////////////////
 //	UPDATE.
 ///////////////////////////////////////////////////
 
 void testApp :: update()
 {
 	updateBoids();
+}
+
+void testApp :: updateBoids ()
+{
+	flock.update();
 }
 
 ///////////////////////////////////////////////////
@@ -151,7 +68,15 @@ void testApp :: draw()
 	
 	drawBoids();
 	
+	if( bDebug )
+		return;
+	
 	gui.draw();
+}
+
+void testApp :: drawBoids ()
+{
+	flock.draw();
 }
 
 ///////////////////////////////////////////////////
@@ -173,7 +98,7 @@ void testApp::keyReleased(int key)
 
 void testApp::mouseMoved(int x, int y )
 {
-
+	flock.addMouse( x, y );
 }
 
 void testApp::mouseDragged(int x, int y, int button)
@@ -183,7 +108,7 @@ void testApp::mouseDragged(int x, int y, int button)
 
 void testApp::mousePressed(int x, int y, int button)
 {
-
+	flock.addFood( x, y );
 }
 
 void testApp::mouseReleased(int x, int y, int button)

@@ -12,6 +12,16 @@
 
 #include "ofMain.h"
 #include "ofxVectorMath.h"
+#include "BoidFood.h"
+
+struct BoidForce
+{
+	float		x;
+	float		y;
+	ofPoint		point;
+	float		reach;
+	float		magnitude;
+};
 
 class Boid 
 {
@@ -22,6 +32,8 @@ public :
 	~Boid();
 	
 	void setBoids		( vector<Boid> *boidsPtr );
+	void setForces		( vector<BoidForce> *forcesPtr );
+	void setFoods		( vector<BoidFood> *foodsPtr );
 	void setPosition	( float x, float y );
 	void setVelocity	( float x, float y );
 	
@@ -32,12 +44,16 @@ public :
 	
 	void draw			();
 	
-	ofxVec2f separate	( vector<Boid> *boids );
-	ofxVec2f align		( vector<Boid> *boids );
-	ofxVec2f cohesion	( vector<Boid> *boids );
-	ofxVec2f moveTo		( ofxVec2f target, bool slowdown = false );
+	ofxVec2f separate		( vector<Boid> *boids );
+	ofxVec2f align			( vector<Boid> *boids );
+	ofxVec2f cohesion		( vector<Boid> *boids );
+	ofxVec2f moveTo			( ofxVec2f &target, bool slowdown = false );
+	ofxVec2f reynoldsLimit	( ofxVec2f &desired );
+	ofxVec2f pointForce		( float x, float y, float reach, float magnitude );
 
 	vector<Boid>		*boids;
+	vector<BoidFood>	*foods;
+	vector<BoidForce>	*forces;
 
 	ofxVec2f			pos;
 	ofxVec2f			vel;
@@ -53,7 +69,7 @@ public :
 	
 	float				size;
 	float				separationDist;
-	float				neighbourDist;
+	float				perception;
 	float				maxSpeed;
 	float				maxForce;
 	
@@ -61,6 +77,8 @@ public :
 	float				alignmentWeight;
 	float				cohesionWeight;
 	
+	bool				bContain;
+	ofRectangle			containerRect;
 };
 
 #endif
