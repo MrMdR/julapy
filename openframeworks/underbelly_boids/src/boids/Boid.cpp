@@ -13,11 +13,11 @@ Boid :: Boid()
 {
 	size			= 5.0;
 	separationDist	= 25.0;
-	perception		= 70;
-	maxSpeed		= 10.0;
+	perception		= 50;
+	maxSpeed		= 15.0;
 	maxForce		= 1.0;
 	
-	separationWeight	= 1.5;
+	separationWeight	= 1.8;
 	alignmentWeight		= 1.0;
 	cohesionWeight		= 1.0;
 	
@@ -32,7 +32,9 @@ Boid :: Boid()
 
 Boid :: ~Boid()
 {
-	//
+	boids	= NULL;
+	forces	= NULL;
+	foods	= NULL;
 }
 
 /////////////////////////////////////////////
@@ -80,19 +82,19 @@ void Boid :: update_acc ()
 	ali *= alignmentWeight;
 	coh *= cohesionWeight;
 	
-	ofxVec2f frc;								//-- point forces.
+	ofxVec2f ptf;								//-- point forces.
 	
 	for( int i=0; i<forces->size(); i++ )
 	{
 		BoidForce &force = forces->at( i );
-		frc += pointForce( force.x, force.y, force.reach, force.magnitude );
+		ptf += pointForce( force.x, force.y, force.reach, force.magnitude );
 	}
 	
 	accNew		= 0;
 	accNew		+= sep;
 	accNew		+= ali;
 	accNew		+= coh;
-	accNew		+= frc;
+	accNew		+= ptf;
 }
 
 void Boid :: update_vel ()
@@ -246,29 +248,15 @@ ofxVec2f Boid :: cohesion( vector<Boid> *boids )
 		}
 	}
     
-	if( count > 0 ) 
+	ofxVec2f steer;
+	
+	if( count > 0 )
 	{
 		center /= (float)count;			// old.
-		return moveTo( center );
+		steer = center - pos;
 		
-//		center /= (float)count;			// new.
-//		center -= pos;
-//		center *= 0.001;
-//		return center;
+		steer = reynoldsLimit( steer );
     }
-	
-	return center;
-}
-
-//--
-
-ofxVec2f Boid :: moveTo( ofxVec2f &target, bool slowdown )
-{
-    ofxVec2f steer;
-	
-	steer = target - pos;
-	
-	steer = reynoldsLimit( steer );
 	
 	return steer;
 }

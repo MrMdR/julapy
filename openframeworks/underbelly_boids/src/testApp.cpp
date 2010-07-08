@@ -23,6 +23,7 @@ void testApp :: initBoids ()
 void testApp :: initGui ()
 {
 	gui.addTitle( "boids" );
+	gui.addSlider( "boidsNum ",				flock.boidsNumRevised,		0, 500   );
 	gui.addSlider( "boidSeperationWeight ", flock.boidSeperationWeight,	0, 10.0  );
 	gui.addSlider( "boidAlignmentWeight ",	flock.boidAlignmentWeight,	0, 10.0  );
 	gui.addSlider( "boidCohesionWeight ",	flock.boidCohesionWeight,	0, 10.0  );
