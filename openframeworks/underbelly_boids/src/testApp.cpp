@@ -19,6 +19,11 @@ void testApp :: setup ()
 void testApp :: initBoids ()
 {
 	flock.init();
+	
+	for( int i=0; i<10; i++ )
+	{
+		flock.addObstacle( ofRandom( 0, ofGetWidth() ), ofRandom( 0, ofGetHeight() ) );
+	}
 }
 
 void testApp :: initGui ()
@@ -92,12 +97,15 @@ void testApp :: keyPressed(int key)
 		bDebug = !bDebug;
 	}
 	
-	cout << key << endl;
+	if( key == 'o' )
+	{
+		flock.addObstacle( ofRandom( 0, ofGetWidth() ), ofRandom( 0, ofGetHeight() ) );
+	}
 }
 
 void testApp::keyReleased(int key)
 {
-
+	
 }
 
 void testApp::mouseMoved(int x, int y )

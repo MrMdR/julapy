@@ -14,6 +14,7 @@
 #include "Boid.h"
 #include "BoidForce.h"
 #include "BoidFood.h"
+#include "BoidObstacle.h"
 
 class Flock
 {
@@ -29,13 +30,16 @@ public :
 	
 	void update			();
 	void updateForces	();
+	void updateFood		();
 	
 	void draw			();
 	void drawBoids		();
 	void drawMice		();
 	void drawFood		();
+	void drawObstacles	();
 
 	void addFood		( int x, int y );
+	void addObstacle	( int x, int y );
 	void addMouse		( int x, int y );
 	
 	int					boidsNum;
@@ -44,10 +48,10 @@ public :
 	vector<Boid>		boids;
 	vector<BoidForce>	forces;
 	
-	vector<BoidFood>	foods;
-	vector<BoidForce>	obstacles;
-	vector<BoidForce>	mice;
-	BoidForce			mouseCopy;
+	vector<BoidFood>		foods;
+	vector<BoidObstacle>	obstacles;
+	vector<BoidForce>		mice;
+	BoidForce				mouseCopy;
 	
 	float				boidSeperationWeight;
 	float				boidAlignmentWeight;

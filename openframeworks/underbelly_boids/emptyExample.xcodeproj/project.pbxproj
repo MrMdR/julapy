@@ -10,6 +10,7 @@
 		1542BBA411E4C08100646071 /* BoidFood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1542BBA311E4C08100646071 /* BoidFood.cpp */; };
 		1583D02E11E5B3E700EB1BA6 /* BoidForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1583D02D11E5B3E700EB1BA6 /* BoidForce.cpp */; };
 		15A2C9FA11E5570B0087EB00 /* Flock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15A2C9F911E5570B0087EB00 /* Flock.cpp */; };
+		15C88FC911E60446006C38FA /* BoidObstacle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C88FC811E60446006C38FA /* BoidObstacle.cpp */; };
 		B274CDFF11E15B1700E26214 /* Boid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B274CDFE11E15B1700E26214 /* Boid.cpp */; };
 		B274CE1D11E15BE500E26214 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B274CE1011E15BE500E26214 /* ofxMatrix3x3.cpp */; };
 		B274CE1E11E15BE500E26214 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B274CE1211E15BE500E26214 /* ofxMatrix4x4.cpp */; };
@@ -111,6 +112,8 @@
 		1583D02D11E5B3E700EB1BA6 /* BoidForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoidForce.cpp; sourceTree = "<group>"; };
 		15A2C9F811E5570B0087EB00 /* Flock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flock.h; sourceTree = "<group>"; };
 		15A2C9F911E5570B0087EB00 /* Flock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flock.cpp; sourceTree = "<group>"; };
+		15C88FC711E60446006C38FA /* BoidObstacle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoidObstacle.h; sourceTree = "<group>"; };
+		15C88FC811E60446006C38FA /* BoidObstacle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoidObstacle.cpp; sourceTree = "<group>"; };
 		B274CDFD11E15B1700E26214 /* Boid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Boid.h; sourceTree = "<group>"; };
 		B274CDFE11E15B1700E26214 /* Boid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Boid.cpp; sourceTree = "<group>"; };
 		B274CE1011E15BE500E26214 /* ofxMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMatrix3x3.cpp; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp; sourceTree = SOURCE_ROOT; };
@@ -262,6 +265,8 @@
 				1583D02D11E5B3E700EB1BA6 /* BoidForce.cpp */,
 				1542BBA211E4C08100646071 /* BoidFood.h */,
 				1542BBA311E4C08100646071 /* BoidFood.cpp */,
+				15C88FC711E60446006C38FA /* BoidObstacle.h */,
+				15C88FC811E60446006C38FA /* BoidObstacle.cpp */,
 			);
 			name = boids;
 			path = src/boids;
@@ -834,6 +839,7 @@
 				1542BBA411E4C08100646071 /* BoidFood.cpp in Sources */,
 				15A2C9FA11E5570B0087EB00 /* Flock.cpp in Sources */,
 				1583D02E11E5B3E700EB1BA6 /* BoidForce.cpp in Sources */,
+				15C88FC911E60446006C38FA /* BoidObstacle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

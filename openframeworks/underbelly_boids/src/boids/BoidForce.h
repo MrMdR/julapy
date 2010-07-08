@@ -20,6 +20,8 @@ public :
 	 BoidForce	( float x=0, float y=0, float size=0, float reach=0, float magnitude=0 );
 	~BoidForce	();
 	
+	void init	( float x=0, float y=0, float size=0, float reach=0, float magnitude=0 );
+	
 	float		x;				// x position of force.
 	float		y;				// y position of force.
 	ofPoint		point;			// center position of force, combination of x and y.

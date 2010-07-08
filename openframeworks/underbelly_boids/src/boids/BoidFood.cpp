@@ -11,11 +11,7 @@
 
 BoidFood :: BoidFood ( float x, float y, float size, float reach, float magnitude )
 {
-	this->x			= x;
-	this->y			= y;
-	this->size		= size;
-	this->reach		= reach;
-	this->magnitude	= magnitude;
+	BoidForce :: init( x, y, size, reach, magnitude );
 }
 
 BoidFood :: ~BoidFood ()
@@ -25,12 +21,12 @@ BoidFood :: ~BoidFood ()
 
 BoidForce BoidFood :: getForceOne ()					//-- first force :: attraction to food source from a far.
 {
-	return BoidForce( x, y, size, size * 3, 10 );
+	return BoidForce( x, y, size, size * 4, 20 );
 }
 
 BoidForce BoidFood :: getForceTwo ()					//-- second force :: sharp repulsion from food when contact is made.
 {
-	return BoidForce( x, y, size, size, -20 );
+	return BoidForce( x, y, size, size - 5, -20 );
 }
 
 void BoidFood :: draw ()
