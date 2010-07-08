@@ -47,7 +47,6 @@ public :
 	ofxVec2f separate		( vector<Boid> *boids );
 	ofxVec2f align			( vector<Boid> *boids );
 	ofxVec2f cohesion		( vector<Boid> *boids );
-	ofxVec2f moveTo			( ofxVec2f &target, bool slowdown = false );
 	ofxVec2f reynoldsLimit	( ofxVec2f &desired );
 	ofxVec2f pointForce		( float x, float y, float reach, float magnitude );
 

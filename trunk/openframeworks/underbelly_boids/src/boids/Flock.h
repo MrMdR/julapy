@@ -23,6 +23,8 @@ public :
 	~Flock();
 	
 	void init			();
+	void addBoids		( int num );
+	void addBoid		( Boid &boid );
 	
 	void update			();
 	void updateForces	();
@@ -39,6 +41,8 @@ public :
 	void addMouse		( int x, int y );
 	
 	int					boidsNum;
+	int					boidsNumRevised;
+	
 	vector<Boid>		boids;
 	vector<BoidForce>	forces;
 	vector<BoidFood>	foods;

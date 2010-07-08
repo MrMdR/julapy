@@ -26,28 +26,9 @@ Flock :: ~Flock ()
 
 void Flock :: init ()
 {
-	boidsNum = 50;
+	boidsNum = boidsNumRevised = 100;
 	
-	for( int i=0; i<boidsNum; i++ )
-	{
-		boids.push_back( Boid() );
-		
-		Boid &boid = boids.back();
-		boid.setBoids( &boids );
-		boid.setForces( &forces );
-		boid.setPosition
-		(
-			ofRandom( 0, ofGetWidth()  ),
-			ofRandom( 0, ofGetHeight() )
-		);
-		boid.setVelocity
-		(
-			ofRandom( -2, 2 ),
-			ofRandom( -2, 2 )
-		);
-		
-		boid.trailCol.push_back( 0xFFFFFF );
-	}
+	addBoids( boidsNum );
 	
 	//--
 	
@@ -67,6 +48,34 @@ void Flock :: init ()
 	bMouseMoved				= false;
 }
 
+void Flock :: addBoids ( int num )
+{
+	for( int i=0; i<num; i++ )
+	{
+		boids.push_back( Boid() );
+		
+		addBoid( boids.back() );
+	}
+}
+
+void Flock :: addBoid ( Boid &boid )
+{
+	boid.setBoids( &boids );
+	boid.setForces( &forces );
+	boid.setPosition
+	(
+		ofRandom( 0, ofGetWidth()  ),
+		ofRandom( 0, ofGetHeight() )
+	);
+	boid.setVelocity
+	(
+		ofRandom( -2, 2 ),
+		ofRandom( -2, 2 )
+	);
+	
+	boid.trailCol.push_back( 0xFFFFFF );
+}
+
 /////////////////////////////////////////////
 //	UPDATE.
 /////////////////////////////////////////////
@@ -75,7 +84,26 @@ void Flock :: update ()
 {
 	updateForces();
 	
-	for( int i=0; i<boids.size(); i++ )
+	if( boidsNum != boidsNumRevised )						//-- need to add or remove boids.
+	{
+		if( boidsNumRevised > boidsNum )		// add.
+		{
+			int num = boidsNumRevised - boidsNum;
+			addBoids( num );
+		}
+		
+		if( boidsNumRevised < boidsNum )		// remove.
+		{
+			int i = boidsNumRevised;
+			int t = boidsNum;
+			
+			boids.erase( boids.begin() + i, boids.begin() + t );
+		}
+		
+		boidsNum = boidsNumRevised;
+	}
+	
+	for( int i=0; i<boids.size(); i++ )						//-- update boid variables.
 	{
 		Boid &boid = boids[ i ];
 		
@@ -89,7 +117,7 @@ void Flock :: update ()
 		boid.maxForce			= boidMaxForce;
 	}
 	
-	for( int i=0; i<boids.size(); i++ )
+	for( int i=0; i<boids.size(); i++ )						//-- update boid movement and save as new value.
 	{
 		Boid &boid = boids[ i ];
 		boid.update_acc();
@@ -97,7 +125,7 @@ void Flock :: update ()
 		boid.update_pos();
 	}
 	
-	for( int i=0; i<boids.size(); i++ )
+	for( int i=0; i<boids.size(); i++ )						//-- update boid with saved boid movement.
 	{
 		Boid &boid = boids[ i ];
 		boid.update_final();
