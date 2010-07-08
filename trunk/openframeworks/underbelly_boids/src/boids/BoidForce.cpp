@@ -11,14 +11,19 @@
 
 BoidForce :: BoidForce ( float x, float y, float size, float reach, float magnitude )
 {
-	this->x			= x;
-	this->y			= y;
-	this->size		= size;
-	this->reach		= reach;
-	this->magnitude	= magnitude;
+	init( x, y, size, reach, magnitude );
 }
 
 BoidForce :: ~BoidForce ()
 {
 
+}
+
+void BoidForce :: init ( float x, float y, float size, float reach, float magnitude )
+{
+	this->x			= x;
+	this->y			= y;
+	this->size		= size;
+	this->reach		= reach;
+	this->magnitude	= magnitude;
 }

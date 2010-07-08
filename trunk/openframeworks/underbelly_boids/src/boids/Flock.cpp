@@ -38,7 +38,7 @@ void Flock :: init ()
 	
 	boidSeparationDist		= 25.0;
 	boidPerception			= 50.0;
-	boidMaxSpeed			= 15.0;
+	boidMaxSpeed			= 10.0;
 	boidMaxForce			= 1.0;
 	
 	bMouseMoved				= false;
@@ -128,6 +128,8 @@ void Flock :: update ()
 		Boid &boid = boids[ i ];
 		boid.update_final();
 	}
+	
+	updateFood();
 }
 
 void Flock :: updateForces ()
@@ -148,6 +150,49 @@ void Flock :: updateForces ()
 		forces.push_back( food.getForceOne() );
 		forces.push_back( food.getForceTwo() );
 	}
+	
+	for( int i=0; i<obstacles.size(); i++ )
+	{
+		BoidObstacle &obs = obstacles[ i ];
+		
+		forces.push_back( BoidForce( obs.x, obs.y, obs.size, obs.reach, obs.magnitude ) );
+	}
+}
+
+void Flock :: updateFood ()
+{
+	for( int i=0; i<foods.size(); i++ )
+	{
+		bool bRemove = false;
+		
+		BoidFood &food = foods[ i ];
+		
+		for( int j=0; j<boids.size(); j++ )
+		{
+			Boid &boid = boids[ j ];
+			
+			float dist = ofDist( food.x, food.y, boid.pos.x, boid.pos.y );
+			float area = food.size + boid.size;
+			
+			if( dist < area )
+			{
+				food.size -= 0.05;
+				
+				if( food.size < 5 )
+				{
+					bRemove = true;
+					
+					break;
+				}
+			}
+		}
+		
+		if( bRemove )
+		{
+			foods.erase( foods.begin() + i );
+			--i;
+		}
+	}
 }
 
 /////////////////////////////////////////////
@@ -162,6 +207,7 @@ void Flock :: draw ()
 	drawBoids();
 	drawMice();
 	drawFood();
+	drawObstacles();
 
 	ofNoFill();
 	ofEnableSmoothing();
@@ -169,6 +215,7 @@ void Flock :: draw ()
 	drawBoids();
 	drawMice();
 	drawFood();
+	drawObstacles();
 	
 	ofDisableSmoothing();
 }
@@ -216,6 +263,15 @@ void Flock :: drawFood ()
 	}
 }
 
+void Flock :: drawObstacles ()
+{
+	for( int i=0; i<obstacles.size(); i++ )
+	{
+		BoidObstacle &obs = obstacles[ i ];
+		obs.draw();
+	}
+}
+
 /////////////////////////////////////////////
 //	FORCES.
 /////////////////////////////////////////////
@@ -226,6 +282,14 @@ void Flock :: addFood ( int x, int y )
 	foodSize = ofRandom( 10, 30 );
 	
 	foods.push_back( BoidFood( x, y, foodSize, foodSize, 10 ) );
+}
+
+void Flock :: addObstacle ( int x, int y )
+{
+	float obstacleSize;
+	obstacleSize = ofRandom( 20, 50 );
+	
+	obstacles.push_back( BoidObstacle( x, y, obstacleSize, obstacleSize * 1.5, -20 ) );
 }
 
 void Flock :: addMouse ( int x, int y )
