@@ -32,20 +32,18 @@ void Flock :: init ()
 	
 	//--
 	
-	Boid &boid = boids[ 0 ];		// store the boid group setting based on the first boid.
+	boidSeperationWeight	= 1.8;
+	boidAlignmentWeight		= 1.0;
+	boidCohesionWeight		= 1.0;
 	
-	boidSeperationWeight	= boid.separationWeight;
-	boidAlignmentWeight		= boid.alignmentWeight;
-	boidCohesionWeight		= boid.cohesionWeight;
+	boidSeparationDist		= 25.0;
+	boidPerception			= 50.0;
+	boidMaxSpeed			= 15.0;
+	boidMaxForce			= 1.0;
 	
-	boidSeparationDist		= boid.separationDist;
-	boidPerception			= boid.perception;
-	boidMaxSpeed			= boid.maxSpeed;
-	boidMaxForce			= boid.maxForce;
-	
+	bMouseMoved				= false;
 	mouseReach				= 70;
 	mouseForce				= -10;
-	bMouseMoved				= false;
 }
 
 void Flock :: addBoids ( int num )
@@ -134,13 +132,21 @@ void Flock :: update ()
 
 void Flock :: updateForces ()
 {
-	clearForces();
+	forces.clear();
 	
-	if( bMouseMoved )
+	if( mice.size() > 0 )
 	{
-		bMouseMoved = false;
+		forces.push_back( mice[ 0 ] );
 		
-		addForce( mousePoint.x, mousePoint.y, mouseReach, mouseForce );
+		mice.clear();
+	}
+	
+	for( int i=0; i<foods.size(); i++ )
+	{
+		BoidFood &food = foods.at( i );
+		
+		forces.push_back( food.getForceOne() );
+		forces.push_back( food.getForceTwo() );
 	}
 }
 
@@ -150,45 +156,52 @@ void Flock :: updateForces ()
 
 void Flock :: draw ()
 {
-	drawBoids();
-	drawForces();
-	drawFood();
-}
-
-void Flock :: drawBoids ()
-{
 	ofFill();
+	ofDisableSmoothing();
 	
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.draw();
-	}
-	
+	drawBoids();
+	drawMice();
+	drawFood();
+
 	ofNoFill();
 	ofEnableSmoothing();
-	
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.draw();
-	}
+
+	drawBoids();
+	drawMice();
+	drawFood();
 	
 	ofDisableSmoothing();
 }
 
-void Flock :: drawForces ()
+void Flock :: drawBoids ()
+{
+	ofSetColor( 255, 255, 255, 255 );
+	
+	for( int i=0; i<boids.size(); i++ )
+	{
+		Boid &boid = boids[ i ];
+		boid.draw();
+	}
+}
+
+void Flock :: drawMice ()
 {
 	ofEnableAlphaBlending();
-
-	ofFill();
-	ofSetColor( 100, 100, 100, 128 );
 	
-	for( int i=0; i<forces.size(); i++ )
+	ofSetColor( 255, 0, 255, 128 );
+	
+	for( int i=0; i<mice.size(); i++ )
 	{
-		BoidForce &force = forces[ i ];
+		BoidForce &mouse = mice[ i ];
 		
-		ofCircle( force.x, force.y, force.reach );
+		ofCircle( mouse.x, mouse.y, mouse.reach );
+	}
+	
+	if( bMouseMoved )
+	{
+		bMouseMoved = false;
+		
+		ofCircle( mouseCopy.x, mouseCopy.y, mouseCopy.reach );
 	}
 	
 	ofDisableAlphaBlending();
@@ -196,58 +209,31 @@ void Flock :: drawForces ()
 
 void Flock :: drawFood ()
 {
-	ofEnableAlphaBlending();
-	
 	for( int i=0; i<foods.size(); i++ )
 	{
-		foods[ i ].draw();
+		BoidFood &food = foods[ i ];
+		food.draw();
 	}
-	
-	ofDisableAlphaBlending();
 }
 
 /////////////////////////////////////////////
 //	FORCES.
 /////////////////////////////////////////////
 
-void Flock :: addForce ( float x, float y, float reach, float magnitude )
-{
-	forces.push_back( BoidForce() );
-	
-	BoidForce &force = forces.back();
-	force.x			= x;
-	force.y			= y;
-	force.point.set( x, y, 0 );
-	force.reach		= reach;
-	force.magnitude	= magnitude;
-}
-
-void Flock :: clearForces ()
-{
-	forces.clear();
-}
-
-/////////////////////////////////////////////
-//	FOOD.
-/////////////////////////////////////////////
-
 void Flock :: addFood ( int x, int y )
 {
-	foods.push_back( BoidFood() );
+	float foodSize;
+	foodSize = ofRandom( 10, 30 );
 	
-	BoidFood &food = foods.back();
-	food.setPosition( x, y );
-	food.setRadius( ofRandom( 10, 30 ) );
+	foods.push_back( BoidFood( x, y, foodSize, foodSize, 10 ) );
 }
-
-/////////////////////////////////////////////
-//	MOUSE.
-/////////////////////////////////////////////
 
 void Flock :: addMouse ( int x, int y )
 {
 	bMouseMoved = true;
 	
-	mousePoint.x = x;
-	mousePoint.y = y;
+	mice.clear();
+	mice.push_back( BoidForce( x, y, mouseReach, mouseReach, mouseForce ) );
+	
+	mouseCopy = mice.back();
 }

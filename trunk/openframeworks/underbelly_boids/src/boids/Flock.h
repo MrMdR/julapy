@@ -12,6 +12,7 @@
 
 #include "ofMain.h"
 #include "Boid.h"
+#include "BoidForce.h"
 #include "BoidFood.h"
 
 class Flock
@@ -31,12 +32,9 @@ public :
 	
 	void draw			();
 	void drawBoids		();
-	void drawForces		();
+	void drawMice		();
 	void drawFood		();
 
-	void addForce		( float x, float y, float reach, float magnitude );
-	void clearForces	();
-	
 	void addFood		( int x, int y );
 	void addMouse		( int x, int y );
 	
@@ -45,7 +43,11 @@ public :
 	
 	vector<Boid>		boids;
 	vector<BoidForce>	forces;
+	
 	vector<BoidFood>	foods;
+	vector<BoidForce>	obstacles;
+	vector<BoidForce>	mice;
+	BoidForce			mouseCopy;
 	
 	float				boidSeperationWeight;
 	float				boidAlignmentWeight;
@@ -56,11 +58,9 @@ public :
 	float				boidMaxSpeed;
 	float				boidMaxForce;
 	
-	ofPoint				mousePoint;
 	bool				bMouseMoved;
 	float				mouseReach;
 	float				mouseForce;
-	
 };
 
 #endif

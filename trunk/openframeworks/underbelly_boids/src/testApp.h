@@ -33,6 +33,7 @@ public :
 	void windowResized	(int w, int h);
 	
 	bool				bDebug;
+	bool				bShiftDown;
 	
 	Flock				flock;
 };

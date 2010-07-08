@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1542BBA411E4C08100646071 /* BoidFood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1542BBA311E4C08100646071 /* BoidFood.cpp */; };
+		1583D02E11E5B3E700EB1BA6 /* BoidForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1583D02D11E5B3E700EB1BA6 /* BoidForce.cpp */; };
 		15A2C9FA11E5570B0087EB00 /* Flock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15A2C9F911E5570B0087EB00 /* Flock.cpp */; };
 		B274CDFF11E15B1700E26214 /* Boid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B274CDFE11E15B1700E26214 /* Boid.cpp */; };
 		B274CE1D11E15BE500E26214 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B274CE1011E15BE500E26214 /* ofxMatrix3x3.cpp */; };
@@ -106,6 +107,8 @@
 /* Begin PBXFileReference section */
 		1542BBA211E4C08100646071 /* BoidFood.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoidFood.h; sourceTree = "<group>"; };
 		1542BBA311E4C08100646071 /* BoidFood.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoidFood.cpp; sourceTree = "<group>"; };
+		1583D02C11E5B3E700EB1BA6 /* BoidForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoidForce.h; sourceTree = "<group>"; };
+		1583D02D11E5B3E700EB1BA6 /* BoidForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoidForce.cpp; sourceTree = "<group>"; };
 		15A2C9F811E5570B0087EB00 /* Flock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flock.h; sourceTree = "<group>"; };
 		15A2C9F911E5570B0087EB00 /* Flock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flock.cpp; sourceTree = "<group>"; };
 		B274CDFD11E15B1700E26214 /* Boid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Boid.h; sourceTree = "<group>"; };
@@ -255,6 +258,8 @@
 				15A2C9F911E5570B0087EB00 /* Flock.cpp */,
 				B274CDFD11E15B1700E26214 /* Boid.h */,
 				B274CDFE11E15B1700E26214 /* Boid.cpp */,
+				1583D02C11E5B3E700EB1BA6 /* BoidForce.h */,
+				1583D02D11E5B3E700EB1BA6 /* BoidForce.cpp */,
 				1542BBA211E4C08100646071 /* BoidFood.h */,
 				1542BBA311E4C08100646071 /* BoidFood.cpp */,
 			);
@@ -828,6 +833,7 @@
 				B274CF8811E1ADE600E26214 /* ofxMSAInteractiveObject.cpp in Sources */,
 				1542BBA411E4C08100646071 /* BoidFood.cpp in Sources */,
 				15A2C9FA11E5570B0087EB00 /* Flock.cpp in Sources */,
+				1583D02E11E5B3E700EB1BA6 /* BoidForce.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

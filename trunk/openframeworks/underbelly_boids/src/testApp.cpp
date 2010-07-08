@@ -8,6 +8,7 @@ void testApp :: setup ()
 {
 	ofSetFrameRate( 25 );
 	ofSetVerticalSync( true );
+	ofSetCircleResolution( 100 );
 	
 	bDebug			= true;
 	
@@ -90,6 +91,8 @@ void testApp :: keyPressed(int key)
 	{
 		bDebug = !bDebug;
 	}
+	
+	cout << key << endl;
 }
 
 void testApp::keyReleased(int key)

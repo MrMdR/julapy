@@ -12,16 +12,8 @@
 
 #include "ofMain.h"
 #include "ofxVectorMath.h"
+#include "BoidForce.h"
 #include "BoidFood.h"
-
-struct BoidForce
-{
-	float		x;
-	float		y;
-	ofPoint		point;
-	float		reach;
-	float		magnitude;
-};
 
 class Boid 
 {
