@@ -7,6 +7,7 @@
 #include "Rocks.h"
 #include "ofxCvBlob.h"
 #include "ofxSimpleGuiToo.h"
+#include "ofxOsc.h"
 
 #define MODE_BOIDS		1
 #define MODE_TRACK		2
@@ -24,11 +25,13 @@ public:
 	void initTracker		();
 	void initBoids			();
 	void initRocks			();
+	void initOsc			();
 	void initGui			();
 	
 	void updateBlobs		();
 	void updateBoids		();
 	void updateRocks		();
+	void updateOsc			();
 	void updateRenderArea	();
 	
 	void drawTracking		();
@@ -66,6 +69,15 @@ public:
 	Rocks					rocks;
 	
 	vector<ofxCvBlob>		blobs;		// combination of rocks + people.
+	
+	ofVideoPlayer			boidVideo;
+	vector<ofTexture>		boidFrames;
+	
+	vector<string>			oscSenderHosts;
+	vector<int>				oscSenderPorts;
+	vector<ofxOscSender>	oscSenders;
+	
+	float					oscTreeVal;
 };
 
 #endif

@@ -46,6 +46,8 @@ void Flock :: init ()
 	mouseReach				= 70;
 	mouseForce				= -10;
 	
+	boidsInTree				= 0;
+	
 	//-- boids.
 	
 	boidsNum = boidsNumRevised = 30;
@@ -88,7 +90,7 @@ void Flock :: addBoid ( Boid &boid )
 		ofRandom( -2, 2 )
 	);
 	
-	boid.setHome( home );
+	boid.setHome( &home );
 	
 	boid.trailCol.push_back( 0xFFFFFF );
 }
@@ -118,6 +120,19 @@ void Flock :: setContainer	( ofRectangle &rect )
 	}
 	
 	queen.setContainer( containerRect );
+}
+
+void Flock :: setBoidFrames	( vector<ofTexture> *boidFramesPtr )
+{
+	boidFrames = boidFramesPtr;
+	
+	for( int i=0; i<boids.size(); i++ )
+	{
+		Boid &boid = boids[ i ];
+		boid.setFrames( boidFrames );
+	}
+	
+	queen.setFrames( boidFrames );
 }
 
 /////////////////////////////////////////////
@@ -160,10 +175,18 @@ void Flock :: update ()
 	
 	//-- update part two.
 	
+	int boidsInTreeCount = 0;
+	
 	for( int i=0; i<boids.size(); i++ )
 	{
 		updateBoidPartTwo( boids[ i ] );
+		
+		Boid &boid = boids[ i ];
+		if( boid.bIsHome )
+			++boidsInTreeCount;
 	}
+	
+	boidsInTree = boidsInTreeCount / (float)boids.size();
 	
 	queen.update_final();
 	
@@ -196,6 +219,7 @@ void Flock :: updateBoidPartTwo ( Boid &boid )
 {
 	boid.update_final();
 	boid.update_home();
+	boid.update_frame();
 }
 
 void Flock :: updateForces ()

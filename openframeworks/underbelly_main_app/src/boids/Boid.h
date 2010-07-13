@@ -25,16 +25,18 @@ public :
 	
 	void setBoids		( vector<Boid> *boidsPtr );
 	void setForces		( vector<BoidForce> *forcesPtr );
-	void setHome		( BoidForce home );
+	void setHome		( BoidForce *home );
 	void setPosition	( float x, float y );
 	void setVelocity	( float x, float y );
 	void setContainer	( ofRectangle &rect );
+	void setFrames		( vector<ofTexture> *framesPtr );
 	
 	void update_acc		();
 	void update_vel		();
 	void update_pos		();
 	void update_final	();
 	void update_home	();
+	void update_frame	();
 	
 	void draw			();
 	void drawDebug		();
@@ -49,7 +51,8 @@ public :
 
 	vector<Boid>		*boids;
 	vector<BoidForce>	*forces;
-
+	BoidForce			*home;
+	
 	ofxVec2f			pos;
 	ofxVec2f			vel;
 	ofxVec2f			acc;
@@ -80,7 +83,6 @@ public :
 	bool				bContain;
 	ofRectangle			containerRect;
 	
-	BoidForce			home;
 	bool				bIsHome;
 	bool				bPullHome;
 	bool				bLeftHome;
@@ -88,6 +90,10 @@ public :
 	int					homeInTimeout;
 	int					homeOutTime;
 	int					homeOutTimeout;
+	
+	vector<ofTexture>	*frames;
+	int					frameIndex;
+	int					framesTotal;
 };
 
 #endif

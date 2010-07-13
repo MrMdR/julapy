@@ -24,6 +24,7 @@ void testApp::setup()
 	initTracker();
 	initBoids();
 	initRocks();
+	initOsc();
 	initGui();
 	
 	updateRocks();
@@ -60,13 +61,66 @@ void testApp :: initTracker ()
 
 void testApp :: initBoids ()
 {
+//	boidVideo.loadMovie( "boid.mov" );
+//	boidVideo.setPaused( true );
+//	
+//	int t = boidVideo.getTotalNumFrames();
+//	int w = boidVideo.width;
+//	int h = boidVideo.height;
+
+	int t = 160;
+	int w = 512;
+	int h = 512;
+
+	ofImage img;
+	
+	for( int i=0; i<t; i++ )
+	{
+		string imgPath = "";
+		char imgPathChar[ 255 ];
+		sprintf( imgPathChar, "boid_anim/boid%04d.png", i );
+		imgPath.insert( imgPath.size(), imgPathChar );
+		
+		img.loadImage( imgPath );
+
+		boidFrames.push_back( ofTexture() );
+		ofTexture &tex = boidFrames.back();
+		tex.allocate( w, h, GL_RGBA );
+		tex.loadData( img.getPixels(), w, h, GL_RGBA );
+		
+		img.clear();
+	}
+	
 	flock.init();
 	flock.addBlobs( &blobs );
+//	flock.setBoidFrames( &boidFrames );
 }
 
 void testApp :: initRocks ()
 {
 	rocks.setup();
+}
+
+void testApp :: initOsc ()
+{
+	oscSenderHosts.push_back( "169.254.209.151" );
+	oscSenderPorts.push_back( 12345 );
+	
+//	oscSenderHosts.push_back( "localhost" );
+//	oscSenderPorts.push_back( 12345 );
+	
+	for( int i=0; i<oscSenderHosts.size(); i++ )
+	{
+		oscSenders.push_back( ofxOscSender() );
+		
+		string oscSenderHost	= oscSenderHosts[ i ];
+		int oscSenderPort		= oscSenderPorts[ i ];
+		
+		ofxOscSender &oscSender = oscSenders.back();
+		oscSender.setup( oscSenderHost, oscSenderPort );
+	}
+	
+	oscTreeVal = 0;
 }
 
 void testApp :: initGui ()
@@ -77,7 +131,7 @@ void testApp :: initGui ()
 	gui.addToggle( "bAddFoodForBoids",	bAddFoodForBoids );
 	
 	gui.addPage();
-	gui.addTitle( "boids" );
+	gui.addTitle( "boids_1" );
 	gui.addSlider( "boidsNum ",			flock.boidsNumRevised,		0, 500   );
 	gui.addSlider( "seperation ",		flock.boidSeperationWeight,	0, 10.0  );
 	gui.addSlider( "alignment ",		flock.boidAlignmentWeight,	0, 10.0  );
@@ -89,6 +143,11 @@ void testApp :: initGui ()
 	gui.addSlider( "maxForce ",			flock.boidMaxForce,			0, 10.0  );
 	gui.addSlider( "mouseReach ",		flock.mouseReach,			0, 200.0 );
 	gui.addSlider( "mouseForce ",		flock.mouseForce,			-20.0, 0 );
+
+	gui.addPage();
+	gui.addTitle( "boids_2" );
+	gui.addSlider( "homeX ",			flock.home.x,				-0.5, 1.5 );
+	gui.addSlider( "homeY ",			flock.home.y,				-0.5, 1.5 );
 	
 	gui.addPage();
 	gui.addTitle( "tracking" );
@@ -120,6 +179,8 @@ void testApp :: update()
 		updateBlobs();
 		updateBoids();
 	}
+	
+	updateOsc();
 }
 
 void testApp :: updateBlobs ()
@@ -156,6 +217,27 @@ void testApp :: updateBoids ()
 void testApp :: updateRocks ()
 {
 	rocks.update();
+}
+
+void testApp :: updateOsc ()
+{
+	float treeVal;
+	treeVal = flock.boidsInTree * 2;
+	treeVal = MIN( treeVal, 1.0 );
+	
+	oscTreeVal += ( treeVal - oscTreeVal ) * 0.2;
+	
+	ofxOscMessage m;
+	m.setAddress( "/boids/tree" );
+	m.addFloatArg( oscTreeVal );
+	
+	cout << oscTreeVal << endl;
+	
+	for( int i=0; i<oscSenders.size(); i++ )
+	{
+		ofxOscSender &oscSender = oscSenders.back();
+		oscSender.sendMessage( m );
+	}
 }
 
 void testApp :: updateRenderArea()
@@ -214,6 +296,9 @@ void testApp::draw()
 		drawBoids();
 		drawRocks();
 		drawPeeps();
+		
+		ofTexture &tex = boidFrames[ ofGetFrameNum() % ( boidFrames.size() - 1 ) ];
+		tex.draw( 0, 0 );
 		
 		glPopMatrix();
 	}

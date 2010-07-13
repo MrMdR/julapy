@@ -30,6 +30,7 @@ public :
 	void addBoid		( Boid &boid );
 	
 	void setContainer	( ofRectangle &rect );
+	void setBoidFrames	( vector<ofTexture> *boidFramesPtr );
 	
 	void update				();
 	void updateBoidPartOne	( Boid &boid, bool bUpdateVars = true );
@@ -58,6 +59,8 @@ public :
 	vector<BoidForce>	forces;
 	Boid				queen;
 	
+	vector<ofTexture>	*boidFrames;
+	
 	vector<BoidFood>		foods;
 	vector<BoidObstacle>	obstacles;
 	vector<BoidForce>		mice;
@@ -79,6 +82,8 @@ public :
 	bool				bMouseMoved;
 	float				mouseReach;
 	float				mouseForce;
+	
+	float				boidsInTree;
 };
 
 #endif
