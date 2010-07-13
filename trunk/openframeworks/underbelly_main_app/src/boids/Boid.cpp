@@ -32,6 +32,7 @@ Boid :: Boid()
 	
 	boids			= NULL;
 	forces			= NULL;
+	home			= NULL;
 	
 	bPullHome		= true;
 	bIsHome			= false;
@@ -40,6 +41,10 @@ Boid :: Boid()
 	homeInTimeout	= 0;
 	homeOutTime		= 0;
 	homeOutTimeout	= 0;
+	
+	frames			= NULL;
+	frameIndex		= 0;
+	framesTotal		= 0;
 }
 
 Boid :: ~Boid()
@@ -62,9 +67,9 @@ void Boid :: setForces ( vector<BoidForce> *forcesPtr )
 	forces = forcesPtr;
 }
 
-void Boid :: setHome ( BoidForce homeForce )
+void Boid :: setHome ( BoidForce *homePtr )
 {
-	home = homeForce;
+	home = homePtr;
 }
 
 void Boid :: setPosition ( float x, float y )
@@ -87,6 +92,13 @@ void Boid :: setContainer ( ofRectangle &rect )
 	containerRect.height	= rect.height;
 }
 
+void Boid :: setFrames ( vector<ofTexture> *framesPtr )
+{
+	frames		= framesPtr;
+	framesTotal	= frames->size();
+	frameIndex	= (int)( ofRandom( 0, framesTotal - 1 ) );
+}
+
 /////////////////////////////////////////////
 //	UPDATE.
 /////////////////////////////////////////////
@@ -99,12 +111,12 @@ void Boid :: update_acc ()
 	
 	ofxVec2f ptf;						
 
-	if( bPullHome )
+	if( bPullHome && home != NULL )
 	{
-		int homeX = home.x * containerRect.width;
-		int homeY = home.y * containerRect.height;
+		int homeX = home->x * containerRect.width;
+		int homeY = home->y * containerRect.height;
 		
-		ptf += pointForce( homeX, homeY, home.reach, home.magnitude );
+		ptf += pointForce( homeX, homeY, home->reach, home->magnitude );
 	}
 	
 	if( !bIsHome && forces != NULL )
@@ -229,21 +241,24 @@ void Boid :: update_final ()
 
 void Boid :: update_home ()
 {
+	if( home == NULL )
+		return;
+	
 	int msElapsed;
 	msElapsed = ofGetElapsedTimeMillis();
 	
 	if( bPullHome && !bIsHome )
 	{
-		float homeX = home.x * containerRect.width;
-		float homeY = home.y * containerRect.height;
+		float homeX = home->x * containerRect.width;
+		float homeY = home->y * containerRect.height;
 		float dist	= ofDist( pos.x, pos.y, homeX, homeY );
 		
-		if( dist < home.size )
+		if( dist < home->size )
 		{
 			bIsHome			= true;
 			
 			homeInTime		= msElapsed;
-			homeInTimeout	= (int)( ofRandom( 1000, 2000 ) );
+			homeInTimeout	= (int)( ofRandom( 5000, 20000 ) );
 		}
 	}
 	
@@ -259,7 +274,7 @@ void Boid :: update_home ()
 			bLeftHome	= true;
 			
 			homeOutTime		= msElapsed;
-			homeOutTimeout	= (int)( ofRandom( 3000, 5000 ) );
+			homeOutTimeout	= (int)( ofRandom( 2000, 4000 ) );
 		}
 	}
 	
@@ -277,6 +292,15 @@ void Boid :: update_home ()
 	}
 }
 
+void Boid :: update_frame ()
+{
+	if( frames == NULL )
+		return;
+	
+	if( ++frameIndex > framesTotal - 1 )
+		frameIndex = 0;
+}
+
 /////////////////////////////////////////////
 //	DRAW.
 /////////////////////////////////////////////
@@ -285,6 +309,18 @@ void Boid :: draw ()
 {
 	ofFill();
 	ofCircle( pos.x, pos.y, size );
+	
+	if( frames == NULL )
+		return;
+	
+	glPushMatrix();
+	glTranslatef( pos.x, pos.y, 0 );
+	glScalef( 0.25, 0.25, 0 );
+	
+	ofTexture &tex = frames->at( frameIndex );
+	tex.draw( 0, 0 );
+	
+	glPopMatrix();
 }
 
 void Boid :: drawDebug ()

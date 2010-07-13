@@ -187,7 +187,6 @@ void Tracker :: updateTracking ()
 	
 	cvImageDiff.absDiff( cvImageBg, cvImageWarp );
 	cvImageDiff.threshold( threshold_1, false );
-	cvImageDiff = cvImageDiff;
 	cvImageDiff.blur( blur );
 	
 	cvImageThsh = cvImageDiff;
