@@ -20,6 +20,7 @@ Boid :: Boid()
 	separationWeight	= 1.8;
 	alignmentWeight		= 1.0;
 	cohesionWeight		= 1.0;
+	randomWeight		= 1.0;
 	
 	trailLength			= 20;
 	
@@ -30,13 +31,21 @@ Boid :: Boid()
 	containerRect.height	= ofGetHeight();
 	
 	boids			= NULL;
+	forces			= NULL;
+	
+	bPullHome		= true;
+	bIsHome			= false;
+	bLeftHome		= false;
+	homeInTime		= 0;
+	homeInTimeout	= 0;
+	homeOutTime		= 0;
+	homeOutTimeout	= 0;
 }
 
 Boid :: ~Boid()
 {
 	boids	= NULL;
 	forces	= NULL;
-	foods	= NULL;
 }
 
 /////////////////////////////////////////////
@@ -53,9 +62,9 @@ void Boid :: setForces ( vector<BoidForce> *forcesPtr )
 	forces = forcesPtr;
 }
 
-void Boid :: setFoods ( vector<BoidFood> *foodsPtr )
+void Boid :: setHome ( BoidForce homeForce )
 {
-	foods = foodsPtr;
+	home = homeForce;
 }
 
 void Boid :: setPosition ( float x, float y )
@@ -84,27 +93,54 @@ void Boid :: setContainer ( ofRectangle &rect )
 
 void Boid :: update_acc ()
 {
-	ofxVec2f sep = separate( boids );			//-- flocking forces.
-	ofxVec2f ali = align( boids );
-	ofxVec2f coh = cohesion( boids );
+	accNew = 0;									// zero the acceleration.
 	
-	sep *= separationWeight;
-	ali *= alignmentWeight;
-	coh *= cohesionWeight;
+	//-- point forces.
 	
-	ofxVec2f ptf;								//-- point forces.
-	
-	for( int i=0; i<forces->size(); i++ )
+	ofxVec2f ptf;						
+
+	if( bPullHome )
 	{
-		BoidForce &force = forces->at( i );
-		ptf += pointForce( force.x, force.y, force.reach, force.magnitude );
+		int homeX = home.x * containerRect.width;
+		int homeY = home.y * containerRect.height;
+		
+		ptf += pointForce( homeX, homeY, home.reach, home.magnitude );
 	}
 	
-	accNew		= 0;
-	accNew		+= sep;
-	accNew		+= ali;
-	accNew		+= coh;
-	accNew		+= ptf;
+	if( !bIsHome && forces != NULL )
+	{
+		for( int i=0; i<forces->size(); i++ )
+		{
+			BoidForce &force = forces->at( i );
+			ptf += pointForce( force.x, force.y, force.reach, force.magnitude );
+		}
+	}
+	
+	accNew += ptf;
+	
+	//-- random motion.
+	
+	ofxVec2f rnd;
+	rnd.set( ofRandom( -randomWeight, randomWeight ), ofRandom( -randomWeight, randomWeight ) );
+	
+	accNew += rnd;
+
+	//-- flocking forces.
+
+	if( !bIsHome && boids != NULL )
+	{
+		ofxVec2f sep = separate( boids );
+		ofxVec2f ali = align( boids );
+		ofxVec2f coh = cohesion( boids );
+		
+		sep *= separationWeight;
+		ali *= alignmentWeight;
+		coh *= cohesionWeight;
+		
+		accNew		+= sep;
+		accNew		+= ali;
+		accNew		+= coh;
+	}
 }
 
 void Boid :: update_vel ()
@@ -189,7 +225,56 @@ void Boid :: update_final ()
 	{
 		trailDir.push_back( ofxVec2f() );
 	}
+}
 
+void Boid :: update_home ()
+{
+	int msElapsed;
+	msElapsed = ofGetElapsedTimeMillis();
+	
+	if( bPullHome && !bIsHome )
+	{
+		float homeX = home.x * containerRect.width;
+		float homeY = home.y * containerRect.height;
+		float dist	= ofDist( pos.x, pos.y, homeX, homeY );
+		
+		if( dist < home.size )
+		{
+			bIsHome			= true;
+			
+			homeInTime		= msElapsed;
+			homeInTimeout	= (int)( ofRandom( 1000, 2000 ) );
+		}
+	}
+	
+	if( bIsHome )
+	{
+		int t;
+		t = msElapsed - homeInTime;
+		
+		if( t > homeInTimeout )
+		{
+			bPullHome	= false;
+			bIsHome		= false;
+			bLeftHome	= true;
+			
+			homeOutTime		= msElapsed;
+			homeOutTimeout	= (int)( ofRandom( 3000, 5000 ) );
+		}
+	}
+	
+	if( bLeftHome )
+	{
+		int t;
+		t = msElapsed - homeOutTime;
+		
+		if( t > homeOutTimeout )
+		{
+			bPullHome	= true;
+			bIsHome		= false;
+			bLeftHome	= false;
+		}
+	}
 }
 
 /////////////////////////////////////////////
@@ -198,10 +283,7 @@ void Boid :: update_final ()
 
 void Boid :: draw ()
 {
-	int c = trailCol.back();
-	
 	ofFill();
-	ofSetColor( c );
 	ofCircle( pos.x, pos.y, size );
 }
 
@@ -221,7 +303,6 @@ void Boid :: drawDebug ()
 void Boid :: drawTrail ()
 {
 	ofNoFill();
-	ofSetColor( 0xFFFFFF );
 	
 	if( trailPos.size() < 2 )
 		return;
@@ -238,7 +319,6 @@ void Boid :: drawTrail ()
 void Boid :: drawTrailFill ()
 {
 	ofNoFill();
-	ofSetColor( 0xFFFFFF );
 	
 	int t = trailPos.size() - 1;
 	

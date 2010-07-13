@@ -25,7 +25,7 @@ public :
 	
 	void setBoids		( vector<Boid> *boidsPtr );
 	void setForces		( vector<BoidForce> *forcesPtr );
-	void setFoods		( vector<BoidFood> *foodsPtr );
+	void setHome		( BoidForce home );
 	void setPosition	( float x, float y );
 	void setVelocity	( float x, float y );
 	void setContainer	( ofRectangle &rect );
@@ -34,6 +34,7 @@ public :
 	void update_vel		();
 	void update_pos		();
 	void update_final	();
+	void update_home	();
 	
 	void draw			();
 	void drawDebug		();
@@ -47,7 +48,6 @@ public :
 	ofxVec2f pointForce		( float x, float y, float reach, float magnitude );
 
 	vector<Boid>		*boids;
-	vector<BoidFood>	*foods;
 	vector<BoidForce>	*forces;
 
 	ofxVec2f			pos;
@@ -75,9 +75,19 @@ public :
 	float				separationWeight;
 	float				alignmentWeight;
 	float				cohesionWeight;
+	float				randomWeight;
 	
 	bool				bContain;
 	ofRectangle			containerRect;
+	
+	BoidForce			home;
+	bool				bIsHome;
+	bool				bPullHome;
+	bool				bLeftHome;
+	int					homeInTime;
+	int					homeInTimeout;
+	int					homeOutTime;
+	int					homeOutTimeout;
 };
 
 #endif

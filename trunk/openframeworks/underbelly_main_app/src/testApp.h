@@ -34,6 +34,7 @@ public:
 	void drawTracking		();
 	void drawBoids			();
 	void drawRocks			();
+	void drawRocksDebug		();
 	void drawPeeps			();
 	
 	void loadRockData		( string fileName = "rockData" );
@@ -47,10 +48,11 @@ public:
 	void windowResized		( int w, int h );
 
 	bool					bDebug;
-	bool					bBoids;
-	bool					bShiftDown;
 	bool					bFullScreen;
 	bool					bRightMonitor;
+	bool					bUseRockBlobs;
+	bool					bUseTrackerBlobs;
+	bool					bAddFoodForBoids;
 	
 	int						mode;
 
