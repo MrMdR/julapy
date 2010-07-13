@@ -13,8 +13,11 @@ void testApp::setup()
 	bDebug				= true;
 	bFullScreen			= false;
 	bRightMonitor		= false;
+	bUseRockBlobs		= true;
+	bUseTrackerBlobs	= false;
+	bAddFoodForBoids	= false;
 	
-	mode				= MODE_TRACK;
+	mode				= MODE_BOIDS;
 	
 	initRenderArea();
 	
@@ -59,11 +62,6 @@ void testApp :: initBoids ()
 {
 	flock.init();
 	flock.addBlobs( &blobs );
-	
-//	for( int i=0; i<10; i++ )
-//	{
-//		flock.addObstacle( ofRandom( 0, ofGetWidth() ), ofRandom( 0, ofGetHeight() ) );
-//	}
 }
 
 void testApp :: initRocks ()
@@ -73,30 +71,40 @@ void testApp :: initRocks ()
 
 void testApp :: initGui ()
 {
-	gui.addTitle( "boids" );
-	gui.addSlider( "boidsNum ",				flock.boidsNumRevised,		0, 500   );
-	gui.addSlider( "boidSeperationWeight ", flock.boidSeperationWeight,	0, 10.0  );
-	gui.addSlider( "boidAlignmentWeight ",	flock.boidAlignmentWeight,	0, 10.0  );
-	gui.addSlider( "boidCohesionWeight ",	flock.boidCohesionWeight,	0, 10.0  );
-	gui.addSlider( "boidSeparationDist ",	flock.boidSeparationDist,	0, 500.0 );
-	gui.addSlider( "boidPerception ",		flock.boidPerception,		0, 500.0 );
-	gui.addSlider( "boidMaxSpeed ",			flock.boidMaxSpeed,			0, 100.0 );
-	gui.addSlider( "boidMaxForce ",			flock.boidMaxForce,			0, 10.0  );
-	gui.addSlider( "mouseReach ",			flock.mouseReach,			0, 200.0 );
-	gui.addSlider( "mouseForce ",			flock.mouseForce,			-20.0, 0 );
+	gui.addTitle( "general" );
+	gui.addToggle( "bUseRockBlobs",		bUseRockBlobs );
+	gui.addToggle( "bUseTrackerBlobs",	bUseTrackerBlobs );
+	gui.addToggle( "bAddFoodForBoids",	bAddFoodForBoids );
 	
 	gui.addPage();
-	gui.addTitle( "openCV" );
+	gui.addTitle( "boids" );
+	gui.addSlider( "boidsNum ",			flock.boidsNumRevised,		0, 500   );
+	gui.addSlider( "seperation ",		flock.boidSeperationWeight,	0, 10.0  );
+	gui.addSlider( "alignment ",		flock.boidAlignmentWeight,	0, 10.0  );
+	gui.addSlider( "cohesion ",			flock.boidCohesionWeight,	0, 10.0  );
+	gui.addSlider( "randomWeight ",		flock.boidRandomWeight,		0, 10.0  );
+	gui.addSlider( "separationDist ",	flock.boidSeparationDist,	0, 500.0 );
+	gui.addSlider( "perception ",		flock.boidPerception,		0, 500.0 );
+	gui.addSlider( "maxSpeed ",			flock.boidMaxSpeed,			0, 100.0 );
+	gui.addSlider( "maxForce ",			flock.boidMaxForce,			0, 10.0  );
+	gui.addSlider( "mouseReach ",		flock.mouseReach,			0, 200.0 );
+	gui.addSlider( "mouseForce ",		flock.mouseForce,			-20.0, 0 );
+	
+	gui.addPage();
+	gui.addTitle( "tracking" );
 	gui.addSlider( "threshold_1 ",		tracker.threshold_1,	0, 255 );
 	gui.addSlider( "blur ",				tracker.blur,			0, 40  );
 	gui.addSlider( "threshold_2 ",		tracker.threshold_2,	0, 255 );
 	gui.addToggle( "bUpdateCameraPos",	tracker.bUpdateCameraPos );
 	gui.addSlider( "cameraRadius",		tracker.cameraRadius,	0, 360 );
 	
-//	gui.loadFromXML();
-	
 	gui.show();
-	gui.setPage( 1 );
+	
+	if( mode == MODE_BOIDS )
+		gui.setPage( 2 );
+	
+	if( mode == MODE_TRACK )
+		gui.setPage( 3 );
 }
 
 ///////////////////////////////////////////
@@ -118,14 +126,20 @@ void testApp :: updateBlobs ()
 {
 	blobs.clear();
 	
-	for( int i=0; i<rocks.blobs.size(); i++ )
+	if( bUseRockBlobs )
 	{
-		blobs.push_back( rocks.blobs[ i ] );
+		for( int i=0; i<rocks.blobs.size(); i++ )
+		{
+			blobs.push_back( rocks.blobs[ i ] );
+		}
 	}
-	
-	for( int i=0; i<tracker.blobs.size(); i++ )
+
+	if( bUseTrackerBlobs )
 	{
-		blobs.push_back( tracker.blobs[ i ] );
+		for( int i=0; i<tracker.blobs.size(); i++ )
+		{
+			blobs.push_back( tracker.blobs[ i ] );
+		}
 	}
 }	
 
@@ -204,6 +218,16 @@ void testApp::draw()
 		glPopMatrix();
 	}
 	
+	if( mode == MODE_ROCKS )
+	{
+		glPushMatrix();
+		glTranslatef( renderArea.x, renderArea.y, 0 );
+		
+		drawRocksDebug();
+		
+		glPopMatrix();
+	}
+	
 	gui.draw();
 }
 
@@ -230,18 +254,23 @@ void testApp :: drawBoids ()
 
 void testApp :: drawRocks ()
 {
-	if( mode == MODE_ROCKS )
-	{
-		rocks.drawImage();
-		rocks.drawDownsampledBlobs();
-	}
-	{
-		rocks.drawDownsampledBlobs();
-	}
+	if( !bUseRockBlobs )
+		return;
+	
+	rocks.drawDownsampledBlobs();
+}
+
+void testApp :: drawRocksDebug ()
+{
+	rocks.drawImage();
+	rocks.drawDownsampledBlobs();
 }
 
 void testApp :: drawPeeps ()
 {
+	if( !bUseTrackerBlobs )
+		return;
+	
 	for( int i=0; i<tracker.blobs.size(); i++ )
 	{
 		ofxCvBlob &blob = tracker.blobs[ i ];
@@ -267,18 +296,21 @@ void testApp :: drawPeeps ()
 
 void testApp::keyPressed(int key)
 {
+	if( key == '[' ) gui.prevPage();
+	if( key == ']' ) gui.nextPage();
+	
 	if( key == '1' )
 	{
 		mode = MODE_BOIDS;
 		
-		gui.setPage( 1 );
+		gui.setPage( 2 );
 	}
 
 	if( key == '2' )
 	{
 		mode = MODE_TRACK;
 		
-		gui.setPage( 2 );
+		gui.setPage( 3 );
 	}
 
 	if( key == '3' )
@@ -375,7 +407,7 @@ void testApp::mouseDragged(int x, int y, int button)
 
 void testApp::mousePressed(int x, int y, int button)
 {
-	if( mode == MODE_BOIDS )
+	if( mode == MODE_BOIDS && bAddFoodForBoids )
 	{
 		flock.addFood( x, y );
 	}

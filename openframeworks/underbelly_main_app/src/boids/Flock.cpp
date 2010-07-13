@@ -26,15 +26,16 @@ Flock :: ~Flock ()
 
 void Flock :: init ()
 {
-	boidsNum = boidsNumRevised = 30;
-	
-	addBoids( boidsNum );
-	
-	//--
+	home.x			= 1.02;
+	home.y			= 0.5;
+	home.size		= 50;
+	home.reach		= 200;
+	home.magnitude	= 20;
 	
 	boidSeperationWeight	= 1.8;
 	boidAlignmentWeight		= 1.0;
 	boidCohesionWeight		= 1.0;
+	boidRandomWeight		= 0.5;
 	
 	boidSeparationDist		= 25.0;
 	boidPerception			= 50.0;
@@ -45,11 +46,17 @@ void Flock :: init ()
 	mouseReach				= 70;
 	mouseForce				= -10;
 	
-	home.x			= 0.95;
-	home.y			= 0.5;
-	home.size		= 50;
-	home.reach		= 200;
-	home.magnitude	= 20;
+	//-- boids.
+	
+	boidsNum = boidsNumRevised = 30;
+	
+	addBoids( boidsNum );
+	
+	//-- queen.
+	
+	queen.setPosition( 0, 0 );
+	queen.setVelocity( ofRandom( -2, 2 ), ofRandom( -2, 2 ) );
+	queen.setBoids( &boids );
 }
 
 void Flock :: addBoids ( int num )
@@ -66,6 +73,7 @@ void Flock :: addBoid ( Boid &boid )
 {
 	boid.setBoids( &boids );
 	boid.setForces( &forces );
+	
 	boid.setPosition
 	(
 //		ofRandom( 0, ofGetWidth()  ),
@@ -73,11 +81,14 @@ void Flock :: addBoid ( Boid &boid )
 		0,
 		0
 	);
+	
 	boid.setVelocity
 	(
 		ofRandom( -2, 2 ),
 		ofRandom( -2, 2 )
 	);
+	
+	boid.setHome( home );
 	
 	boid.trailCol.push_back( 0xFFFFFF );
 }
@@ -105,6 +116,8 @@ void Flock :: setContainer	( ofRectangle &rect )
 		Boid &boid = boids[ i ];
 		boid.setContainer( containerRect );
 	}
+	
+	queen.setContainer( containerRect );
 }
 
 /////////////////////////////////////////////
@@ -134,13 +147,39 @@ void Flock :: update ()
 		boidsNum = boidsNumRevised;
 	}
 	
-	for( int i=0; i<boids.size(); i++ )						//-- update boid variables.
+	//-- update part one.
+	
+	for( int i=0; i<boids.size(); i++ )						
 	{
-		Boid &boid = boids[ i ];
-		
-		boid.separationWeight	= boidSeperationWeight;
+		updateBoidPartOne( boids[ i ] );
+	}
+
+	queen.perception	= boidPerception * 3;
+	queen.maxSpeed		= boidMaxSpeed * 0.5;
+	updateBoidPartOne( queen, false );
+	
+	//-- update part two.
+	
+	for( int i=0; i<boids.size(); i++ )
+	{
+		updateBoidPartTwo( boids[ i ] );
+	}
+	
+	queen.update_final();
+	
+	//-- yum!
+	
+	updateFood();
+}
+
+void Flock :: updateBoidPartOne ( Boid &boid, bool bUpdateVars )
+{
+	if( bUpdateVars )
+	{
+		boid.separationWeight	= boidSeperationWeight;		//-- update boid variables.
 		boid.alignmentWeight	= boidAlignmentWeight;
 		boid.cohesionWeight		= boidCohesionWeight;
+		boid.randomWeight		= boidRandomWeight;
 		
 		boid.separationDist		= boidSeparationDist;
 		boid.perception			= boidPerception;
@@ -148,21 +187,15 @@ void Flock :: update ()
 		boid.maxForce			= boidMaxForce;
 	}
 	
-	for( int i=0; i<boids.size(); i++ )						//-- update boid movement and save as new value.
-	{
-		Boid &boid = boids[ i ];
-		boid.update_acc();
-		boid.update_vel();
-		boid.update_pos();
-	}
-	
-	for( int i=0; i<boids.size(); i++ )						//-- update boid with saved boid movement.
-	{
-		Boid &boid = boids[ i ];
-		boid.update_final();
-	}
-	
-	updateFood();
+	boid.update_acc();									//-- update boid movement and save as new value.
+	boid.update_vel();
+	boid.update_pos();
+}
+
+void Flock :: updateBoidPartTwo ( Boid &boid )
+{
+	boid.update_final();
+	boid.update_home();
 }
 
 void Flock :: updateForces ()
@@ -205,12 +238,7 @@ void Flock :: updateForces ()
 		}
 	}
 	
-	//-- home force.
-	
-	float homeX = home.x * containerRect.width;
-	float homeY = home.y * containerRect.height;
-	
-	forces.push_back( BoidForce( homeX, homeY, home.size, home.reach, home.magnitude ) );
+	forces.push_back( BoidForce( queen.pos.x, queen.pos.y, 50, 50, -20 ) );
 }
 
 void Flock :: updateFood ()
@@ -277,24 +305,29 @@ void Flock :: draw ()
 
 void Flock :: drawBoids ()
 {
-	ofSetColor( 255, 255, 255, 255 );
-	
 	for( int i=0; i<boids.size(); i++ )
 	{
+		ofSetColor( 0xFFFFFF );
+		
 		Boid &boid = boids[ i ];
 		boid.draw();
 		boid.drawTrail();
 		boid.drawTrailFill();
 		boid.drawDebug();
 	}
+	
+	ofSetColor( 0xFF0000 );
+	
+	queen.draw();
+	queen.drawTrail();
+	queen.drawTrailFill();
+	queen.drawDebug();
 }
 
 void Flock :: drawMice ()
 {
-	ofEnableAlphaBlending();
-	
 	ofNoFill();
-	ofSetColor( 255, 0, 255, 128 );
+	ofSetColor( 0xFF00FF );
 	
 	for( int i=0; i<mice.size(); i++ )
 	{
@@ -309,8 +342,6 @@ void Flock :: drawMice ()
 		
 		ofCircle( mouseCopy.x, mouseCopy.y, mouseCopy.reach );
 	}
-	
-	ofDisableAlphaBlending();
 }
 
 void Flock :: drawFood ()

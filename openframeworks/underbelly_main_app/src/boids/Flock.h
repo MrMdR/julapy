@@ -31,9 +31,11 @@ public :
 	
 	void setContainer	( ofRectangle &rect );
 	
-	void update			();
-	void updateForces	();
-	void updateFood		();
+	void update				();
+	void updateBoidPartOne	( Boid &boid, bool bUpdateVars = true );
+	void updateBoidPartTwo	( Boid &boid );
+	void updateForces		();
+	void updateFood			();
 	
 	void draw			();
 	void drawBoids		();
@@ -54,6 +56,7 @@ public :
 	
 	vector<Boid>		boids;
 	vector<BoidForce>	forces;
+	Boid				queen;
 	
 	vector<BoidFood>		foods;
 	vector<BoidObstacle>	obstacles;
@@ -66,6 +69,7 @@ public :
 	float				boidSeperationWeight;
 	float				boidAlignmentWeight;
 	float				boidCohesionWeight;
+	float				boidRandomWeight;
 	
 	float				boidSeparationDist;
 	float				boidPerception;
