@@ -19,7 +19,7 @@ class ofxCvBlobUtil
 public :
 	
 	 ofxCvBlobUtil();
-	ofxCvBlobUtil();
+	~ofxCvBlobUtil();
 	
 	void downSampleBlobs	( vector<ofxCvBlob> &blobsIn, vector<ofxCvBlob> &blobsOut, int numOfPoints );
 	void scaleBlobs			( vector<ofxCvBlob> &blobsIn, float scaleX, float scaleY );
