@@ -2,20 +2,15 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-#include "ofxVideoGrabber.h"
-#include "ofxOpenCv.h"
-#include "ofxContourUtil.h"
-#include "ofxSimpleGuiToo.h"
-#include "ofxCvWarper.h"
-
+#include "Tracker.h"
 #include "Flock.h"
-
-#define USE_VIDEO_INPUT				// comment out to use camera input.
-#define USE_POINT_GREY_CAMERA		// comment out to use normal camera that does not require IIDC lib.
+#include "Rocks.h"
+#include "ofxCvBlob.h"
+#include "ofxSimpleGuiToo.h"
 
 #define MODE_BOIDS		1
 #define MODE_TRACK		2
-
+#define MODE_ROCKS		3
 
 class testApp : public ofBaseApp
 {
@@ -26,22 +21,14 @@ public:
 	void draw	();
 	
 	void initRenderArea		();
+	void initTracker		();
 	void initBoids			();
-	
-	void initVideo			();
-	void initVideoGrabber	();
-	void initVideoPlayer	();
+	void initRocks			();
 	void initGui			();
-	
-	void updateVideoGrabber	();
-	void updateVideoPlayer	();
-	void updateTracking		();
-	void updateBackground	();
-	int  updateContours		();
-	void updateCameraPos	( int x, int y );
 	
 	void updateBlobs		();
 	void updateBoids		();
+	void updateRocks		();
 	void updateRenderArea	();
 	
 	void drawTracking		();
@@ -51,20 +38,19 @@ public:
 	
 	void loadRockData		( string fileName = "rockData" );
 
-	void keyPressed		( int key );
-	void keyReleased	( int key );
-	void mouseMoved		( int x, int y );
-	void mouseDragged	( int x, int y, int button );
-	void mousePressed	( int x, int y, int button );
-	void mouseReleased	( int x, int y, int button );
-	void windowResized	( int w, int h );
+	void keyPressed			( int key );
+	void keyReleased		( int key );
+	void mouseMoved			( int x, int y );
+	void mouseDragged		( int x, int y, int button );
+	void mousePressed		( int x, int y, int button );
+	void mouseReleased		( int x, int y, int button );
+	void windowResized		( int w, int h );
 
 	bool					bDebug;
 	bool					bBoids;
 	bool					bShiftDown;
 	bool					bFullScreen;
 	bool					bRightMonitor;
-	bool					bUpdateCameraPos;
 	
 	int						mode;
 
@@ -72,54 +58,12 @@ public:
 	ofRectangle				renderAreaWindow;
 	ofRectangle				renderAreaFullScreen;
 	ofRectangle				renderAreaRightMonitor;
+
+	Flock					flock;
+	Tracker					tracker;
+	Rocks					rocks;
 	
-	int						modeTrackOffsetX;
-	int						modeTrackOffsetY;
-	
-	//-- boids.
-	
-	Flock				flock;
-	vector<ofxCvBlob>	blobs;		// combination of rocks + people.
-	vector<ofxCvBlob>	rocks;
-	vector<ofxCvBlob>	peeps;
-	
-	//-- opencv.
-	
-#ifdef USE_VIDEO_INPUT	
-	ofVideoPlayer			videoPlayer;
-#else
-#ifdef USE_POINT_GREY_CAMERA	
-	ofxVideoGrabber			videoGrabber;
-#else
-	ofVideoGrabber			videoGrabber;
-#endif
-#endif
-	
-	ofRectangle				videoLrgRect;
-	ofRectangle				videoSmlRect;
-	
-	bool					isVideoNewFrame;
-	
-	ofxCvGrayscaleImage		videoLrgImage;
-	ofxCvGrayscaleImage		videoSmlImage;
-	
-	//--
-	
-	ofxCvWarper				cvWarper;
-	ofxCvGrayscaleImage		cvImageWarp;
-	ofxCvGrayscaleImage		cvImageBg;
-	ofxCvGrayscaleImage		cvImageDiff;
-	ofxCvGrayscaleImage		cvImageThsh;
-	
-	int						threshold_1;
-	int						threshold_2;
-	int						blur;
-	
-	ofxCvContourFinder		contourFinder;
-	ofxContourUtil			contourUtil;
-	
-	ofPoint					cameraPosition;
-	float					cameraRadius;
+	vector<ofxCvBlob>		blobs;		// combination of rocks + people.
 };
 
 #endif

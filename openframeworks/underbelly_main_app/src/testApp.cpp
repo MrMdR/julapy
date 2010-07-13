@@ -11,27 +11,20 @@ void testApp::setup()
 	ofSetCircleResolution( 100 );
 
 	bDebug				= true;
-	bBoids				= true;
 	bFullScreen			= false;
 	bRightMonitor		= false;
-	bUpdateCameraPos	= false;
 	
-	mode				= MODE_BOIDS;
-	
-	modeTrackOffsetX	= 260;
-	modeTrackOffsetY	= 115;
+	mode				= MODE_TRACK;
 	
 	initRenderArea();
+	
+	initTracker();
 	initBoids();
-	initVideo();
-	initVideoGrabber();
-	initVideoPlayer();
+	initRocks();
 	initGui();
 	
-	cameraRadius = 200;
-	updateCameraPos( videoSmlRect.width * 0.5, videoSmlRect.height * 0.5 );
-	
-	loadRockData();
+	updateRocks();
+	updateRenderArea();
 }
 
 void testApp :: initRenderArea()
@@ -57,6 +50,11 @@ void testApp :: initRenderArea()
 	renderArea.height	= renderAreaWindow.height;
 }
 
+void testApp :: initTracker ()
+{
+	tracker.setup();
+}
+
 void testApp :: initBoids ()
 {
 	flock.init();
@@ -68,62 +66,9 @@ void testApp :: initBoids ()
 //	}
 }
 
-void testApp :: initVideo()
+void testApp :: initRocks ()
 {
-	videoLrgRect.width  = 640;
-	videoLrgRect.height = 480;
-	
-	videoSmlRect.width  = 320;
-	videoSmlRect.height = 240;
-
-	videoLrgImage.allocate( videoLrgRect.width, videoLrgRect.height );
-	videoSmlImage.allocate( videoSmlRect.width, videoSmlRect.height );
-	
-	cvImageWarp.allocate( videoSmlRect.width, videoSmlRect.height );
-	cvImageBg.allocate( videoSmlRect.width, videoSmlRect.height );
-	cvImageDiff.allocate( videoSmlRect.width, videoSmlRect.height );
-	cvImageThsh.allocate( videoSmlRect.width, videoSmlRect.height );
-	
-	cvWarper.setup( &videoSmlImage, &cvImageWarp );
-	cvWarper.setPosition( modeTrackOffsetX, modeTrackOffsetY );
-	cvWarper.load( "video_warper_data.txt" );
-	
-	threshold_1	= 30;
-	threshold_2	= 30;
-	blur		= 4;
-	
-	isVideoNewFrame = false;
-}
-
-void testApp :: initVideoGrabber ()
-{
-#ifndef USE_VIDEO_INPUT
-#ifdef	USE_POINT_GREY_CAMERA	
-	bool result = videoGrabber.initGrabber( videoLrgRect.width, videoLrgRect.height, VID_FORMAT_GREYSCALE, VID_FORMAT_GREYSCALE, 25, true, new Libdc1394Grabber() );
-	
-	if( result )
-	{
-		ofLog(OF_LOG_NOTICE,"Camera succesfully initialized.");
-	} 
-	else
-	{
-		ofLog(OF_LOG_FATAL_ERROR,"Camera failed to initialize.");
-	}
-#else
-	videoGrabber.initGrabber( videoLrgRect.width, videoLrgRect.height );
-#endif
-#endif
-}
-
-void testApp :: initVideoPlayer ()
-{
-#ifdef USE_VIDEO_INPUT
-	videoPlayer.loadMovie( "underbelly_test_03.mov" );
-	videoPlayer.setPaused( false );
-	videoPlayer.setPosition( 0.0 );
-	videoPlayer.setLoopState( true );
-	videoPlayer.play();
-#endif
+	rocks.setup();
 }
 
 void testApp :: initGui ()
@@ -142,11 +87,11 @@ void testApp :: initGui ()
 	
 	gui.addPage();
 	gui.addTitle( "openCV" );
-	gui.addSlider( "threshold_1 ",		threshold_1,	0, 255 );
-	gui.addSlider( "blur ",				blur,			0, 40  );
-	gui.addSlider( "threshold_2 ",		threshold_2,	0, 255 );
-	gui.addToggle( "bUpdateCameraPos",	bUpdateCameraPos );
-	gui.addSlider( "cameraRadius",		cameraRadius,	0, 360 );
+	gui.addSlider( "threshold_1 ",		tracker.threshold_1,	0, 255 );
+	gui.addSlider( "blur ",				tracker.blur,			0, 40  );
+	gui.addSlider( "threshold_2 ",		tracker.threshold_2,	0, 255 );
+	gui.addToggle( "bUpdateCameraPos",	tracker.bUpdateCameraPos );
+	gui.addSlider( "cameraRadius",		tracker.cameraRadius,	0, 360 );
 	
 //	gui.loadFromXML();
 	
@@ -160,23 +105,7 @@ void testApp :: initGui ()
 
 void testApp :: update()
 {
-	updateVideoGrabber();
-	updateVideoPlayer();
-	updateTracking();
-	
-	int blobsFound;
-	blobsFound = updateContours();
-	
-	if( blobsFound > 0 )
-	{
-		contourUtil.downSampleBlobs( contourFinder.blobs, peeps, 40 );
-		contourUtil.scaleBlobs( peeps, renderArea.width / (float)videoSmlRect.width, renderArea.height / (float)videoSmlRect.height );
-//		contourUtil.translateBlobs( peeps, renderArea.x, renderArea.y );
-	}
-	else
-	{
-		peeps.clear();
-	}
+	tracker.update();
 	
 	if( mode == MODE_BOIDS )
 	{
@@ -185,143 +114,18 @@ void testApp :: update()
 	}
 }
 
-void testApp :: updateVideoGrabber ()
-{
-#ifndef USE_VIDEO_INPUT
-#ifdef	USE_POINT_GREY_CAMERA
-	videoGrabber.update();
-#else
-	videoGrabber.grabFrame();
-#endif
-	
-	isVideoNewFrame = videoGrabber.isFrameNew();
-	
-	if( isVideoNewFrame )
-	{
-		
-#ifdef USE_POINT_GREY_CAMERA
-		
-		videoLrgImage.setFromPixels( videoGrabber.getPixels(), videoLrgRect.width, videoLrgRect.height );
-		
-#else
-		ofxCvColorImage videoClrImage;
-		videoClrImage.allocate( videoLrgRect.width, videoLrgRect.height );
-		videoClrImage.setFromPixels( videoGrabber.getPixels(), videoLrgRect.width, videoLrgRect.height );
-		
-		videoLrgImage.setFromColorImage( videoClrImage );
-		
-		videoClrImage.clear();
-#endif
-		
-		videoSmlImage.scaleIntoMe( videoLrgImage );
-	}
-#endif
-}
-
-void testApp :: updateVideoPlayer ()
-{
-#ifdef USE_VIDEO_INPUT
-	
-	videoPlayer.update();
-	
-	isVideoNewFrame = videoPlayer.isFrameNew();
-	
-	if( isVideoNewFrame )
-	{
-		ofxCvColorImage videoClrImage;
-		videoClrImage.allocate( videoLrgRect.width, videoLrgRect.height );
-		videoClrImage.setFromPixels( videoPlayer.getPixels(), videoLrgRect.width, videoLrgRect.height );
-		
-		videoLrgImage.setFromColorImage( videoClrImage );
-		
-		videoClrImage.clear();
-		
-		videoSmlImage.scaleIntoMe( videoLrgImage );
-	}
-	
-#endif
-}
-
-void testApp :: updateTracking ()
-{
-	cvWarper.warp();
-	
-	cvImageDiff.absDiff( cvImageBg, cvImageWarp );
-	cvImageDiff.threshold( threshold_1, false );
-	cvImageDiff = cvImageDiff;
-	cvImageDiff.blur( blur );
-	
-	cvImageThsh = cvImageDiff;
-	cvImageThsh.threshold( threshold_2, false );
-}
-
-void testApp :: updateBackground ()
-{
-	cvImageBg = cvImageWarp;
-}
-
-int testApp :: updateContours ()
-{
-	int maxArea;
-	maxArea = videoSmlRect.width * videoSmlRect.height;
-	
-	float cfMinArea;
-	cfMinArea = 0.001;
-	
-	int maxContoursToFind;
-	maxContoursToFind = 20;
-	
-	int runningBlobs;
-	
-	runningBlobs = contourFinder.findContours
-	(
-		cvImageThsh,					// image to be used.
-		(int)( maxArea * cfMinArea ),	// min area.
-		maxArea,						// max area.
-		maxContoursToFind,				// max number of contours to find.
-		false,							// find holes.
-		false							// use approximation.
-	);
-	
-	return runningBlobs;
-}
-
-void testApp :: updateCameraPos	( int x, int y )
-{
-	cameraPosition.x = x;
-	cameraPosition.y = y;
-	
-	float dist = 0;
-	int w = videoSmlRect.width;
-	int h = videoSmlRect.height;
-	
-//	cameraRadius = 0;
-//	
-//	dist = ofDist( x, y, 0, 0 );
-//	cameraRadius = ( dist > cameraRadius ) ? dist : cameraRadius;
-//	
-//	dist = ofDist( x, y, w, 0 );
-//	cameraRadius = ( dist > cameraRadius ) ? dist : cameraRadius;
-//	
-//	dist = ofDist( x, y, w, h );
-//	cameraRadius = ( dist > cameraRadius ) ? dist : cameraRadius;
-//	
-//	dist = ofDist( x, y, 0, h );
-//	cameraRadius = ( dist > cameraRadius ) ? dist : cameraRadius;
-}
-
 void testApp :: updateBlobs ()
 {
 	blobs.clear();
 	
-	for( int i=0; i<rocks.size(); i++ )
+	for( int i=0; i<rocks.blobs.size(); i++ )
 	{
-		blobs.push_back( rocks[ i ] );
+		blobs.push_back( rocks.blobs[ i ] );
 	}
 	
-	for( int i=0; i<peeps.size(); i++ )
+	for( int i=0; i<tracker.blobs.size(); i++ )
 	{
-		blobs.push_back( peeps[ i ] );
+		blobs.push_back( tracker.blobs[ i ] );
 	}
 }	
 
@@ -333,6 +137,11 @@ void testApp :: updateBoids ()
 	
 	flock.setContainer( boidRect );
 	flock.update();
+}
+
+void testApp :: updateRocks ()
+{
+	rocks.update();
 }
 
 void testApp :: updateRenderArea()
@@ -366,6 +175,8 @@ void testApp :: updateRenderArea()
 			renderArea.height	= renderAreaFullScreen.height;
 		}
 	}
+	
+	tracker.updateRenderArea( renderArea );
 }
 
 ///////////////////////////////////////////
@@ -409,76 +220,7 @@ void testApp :: drawTracking ()
 		ofRect( 0, 0, renderAreaWindow.width, renderAreaWindow.height );
 	}
 	
-	int pad = 10;
-	
-	glPushMatrix();
-	glTranslatef( modeTrackOffsetX, modeTrackOffsetY, 0 );
-	
-	ofSetColor( 0xFFFFFF );
-	videoSmlImage.draw( 0, 0 );
-	ofSetColor( 0x00FF00 );
-	ofDrawBitmapString( "1) original", 10, 20 );
-	
-	glPushMatrix();
-	glTranslatef( videoSmlImage.width + pad, 0, 0 );
-	
-	ofSetColor( 0xFFFFFF );
-	cvImageWarp.draw( 0, 0 );
-	ofSetColor( 0x00FF00 );
-	ofDrawBitmapString( "2) warped", 10, 20 );
-	
-	glPushMatrix();
-	glTranslatef( videoSmlRect.width + pad, 0, 0 );
-	
-	ofSetColor( 0xFFFFFF );
-	cvImageBg.draw( 0, 0 );
-	ofSetColor( 0x00FF00 );
-	ofDrawBitmapString( "3) background", 10, 20 );
-	
-	glPopMatrix();
-	glPopMatrix();
-	
-	glPushMatrix();
-	glTranslatef( 0, videoSmlRect.height + pad, 0 );
-	
-	ofSetColor( 0xFFFFFF );
-	cvImageDiff.draw( 0, 0 );
-	ofSetColor( 0x00FF00 );
-	ofDrawBitmapString( "4) diff + blur", 10, 20 );
-	
-	glPushMatrix();
-	glTranslatef( videoSmlRect.width + pad, 0, 0 );
-	
-	ofSetColor( 0xFFFFFF );
-	cvImageThsh.draw( 0, 0 );
-	ofSetColor( 0x00FF00 );
-	ofDrawBitmapString( "5) threshold", 10, 20 );
-	
-	glPushMatrix();
-	glTranslatef( videoSmlRect.width + pad, 0, 0 );
-	
-	ofFill();
-	ofSetColor( 0x000000 );
-	ofRect( 0, 0, videoSmlRect.width, videoSmlRect.height );
-	contourFinder.draw();
-	ofSetColor( 0x00FF00 );
-	ofDrawBitmapString( "6) contours", 10, 20 );
-	
-	glPopMatrix();
-	glPopMatrix();
-	glPopMatrix();
-	
-	ofNoFill();											//-- camera position.
-	ofSetColor( 255, 0, 0, 127 );
-	ofEnableAlphaBlending();
-	ofCircle( cameraPosition.x, cameraPosition.y, cameraRadius );
-	ofFill();
-	ofCircle( cameraPosition.x, cameraPosition.y, 3 );
-	ofDisableAlphaBlending();
-	
-	glPopMatrix();
-	
-	cvWarper.draw();
+	tracker.draw();
 }
 
 void testApp :: drawBoids ()
@@ -488,30 +230,21 @@ void testApp :: drawBoids ()
 
 void testApp :: drawRocks ()
 {
-	for( int i=0; i<rocks.size(); i++ )
+	if( mode == MODE_ROCKS )
 	{
-		ofxCvBlob &blob = rocks[ i ];
-		
-		int t = blob.pts.size();
-		
-		for( int j=0; j<t; j++ )
-		{
-			ofPoint &p1 = blob.pts[ j ];
-			ofPoint &p2 = blob.pts[ ( j + 1 ) % t ];
-			
-			ofNoFill();
-			ofSetColor( 0xFF00FF );
-			ofLine( p1.x, p1.y, p2.x, p2.y );
-			ofCircle( p1.x, p1.y, 4 );
-		}
+		rocks.drawImage();
+		rocks.drawDownsampledBlobs();
+	}
+	{
+		rocks.drawDownsampledBlobs();
 	}
 }
 
 void testApp :: drawPeeps ()
 {
-	for( int i=0; i<peeps.size(); i++ )
+	for( int i=0; i<tracker.blobs.size(); i++ )
 	{
-		ofxCvBlob &blob = peeps[ i ];
+		ofxCvBlob &blob = tracker.blobs[ i ];
 		
 		int t = blob.pts.size();
 		
@@ -526,57 +259,6 @@ void testApp :: drawPeeps ()
 			ofCircle( p1.x, p1.y, 4 );
 		}
 	}
-}
-
-///////////////////////////////////////////////////
-//	DATA.
-///////////////////////////////////////////////////
-
-void testApp :: loadRockData ( string fileName )
-{
-	rocks.clear();
-	
-	ifstream myFile;
-	string line;
-	myFile.open( ofToDataPath( fileName ).c_str() );
-	if( myFile.is_open() )
-	{
-		bool bNewBlob = true;
-		
-		while( !myFile.eof() )
-		{
-			getline( myFile, line );
-			
-			if( bNewBlob )
-			{
-				if( line == "" )		// if second blank line then finished.
-				{
-					break;
-				}
-				
-				bNewBlob = false;
-				
-				rocks.push_back( ofxCvBlob() );
-			}
-			
-			if( line == "" )
-			{
-				bNewBlob = true;
-				
-				continue;
-			}
-			
-			vector<string> values = ofSplitString( line, " " );
-			
-			ofxCvBlob &blob = rocks.back();
-			
-			blob.pts.push_back( ofPoint() );
-			ofPoint &p = blob.pts.back();
-			p.x = atof( values[ 0 ].c_str() );
-			p.y = atof( values[ 1 ].c_str() );
-		}
-	}
-	myFile.close();
 }
 
 ///////////////////////////////////////////
@@ -598,6 +280,13 @@ void testApp::keyPressed(int key)
 		
 		gui.setPage( 2 );
 	}
+
+	if( key == '3' )
+	{
+		mode = MODE_ROCKS;
+		
+//		gui.setPage( 2 );
+	}
 	
 	if( key == 'd' )
 	{
@@ -610,40 +299,6 @@ void testApp::keyPressed(int key)
 		else
 		{
 			gui.hide();
-		}
-
-	}
-	
-	if( key == 'b' )
-	{
-		updateBackground();
-	}
-	
-	if( key == 'c' )
-	{
-		bUpdateCameraPos = !bUpdateCameraPos;
-	}
-	
-	if( key == 'w' )
-	{
-		cvWarper.reset();
-	}
-	
-	if( key == 's' )
-	{
-		cvWarper.save( "video_warper_data.txt" );
-	}
-	
-	if( key == 'l' )
-	{
-		cvWarper.load( "video_warper_data.txt" );
-	}
-	
-	if( key == 'o' )
-	{
-		if( bBoids )
-		{
-			flock.addObstacle( ofRandom( 0, ofGetWidth() ), ofRandom( 0, ofGetHeight() ) );
 		}
 	}
 	
@@ -659,16 +314,52 @@ void testApp::keyPressed(int key)
 		
 		updateRenderArea();
 	}
+	
+	if( mode == MODE_TRACK )
+	{
+		if( key == 'b' )
+		{
+			tracker.updateBackground();
+		}
+		
+		if( key == 'c' )
+		{
+			tracker.bUpdateCameraPos = !tracker.bUpdateCameraPos;
+		}
+		
+		if( key == 'w' )
+		{
+			tracker.cvWarper.reset();
+		}
+		
+		if( key == 's' )
+		{
+			tracker.cvWarper.save( "video_warper_data.txt" );
+		}
+		
+		if( key == 'l' )
+		{
+			tracker.cvWarper.load( "video_warper_data.txt" );
+		}
+	}
+	
+	if( mode == MODE_BOIDS )
+	{
+		if( key == 'o' )
+		{
+			flock.addObstacle( ofRandom( 0, ofGetWidth() ), ofRandom( 0, ofGetHeight() ) );
+		}
+	}
 }
 
 void testApp::keyReleased(int key)
 {
-
+	//
 }
 
 void testApp::mouseMoved(int x, int y )
 {
-	if( bBoids )
+	if( mode == MODE_BOIDS )
 	{
 		flock.addMouse( x, y );
 	}
@@ -676,19 +367,17 @@ void testApp::mouseMoved(int x, int y )
 
 void testApp::mouseDragged(int x, int y, int button)
 {
-
+	if( mode == MODE_TRACK && tracker.bUpdateCameraPos )
+	{
+		tracker.updateCameraPos( x, y );
+	}
 }
 
 void testApp::mousePressed(int x, int y, int button)
 {
-	if( mode == MODE_BOIDS && bBoids )
+	if( mode == MODE_BOIDS )
 	{
 		flock.addFood( x, y );
-	}
-	
-	if( mode == MODE_TRACK && bUpdateCameraPos )
-	{
-		updateCameraPos( x - modeTrackOffsetX, y - modeTrackOffsetY );
 	}
 }
 
