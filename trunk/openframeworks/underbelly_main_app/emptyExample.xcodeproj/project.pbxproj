@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15C7380811EB1A5E00AB1987 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C7380611EB1A5E00AB1987 /* ofxContourUtil.cpp */; };
 		15CFC27A11E9E18D00E1FC64 /* Boid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CFC27011E9E18D00E1FC64 /* Boid.cpp */; };
 		15CFC27B11E9E18D00E1FC64 /* BoidFood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CFC27211E9E18D00E1FC64 /* BoidFood.cpp */; };
 		15CFC27C11E9E18D00E1FC64 /* BoidForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15CFC27411E9E18D00E1FC64 /* BoidForce.cpp */; };
@@ -64,6 +63,9 @@
 		15F6FF1A11AD3697007E1B11 /* ofxVideoGrabberFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15F6FF0C11AD3697007E1B11 /* ofxVideoGrabberFeature.cpp */; };
 		15F6FF1B11AD3697007E1B11 /* ofxVideoGrabberSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15F6FF0F11AD3697007E1B11 /* ofxVideoGrabberSettings.cpp */; };
 		15F6FF3D11AD371B007E1B11 /* ofxThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15F6FF3B11AD371B007E1B11 /* ofxThread.cpp */; };
+		B2FD4A3711EBE17100DDB43B /* ofxCvBlobUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FD4A3511EBE17100DDB43B /* ofxCvBlobUtil.cpp */; };
+		B2FD4A7A11EBF0F300DDB43B /* Tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FD4A7911EBF0F300DDB43B /* Tracker.cpp */; };
+		B2FD4AF811EBFD1200DDB43B /* Rocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FD4AF711EBFD1200DDB43B /* Rocks.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -77,7 +79,7 @@
 		E45BE9840E8CC7DD009D7055 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */; };
-		E4C2422B10CC554B004149E2 /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2421E10CC549C004149E2 /* openFrameworksDebug.a */; };
+		E4C2422B10CC554B004149E2 /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2421E10CC549C004149E2 /* openFrameworks.a */; };
 		E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424410CC5A17004149E2 /* AppKit.framework */; };
 		E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424510CC5A17004149E2 /* Cocoa.framework */; };
 		E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424610CC5A17004149E2 /* IOKit.framework */; };
@@ -135,8 +137,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		15C7380611EB1A5E00AB1987 /* ofxContourUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxContourUtil.cpp; path = ../../../addons/ofxContourUtil/ofxContourUtil.cpp; sourceTree = SOURCE_ROOT; };
-		15C7380711EB1A5E00AB1987 /* ofxContourUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxContourUtil.h; path = ../../../addons/ofxContourUtil/ofxContourUtil.h; sourceTree = SOURCE_ROOT; };
 		15CFC27011E9E18D00E1FC64 /* Boid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Boid.cpp; path = src/boids/Boid.cpp; sourceTree = SOURCE_ROOT; };
 		15CFC27111E9E18D00E1FC64 /* Boid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Boid.h; path = src/boids/Boid.h; sourceTree = SOURCE_ROOT; };
 		15CFC27211E9E18D00E1FC64 /* BoidFood.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoidFood.cpp; path = src/boids/BoidFood.cpp; sourceTree = SOURCE_ROOT; };
@@ -299,6 +299,12 @@
 		15F6FF3911AD371B007E1B11 /* Instructions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Instructions.txt; path = ../../../addons/ofxThread/docs/Instructions.txt; sourceTree = SOURCE_ROOT; };
 		15F6FF3B11AD371B007E1B11 /* ofxThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxThread.cpp; path = ../../../addons/ofxThread/src/ofxThread.cpp; sourceTree = SOURCE_ROOT; };
 		15F6FF3C11AD371B007E1B11 /* ofxThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxThread.h; path = ../../../addons/ofxThread/src/ofxThread.h; sourceTree = SOURCE_ROOT; };
+		B2FD4A3511EBE17100DDB43B /* ofxCvBlobUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCvBlobUtil.cpp; sourceTree = "<group>"; };
+		B2FD4A3611EBE17100DDB43B /* ofxCvBlobUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCvBlobUtil.h; sourceTree = "<group>"; };
+		B2FD4A7811EBF0F300DDB43B /* Tracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tracker.h; sourceTree = "<group>"; };
+		B2FD4A7911EBF0F300DDB43B /* Tracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tracker.cpp; sourceTree = "<group>"; };
+		B2FD4AF611EBFD1200DDB43B /* Rocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rocks.h; sourceTree = "<group>"; };
+		B2FD4AF711EBFD1200DDB43B /* Rocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rocks.cpp; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -345,7 +351,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4C2422B10CC554B004149E2 /* openFrameworksDebug.a in Frameworks */,
+				E4C2422B10CC554B004149E2 /* openFrameworks.a in Frameworks */,
 				E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */,
 				E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
@@ -382,7 +388,7 @@
 				15CFC28A11E9E1CA00E1FC64 /* ofxVectorMath */,
 				15F6FEC811AD3697007E1B11 /* ofxIIDC */,
 				15F6FE8B11AD34DE007E1B11 /* ofxOpenCv */,
-				15C7380511EB1A5E00AB1987 /* ofxContourUtil */,
+				B2FD4A3411EBE17100DDB43B /* ofxCvBlobUtil */,
 				15EE06E711E7542300E03316 /* ofxCvWarper */,
 				15EE060211E7476E00E03316 /* ofxXmlSettings */,
 				15F6FF3711AD371B007E1B11 /* ofxThread */,
@@ -392,16 +398,6 @@
 			);
 			name = addons;
 			sourceTree = "<group>";
-		};
-		15C7380511EB1A5E00AB1987 /* ofxContourUtil */ = {
-			isa = PBXGroup;
-			children = (
-				15C7380611EB1A5E00AB1987 /* ofxContourUtil.cpp */,
-				15C7380711EB1A5E00AB1987 /* ofxContourUtil.h */,
-			);
-			name = ofxContourUtil;
-			path = ../../../addons/ofxContourUtil;
-			sourceTree = SOURCE_ROOT;
 		};
 		15CFC26F11E9E18D00E1FC64 /* boids */ = {
 			isa = PBXGroup;
@@ -798,6 +794,36 @@
 			path = ../../../addons/ofxThread/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		B2FD4A3411EBE17100DDB43B /* ofxCvBlobUtil */ = {
+			isa = PBXGroup;
+			children = (
+				B2FD4A3511EBE17100DDB43B /* ofxCvBlobUtil.cpp */,
+				B2FD4A3611EBE17100DDB43B /* ofxCvBlobUtil.h */,
+			);
+			name = ofxCvBlobUtil;
+			path = ../../../addons/ofxCvBlobUtil;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2FD4A7711EBF0DE00DDB43B /* tracker */ = {
+			isa = PBXGroup;
+			children = (
+				B2FD4A7811EBF0F300DDB43B /* Tracker.h */,
+				B2FD4A7911EBF0F300DDB43B /* Tracker.cpp */,
+			);
+			name = tracker;
+			path = src/tracker;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2FD4AF511EBFD0100DDB43B /* rocks */ = {
+			isa = PBXGroup;
+			children = (
+				B2FD4AF611EBFD1200DDB43B /* Rocks.h */,
+				B2FD4AF711EBFD1200DDB43B /* Rocks.cpp */,
+			);
+			name = rocks;
+			path = src/rocks;
+			sourceTree = SOURCE_ROOT;
+		};
 		E45BE0360E8CC5DE009D7055 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -993,6 +1019,8 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
+				B2FD4A7711EBF0DE00DDB43B /* tracker */,
+				B2FD4AF511EBFD0100DDB43B /* rocks */,
 				15CFC26F11E9E18D00E1FC64 /* boids */,
 			);
 			path = src;
@@ -1001,7 +1029,7 @@
 		E4C2421710CC549C004149E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E4C2421E10CC549C004149E2 /* openFrameworksDebug.a */,
+				E4C2421E10CC549C004149E2 /* openFrameworks.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1129,10 +1157,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E4C2421E10CC549C004149E2 /* openFrameworksDebug.a */ = {
+		E4C2421E10CC549C004149E2 /* openFrameworks.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = openFrameworksDebug.a;
+			path = openFrameworks.a;
 			remoteRef = E4C2421D10CC549C004149E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1216,7 +1244,9 @@
 				15CFC29911E9E1CA00E1FC64 /* ofxMatrix3x3.cpp in Sources */,
 				15CFC29A11E9E1CA00E1FC64 /* ofxMatrix4x4.cpp in Sources */,
 				15CFC29B11E9E1CA00E1FC64 /* ofxQuaternion.cpp in Sources */,
-				15C7380811EB1A5E00AB1987 /* ofxContourUtil.cpp in Sources */,
+				B2FD4A3711EBE17100DDB43B /* ofxCvBlobUtil.cpp in Sources */,
+				B2FD4A7A11EBF0F300DDB43B /* Tracker.cpp in Sources */,
+				B2FD4AF811EBFD1200DDB43B /* Rocks.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
