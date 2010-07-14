@@ -29,7 +29,7 @@ public :
 	void setPosition	( float x, float y );
 	void setVelocity	( float x, float y );
 	void setContainer	( ofRectangle &rect );
-	void setFrames		( vector<ofTexture> *framesPtr );
+	void setFrames		( vector<ofImage> *framesPtr );
 	
 	void update_acc		();
 	void update_vel		();
@@ -38,10 +38,10 @@ public :
 	void update_home	();
 	void update_frame	();
 	
-	void draw			();
+	void drawHead		();
 	void drawDebug		();
 	void drawTrail		();
-	void drawTrailFill	();
+	void drawTrailLine	();
 	
 	ofxVec2f separate		( vector<Boid> *boids );
 	ofxVec2f align			( vector<Boid> *boids );
@@ -66,7 +66,9 @@ public :
 	
 	vector<ofxVec2f>	trailPos;
 	vector<ofxVec2f>	trailDir;
-	vector<int>			trailCol;
+	vector<ofPoint>		trailRnd;
+	vector<ofPoint>		trailVrt;
+	vector<ofColor>		trailCol;
 	int					trailLength;
 	
 	float				size;
@@ -91,9 +93,11 @@ public :
 	int					homeOutTime;
 	int					homeOutTimeout;
 	
-	vector<ofTexture>	*frames;
+	vector<ofImage>		*frames;
 	int					frameIndex;
 	int					framesTotal;
+	int					frameW;
+	int					frameH;
 };
 
 #endif

@@ -25,6 +25,7 @@ void testApp::setup()
 	initBoids();
 	initRocks();
 	initOsc();
+	initBlendModes();
 	initGui();
 	
 	updateRocks();
@@ -61,39 +62,25 @@ void testApp :: initTracker ()
 
 void testApp :: initBoids ()
 {
-//	boidVideo.loadMovie( "boid.mov" );
-//	boidVideo.setPaused( true );
-//	
-//	int t = boidVideo.getTotalNumFrames();
-//	int w = boidVideo.width;
-//	int h = boidVideo.height;
-
 	int t = 160;
 	int w = 512;
 	int h = 512;
 
-	ofImage img;
-	
 	for( int i=0; i<t; i++ )
 	{
 		string imgPath = "";
 		char imgPathChar[ 255 ];
 		sprintf( imgPathChar, "boid_anim/boid%04d.png", i );
 		imgPath.insert( imgPath.size(), imgPathChar );
-		
-		img.loadImage( imgPath );
 
-		boidFrames.push_back( ofTexture() );
-		ofTexture &tex = boidFrames.back();
-		tex.allocate( w, h, GL_RGBA );
-		tex.loadData( img.getPixels(), w, h, GL_RGBA );
-		
-		img.clear();
+		boidFrames.push_back( ofImage() );
+		ofImage &img = boidFrames.back();
+		img.loadImage( imgPath );
 	}
 	
-	flock.init();
 	flock.addBlobs( &blobs );
-//	flock.setBoidFrames( &boidFrames );
+	flock.setBoidFrames( &boidFrames );
+	flock.init();
 }
 
 void testApp :: initRocks ()
@@ -123,6 +110,22 @@ void testApp :: initOsc ()
 	oscTreeVal = 0;
 }
 
+void testApp :: initBlendModes()
+{
+	addBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );	// alpha blending.
+	addBlendMode( GL_SRC_ALPHA, GL_ONE );					// additive blending.
+	addBlendMode( GL_ONE,		GL_ONE_MINUS_DST_ALPHA );	// ?
+	addBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );	// ?
+	
+	blendModeIndex = 0;
+}
+
+void testApp :: addBlendMode( GLuint srcBlend, GLuint dstBlend )
+{
+	blendModes.push_back( srcBlend );
+	blendModes.push_back( dstBlend );
+}
+
 void testApp :: initGui ()
 {
 	gui.addTitle( "general" );
@@ -131,7 +134,7 @@ void testApp :: initGui ()
 	gui.addToggle( "bAddFoodForBoids",	bAddFoodForBoids );
 	
 	gui.addPage();
-	gui.addTitle( "boids_1" );
+	gui.addTitle( "boids_1 :: movement" );
 	gui.addSlider( "boidsNum ",			flock.boidsNumRevised,		0, 500   );
 	gui.addSlider( "seperation ",		flock.boidSeperationWeight,	0, 10.0  );
 	gui.addSlider( "alignment ",		flock.boidAlignmentWeight,	0, 10.0  );
@@ -143,6 +146,10 @@ void testApp :: initGui ()
 	gui.addSlider( "maxForce ",			flock.boidMaxForce,			0, 10.0  );
 	gui.addSlider( "mouseReach ",		flock.mouseReach,			0, 200.0 );
 	gui.addSlider( "mouseForce ",		flock.mouseForce,			-20.0, 0 );
+
+	gui.addPage();
+	gui.addTitle( "boids_1 :: presentation" );
+	gui.addSlider( "blendMode ",		blendModeIndex,				0, (int)( ( blendModes.size() - 1 ) * 0.5 ) );
 
 	gui.addPage();
 	gui.addTitle( "boids_2" );
@@ -157,7 +164,7 @@ void testApp :: initGui ()
 	gui.addToggle( "bUpdateCameraPos",	tracker.bUpdateCameraPos );
 	gui.addSlider( "cameraRadius",		tracker.cameraRadius,	0, 360 );
 	
-	gui.show();
+//	gui.show();
 	
 	if( mode == MODE_BOIDS )
 		gui.setPage( 2 );
@@ -231,8 +238,6 @@ void testApp :: updateOsc ()
 	m.setAddress( "/boids/tree" );
 	m.addFloatArg( oscTreeVal );
 	
-	cout << oscTreeVal << endl;
-	
 	for( int i=0; i<oscSenders.size(); i++ )
 	{
 		ofxOscSender &oscSender = oscSenders.back();
@@ -292,13 +297,17 @@ void testApp::draw()
 	{
 		glPushMatrix();
 		glTranslatef( renderArea.x, renderArea.y, 0 );
+
+		glEnable(GL_BLEND);
+		glBlendFunc( blendModes[ blendModeIndex * 2 + 0 ], blendModes[ blendModeIndex * 2 + 1 ] );
 		
 		drawBoids();
+		
+		glDisable(GL_BLEND);
+		
 		drawRocks();
 		drawPeeps();
-		
-		ofTexture &tex = boidFrames[ ofGetFrameNum() % ( boidFrames.size() - 1 ) ];
-		tex.draw( 0, 0 );
+//		drawBoidTexture();
 		
 		glPopMatrix();
 	}
@@ -373,6 +382,21 @@ void testApp :: drawPeeps ()
 			ofCircle( p1.x, p1.y, 4 );
 		}
 	}
+}
+
+void testApp :: drawBoidTexture ()
+{
+	ofEnableAlphaBlending();
+	
+	ofFill();
+	ofSetColor( 0xFFFFFF );
+	
+	int frameIndex = ofGetFrameNum() % boidFrames.size();
+	cout << frameIndex << endl;
+	ofImage &img = boidFrames[ frameIndex ];
+	img.draw( 0, 0 );
+	
+	ofDisableAlphaBlending();
 }
 
 ///////////////////////////////////////////
