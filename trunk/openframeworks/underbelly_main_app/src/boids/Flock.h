@@ -28,9 +28,10 @@ public :
 	void init			();
 	void addBoids		( int num );
 	void addBoid		( Boid &boid );
+	void addQueen		();
 	
 	void setContainer	( ofRectangle &rect );
-	void setBoidFrames	( vector<ofTexture> *boidFramesPtr );
+	void setBoidFrames	( vector<ofImage> *boidFramesPtr );
 	
 	void update				();
 	void updateBoidPartOne	( Boid &boid, bool bUpdateVars = true );
@@ -59,7 +60,7 @@ public :
 	vector<BoidForce>	forces;
 	Boid				queen;
 	
-	vector<ofTexture>	*boidFrames;
+	vector<ofImage>		*boidFrames;
 	
 	vector<BoidFood>		foods;
 	vector<BoidObstacle>	obstacles;

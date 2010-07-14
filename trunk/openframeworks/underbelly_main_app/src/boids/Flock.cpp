@@ -53,12 +53,7 @@ void Flock :: init ()
 	boidsNum = boidsNumRevised = 30;
 	
 	addBoids( boidsNum );
-	
-	//-- queen.
-	
-	queen.setPosition( 0, 0 );
-	queen.setVelocity( ofRandom( -2, 2 ), ofRandom( -2, 2 ) );
-	queen.setBoids( &boids );
+	addQueen();
 }
 
 void Flock :: addBoids ( int num )
@@ -73,26 +68,20 @@ void Flock :: addBoids ( int num )
 
 void Flock :: addBoid ( Boid &boid )
 {
+	boid.setPosition( 0, 0 );
+	boid.setVelocity( ofRandom( -2, 2 ), ofRandom( -2, 2 ) );
 	boid.setBoids( &boids );
 	boid.setForces( &forces );
-	
-	boid.setPosition
-	(
-//		ofRandom( 0, ofGetWidth()  ),
-//		ofRandom( 0, ofGetHeight() )
-		0,
-		0
-	);
-	
-	boid.setVelocity
-	(
-		ofRandom( -2, 2 ),
-		ofRandom( -2, 2 )
-	);
-	
 	boid.setHome( &home );
-	
-	boid.trailCol.push_back( 0xFFFFFF );
+	boid.setFrames( boidFrames );
+}
+
+void Flock :: addQueen ()
+{
+	queen.setPosition( 0, 0 );
+	queen.setVelocity( ofRandom( -2, 2 ), ofRandom( -2, 2 ) );
+	queen.setBoids( &boids );
+	queen.setFrames( boidFrames );
 }
 
 void Flock :: setContainer	( ofRectangle &rect )
@@ -122,17 +111,9 @@ void Flock :: setContainer	( ofRectangle &rect )
 	queen.setContainer( containerRect );
 }
 
-void Flock :: setBoidFrames	( vector<ofTexture> *boidFramesPtr )
+void Flock :: setBoidFrames	( vector<ofImage> *boidFramesPtr )
 {
 	boidFrames = boidFramesPtr;
-	
-	for( int i=0; i<boids.size(); i++ )
-	{
-		Boid &boid = boids[ i ];
-		boid.setFrames( boidFrames );
-	}
-	
-	queen.setFrames( boidFrames );
 }
 
 /////////////////////////////////////////////
@@ -210,7 +191,7 @@ void Flock :: updateBoidPartOne ( Boid &boid, bool bUpdateVars )
 		boid.maxForce			= boidMaxForce;
 	}
 	
-	boid.update_acc();									//-- update boid movement and save as new value.
+	boid.update_acc();										//-- update boid movement and save as new value.
 	boid.update_vel();
 	boid.update_pos();
 }
@@ -334,18 +315,23 @@ void Flock :: drawBoids ()
 		ofSetColor( 0xFFFFFF );
 		
 		Boid &boid = boids[ i ];
-		boid.draw();
+		boid.drawHead();
+		
+		ofEnableSmoothing();
 		boid.drawTrail();
-		boid.drawTrailFill();
-		boid.drawDebug();
+		ofDisableSmoothing();
+
+//		boid.drawDebug();
+//		boid.drawTrailLine();
 	}
 	
 	ofSetColor( 0xFF0000 );
 	
-	queen.draw();
+	queen.drawHead();
 	queen.drawTrail();
-	queen.drawTrailFill();
-	queen.drawDebug();
+	
+//	queen.drawDebug();
+//	queen.drawTrailLine();
 }
 
 void Flock :: drawMice ()

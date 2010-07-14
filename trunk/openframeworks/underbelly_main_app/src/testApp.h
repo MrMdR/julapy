@@ -26,6 +26,8 @@ public:
 	void initBoids			();
 	void initRocks			();
 	void initOsc			();
+	void initBlendModes		();
+	void addBlendMode		( GLuint srcBlend, GLuint dstBlend );
 	void initGui			();
 	
 	void updateBlobs		();
@@ -39,6 +41,7 @@ public:
 	void drawRocks			();
 	void drawRocksDebug		();
 	void drawPeeps			();
+	void drawBoidTexture	();
 	
 	void loadRockData		( string fileName = "rockData" );
 
@@ -71,13 +74,16 @@ public:
 	vector<ofxCvBlob>		blobs;		// combination of rocks + people.
 	
 	ofVideoPlayer			boidVideo;
-	vector<ofTexture>		boidFrames;
+	vector<ofImage>			boidFrames;
 	
 	vector<string>			oscSenderHosts;
 	vector<int>				oscSenderPorts;
 	vector<ofxOscSender>	oscSenders;
 	
 	float					oscTreeVal;
+	
+	vector<GLuint>			blendModes;
+	int						blendModeIndex;
 };
 
 #endif

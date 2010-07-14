@@ -45,6 +45,8 @@ Boid :: Boid()
 	frames			= NULL;
 	frameIndex		= 0;
 	framesTotal		= 0;
+	frameW			= 0;
+	frameH			= 0;
 }
 
 Boid :: ~Boid()
@@ -92,11 +94,13 @@ void Boid :: setContainer ( ofRectangle &rect )
 	containerRect.height	= rect.height;
 }
 
-void Boid :: setFrames ( vector<ofTexture> *framesPtr )
+void Boid :: setFrames ( vector<ofImage> *framesPtr )
 {
 	frames		= framesPtr;
 	framesTotal	= frames->size();
 	frameIndex	= (int)( ofRandom( 0, framesTotal - 1 ) );
+	frameW		= frames->at( 0 ).width;
+	frameH		= frames->at( 0 ).height;
 }
 
 /////////////////////////////////////////////
@@ -212,7 +216,8 @@ void Boid :: update_final ()
 	
 	if( trailPos.size() > 1 )
 	{
-		int t = trailPos.size();
+		int t;
+		t = trailPos.size();
 		
 		dir  = trailPos[ t - 1 ];
 		dir -= trailPos[ t - 2 ];
@@ -223,19 +228,94 @@ void Boid :: update_final ()
 		
 		trailDir.push_back( perp );
 		
+		//-- random trail displacement.
+		
+		bool bAddRndDisplace;
+		bAddRndDisplace = true;
+		
+		if( bAddRndDisplace )
+		{
+			trailRnd.push_back( ofPoint() );
+			ofPoint &rnd = trailRnd.back();
+			float rd	= 10;
+			float r		= ofRandom( -rd, rd );
+			rnd.x		= perp.x * r;
+			rnd.y		= perp.y * r;
+		}
+		
 		//-- if max numbe is reached, start removing old trail positions.
 		
 		if( trailPos.size() > trailLength )				
 		{
-			int t = trailPos.size() - trailLength;
+			int diff;
+			diff = trailPos.size() - trailLength;
 			
-			trailPos.erase( trailPos.begin(), trailPos.begin() + t );
-			trailDir.erase( trailDir.begin(), trailDir.begin() + t );
+			trailPos.erase( trailPos.begin(), trailPos.begin() + diff );
+			trailDir.erase( trailDir.begin(), trailDir.begin() + diff );
+			trailRnd.erase( trailRnd.begin(), trailRnd.begin() + diff );
+		}
+		
+		//-- work out vertices & color.
+		
+		trailVrt.clear();
+		trailCol.clear();
+		
+		t = trailPos.size();
+		
+		for( int i=0; i<t; i++ )
+		{
+			ofxVec2f &p1 = trailPos[ i ];
+			ofxVec2f &d1 = trailDir[ i ];
+			ofPoint  &r1 = trailRnd[ i ];
+			
+			float p		= i / (float)( t - 1 );
+			float s		= cos( PI * 0.5 * p );
+			float si	= 1 - s;
+			float w		= 10 * si;
+			float a		= si;
+			
+			float dx1	= d1.x * w * 0.5;		// x component of direction 1, multiplied by width.
+			float dy1	= d1.y * w * 0.5;		// y component of direction 1, multiplied by width.
+			
+			float v1x	= p1.x - dx1;			// vertex 1, x component.
+			float v1y	= p1.y - dy1;			// vertex 1, y component.
+			
+			float v2x	= p1.x + dx1;			// vertex 2, x component.
+			float v2y	= p1.y + dy1;			// vertex 2, y component.
+			
+			if( bAddRndDisplace )
+			{
+				v1x += r1.x * s;
+				v1y += r1.y * s;
+				v2x += r1.x * s;
+				v2y += r1.y * s;
+			}
+
+			trailVrt.push_back( ofPoint() );	// vertex 1
+			ofPoint &vrt_1 = trailVrt.back();
+			vrt_1.set( v1x, v1y, 0 );
+			
+			trailVrt.push_back( ofPoint() );	// vertex 1
+			ofPoint &vrt_2 = trailVrt.back();
+			vrt_2.set( v2x, v2y, 0 );
+			
+			trailCol.push_back( ofColor() );	// color of vertex 1.
+			trailCol.back().r = 255;
+			trailCol.back().g = 255;
+			trailCol.back().b = 255;
+			trailCol.back().a = 255 * a;
+			
+			trailCol.push_back( ofColor() );	// color of vertex 1.
+			trailCol.back().r = 255;
+			trailCol.back().g = 255;
+			trailCol.back().b = 255;
+			trailCol.back().a = 255 * a;
 		}
 	}
-	else
+	else	// this is the first trail position, nothing to work out.
 	{
 		trailDir.push_back( ofxVec2f() );
+		trailRnd.push_back( ofPoint() );
 	}
 }
 
@@ -305,22 +385,33 @@ void Boid :: update_frame ()
 //	DRAW.
 /////////////////////////////////////////////
 
-void Boid :: draw ()
+void Boid :: drawHead ()
 {
-	ofFill();
-	ofCircle( pos.x, pos.y, size );
-	
 	if( frames == NULL )
-		return;
-	
-	glPushMatrix();
-	glTranslatef( pos.x, pos.y, 0 );
-	glScalef( 0.25, 0.25, 0 );
-	
-	ofTexture &tex = frames->at( frameIndex );
-	tex.draw( 0, 0 );
-	
-	glPopMatrix();
+	{
+		ofFill();
+		ofCircle( pos.x, pos.y, size );
+	}
+	else 
+	{
+		float s;
+		s = 0.5;
+		
+		float x;
+		x = pos.x - frameW * s * 0.5;
+		
+		float y;
+		y = pos.y - frameH * s * 0.5;
+		
+		glPushMatrix();
+		glTranslatef( x, y, 0 );
+		glScalef( s, s, 0 );
+		
+		ofImage &img = frames->at( frameIndex );
+		img.draw( 0, 0 );
+		
+		glPopMatrix();
+	}
 }
 
 void Boid :: drawDebug ()
@@ -338,6 +429,44 @@ void Boid :: drawDebug ()
 
 void Boid :: drawTrail ()
 {
+	ofStyle style = ofGetStyle();
+	if( style.smoothing && !style.bFill )
+	{
+		glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+		glEnable( GL_LINE_SMOOTH );
+		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	glBegin( GL_QUAD_STRIP );
+//	glBegin( GL_LINE_LOOP );
+//	glBegin( GL_LINE_STRIP );
+//	glBegin( GL_LINES );
+	
+	for( int i=0; i<trailVrt.size(); i+=2 )
+	{
+		int j = i + 0;
+		int k = i + 1;
+		
+		ofPoint &v1 = trailVrt[ j ];
+		ofPoint &v2 = trailVrt[ k ];
+		
+		ofColor &c1 = trailCol[ j ];
+		ofColor &c2 = trailCol[ k ];
+		
+		ofSetColor( c1.r, c1.g, c1.b, c1.a );
+		glVertex2f( v1.x, v1.y );
+
+		ofSetColor( c2.r, c2.g, c2.b, c2.a );
+		glVertex2f( v2.x, v2.y );
+	}
+	
+	glEnd();
+}
+
+void Boid :: drawTrailLine ()
+{
 	ofNoFill();
 	
 	if( trailPos.size() < 2 )
@@ -349,50 +478,6 @@ void Boid :: drawTrail ()
 		ofxVec2f &p2 = trailPos[ i + 1 ];
 		
 		ofLine( p1.x, p1.y, p2.x, p2.y );
-	}
-}
-
-void Boid :: drawTrailFill ()
-{
-	ofNoFill();
-	
-	int t = trailPos.size() - 1;
-	
-	for( int i=0; i<t; i++ )
-	{
-		ofxVec2f &p1 = trailPos[ i ];
-		ofxVec2f &p2 = trailPos[ i + 1 ];
-		
-		ofxVec2f &d1 = trailDir[ i ];
-		ofxVec2f &d2 = trailDir[ i + 1 ];
-
-		float p		= i / (float)t;
-		float s		= 1 - cos( PI * 0.5 * p );
-		float w		= 10 * s;
-		
-		float dx1	= d1.x * w * 0.5;		// x component of direction 1, multiplied by width.
-		float dy1	= d1.y * w * 0.5;		// y component of direction 1, multiplied by width.
-		float dx2	= d2.x * w * 0.5;		// x component of direction 2, multiplied by width.
-		float dy2	= d2.y * w * 0.5;		// y component of direction 2, multiplied by width.
-		
-		float v1x = p1.x - dx1;		// vertex 1, x component.
-		float v1y = p1.y - dy1;		// vertex 1, y component.
-		
-		float v2x = p1.x + dx1;		// vertex 2, x component.
-		float v2y = p1.y + dy1;		// vertex 2, y component.
-		
-		float v3x = p2.x + dx2;		// vertex 3, x component.
-		float v3y = p2.y + dy2;		// vertex 3, x component.
-		
-		float v4x = p2.x - dx2;		// vertex 4, x component.
-		float v4y = p2.y - dy2;		// vertex 4, x component.
-		
-		ofBeginShape();
-		ofVertex( v1x, v1y );
-		ofVertex( v2x, v2y );
-		ofVertex( v3x, v3y );
-		ofVertex( v4x, v4y );
-		ofEndShape( true );
 	}
 }
 

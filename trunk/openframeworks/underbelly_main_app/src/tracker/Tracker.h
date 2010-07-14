@@ -10,7 +10,7 @@
 #ifndef	TRACKER
 #define TRACKER
 
-//#define USE_VIDEO_INPUT				// comment out to use camera input.
+#define USE_VIDEO_INPUT				// comment out to use camera input.
 #define USE_POINT_GREY_CAMERA		// comment out to use normal camera that does not require IIDC lib.
 
 #include "ofMain.h"
