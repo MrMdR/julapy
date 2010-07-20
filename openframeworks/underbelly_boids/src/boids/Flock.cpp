@@ -26,7 +26,7 @@ Flock :: ~Flock ()
 
 void Flock :: init ()
 {
-	boidsNum = boidsNumRevised = 100;
+	boidsNum = boidsNumRevised = 30;
 	
 	addBoids( boidsNum );
 	
@@ -72,6 +72,31 @@ void Flock :: addBoid ( Boid &boid )
 	);
 	
 	boid.trailCol.push_back( 0xFFFFFF );
+}
+
+void Flock :: setContainer	( ofRectangle &rect )
+{
+	if
+	(
+		containerRect.x			== rect.x		&&
+		containerRect.y			== rect.y		&&
+		containerRect.width		== rect.width	&&
+		containerRect.height	== rect.height
+	)
+	{
+		return;
+	}
+	
+	containerRect.x			= rect.x;
+	containerRect.y			= rect.y;
+	containerRect.width		= rect.width;
+	containerRect.height	= rect.height;
+	
+	for( int i=0; i<boids.size(); i++ )
+	{
+		Boid &boid = boids[ i ];
+		boid.setContainer( containerRect );
+	}
 }
 
 /////////////////////////////////////////////
@@ -157,6 +182,20 @@ void Flock :: updateForces ()
 		
 		forces.push_back( BoidForce( obs.x, obs.y, obs.size, obs.reach, obs.magnitude ) );
 	}
+	
+	for( int i=0; i<blobs->size(); i++ )
+	{
+		ofxCvBlob &blob = blobs->at( i );
+		
+		int t = blob.pts.size();
+		
+		for( int j=0; j<t; j++ )
+		{
+			ofPoint &p1 = blob.pts[ j ];
+			
+			forces.push_back( BoidForce( p1.x, p1.y, 40, 40, -20 ) );
+		}
+	}
 }
 
 void Flock :: updateFood ()
@@ -228,6 +267,9 @@ void Flock :: drawBoids ()
 	{
 		Boid &boid = boids[ i ];
 		boid.draw();
+		boid.drawTrail();
+		boid.drawTrailFill();
+		boid.drawDebug();
 	}
 }
 
@@ -235,6 +277,7 @@ void Flock :: drawMice ()
 {
 	ofEnableAlphaBlending();
 	
+	ofNoFill();
 	ofSetColor( 255, 0, 255, 128 );
 	
 	for( int i=0; i<mice.size(); i++ )
@@ -256,6 +299,8 @@ void Flock :: drawMice ()
 
 void Flock :: drawFood ()
 {
+	ofNoFill();
+	
 	for( int i=0; i<foods.size(); i++ )
 	{
 		BoidFood &food = foods[ i ];
@@ -265,6 +310,8 @@ void Flock :: drawFood ()
 
 void Flock :: drawObstacles ()
 {
+	ofNoFill();
+	
 	for( int i=0; i<obstacles.size(); i++ )
 	{
 		BoidObstacle &obs = obstacles[ i ];
@@ -300,4 +347,9 @@ void Flock :: addMouse ( int x, int y )
 	mice.push_back( BoidForce( x, y, mouseReach, mouseReach, mouseForce ) );
 	
 	mouseCopy = mice.back();
+}
+
+void Flock :: addBlobs ( vector<ofxCvBlob> *blobsPtr )
+{
+	blobs = blobsPtr;
 }
