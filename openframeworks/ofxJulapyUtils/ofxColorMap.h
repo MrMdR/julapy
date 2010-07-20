@@ -17,13 +17,18 @@ class ofxColorMap
 	
 public :
 	
-	ofxColorMap();
+	 ofxColorMap();
 	~ofxColorMap();
 	
-	void loadImage( string fileName );
-	void getColorXY( float x, float y, int *r, int *g, int *b );
+	void setup		( ofImage *image );
 	
-	ofImage image;
+	int  getColor	( const ofPoint& p );
+	int  getColor	( float x, float y );
+	
+private :
+	
+	ofImage* image;
+	
 };
 
 #endif
