@@ -144,12 +144,8 @@ void ofxTriangle :: draw( float x, float y )
 
 void ofxTriangle :: draw()
 {
-	ofFill();
-
 	for( int i=0; i<triangles.size(); i++ )
 	{
-		ofSetColor( ofRandom( 0, 0xffffff ) );
-		
 		ofxTriangleData& tr = triangles.at( i );
 		
 		ofTriangle
