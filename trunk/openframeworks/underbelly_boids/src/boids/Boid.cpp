@@ -21,11 +21,13 @@ Boid :: Boid()
 	alignmentWeight		= 1.0;
 	cohesionWeight		= 1.0;
 	
+	trailLength			= 20;
+	
 	bContain				= true;
 	containerRect.x			= 0.0;
 	containerRect.y			= 0.0;
-	containerRect.width		= 1.0;
-	containerRect.height	= 1.0;
+	containerRect.width		= ofGetWidth();
+	containerRect.height	= ofGetHeight();
 	
 	boids			= NULL;
 }
@@ -68,6 +70,14 @@ void Boid :: setVelocity ( float x, float y )
 	vel.y = velNew.y = y;
 }
 
+void Boid :: setContainer ( ofRectangle &rect )
+{
+	containerRect.x			= rect.x;
+	containerRect.y			= rect.y;
+	containerRect.width		= rect.width;
+	containerRect.height	= rect.height;
+}
+
 /////////////////////////////////////////////
 //	UPDATE.
 /////////////////////////////////////////////
@@ -105,14 +115,14 @@ void Boid :: update_vel ()
 
 void Boid :: update_pos ()
 {
+	ofRectangle r;
+	r.x			= containerRect.x;
+	r.y			= containerRect.y;
+	r.width		= containerRect.width;
+	r.height	= containerRect.height;
+	
 	if( bContain )
 	{
-		ofRectangle r;
-		r.x			= containerRect.x * ofGetWidth();
-		r.y			= containerRect.y * ofGetHeight();
-		r.width		= containerRect.width  * ofGetWidth();
-		r.height	= containerRect.height * ofGetHeight();
-		
 		float efficiency = .03;
 //		efficiency ~ 10 : boids immediately rejected
 //		efficiency ~ .1 : boids slowly change direction
@@ -127,10 +137,10 @@ void Boid :: update_pos ()
 	}
 	else
 	{
-		if( posNew.x < -size ) posNew.x = ofGetWidth()  + size;
-		if( posNew.y < -size ) posNew.y = ofGetHeight() + size;
-		if( posNew.x > ofGetWidth()  + size ) posNew.x = -size;
-		if( posNew.y > ofGetHeight() + size ) posNew.y = -size;
+		if( posNew.x < -size ) posNew.x = r.width  + size;
+		if( posNew.y < -size ) posNew.y = r.height + size;
+		if( posNew.x > r.width  + size ) posNew.x = -size;
+		if( posNew.y > r.height + size ) posNew.y = -size;
 	}
 	
 	//--
@@ -143,6 +153,43 @@ void Boid :: update_final ()
 	pos = posNew;
 	vel = velNew;
 	acc = accNew;
+	
+	//-- add position to trail.
+	
+	trailPos.push_back( ofxVec2f() );
+	ofxVec2f &tp = trailPos.back();
+	tp.set( pos );
+	
+	//-- add direction of trail.
+	
+	if( trailPos.size() > 1 )
+	{
+		int t = trailPos.size();
+		
+		dir  = trailPos[ t - 1 ];
+		dir -= trailPos[ t - 2 ];
+		dir.normalize();
+		
+		perp.set( dir );
+		perp.perpendicular();
+		
+		trailDir.push_back( perp );
+		
+		//-- if max numbe is reached, start removing old trail positions.
+		
+		if( trailPos.size() > trailLength )				
+		{
+			int t = trailPos.size() - trailLength;
+			
+			trailPos.erase( trailPos.begin(), trailPos.begin() + t );
+			trailDir.erase( trailDir.begin(), trailDir.begin() + t );
+		}
+	}
+	else
+	{
+		trailDir.push_back( ofxVec2f() );
+	}
+
 }
 
 /////////////////////////////////////////////
@@ -153,8 +200,81 @@ void Boid :: draw ()
 {
 	int c = trailCol.back();
 	
+	ofFill();
 	ofSetColor( c );
 	ofCircle( pos.x, pos.y, size );
+}
+
+void Boid :: drawDebug ()
+{
+	int line = 14;
+	
+	ofNoFill();
+	
+	ofSetColor( 0xFF0000 );
+	ofLine( pos.x, pos.y, pos.x + dir.x * line, pos.y + dir.y * line );
+	
+	ofSetColor( 0x00FF00 );
+	ofLine( pos.x, pos.y, pos.x + perp.x * line, pos.y + perp.y * line );
+}
+
+void Boid :: drawTrail ()
+{
+	ofNoFill();
+	ofSetColor( 0xFFFFFF );
+	
+	for( int i=0; i<trailPos.size() - 1; i++ )
+	{
+		ofxVec2f &p1 = trailPos[ i ];
+		ofxVec2f &p2 = trailPos[ i + 1 ];
+		
+		ofLine( p1.x, p1.y, p2.x, p2.y );
+	}
+}
+
+void Boid :: drawTrailFill ()
+{
+	ofNoFill();
+	ofSetColor( 0xFFFFFF );
+	
+	int t = trailPos.size() - 1;
+	
+	for( int i=0; i<t; i++ )
+	{
+		ofxVec2f &p1 = trailPos[ i ];
+		ofxVec2f &p2 = trailPos[ i + 1 ];
+		
+		ofxVec2f &d1 = trailDir[ i ];
+		ofxVec2f &d2 = trailDir[ i + 1 ];
+
+		float p		= i / (float)t;
+		float s		= 1 - cos( PI * 0.5 * p );
+		float w		= 10 * s;
+		
+		float dx1	= d1.x * w * 0.5;		// x component of direction 1, multiplied by width.
+		float dy1	= d1.y * w * 0.5;		// y component of direction 1, multiplied by width.
+		float dx2	= d2.x * w * 0.5;		// x component of direction 2, multiplied by width.
+		float dy2	= d2.y * w * 0.5;		// y component of direction 2, multiplied by width.
+		
+		float v1x = p1.x - dx1;		// vertex 1, x component.
+		float v1y = p1.y - dy1;		// vertex 1, y component.
+		
+		float v2x = p1.x + dx1;		// vertex 2, x component.
+		float v2y = p1.y + dy1;		// vertex 2, y component.
+		
+		float v3x = p2.x + dx2;		// vertex 3, x component.
+		float v3y = p2.y + dy2;		// vertex 3, x component.
+		
+		float v4x = p2.x - dx2;		// vertex 4, x component.
+		float v4y = p2.y - dy2;		// vertex 4, x component.
+		
+		ofBeginShape();
+		ofVertex( v1x, v1y );
+		ofVertex( v2x, v2y );
+		ofVertex( v3x, v3y );
+		ofVertex( v4x, v4y );
+		ofEndShape( true );
+	}
 }
 
 /////////////////////////////////////////////

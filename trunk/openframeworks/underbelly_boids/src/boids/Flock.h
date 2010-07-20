@@ -15,6 +15,7 @@
 #include "BoidForce.h"
 #include "BoidFood.h"
 #include "BoidObstacle.h"
+#include "ofxCvBlob.h"
 
 class Flock
 {
@@ -27,6 +28,8 @@ public :
 	void init			();
 	void addBoids		( int num );
 	void addBoid		( Boid &boid );
+	
+	void setContainer	( ofRectangle &rect );
 	
 	void update			();
 	void updateForces	();
@@ -41,9 +44,12 @@ public :
 	void addFood		( int x, int y );
 	void addObstacle	( int x, int y );
 	void addMouse		( int x, int y );
+	void addBlobs		( vector<ofxCvBlob> *blobs );
 	
 	int					boidsNum;
 	int					boidsNumRevised;
+	
+	ofRectangle			containerRect;
 	
 	vector<Boid>		boids;
 	vector<BoidForce>	forces;
@@ -52,6 +58,8 @@ public :
 	vector<BoidObstacle>	obstacles;
 	vector<BoidForce>		mice;
 	BoidForce				mouseCopy;
+	
+	vector<ofxCvBlob>		*blobs;
 	
 	float				boidSeperationWeight;
 	float				boidAlignmentWeight;

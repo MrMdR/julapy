@@ -28,6 +28,7 @@ public :
 	void setFoods		( vector<BoidFood> *foodsPtr );
 	void setPosition	( float x, float y );
 	void setVelocity	( float x, float y );
+	void setContainer	( ofRectangle &rect );
 	
 	void update_acc		();
 	void update_vel		();
@@ -35,6 +36,9 @@ public :
 	void update_final	();
 	
 	void draw			();
+	void drawDebug		();
+	void drawTrail		();
+	void drawTrailFill	();
 	
 	ofxVec2f separate		( vector<Boid> *boids );
 	ofxVec2f align			( vector<Boid> *boids );
@@ -54,7 +58,11 @@ public :
 	ofxVec2f			velNew;
 	ofxVec2f			accNew;
 	
+	ofxVec2f			dir;
+	ofxVec2f			perp;
+	
 	vector<ofxVec2f>	trailPos;
+	vector<ofxVec2f>	trailDir;
 	vector<int>			trailCol;
 	int					trailLength;
 	
