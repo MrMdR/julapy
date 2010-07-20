@@ -40,7 +40,7 @@ void Rocks :: update()
 	
 	if( blobsFound > 0 )
 	{
-		blobUtil.downSampleBlobs( contourFinder.blobs, blobs, 10 );
+		blobUtil.downSampleBlobs( contourFinder.blobs, blobs, 100 );
 	}
 }
 
