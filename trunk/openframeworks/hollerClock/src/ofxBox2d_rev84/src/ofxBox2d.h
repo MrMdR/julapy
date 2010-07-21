@@ -86,5 +86,5 @@ public:
 	void draw();
 	void drawGround();
 	
-	void raycast ( const ofPoint &p1, const ofPoint &p2, int maxHits = 10, vector<ofPoint>* hitPoints = NULL );
+	void raycast ( const ofPoint &p1, const ofPoint &p2, int maxHits = 1, vector<ofPoint>* hitPoints = NULL, vector<b2Shape*>* shapes = NULL );
 };

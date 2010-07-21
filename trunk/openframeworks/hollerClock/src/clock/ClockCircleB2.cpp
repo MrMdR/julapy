@@ -12,6 +12,9 @@
 ClockCircleB2 :: ClockCircleB2 ( float radius, int color )
 {
 	set( radius, color );
+	
+	spinDir = ( ofRandom( 0.0, 1.0 ) > 0.5 ) ? 1 : -1;
+	spinFrc	= ofRandom( 0.2, 0.5 );
 }
 
 ClockCircleB2 :: ~ClockCircleB2 ()

@@ -146,6 +146,43 @@
 		B208000E11EEABCC002AC0F8 /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
 		B208002111EEC718002AC0F8 /* Ball2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball2d.h; sourceTree = "<group>"; };
 		B208002211EEC718002AC0F8 /* Ball2d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ball2d.cpp; sourceTree = "<group>"; };
+		B20B11E211F6756300D3FC57 /* ApplyForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplyForce.h; path = src/box2d_tests/ApplyForce.h; sourceTree = SOURCE_ROOT; };
+		B20B11E311F6756300D3FC57 /* BodyTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BodyTypes.h; path = src/box2d_tests/BodyTypes.h; sourceTree = SOURCE_ROOT; };
+		B20B11E411F6756300D3FC57 /* Breakable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Breakable.h; path = src/box2d_tests/Breakable.h; sourceTree = SOURCE_ROOT; };
+		B20B11E511F6756300D3FC57 /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bridge.h; path = src/box2d_tests/Bridge.h; sourceTree = SOURCE_ROOT; };
+		B20B11E611F6756300D3FC57 /* Cantilever.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cantilever.h; path = src/box2d_tests/Cantilever.h; sourceTree = SOURCE_ROOT; };
+		B20B11E711F6756300D3FC57 /* Chain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Chain.h; path = src/box2d_tests/Chain.h; sourceTree = SOURCE_ROOT; };
+		B20B11E811F6756300D3FC57 /* CharacterCollision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharacterCollision.h; path = src/box2d_tests/CharacterCollision.h; sourceTree = SOURCE_ROOT; };
+		B20B11E911F6756300D3FC57 /* CollisionFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollisionFiltering.h; path = src/box2d_tests/CollisionFiltering.h; sourceTree = SOURCE_ROOT; };
+		B20B11EA11F6756300D3FC57 /* CollisionProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollisionProcessing.h; path = src/box2d_tests/CollisionProcessing.h; sourceTree = SOURCE_ROOT; };
+		B20B11EB11F6756300D3FC57 /* CompoundShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompoundShapes.h; path = src/box2d_tests/CompoundShapes.h; sourceTree = SOURCE_ROOT; };
+		B20B11EC11F6756300D3FC57 /* Confined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Confined.h; path = src/box2d_tests/Confined.h; sourceTree = SOURCE_ROOT; };
+		B20B11ED11F6756300D3FC57 /* ContinuousTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContinuousTest.h; path = src/box2d_tests/ContinuousTest.h; sourceTree = SOURCE_ROOT; };
+		B20B11EE11F6756300D3FC57 /* DistanceTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DistanceTest.h; path = src/box2d_tests/DistanceTest.h; sourceTree = SOURCE_ROOT; };
+		B20B11EF11F6756300D3FC57 /* Dominos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dominos.h; path = src/box2d_tests/Dominos.h; sourceTree = SOURCE_ROOT; };
+		B20B11F011F6756300D3FC57 /* DynamicTreeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicTreeTest.h; path = src/box2d_tests/DynamicTreeTest.h; sourceTree = SOURCE_ROOT; };
+		B20B11F111F6756300D3FC57 /* EdgeShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EdgeShapes.h; path = src/box2d_tests/EdgeShapes.h; sourceTree = SOURCE_ROOT; };
+		B20B11F211F6756300D3FC57 /* Gears.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gears.h; path = src/box2d_tests/Gears.h; sourceTree = SOURCE_ROOT; };
+		B20B11F311F6756300D3FC57 /* LineJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineJoint.h; path = src/box2d_tests/LineJoint.h; sourceTree = SOURCE_ROOT; };
+		B20B11F411F6756300D3FC57 /* OneSidedPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OneSidedPlatform.h; path = src/box2d_tests/OneSidedPlatform.h; sourceTree = SOURCE_ROOT; };
+		B20B11F511F6756300D3FC57 /* PolyCollision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PolyCollision.h; path = src/box2d_tests/PolyCollision.h; sourceTree = SOURCE_ROOT; };
+		B20B11F611F6756300D3FC57 /* PolyShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PolyShapes.h; path = src/box2d_tests/PolyShapes.h; sourceTree = SOURCE_ROOT; };
+		B20B11F711F6756300D3FC57 /* Prismatic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prismatic.h; path = src/box2d_tests/Prismatic.h; sourceTree = SOURCE_ROOT; };
+		B20B11F811F6756300D3FC57 /* Pulleys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pulleys.h; path = src/box2d_tests/Pulleys.h; sourceTree = SOURCE_ROOT; };
+		B20B11F911F6756300D3FC57 /* Pyramid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pyramid.h; path = src/box2d_tests/Pyramid.h; sourceTree = SOURCE_ROOT; };
+		B20B11FA11F6756300D3FC57 /* RayCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RayCast.h; path = src/box2d_tests/RayCast.h; sourceTree = SOURCE_ROOT; };
+		B20B11FB11F6756300D3FC57 /* Revolute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Revolute.h; path = src/box2d_tests/Revolute.h; sourceTree = SOURCE_ROOT; };
+		B20B11FC11F6756300D3FC57 /* SensorTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SensorTest.h; path = src/box2d_tests/SensorTest.h; sourceTree = SOURCE_ROOT; };
+		B20B11FD11F6756300D3FC57 /* ShapeEditing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShapeEditing.h; path = src/box2d_tests/ShapeEditing.h; sourceTree = SOURCE_ROOT; };
+		B20B11FE11F6756300D3FC57 /* SliderCrank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SliderCrank.h; path = src/box2d_tests/SliderCrank.h; sourceTree = SOURCE_ROOT; };
+		B20B11FF11F6756300D3FC57 /* SphereStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SphereStack.h; path = src/box2d_tests/SphereStack.h; sourceTree = SOURCE_ROOT; };
+		B20B120011F6756300D3FC57 /* TestEntries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestEntries.cpp; path = src/box2d_tests/TestEntries.cpp; sourceTree = SOURCE_ROOT; };
+		B20B120111F6756300D3FC57 /* TheoJansen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TheoJansen.h; path = src/box2d_tests/TheoJansen.h; sourceTree = SOURCE_ROOT; };
+		B20B120211F6756300D3FC57 /* TimeOfImpact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeOfImpact.h; path = src/box2d_tests/TimeOfImpact.h; sourceTree = SOURCE_ROOT; };
+		B20B120311F6756300D3FC57 /* VaryingFriction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VaryingFriction.h; path = src/box2d_tests/VaryingFriction.h; sourceTree = SOURCE_ROOT; };
+		B20B120411F6756300D3FC57 /* VaryingRestitution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VaryingRestitution.h; path = src/box2d_tests/VaryingRestitution.h; sourceTree = SOURCE_ROOT; };
+		B20B120511F6756300D3FC57 /* VerticalStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalStack.h; path = src/box2d_tests/VerticalStack.h; sourceTree = SOURCE_ROOT; };
+		B20B120611F6756300D3FC57 /* Web.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Web.h; path = src/box2d_tests/Web.h; sourceTree = SOURCE_ROOT; };
 		B2569A6311F3E3F400553DF4 /* ClockCircleB2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockCircleB2.h; sourceTree = "<group>"; };
 		B2569A6411F3E3F400553DF4 /* ClockCircleB2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockCircleB2.cpp; sourceTree = "<group>"; };
 		B2569A8D11F3E6B000553DF4 /* Box2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Box2D.h; path = src/ofxBox2d_rev84/src/lib/Box2D/Include/Box2D.h; sourceTree = SOURCE_ROOT; };
@@ -391,6 +428,51 @@
 			name = ball2D;
 			path = src/ball2D;
 			sourceTree = SOURCE_ROOT;
+		};
+		B20B11E111F6756300D3FC57 /* box2d_tests */ = {
+			isa = PBXGroup;
+			children = (
+				B20B11E211F6756300D3FC57 /* ApplyForce.h */,
+				B20B11E311F6756300D3FC57 /* BodyTypes.h */,
+				B20B11E411F6756300D3FC57 /* Breakable.h */,
+				B20B11E511F6756300D3FC57 /* Bridge.h */,
+				B20B11E611F6756300D3FC57 /* Cantilever.h */,
+				B20B11E711F6756300D3FC57 /* Chain.h */,
+				B20B11E811F6756300D3FC57 /* CharacterCollision.h */,
+				B20B11E911F6756300D3FC57 /* CollisionFiltering.h */,
+				B20B11EA11F6756300D3FC57 /* CollisionProcessing.h */,
+				B20B11EB11F6756300D3FC57 /* CompoundShapes.h */,
+				B20B11EC11F6756300D3FC57 /* Confined.h */,
+				B20B11ED11F6756300D3FC57 /* ContinuousTest.h */,
+				B20B11EE11F6756300D3FC57 /* DistanceTest.h */,
+				B20B11EF11F6756300D3FC57 /* Dominos.h */,
+				B20B11F011F6756300D3FC57 /* DynamicTreeTest.h */,
+				B20B11F111F6756300D3FC57 /* EdgeShapes.h */,
+				B20B11F211F6756300D3FC57 /* Gears.h */,
+				B20B11F311F6756300D3FC57 /* LineJoint.h */,
+				B20B11F411F6756300D3FC57 /* OneSidedPlatform.h */,
+				B20B11F511F6756300D3FC57 /* PolyCollision.h */,
+				B20B11F611F6756300D3FC57 /* PolyShapes.h */,
+				B20B11F711F6756300D3FC57 /* Prismatic.h */,
+				B20B11F811F6756300D3FC57 /* Pulleys.h */,
+				B20B11F911F6756300D3FC57 /* Pyramid.h */,
+				B20B11FA11F6756300D3FC57 /* RayCast.h */,
+				B20B11FB11F6756300D3FC57 /* Revolute.h */,
+				B20B11FC11F6756300D3FC57 /* SensorTest.h */,
+				B20B11FD11F6756300D3FC57 /* ShapeEditing.h */,
+				B20B11FE11F6756300D3FC57 /* SliderCrank.h */,
+				B20B11FF11F6756300D3FC57 /* SphereStack.h */,
+				B20B120011F6756300D3FC57 /* TestEntries.cpp */,
+				B20B120111F6756300D3FC57 /* TheoJansen.h */,
+				B20B120211F6756300D3FC57 /* TimeOfImpact.h */,
+				B20B120311F6756300D3FC57 /* VaryingFriction.h */,
+				B20B120411F6756300D3FC57 /* VaryingRestitution.h */,
+				B20B120511F6756300D3FC57 /* VerticalStack.h */,
+				B20B120611F6756300D3FC57 /* Web.h */,
+			);
+			name = box2d_tests;
+			path = src/box2d_tests;
+			sourceTree = "<group>";
 		};
 		B2569A8811F3E6B000553DF4 /* ofxBox2d_rev84 */ = {
 			isa = PBXGroup;
@@ -876,6 +958,7 @@
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				15C54ACA1164247B00FF3DF7 /* addons */,
+				B20B11E111F6756300D3FC57 /* box2d_tests */,
 				E4C2422310CC54B6004149E2 /* openFrameworks */,
 				E45BE0360E8CC5DE009D7055 /* libs */,
 			);

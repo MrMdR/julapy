@@ -90,12 +90,12 @@ void Clock :: createCircles ()
 	float area	= 0.015;		// biggest area as start.
 	float dec	= 0.5;		// decrease in area for the next batch of circles.
 	
-	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0xFFFFFF, 100 );
-	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xFFFF00, 270 );
-	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xFF0000, 540 );
-	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0xFF00FF, 710 );
-	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0x0000FF, 950 );
-	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0x00FFFF, 1120 );
+	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0x6b007e, 100 );
+	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xf51d2a, 270 );
+	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xf6009d, 540 );
+	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0x8c162f, 710 );
+	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0xc96dfd, 950 );
+	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0xf7719a, 1120 );
 }
 
 void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color, int lx )
@@ -154,26 +154,8 @@ float Clock :: areaToRadius ( float area )
 //	UPDATE.
 ///////////////////////////////////////////////
 
-void Clock :: update ()
+void Clock :: update ( int hrs, int min, int sec )
 {
-	updateTime();
-	updateTimeX();
-	
-	if( clockMode == CLOCK_MODE_1 )
-		updateForcesM1();
-	
-	if( clockMode == CLOCK_MODE_2 )
-		updateForcesM2();		
-	
-	box2d->update();
-}
-
-void Clock :: updateTime ()
-{
-	int hrs = ofGetHours();
-	int min = ofGetMinutes();
-	int sec = ofGetSeconds();
-	
 	hrsOneCount = hrs / 10;
 	hrsTwoCount = hrs % 10;
 	
@@ -182,6 +164,23 @@ void Clock :: updateTime ()
 	
 	secOneCount = sec / 10;
 	secTwoCount = sec % 10;
+
+	//--
+	
+	updateTimeX();
+	
+	if( clockMode == CLOCK_MODE_1 )
+	{
+		updateForcesM1();
+		updateRayBlob();
+	}
+	
+	if( clockMode == CLOCK_MODE_2 )
+	{
+		updateForcesM2();		
+	}
+	
+	box2d->update();
 }
 
 void Clock :: updateTimeX ()
@@ -275,12 +274,11 @@ void Clock :: pullToCenter ( ClockCircle& circle )
 	d = v.length() / (float)screenMaxLength;
 	
 	float s;
-	s = circle.getRadius() / 30.0;			// the bigger the circle, the stronger the pull towards center.
+	s = circle.getRadius() / 20.0;			// the bigger the circle, the stronger the pull towards center.
 	
 	ofxVec2f perp;							// spinning force.
 	perp = v.getPerpendicular();
-	perp *= 0.2;
-//	perp *= ( circle )
+	perp *= circle.spinFrc;
 	
 	v.normalize();
 	v *= d;
@@ -302,12 +300,18 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 	v = c - p;
 	
 	float d;
-	d = 1 - ( v.length() / ( screenMaxLength * 0.35 ) );
+	d = 1 - ( v.length() / ( screenMinLength * 0.4 ) );
 
+	ofxVec2f perp;							// spinning force.
+	perp = v.getPerpendicular();
+	perp *= circle.spinFrc;
+	perp *= circle.spinDir;
+	
 	v.normalize();
 	v *= d;
 	v *= -1;
 	v *= 15;
+	v += perp;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -368,9 +372,107 @@ void Clock :: lineUp ( ClockCircle& circle )
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
 
-///////////////////////////////////////////////
-//	TOGGLE CLOCK MODE.
-///////////////////////////////////////////////
+//-- RAY BLOB.
+
+void Clock :: updateRayBlob ()
+{
+	int h = RAY_BLOB_HI_RES;	// high res.
+	int l = RAY_BLOB_LO_RES;	// low res - down sample.
+	int s = h / l;				// sample.
+	
+	bool bVerbose = false;
+	
+	float blobPad	= 50;
+	float blobEase	= 0.4;
+	float blobDist	= screenMinLength * 0.3;
+	
+	ofxVec2f p1;
+	ofxVec2f p2;
+	ofxVec2f hitPoint;
+	
+	p2.set( screenWidth * 0.5, screenHeight * 0.5 );
+	
+	for( int i=0; i<h; i+=s )
+	{
+		if( bVerbose && ofGetFrameNum() == 0 )
+			cout << "new loop" << endl;
+		
+		int count			= 0;
+		float length		= 0;
+		float lengthMax		= 0;
+		float lengthTotal	= 0;
+		
+		for( int j=0; j<s; j++ )
+		{
+			//-------						// works out the index.
+			
+			int k = i + j;
+			int m = k - (int)( s * 0.5 );
+			
+			if( m < 0 )
+				m += h;
+			
+			if( m > h - 1 )
+				break;
+			
+			//-------						// prints index for debugging.
+			
+			if( bVerbose && ofGetFrameNum() == 0 )
+				cout << m << endl;
+			
+			//-------						// works out average length of samples.
+			
+			float p;
+			p = m / (float)h;
+			
+			p1.set( 0, -1 );
+			p1.rotate( p * TWO_PI * RAD_TO_DEG );
+			p1 *= blobDist;
+			p1 += p2;
+			
+			vector<ofPoint> hitPoints;
+			box2d->raycast( p1, p2, 10, &hitPoints );
+			
+			if( hitPoints.size() > 0 )
+			{
+				hitPoint.set( hitPoints[ 0 ] );
+				hitPoint -= p2;
+				hitPoint += hitPoint.getNormalized() * blobPad;
+			}
+			else
+			{
+				hitPoint.set( 0, 0 );
+			}
+
+			length		= hitPoint.length();
+			lengthMax	= ( length > lengthMax ) ? length : lengthMax;
+			lengthTotal	+= length;
+			count		+= 1;
+		}
+		
+		//-------							// calc average.
+		
+		float lengthAvg;
+		lengthAvg = length / (float)count;
+
+		float p;
+		p = i / (float)h;
+		
+		p1.set( 0, -1 );
+		p1.rotate( p * TWO_PI * RAD_TO_DEG );
+//		p1 *= lengthAvg;
+		p1 *= lengthMax;
+		p1 += p2;
+		
+		int n = i / s;
+		ofPoint& rayPoint = rayBlob[ n ];
+		
+		rayPoint.x += ( p1.x - rayPoint.x ) * blobEase;
+		rayPoint.y += ( p1.y - rayPoint.y ) * blobEase;
+	}
+}
+
+//-- CLOCK MODE.
 
 void Clock :: toggleClockMode ()
 {
@@ -391,10 +493,15 @@ void Clock :: toggleClockMode ()
 void Clock :: draw ()
 {
 	box2d->draw();
+
+	if( clockMode == CLOCK_MODE_1 )
+	{
+		drawRayBlob();
+//		drawRayCasts();
+	}
 	
 	drawCircles();
 	drawTime();
-	drawRayCasts();
 }
 
 void Clock :: drawCircles ()
@@ -447,11 +554,10 @@ void Clock :: drawTime ()
 
 void Clock :: drawRayCasts ()
 {
-	int t = 10;
-
-	ofNoFill();
-	ofSetColor( 0xFF0000 );
+	int t = RAY_BLOB_LO_RES;
 	
+	ofEnableAlphaBlending();
+
 	for( int i=0; i<t; i++ )
 	{
 		float p;
@@ -467,26 +573,45 @@ void Clock :: drawRayCasts ()
 		
 		ofxVec2f cp;
 		cp.set( screenWidth * 0.5, screenHeight * 0.5 );
-		
+
+		ofNoFill();
+		ofSetColor( 255, 0, 0, 100 );
 		ofLine( cp.x, cp.y, cp.x + v.x, cp.y + v.y );
+		
+		ofPoint& rayPoint = rayBlob[ i ];
+		
+		ofFill();
+		ofSetColor( 0, 255, 0, 100 );
+		ofCircle( rayPoint.x, rayPoint.y, 4 );
 	}
 	
-	//-- raycast test.
+	ofDisableAlphaBlending();
+}
+
+void Clock :: drawRayBlob ()
+{
+	int t = RAY_BLOB_LO_RES;
+
+	ofNoFill();
+	ofSetColor( 255, 255, 255, 100 );
+	ofSetLineWidth( 2 );
+	ofEnableSmoothing();
+	ofEnableAlphaBlending();
 	
-	ofPoint p1;
-	ofPoint p2;
+	ofBeginShape();
 	
-	p1.set( screenWidth * 0.5, screenHeight * 0.5, 0 );
-	p2.set( p1.x, p1.y - 300 );
+	for( int i=0; i<t+3; i++ )
+	{
+		int j = i % t;
+		
+		ofPoint& rayPoint = rayBlob[ j ];
+		
+		ofCurveVertex( rayPoint.x, rayPoint.y );
+	}
 	
-	vector<ofPoint> hitPoints;
+	ofEndShape( true );
 	
-	box2d->raycast( p1, p2, 10, &hitPoints );
-	
-	if( hitPoints.size() == 0 )
-		return;
-	
-	ofFill();
-	ofSetColor( 0xFF00FF );
-	ofCircle( hitPoints[ 0 ].x, hitPoints[ 0 ].y, 4 );
+	ofSetLineWidth( 1 );
+	ofDisableSmoothing();
+	ofDisableAlphaBlending();
 }

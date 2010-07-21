@@ -15,8 +15,10 @@
 #include "ofxVectorMath.h"
 #include "ClockCircle.h"
 
-#define CLOCK_MODE_1	1
-#define CLOCK_MODE_2	2
+#define CLOCK_MODE_1		1
+#define CLOCK_MODE_2		2
+#define RAY_BLOB_HI_RES		200
+#define RAY_BLOB_LO_RES		10
 
 class Clock
 {
@@ -35,12 +37,11 @@ public :
 	float areaToRadius		( float area );
 	
 	void setup				();
-	void update				();
+	void update				( int hrs, int min, int sec );
 	void draw				();
 	
 	void setForM1			();
 	void setForM2			();
-	void updateTime			();
 	void updateTimeX		();
 	void updateForcesM1		();
 	void updateForcesM2		();
@@ -51,12 +52,15 @@ public :
 	void floatUp			( ClockCircle& circle );
 	void lineUp				( ClockCircle& circle );
 	
+	void updateRayBlob		();
+	
 	void toggleClockMode	();
 	
 	void drawCircles		();
 	void drawCircle			( ClockCircle &circle );
 	void drawTime			();
 	void drawRayCasts		();
+	void drawRayBlob		();
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
@@ -112,6 +116,8 @@ public :
 	ofTrueTypeFont*			font;
 	
 	ofxBox2d*				box2d;
+	
+	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	
 };
 

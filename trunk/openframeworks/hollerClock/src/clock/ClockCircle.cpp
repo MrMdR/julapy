@@ -46,7 +46,7 @@ void ClockCircle :: enableGravity ( bool b )
 
 void ClockCircle :: draw ()
 {
-	if( true )
+	if( false )
 	{
 		ClockCircleB2 :: draw();
 		
@@ -58,7 +58,7 @@ void ClockCircle :: draw ()
 	glPushMatrix();
 	glTranslatef( getPosition().x, getPosition().y, 0 );
 	
-	ofCircle( 0, 0, radius );
+	ofCircle( 0, 0, radius - 1 );
 	
 	glPopMatrix();
 }

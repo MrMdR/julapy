@@ -28,6 +28,8 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 
+	int					frameRate;
+	
 	ofxBox2d			box2d;
 	Clock				clock;
 	
