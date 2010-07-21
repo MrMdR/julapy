@@ -6,7 +6,7 @@
 
 void testApp::setup()
 {
-	ofSetFrameRate( 60 );
+	ofSetFrameRate( frameRate = 60 );
 	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
@@ -37,7 +37,30 @@ void testApp :: initClock ()
 
 void testApp::update()
 {
-	clock.update();
+	int hrs;
+	int min;
+	int sec;
+	
+	if( screenGrabber.isRecording() )
+	{
+		int frameNum = ofGetFrameNum();
+		
+		int s = 00 + frameNum / frameRate;		// start time is add at front.
+		int m = 48 + s / 60;					// start time is add at front.
+		int h = 12 + m / 60;					// start time is add at front.
+		
+		hrs = h % 24;
+		min = m % 60;
+		sec = s % 60;
+	}
+	else
+	{
+		hrs = ofGetHours();
+		min = ofGetMinutes();
+		sec = ofGetSeconds();
+	}
+	
+	clock.update( hrs, min, sec );
 }
 
 ///////////////////////////////////////////
@@ -46,7 +69,7 @@ void testApp::update()
 
 void testApp::draw()
 {
-	int bg = 30;
+	int bg = 0;
 	ofBackground( bg, bg, bg );
 	
 	clock.draw();
@@ -84,7 +107,7 @@ void testApp::mouseDragged(int x, int y, int button)
 
 void testApp::mousePressed(int x, int y, int button)
 {
-	clock.toggleClockMode();
+//	clock.toggleClockMode();
 }
 
 void testApp::mouseReleased(int x, int y, int button)

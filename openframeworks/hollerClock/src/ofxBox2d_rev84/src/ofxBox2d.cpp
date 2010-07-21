@@ -334,21 +334,11 @@ void ofxBox2d::draw() {
 
 // -------------------------------------------------------
 
-void ofxBox2d :: raycast ( const ofPoint &p1, const ofPoint &p2, int maxHits, vector<ofPoint>* hitPoints )
+void ofxBox2d :: raycast ( const ofPoint &p1, const ofPoint &p2, int maxHits, vector<ofPoint>* hitPoints, vector<b2Shape*>* shapes )
 {
-	bool bHitPoints;
-	bHitPoints = ( hitPoints != NULL );
-
-	b2Vec2 sp1	= b2Vec2( p1.x / OFX_BOX2D_SCALE, p1.y / OFX_BOX2D_SCALE );
-	b2Vec2 sp2	= b2Vec2( p2.x / OFX_BOX2D_SCALE, p2.y / OFX_BOX2D_SCALE );
-	b2Vec2 dir	= sp2 - sp1;
-	
 	b2Segment segment;
-	segment.p1	= sp1;
-	segment.p2	= sp2;
-	
-	float segmentLength;
-	segmentLength = ofDist( sp1.x, sp1.y, sp2.x, sp2.y );
+	segment.p1	= b2Vec2( p1.x / OFX_BOX2D_SCALE, p1.y / OFX_BOX2D_SCALE );
+	segment.p2	= b2Vec2( p2.x / OFX_BOX2D_SCALE, p2.y / OFX_BOX2D_SCALE );
 	
 	for( int i=0; i<maxHits; i++ )
 	{
@@ -360,80 +350,36 @@ void ofxBox2d :: raycast ( const ofPoint &p1, const ofPoint &p2, int maxHits, ve
 	
 		if( shape != NULL )
 		{
-			if( bHitPoints )
+			if( shapes != NULL )
 			{
+				shapes->push_back( shape );
+			}
+			
+			if( hitPoints != NULL )
+			{
+				b2Vec2 hit;
+				hit = ( 1 - lambda ) * segment.p1 + lambda * segment.p2;
+				
 				ofPoint hitPoint;
-				hitPoint.x = ( ( 1 - lambda ) * segment.p1.x + lambda * segment.p2.x ) * OFX_BOX2D_SCALE;
-				hitPoint.y = ( ( 1 - lambda ) * segment.p1.y + lambda * segment.p2.y ) * OFX_BOX2D_SCALE;
+				hitPoint.x = hit.x * OFX_BOX2D_SCALE;
+				hitPoint.y = hit.y * OFX_BOX2D_SCALE;
 				
 				hitPoints->push_back( hitPoint );
-				
-				return;		// testing with one point for the moment.
 			}
+			
+			lambda = MIN( lambda + 0.001, 1.0 );	// nudge lambda a little so it doesn't find the same shape twice.
+			
+			segment.p1 = ( 1 - lambda ) * segment.p1 + lambda * segment.p2;
 		}
 		else
 		{
 			return;		// nothing hit.
 		}
 		
-		segmentLength *= ( 1 - lambda );
+		float segmentLength;
+		segmentLength = ofDist( segment.p1.x, segment.p1.y, segment.p2.x, segment.p2.y );
 
 		if( segmentLength <= B2_FLT_EPSILON )
-			break;
-		
-		sp1 = ( 1 - lambda ) * segment.p1 + lambda * segment.p2;
-		dir	= segment.p2 - segment.p1;
-		dir.Normalize();
-		dir = dir - 2 * b2Dot( dir, normal ) * normal;
-		
-		segment.p1 = sp1 - 0.1 * dir;
-		segment.p2 = sp1 + segmentLength * dir;
+			return;
 	}
 }
-
-/**
- 
-void Step(Settings* settings)
-{
-	Test::Step(settings);
-	
-	float32 segmentLength = 30.0f;
-	
-	b2Segment segment;
-	b2Vec2 laserStart(5.0f-0.1f,0.0f);
-	b2Vec2 laserDir(segmentLength,0.0f);
-	segment.p1 = laserBody->GetWorldPoint(laserStart);
-	segment.p2 = laserBody->GetWorldVector(laserDir);
-	segment.p2+=segment.p1;
-	
-	for(int32 rebounds=0;rebounds<10;rebounds++){
-		
-		float32 lambda=1;
-		b2Vec2 normal;
-		b2Shape* shape = m_world->RaycastOne(segment,&lambda,&normal,false,NULL);
-		
-		b2Color laserColor(255,0,0);
-		
-		if(shape)
-		{
-			m_debugDraw.DrawSegment(segment.p1,(1-lambda)*segment.p1+lambda*segment.p2,laserColor);
-		}
-		else
-		{
-			m_debugDraw.DrawSegment(segment.p1,segment.p2,laserColor);
-			break;
-		}
-		//Bounce
-		segmentLength *=(1-lambda);
-		if(segmentLength<=B2_FLT_EPSILON)
-			break;
-		laserStart = (1-lambda)*segment.p1+lambda*segment.p2;
-		laserDir = segment.p2-segment.p1;
-		laserDir.Normalize();
-		laserDir = laserDir -2 * b2Dot(laserDir,normal) * normal;
-		segment.p1 = laserStart-0.1f*laserDir;
-		segment.p2 = laserStart+segmentLength*laserDir;
-	}
-}
- 
-*/

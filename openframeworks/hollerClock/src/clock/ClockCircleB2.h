@@ -26,6 +26,9 @@ public :
 	int			colorHex;
 	ofColor		color;
 	ofPoint		lineUpPoint;
+	
+	int			spinDir;
+	float		spinFrc;
 };
 
 #endif
