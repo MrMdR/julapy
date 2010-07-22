@@ -35,6 +35,7 @@ public :
 	void  createCircles		();
 	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, int lineX = 0 );
 	float areaToRadius		( float area );
+	void  createSoftBody	();
 	
 	void setup				();
 	void update				( int hrs, int min, int sec );
@@ -42,11 +43,9 @@ public :
 	
 	void setForM1			();
 	void setForM2			();
-	void updateTimeX		();
-	void updateForcesM1		();
-	void updateForcesM2		();
-	void updateForcesM1b	( vector<ClockCircle*> &circlesVec, int count );
-	void updateForcesM2b	( vector<ClockCircle*> &circlesVec, int count );
+	void updateText			();
+	void updateForces		();
+	void updateForcesVec	( vector<ClockCircle*> &circlesVec, int count );
 	void pullToCenter		( ClockCircle& circle );
 	void pushFromCenter		( ClockCircle& circle );
 	void floatUp			( ClockCircle& circle );
@@ -58,6 +57,7 @@ public :
 	
 	void drawCircles		();
 	void drawCircle			( ClockCircle &circle );
+	void drawCircleLine		( ClockCircle &circle );
 	void drawTime			();
 	void drawRayCasts		();
 	void drawRayBlob		();
@@ -69,6 +69,8 @@ public :
 	vector<ClockCircle*>	secOne;
 	vector<ClockCircle*>	secTwo;
 	vector<ClockCircle*>	circlesAll;
+	vector<ClockCircle*>	circlesActive;
+	vector<ClockCircle*>	circlesInactive;
 	
 	int						clockMode;
 	
@@ -112,12 +114,20 @@ public :
 	int						screenMinLength;
 	int						screenMaxLength;
 	int						screenTotal;
+	ofxVec2f				screenCenter;
 	
 	ofTrueTypeFont*			font;
 	
 	ofxBox2d*				box2d;
 	
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
+	
+	ofxBox2dSoftBody*		softBody;
+	
+	int						forceCenterPull;
+	int						forceCenterPush;
+	int						rayBlobPad;
+	float					rayBlobEase;
 	
 };
 

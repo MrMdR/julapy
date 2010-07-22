@@ -5,6 +5,7 @@
 #include "ofMain.h"
 #include "ofxXmlSettings.h"
 #include "ofxScreenGrabUtil.h"
+#include "ofxSimpleGuiToo.h"
 #include "Ball2d.h"
 #include "ofxBox2d.h"
 #include "Clock.h"
@@ -19,6 +20,7 @@ public:
 	void draw	();
 	
 	void initClock		();
+	void initGui		();
 	
 	void keyPressed		( int key );
 	void keyReleased	( int key );
@@ -29,12 +31,15 @@ public:
 	void windowResized	( int w, int h );
 
 	int					frameRate;
+	bool				bDebug;
 	
 	ofxBox2d			box2d;
 	Clock				clock;
 	
 	ofTrueTypeFont		font;
 	ofxScreenGrabUtil	screenGrabber;
+	
+	ofxSimpleGuiToo		gui;
 };
 
 #endif

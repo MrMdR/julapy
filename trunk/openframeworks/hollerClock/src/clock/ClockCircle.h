@@ -10,18 +10,35 @@
 #ifndef CLOCK_CIRCLE_H
 #define CLOCK_CIRCLE_H
 
-#include "ClockCircleB2.h"
+#include "ofxBox2dCircle.h"
 
-class ClockCircle : public ClockCircleB2
+class ClockCircle : public ofxBox2dCircle
 {
 
 public :
 	
-	 ClockCircle	( float radius = 0.001, int color = 0xFFFFFF );
-	~ClockCircle	();
+	 ClockCircle		( float radius = 0.001, int color = 0xFFFFFF );
+	~ClockCircle		();
 
-	void enableGravity	( bool b );
+	void update			();
 	void draw			();
+	
+	void set			( float radius, int color );
+	void enableGravity	( bool b );
+	
+	//--
+	
+	float		radius;
+	int			colorHex;
+	ofColor		color;
+	ofPoint		lineUpPoint;
+	
+	int			spinDir;
+	float		spinFrc;
+	
+	bool		active;
+	
+	ofPoint		eye;
 };
 
 #endif
