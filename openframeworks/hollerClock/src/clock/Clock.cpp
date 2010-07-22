@@ -11,8 +11,9 @@
 
 Clock :: Clock ()
 {
-	box2d	= NULL;
-	font	= NULL;
+	box2d		= NULL;
+	font		= NULL;
+	softBody	= NULL;
 	
 	clockMode = CLOCK_MODE_1;
 	
@@ -37,6 +38,11 @@ Clock :: Clock ()
 	secOneM2X = 950;
 	secTwoM2X = 1120;
 	
+	forceCenterPull	= 30;
+	forceCenterPush = 30;
+	rayBlobPad		= 50;
+	rayBlobEase		= 0.4;
+	
 	setSize( ofGetWidth(), ofGetHeight() );
 }
 
@@ -55,6 +61,7 @@ void Clock :: setup ()
 		return;
 	
 	createCircles();
+//	createSoftBody();
 }
 
 ///////////////////////////////////////////////
@@ -78,6 +85,9 @@ void Clock :: setSize ( int w, int h )
 	screenMinLength	= MIN( w, h );
 	screenMaxLength = MAX( w, h );
 	screenTotal		= w * h;
+	
+	screenCenter.x	= screenWidth * 0.5;
+	screenCenter.y	= screenHeight * 0.5;
 }
 
 void Clock :: setTimeFont ( ofTrueTypeFont *font )
@@ -150,6 +160,17 @@ float Clock :: areaToRadius ( float area )
 	return r;
 }
 
+void Clock :: createSoftBody ()
+{
+	float mass		= 3.0;
+	float bounce	= 0.53;
+	float friction	= 0.1;
+	
+	softBody = new ofxBox2dSoftBody();
+	softBody->setPhysics( mass, bounce, friction );
+	softBody->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ) );
+}
+
 ///////////////////////////////////////////////
 //	UPDATE.
 ///////////////////////////////////////////////
@@ -167,23 +188,23 @@ void Clock :: update ( int hrs, int min, int sec )
 
 	//--
 	
-	updateTimeX();
+	updateText();
+	updateForces();
 	
 	if( clockMode == CLOCK_MODE_1 )
 	{
-		updateForcesM1();
 		updateRayBlob();
 	}
 	
-	if( clockMode == CLOCK_MODE_2 )
-	{
-		updateForcesM2();		
-	}
-	
 	box2d->update();
+	
+	for( int i=0; i<circlesAll.size(); i++ )
+	{
+		circlesAll[ i ]->update();
+	}
 }
 
-void Clock :: updateTimeX ()
+void Clock :: updateText ()
 {
 	float ease = 0.3;
 	
@@ -235,30 +256,59 @@ void Clock :: setForM2 ()
 //	CLOCK MODE 1.
 ///////////////////////////////////////////////
 
-void Clock :: updateForcesM1 ()
+void Clock :: updateForces ()
 {
-	updateForcesM1b( hrsOne, hrsOneCount );
-	updateForcesM1b( hrsTwo, hrsTwoCount );
-	updateForcesM1b( minOne, minOneCount );
-	updateForcesM1b( minTwo, minTwoCount );
-	updateForcesM1b( secOne, secOneCount );
-	updateForcesM1b( secTwo, secTwoCount );
+	circlesActive.clear();
+	circlesInactive.clear();
+	
+	updateForcesVec( hrsOne, hrsOneCount );
+	updateForcesVec( hrsTwo, hrsTwoCount );
+	updateForcesVec( minOne, minOneCount );
+	updateForcesVec( minTwo, minTwoCount );
+	updateForcesVec( secOne, secOneCount );
+	updateForcesVec( secTwo, secTwoCount );
 }
 
-void Clock :: updateForcesM1b ( vector<ClockCircle*> &circlesVec, int count )
+void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 {
 	for( int i=0; i<circlesVec.size(); i++ )
 	{
+		ClockCircle& circle	= *circlesVec[ i ];
+		
 		if( i < count )
 		{
-			pullToCenter( *circlesVec[ i ] );
+			if( clockMode == CLOCK_MODE_1 )
+			{
+				pullToCenter( circle );
+			}
+			else if( clockMode == CLOCK_MODE_2 )
+			{
+				lineUp( circle );
+			}
+
+			circle.active = true;
+			circlesActive.push_back( &circle );
 		}
 		else 
 		{
-			pushFromCenter( *circlesVec[ i ] );
+			if( clockMode == CLOCK_MODE_1 )
+			{
+				pushFromCenter( circle );
+			}
+			else if( clockMode == CLOCK_MODE_2 )
+			{
+				floatUp( circle );
+			}
+			
+			circle.active = false;
+			circlesInactive.push_back( &circle );
 		}
+		
+		circle.update();
 	}
 }
+
+//-- CM1 FORCES.
 
 void Clock :: pullToCenter ( ClockCircle& circle )
 {
@@ -283,7 +333,7 @@ void Clock :: pullToCenter ( ClockCircle& circle )
 	v.normalize();
 	v *= d;
 	v *= s;
-	v *= 30;
+	v *= forceCenterPull;
 	v += perp;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
@@ -291,59 +341,49 @@ void Clock :: pullToCenter ( ClockCircle& circle )
 
 void Clock :: pushFromCenter ( ClockCircle& circle )
 {
-	ofxVec2f c;
-	ofxVec2f p;
 	ofxVec2f v;
+	v.set( circle.getPosition() );
+	v -= screenCenter;
 	
-	c.set( ofGetWidth() * 0.5, ofGetHeight() * 0.5 );
-	p.set( circle.getPosition() );
-	v = c - p;
+	//-- distance to keep from center, same shape as blob.
+	
+	float ang;
+	ang = v.angle( ofxVec2f( 0, -1 ) );
+	ang *= -1;
+	ang += 180;
+	ang /= 360.0;
+
+	int ri = (int)( ang * RAY_BLOB_LO_RES );
+	ri = MAX( MIN( ri, RAY_BLOB_LO_RES - 1 ), 0 );
+	
+	ofxVec2f rb;
+	rb.set( rayBlob[ ri ] );
+	rb -= screenCenter;
+	rb *= 1.3;
 	
 	float d;
-	d = 1 - ( v.length() / ( screenMinLength * 0.4 ) );
+//	d = 1 - ( v.length() / ( screenMinLength * 0.4 ) );
+	d = 1 - ( v.length() / ( rb.length() ) );
 
+	//-- perpendicular force to center.
+	
 	ofxVec2f perp;							// spinning force.
 	perp = v.getPerpendicular();
 	perp *= circle.spinFrc;
 	perp *= circle.spinDir;
+	perp *= 3;
+	
+	//-- add forces.
 	
 	v.normalize();
 	v *= d;
-	v *= -1;
-	v *= 15;
-	v += perp;
+	v *= forceCenterPull;
+//	v += perp;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
 
-///////////////////////////////////////////////
-//	CLOCK MODE 2.
-///////////////////////////////////////////////
-
-void Clock :: updateForcesM2 ()
-{
-	updateForcesM2b( hrsOne, hrsOneCount );
-	updateForcesM2b( hrsTwo, hrsTwoCount );
-	updateForcesM2b( minOne, minOneCount );
-	updateForcesM2b( minTwo, minTwoCount );
-	updateForcesM2b( secOne, secOneCount );
-	updateForcesM2b( secTwo, secTwoCount );
-}
-
-void Clock :: updateForcesM2b ( vector<ClockCircle*> &circlesVec, int count )
-{
-	for( int i=0; i<circlesVec.size(); i++ )
-	{
-		if( i < count )
-		{
-			lineUp( *circlesVec[ i ] );
-		}
-		else 
-		{
-			floatUp( *circlesVec[ i ] );
-		}
-	}
-}
+//-- CM2 FORCES.
 
 void Clock :: floatUp ( ClockCircle& circle )
 {
@@ -380,15 +420,13 @@ void Clock :: updateRayBlob ()
 	int l = RAY_BLOB_LO_RES;	// low res - down sample.
 	int s = h / l;				// sample.
 	
-	bool bVerbose = false;
-	
-	float blobPad	= 50;
-	float blobEase	= 0.4;
-	float blobDist	= screenMinLength * 0.3;
+	bool  bVerbose	= false;
+	float blobDist	= screenMaxLength * 0.5;
 	
 	ofxVec2f p1;
 	ofxVec2f p2;
 	ofxVec2f hitPoint;
+	ofxVec2f rayPoint;
 	
 	p2.set( screenWidth * 0.5, screenHeight * 0.5 );
 	
@@ -430,20 +468,28 @@ void Clock :: updateRayBlob ()
 			p1 *= blobDist;
 			p1 += p2;
 			
-			vector<ofPoint> hitPoints;
-			box2d->raycast( p1, p2, 10, &hitPoints );
+			hitPoint.set( 0, 0 );
 			
-			if( hitPoints.size() > 0 )
+			for( int c=0; c<circlesActive.size(); c++ )
 			{
-				hitPoint.set( hitPoints[ 0 ] );
-				hitPoint -= p2;
-				hitPoint += hitPoint.getNormalized() * blobPad;
+				bool bHit;
+				
+				ClockCircle& circle = *circlesActive[ c ];
+				bHit = circle.raycast( p1, p2, &rayPoint );
+				
+				if( bHit )
+				{
+					rayPoint -= p2;
+					
+					if( rayPoint.length() > hitPoint.length() )
+					{
+						hitPoint.set( rayPoint );
+					}
+				}
 			}
-			else
-			{
-				hitPoint.set( 0, 0 );
-			}
-
+			
+			hitPoint += hitPoint.getNormalized() * rayBlobPad;
+			
 			length		= hitPoint.length();
 			lengthMax	= ( length > lengthMax ) ? length : lengthMax;
 			lengthTotal	+= length;
@@ -467,8 +513,8 @@ void Clock :: updateRayBlob ()
 		int n = i / s;
 		ofPoint& rayPoint = rayBlob[ n ];
 		
-		rayPoint.x += ( p1.x - rayPoint.x ) * blobEase;
-		rayPoint.y += ( p1.y - rayPoint.y ) * blobEase;
+		rayPoint.x += ( p1.x - rayPoint.x ) * rayBlobEase;
+		rayPoint.y += ( p1.y - rayPoint.y ) * rayBlobEase;
 	}
 }
 
@@ -501,6 +547,10 @@ void Clock :: draw ()
 	}
 	
 	drawCircles();
+	
+	if( softBody != NULL )
+		softBody->draw();
+	
 	drawTime();
 }
 
@@ -509,6 +559,7 @@ void Clock :: drawCircles ()
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		drawCircle( *circlesAll[ i ] );
+		drawCircleLine( *circlesAll[ i ] );
 	}
 }
 
@@ -527,6 +578,46 @@ void Clock :: drawCircle ( ClockCircle &circle )
 	circle.draw();
 	
 	ofDisableSmoothing();
+	
+	//--
+	
+//	ofxVec2f cp;
+//	cp.set( screenWidth * 0.5, screenHeight * 0.5 );
+//	
+//	ofxVec2f pp;
+//	pp.set( circle.getPosition() );
+//	pp -= cp;
+//	
+//	float ang;
+//	ang = pp.angle( ofxVec2f( 0, -1 ) );
+//	ang *= -1;
+//	
+//	ofxVec2f up;
+//	up.set( 0, -1 );
+//	up.rotate( ang );
+//	up *= pp.length();
+//	up += cp;
+//	
+//	ofEnableSmoothing();
+//	ofEnableAlphaBlending();
+//	
+//	ofSetColor( 255, 255, 255, 255 );
+//	ofLine( cp.x, cp.y, up.x, up.y );
+//	
+//	ofDisableSmoothing();
+//	ofDisableAlphaBlending();
+}
+
+void Clock :: drawCircleLine ( ClockCircle &circle )
+{
+	ofEnableSmoothing();
+	ofEnableAlphaBlending();
+	
+	ofSetColor( 255, 255, 255, 50 );
+	ofLine( screenCenter.x, screenCenter.y, circle.eye.x, circle.eye.y );
+	
+	ofDisableSmoothing();
+	ofDisableAlphaBlending();
 }
 
 void Clock :: drawTime ()
@@ -539,6 +630,8 @@ void Clock :: drawTime ()
 	ofEnableAlphaBlending();
 	ofSetColor( 0, 0, 0, 120 );
 	ofRect( 0, screenHeight - blackH, screenWidth, blackH );
+	ofSetColor( 255, 255, 255, 120 );
+	ofRect( 0, screenHeight - blackH - 1, screenWidth, 1 );
 	ofDisableAlphaBlending();
 	
 	ofSetColor( 0xFFFFFF );

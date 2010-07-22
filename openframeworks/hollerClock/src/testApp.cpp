@@ -10,12 +10,15 @@ void testApp::setup()
 	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
+	bDebug = true;
+	
 	font.loadFont( "fonts/cooperBlack.ttf", 40 );
 	
 	screenGrabber.setup( "movie/" );
 	screenGrabber.setPause( true );
 	
 	initClock();
+	initGui();
 }
 	
 void testApp :: initClock ()
@@ -29,6 +32,20 @@ void testApp :: initClock ()
 	clock.setBox2d( &box2d );
 	clock.setTimeFont( &font );
 	clock.setup();
+}
+
+void testApp :: initGui ()
+{
+	gui.addTitle( "clock" );
+	gui.addSlider( "forceCenterPull",	clock.forceCenterPull,	0, 100 );
+	gui.addSlider( "forceCenterPush",	clock.forceCenterPush,	0, 100 );
+	gui.addSlider( "rayBlobPad",		clock.rayBlobPad,		0, 100 );
+	gui.addSlider( "rayBlobEase",		clock.rayBlobEase,		0, 1 );
+	
+	gui.setPage( 1 );
+	
+	if( bDebug )
+		gui.show();
 }
 
 ///////////////////////////////////////////
@@ -75,7 +92,9 @@ void testApp::draw()
 	clock.draw();
 	
 	ofSetColor( 0xFFFFFF );
-	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 20, 30 );
+	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, ofGetHeight() - 15 );
+
+	gui.draw();
 	
 	screenGrabber.save();
 }
@@ -88,6 +107,25 @@ void testApp::keyPressed(int key)
 {
 	if( key == 's' )
 		screenGrabber.togglePause();
+	
+	if( key == 'd' )
+	{
+		bDebug = !bDebug;
+		
+		if( bDebug )
+		{
+			gui.show();
+		}
+		else
+		{
+			gui.hide();
+		}
+	}
+	
+	if( key == 'm' )
+	{
+		clock.toggleClockMode();
+	}
 }
 
 void testApp::keyReleased(int key)
@@ -107,7 +145,7 @@ void testApp::mouseDragged(int x, int y, int button)
 
 void testApp::mousePressed(int x, int y, int button)
 {
-//	clock.toggleClockMode();
+
 }
 
 void testApp::mouseReleased(int x, int y, int button)
