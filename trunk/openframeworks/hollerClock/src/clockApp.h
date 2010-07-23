@@ -1,5 +1,5 @@
-#ifndef _TEST_APP
-#define _TEST_APP
+#ifndef _CLOCK_APP
+#define _CLOCK_APP
 
 
 #include "ofMain.h"
@@ -11,7 +11,7 @@
 #include "Clock.h"
 
 
-class testApp : public ofBaseApp
+class clockApp : public ofBaseApp
 {
 public:
 	

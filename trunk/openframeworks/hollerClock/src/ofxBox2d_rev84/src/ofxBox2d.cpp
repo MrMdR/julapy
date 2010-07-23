@@ -97,10 +97,17 @@ void ofxBox2d::grabShapeDown(float x, float y) {
 		if (mouseJoint != NULL) {
 			return;
 		}
+
+		float mouseArea;
+		mouseArea = 1.0 / OFX_BOX2D_SCALE;
+		
+		float mouseAreaSqrt;
+		mouseAreaSqrt = sqrt( mouseArea );
 		
 		// Make a small box.
 		b2AABB aabb;
 		b2Vec2 d;
+//		d.Set( mouseAreaSqrt, mouseAreaSqrt );		// doesn't do much.
 		d.Set(0.001f, 0.001f);
 		aabb.lowerBound = p - d;
 		aabb.upperBound = p + d;
