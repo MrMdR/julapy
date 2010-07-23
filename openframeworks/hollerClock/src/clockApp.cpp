@@ -1,10 +1,10 @@
-#include "testApp.h"
+#include "clockApp.h"
 
 ///////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////
 
-void testApp::setup()
+void clockApp :: setup()
 {
 	ofSetFrameRate( frameRate = 60 );
 	ofSetVerticalSync( true );
@@ -21,7 +21,7 @@ void testApp::setup()
 	initGui();
 }
 	
-void testApp :: initClock ()
+void clockApp :: initClock ()
 {
 	box2d.init();
 	box2d.createBounds();
@@ -34,7 +34,7 @@ void testApp :: initClock ()
 	clock.setup();
 }
 
-void testApp :: initGui ()
+void clockApp :: initGui ()
 {
 	gui.addTitle( "clock" );
 	gui.addSlider( "forceCenterPull",	clock.forceCenterPull,	0, 100 );
@@ -52,7 +52,7 @@ void testApp :: initGui ()
 //	UPDATE.
 ///////////////////////////////////////////
 
-void testApp::update()
+void clockApp::update()
 {
 	int hrs;
 	int min;
@@ -84,7 +84,7 @@ void testApp::update()
 //	DRAW.
 ///////////////////////////////////////////
 
-void testApp::draw()
+void clockApp::draw()
 {
 	int bg = 0;
 	ofBackground( bg, bg, bg );
@@ -103,7 +103,7 @@ void testApp::draw()
 //	HANDLERS.
 ///////////////////////////////////////////
 
-void testApp::keyPressed(int key)
+void clockApp :: keyPressed(int key)
 {
 	if( key == 's' )
 		screenGrabber.togglePause();
@@ -128,32 +128,32 @@ void testApp::keyPressed(int key)
 	}
 }
 
-void testApp::keyReleased(int key)
+void clockApp :: keyReleased(int key)
 {
 
 }
 
-void testApp::mouseMoved(int x, int y )
+void clockApp::mouseMoved(int x, int y )
 {
 
 }
 
-void testApp::mouseDragged(int x, int y, int button)
+void clockApp::mouseDragged(int x, int y, int button)
 {
 
 }
 
-void testApp::mousePressed(int x, int y, int button)
+void clockApp::mousePressed(int x, int y, int button)
 {
 
 }
 
-void testApp::mouseReleased(int x, int y, int button)
+void clockApp::mouseReleased(int x, int y, int button)
 {
 
 }
 
-void testApp::windowResized(int w, int h)
+void clockApp::windowResized(int w, int h)
 {
 
 }

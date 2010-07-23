@@ -345,25 +345,33 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 	v.set( circle.getPosition() );
 	v -= screenCenter;
 	
-	//-- distance to keep from center, same shape as blob.
-	
-	float ang;
-	ang = v.angle( ofxVec2f( 0, -1 ) );
-	ang *= -1;
-	ang += 180;
-	ang /= 360.0;
+	//-- distance to keep from center, follow the shape of the inner blob.
 
-	int ri = (int)( ang * RAY_BLOB_LO_RES );
-	ri = MAX( MIN( ri, RAY_BLOB_LO_RES - 1 ), 0 );
-	
-	ofxVec2f rb;
-	rb.set( rayBlob[ ri ] );
-	rb -= screenCenter;
-	rb *= 1.3;
-	
 	float d;
-//	d = 1 - ( v.length() / ( screenMinLength * 0.4 ) );
-	d = 1 - ( v.length() / ( rb.length() ) );
+	d = 1 - ( v.length() / ( screenMinLength * 0.4 ) );
+	
+//	float ang;
+//	ang = v.angle( ofxVec2f( 0, -1 ) );
+//	ang *= -1;
+//	ang += 180;
+//	ang /= 360.0;
+//
+//	int ri = (int)( ang * RAY_BLOB_LO_RES );
+//	ri = MAX( MIN( ri, RAY_BLOB_LO_RES - 1 ), 0 );
+//
+//	ofxVec2f rb;
+//	rb.set( rayBlob[ ri ] );
+//	rb -= screenCenter;
+//	
+//	ofxVec2f rv;
+//	rv.set( 0, -1 );
+//	rv.rotateRad( TWO_PI - v.angleRad( ofxVec2f( 0, -1 ) ) );
+//	rv *= rb.length();
+//	rv *= 1.5;
+//	
+//	rayPoints.push_back( rv + screenCenter );
+//	
+//	d = 1 - ( v.length() / ( rv.length() ) );
 
 	//-- perpendicular force to center.
 	
@@ -578,34 +586,6 @@ void Clock :: drawCircle ( ClockCircle &circle )
 	circle.draw();
 	
 	ofDisableSmoothing();
-	
-	//--
-	
-//	ofxVec2f cp;
-//	cp.set( screenWidth * 0.5, screenHeight * 0.5 );
-//	
-//	ofxVec2f pp;
-//	pp.set( circle.getPosition() );
-//	pp -= cp;
-//	
-//	float ang;
-//	ang = pp.angle( ofxVec2f( 0, -1 ) );
-//	ang *= -1;
-//	
-//	ofxVec2f up;
-//	up.set( 0, -1 );
-//	up.rotate( ang );
-//	up *= pp.length();
-//	up += cp;
-//	
-//	ofEnableSmoothing();
-//	ofEnableAlphaBlending();
-//	
-//	ofSetColor( 255, 255, 255, 255 );
-//	ofLine( cp.x, cp.y, up.x, up.y );
-//	
-//	ofDisableSmoothing();
-//	ofDisableAlphaBlending();
 }
 
 void Clock :: drawCircleLine ( ClockCircle &circle )

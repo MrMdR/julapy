@@ -14,8 +14,6 @@
 
 #include"ofxBox2dContactListener.h"
 
-//#include "ofxBox2dRayCast.h"
-
 class ofxBox2d {
 	
 private:
