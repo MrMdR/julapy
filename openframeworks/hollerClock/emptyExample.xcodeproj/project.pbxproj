@@ -86,6 +86,7 @@
 		B2CDEA7111F58BD600D1E7CD /* ofxTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA6511F58BD600D1E7CD /* ofxTrigger.cpp */; };
 		B2CDEA7211F58BD600D1E7CD /* ofxTrigLUT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA6711F58BD600D1E7CD /* ofxTrigLUT.cpp */; };
 		B2CDEA7311F58BD600D1E7CD /* ofxVideoSaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA6911F58BD600D1E7CD /* ofxVideoSaver.cpp */; };
+		B2F2717F11FD48DE003B876D /* jointApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F2717D11FD48DE003B876D /* jointApp.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -373,6 +374,8 @@
 		B2CDEA6911F58BD600D1E7CD /* ofxVideoSaver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxVideoSaver.cpp; path = ../../../addons/ofxJulapyUtils/ofxVideoSaver.cpp; sourceTree = SOURCE_ROOT; };
 		B2CDEA6A11F58BD600D1E7CD /* ofxVideoSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVideoSaver.h; path = ../../../addons/ofxJulapyUtils/ofxVideoSaver.h; sourceTree = SOURCE_ROOT; };
 		B2F270FE11FD3D42003B876D /* ofxBox2dContactReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBox2dContactReceiver.h; sourceTree = "<group>"; };
+		B2F2717D11FD48DE003B876D /* jointApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jointApp.cpp; path = src/testApps/jointApp.cpp; sourceTree = SOURCE_ROOT; };
+		B2F2717E11FD48DE003B876D /* jointApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jointApp.h; path = src/testApps/jointApp.h; sourceTree = SOURCE_ROOT; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -826,6 +829,8 @@
 				B28481D811F939E3004F0780 /* filteringApp.h */,
 				B284831411F9635C004F0780 /* contactApp.cpp */,
 				B284831511F9635C004F0780 /* contactApp.h */,
+				B2F2717D11FD48DE003B876D /* jointApp.cpp */,
+				B2F2717E11FD48DE003B876D /* jointApp.h */,
 			);
 			name = testApps;
 			path = src/testApps;
@@ -1365,6 +1370,7 @@
 				B20874CA11F80F2100592A37 /* ofxMSAInteractiveObject.cpp in Sources */,
 				B28481D911F939E3004F0780 /* filteringApp.cpp in Sources */,
 				B284831611F9635C004F0780 /* contactApp.cpp in Sources */,
+				B2F2717F11FD48DE003B876D /* jointApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

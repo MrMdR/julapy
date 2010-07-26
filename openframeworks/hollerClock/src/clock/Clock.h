@@ -42,8 +42,8 @@ public :
 	void update				( int hrs, int min, int sec );
 	void draw				();
 	
-	void setForM1			();
-	void setForM2			();
+	void initModeOne		();
+	void initModeTwo		();
 	void updateText			();
 	void updateForces		();
 	void updateForcesVec	( vector<ClockCircle*> &circlesVec, int count );
@@ -58,6 +58,7 @@ public :
 	
 	void drawCircles		();
 	void drawCircle			( ClockCircle &circle );
+	void drawCircleLines	();
 	void drawCircleLine		( ClockCircle &circle );
 	void drawTime			();
 	void drawRayCasts		();
@@ -120,6 +121,7 @@ public :
 	ofTrueTypeFont*			font;
 	
 	ofxBox2d*				box2d;
+	b2Controller*			gravity;
 	
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	

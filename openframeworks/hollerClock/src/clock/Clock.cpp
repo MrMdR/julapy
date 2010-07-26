@@ -71,6 +71,14 @@ void Clock :: setup ()
 void Clock :: setBox2d ( ofxBox2d *box2d )
 {
 	this->box2d = box2d;
+	
+	//-- gravity controller.
+	
+	b2GravityControllerDef gDef;
+	gDef.G		= 10;
+	gDef.invSqr	= true;
+	
+	gravity = box2d->getWorld()->CreateController( &gDef );
 }
 
 void Clock :: setSize ( ofRectangle &size )
@@ -121,11 +129,11 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		float bounce	= 0.53;
 		float friction	= 0.1;
 		
+//		circle->enableGravity( false );
 		circle->setPhysics( mass, bounce, friction );
 		circle->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ), radius, false );
 		circle->setRotationFriction( 1.0 );
 		circle->setDamping( 1.0 );
-//		circle->enableGravity( false );
 		
 		//-- define line up point.
 		
@@ -148,6 +156,8 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		
 		circlesVec.push_back( circle );
 		circlesAll.push_back( circle );
+		
+//		gravity->AddBody( circle->body );
 	}
 }
 
@@ -232,23 +242,26 @@ void Clock :: updateText ()
 //	PREPARE CIRCLES.
 ///////////////////////////////////////////////
 
-void Clock :: setForM1 ()
+void Clock :: initModeOne ()
 {
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		ClockCircle& circle = *circlesAll[ i ];
 		
-//		circle.enableGravity( false );
+		if( circle.hasJoint() )
+			circle.destroyJoint();
+		
+		circle.enableGravity( false );
 	}
 }
 
-void Clock :: setForM2 ()
+void Clock :: initModeTwo ()
 {
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		ClockCircle& circle = *circlesAll[ i ];
 		
-//		circle.enableGravity( true );
+		circle.enableGravity( true );
 	}
 }
 
@@ -283,7 +296,10 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 			}
 			else if( clockMode == CLOCK_MODE_2 )
 			{
-				lineUp( circle );
+//				lineUp( circle );
+				
+				if( !circle.hasJoint() )
+					circle.createJoint();
 			}
 
 			circle.active = true;
@@ -297,7 +313,10 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 			}
 			else if( clockMode == CLOCK_MODE_2 )
 			{
-				floatUp( circle );
+				if( circle.hasJoint() )
+					circle.destroyJoint();
+				
+//				floatUp( circle );
 			}
 			
 			circle.active = false;
@@ -533,10 +552,14 @@ void Clock :: toggleClockMode ()
 	if( clockMode == CLOCK_MODE_1 )
 	{
 		clockMode = CLOCK_MODE_2;
+		
+		initModeTwo();
 	}
 	else if( clockMode == CLOCK_MODE_2 )
 	{
 		clockMode = CLOCK_MODE_1;
+		
+		initModeOne();
 	}
 }
 
@@ -590,6 +613,11 @@ void Clock :: draw ()
 	
 	drawCircles();
 	
+	if( clockMode == CLOCK_MODE_1 )
+	{
+		drawCircleLines();
+	}
+	
 	if( softBody != NULL )
 		softBody->draw();
 	
@@ -601,7 +629,6 @@ void Clock :: drawCircles ()
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		drawCircle( *circlesAll[ i ] );
-		drawCircleLine( *circlesAll[ i ] );
 	}
 }
 
@@ -620,6 +647,14 @@ void Clock :: drawCircle ( ClockCircle &circle )
 	circle.draw();
 	
 	ofDisableSmoothing();
+}
+
+void Clock :: drawCircleLines ()
+{
+	for( int i=0; i<circlesAll.size(); i++ )
+	{
+		drawCircleLine( *circlesAll[ i ] );
+	}
 }
 
 void Clock :: drawCircleLine ( ClockCircle &circle )
