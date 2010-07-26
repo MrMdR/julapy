@@ -21,7 +21,10 @@ ClockCircle :: ClockCircle ( float r, int c )
 	spinDir = ( ofRandom( 0.0, 1.0 ) > 0.5 ) ? 1 : -1;
 	spinFrc	= ofRandom( 0.2, 0.5 );
 	
-	active	= false;
+	active		= false;
+	
+	joint = NULL;
+	point = NULL;
 }
 
 ClockCircle :: ~ClockCircle ()
@@ -29,10 +32,63 @@ ClockCircle :: ~ClockCircle ()
 	//
 }
 
-void ClockCircle :: enableGravity ( bool b )
+///////////////////////////////////////////////
+//	JOINT.
+///////////////////////////////////////////////
+
+void ClockCircle :: createJoint ()
 {
-	ofxBox2dCircle :: enableGravity( b );
+	if( hasJoint() )
+		return;
+	
+	b2BodyDef bd;
+	bd.position.Set( lineUpPoint.x / OFX_BOX2D_SCALE, lineUpPoint.y / OFX_BOX2D_SCALE);
+	point = world->CreateBody( &bd );
+	
+	b2DistanceJointDef jd;
+	b2Vec2 p1, p2, d;
+	
+	jd.frequencyHz  = 1.0;
+	jd.dampingRatio = 0.2;
+	
+	jd.body1 = body;
+	jd.body2 = point;
+	
+	jd.localAnchor1.Set( 0, 0 );
+	jd.localAnchor2.Set( 0, 0 );
+	jd.collideConnected = false;
+	
+	p1	= jd.body1->GetWorldPoint( jd.localAnchor1 );
+	p2	= jd.body2->GetWorldPoint( jd.localAnchor2 );
+	d	= p2 - p1;
+	
+	jd.length = 0;
+	
+	joint = (b2DistanceJoint*)world->CreateJoint( &jd );
+	
+	body->WakeUp();
 }
+
+void ClockCircle :: destroyJoint ()
+{
+	if( !hasJoint() )
+		return;
+	
+	world->DestroyJoint( joint );
+	joint = NULL;
+	
+	world->DestroyBody( point );
+	point = NULL;
+}
+
+bool ClockCircle :: hasJoint ()
+{
+	return ( point != NULL && joint != NULL );
+}
+
+///////////////////////////////////////////////
+//	UPDATE.
+///////////////////////////////////////////////
 
 void ClockCircle :: update ()
 {
@@ -49,6 +105,10 @@ void ClockCircle :: update ()
 	colorCurr.g += ( colorTrgt.g - colorCurr.g ) * 0.1;
 	colorCurr.b += ( colorTrgt.b - colorCurr.b ) * 0.1;
 }
+
+///////////////////////////////////////////////
+//	DRAW.
+///////////////////////////////////////////////
 
 void ClockCircle :: draw ()
 {

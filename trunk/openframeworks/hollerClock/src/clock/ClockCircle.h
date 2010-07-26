@@ -10,7 +10,7 @@
 #ifndef CLOCK_CIRCLE_H
 #define CLOCK_CIRCLE_H
 
-#include "ofxBox2dCircle.h"
+#include "ofxBox2d.h"
 
 class ClockCircle : public ofxBox2dCircle
 {
@@ -23,14 +23,15 @@ public :
 	void update			();
 	void draw			();
 	
-	void enableGravity	( bool b );
-	
-	//--
+	void createJoint	();
+	void destroyJoint	();
+	bool hasJoint		();
 	
 	float		radius;
 	int			colorHex;
 	ofColor		colorTrgt;
 	ofColor		colorCurr;
+	
 	ofPoint		lineUpPoint;
 	
 	int			spinDir;
@@ -39,6 +40,9 @@ public :
 	bool		active;
 	
 	ofPoint		eye;
+	
+	b2Body*				point;
+	b2DistanceJoint*	joint;
 };
 
 #endif
