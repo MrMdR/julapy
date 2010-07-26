@@ -279,44 +279,60 @@ public:
 	{
 		bool bHit = false;
 		
-		if( body != NULL )
+		if( body == NULL )
+			return bHit;
+		
+		b2Shape* shape = body->GetShapeList();
+		
+		b2Segment segment;
+		segment.p1	= b2Vec2( p1.x / OFX_BOX2D_SCALE, p1.y / OFX_BOX2D_SCALE );
+		segment.p2	= b2Vec2( p2.x / OFX_BOX2D_SCALE, p2.y / OFX_BOX2D_SCALE );
+		
+		const b2XForm xf = shape->GetBody()->GetXForm();
+		float lambda = 1;
+		b2Vec2 normal;
+		
+		b2SegmentCollide hitResult;
+		hitResult = shape->TestSegment( xf, &lambda, &normal, segment, 1 );
+		
+		if( hitResult == e_hitCollide )					// ray has hit shape.
 		{
-			b2Shape* shape = body->GetShapeList();
+			bHit = true;
+		}
+		else if( hitResult == e_missCollide )			// ray does not hit shape.
+		{
+			bHit = false;
+		}
+		else if( hitResult == e_startsInsideCollide )	// ray starts inside shape.
+		{
+			bHit = true;
+		}
+		
+		if( bHit && hitPoint != NULL )
+		{
+			hitPoint->x = ( 1 - lambda ) * segment.p1.x + lambda * segment.p2.x;
+			hitPoint->y = ( 1 - lambda ) * segment.p1.y + lambda * segment.p2.y;
 			
-			b2Segment segment;
-			segment.p1	= b2Vec2( p1.x / OFX_BOX2D_SCALE, p1.y / OFX_BOX2D_SCALE );
-			segment.p2	= b2Vec2( p2.x / OFX_BOX2D_SCALE, p2.y / OFX_BOX2D_SCALE );
-			
-			const b2XForm xf = shape->GetBody()->GetXForm();
-			float lambda = 1;
-			b2Vec2 normal;
-			
-			b2SegmentCollide hitResult;
-			hitResult = shape->TestSegment( xf, &lambda, &normal, segment, 1 );
-			
-			if( hitResult == e_hitCollide )					// ray has hit shape.
-			{
-				bHit = true;
-			}
-			else if( hitResult == e_missCollide )			// ray does not hit shape.
-			{
-				bHit = false;
-			}
-			else if( hitResult == e_startsInsideCollide )	// ray starts inside shape.
-			{
-				bHit = true;
-			}
-			
-			if( bHit && hitPoint != NULL )
-			{
-				hitPoint->x = ( 1 - lambda ) * segment.p1.x + lambda * segment.p2.x;
-				hitPoint->y = ( 1 - lambda ) * segment.p1.y + lambda * segment.p2.y;
-				
-				hitPoint->x *= OFX_BOX2D_SCALE;
-				hitPoint->y *= OFX_BOX2D_SCALE;
-			}
+			hitPoint->x *= OFX_BOX2D_SCALE;
+			hitPoint->y *= OFX_BOX2D_SCALE;
 		}
 		
 		return bHit;
-	}	
+	}
+	
+	//------------------------------------------------
+	
+	bool isShape ( b2Shape *shape )
+	{
+		if( body == NULL )
+			return false;
+		
+		for( b2Shape* s=body->GetShapeList(); s; s=s->GetNext() )
+		{
+			if( shape == s )
+				return true;
+		}
+		
+		return false;
+	}
 };

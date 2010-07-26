@@ -541,6 +541,40 @@ void Clock :: toggleClockMode ()
 }
 
 ///////////////////////////////////////////////
+//	CONTACT HANDLER.
+///////////////////////////////////////////////
+
+void Clock :: box2dContactEventHandler ( const b2ContactPoint* p )
+{
+	for( int i=0; i<circlesAll.size(); i++ )
+	{
+		ClockCircle& circle = *circlesAll[ i ];
+		
+		for( b2Shape* s=circle.body->GetShapeList(); s; s=s->GetNext() )
+		{
+			if( p->shape1 == s || p->shape2 == s )
+			{
+				float vel;								// weight colour change by velocity.
+				vel = p->velocity.Length();
+				vel /= 10;
+				vel = ofClamp( vel, 0, 1 );
+				
+				if( vel > 0.5 )
+				{
+//					circle.colorCurr.r = circle.colorTrgt.r * ( 1 - vel );
+//					circle.colorCurr.g = circle.colorTrgt.g * ( 1 - vel );
+//					circle.colorCurr.b = circle.colorTrgt.b * ( 1 - vel );
+					
+					circle.colorCurr.r = 255;
+					circle.colorCurr.g = 255;
+					circle.colorCurr.b = 255;
+				}
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////
 //	DRAW.
 ///////////////////////////////////////////////
 
@@ -574,14 +608,14 @@ void Clock :: drawCircles ()
 void Clock :: drawCircle ( ClockCircle &circle )
 {
 	ofFill();
-	ofSetColor( circle.colorHex );
+	ofSetColor( circle.colorCurr.r, circle.colorCurr.g, circle.colorCurr.b );
 	
 	circle.draw();
 	
 	ofEnableSmoothing();
 	
 	ofNoFill();
-	ofSetColor( circle.colorHex );
+	ofSetColor( circle.colorCurr.r, circle.colorCurr.g, circle.colorCurr.b );
 	
 	circle.draw();
 	

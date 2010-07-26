@@ -28,6 +28,9 @@ void clockApp :: initClock ()
 	box2d.setGravity( 0, 0 );
 	box2d.setFPS( 30.0 );
 	box2d.registerGrabbing();
+	box2d.getWorld()->SetContactListener( &contactListener );
+	
+	contactListener.addReceiver( &clock );
 	
 	clock.setBox2d( &box2d );
 	clock.setTimeFont( &font );

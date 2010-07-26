@@ -12,7 +12,8 @@
 #include "ofxBox2dJoint.h"
 #include "ofxBox2dRender.h"
 
-#include"ofxBox2dContactListener.h"
+#include "ofxBox2dContactListener.h"
+#include "ofxBox2dContactReceiver.h"
 
 class ofxBox2d {
 	

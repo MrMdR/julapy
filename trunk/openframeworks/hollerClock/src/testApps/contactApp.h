@@ -12,33 +12,43 @@ public:
 	void Remove(const b2ContactPoint* point);
 };
 
-class contactApp : public ofSimpleApp{
+//--------------------------------------------------------------
+
+class CustomBall : public ofxBox2dCircle
+{
 public:
-	void setup();
-	void update();
-	void draw();
+	void update	();
+	void draw	();
 	
-	void keyPressed  (int key);
-	void keyReleased (int key);
-	void mousePressed(int x, int y, int button);
-	void mouseMoved(int x, int y );
-	void mouseDragged(int x, int y, int button);
-	void mouseReleased(int x, int y, int button);
+	int r;
+	int g;
+	int b;
+};
 
-	void windowResized(int w, int h);
-	
-	// box2d system
-	ofxBox2d		welt;	
-	ofxBox2dCircle	ball;
-	ofxBox2dRect	box;
+//--------------------------------------------------------------
 
+class contactApp : public ofSimpleApp
+{
+public:
 	
-	MyContactListener	contacts;
-	vector <b2Vec2> contact_points;
-	vector <b2Vec2> contact_velocities;
+	void setup	();
+	void update	();
+	void draw	();
 	
+	void box2dContactEventHandler	( const b2ContactPoint* point );
 	
+	void keyPressed		(int key);
+	void keyReleased	(int key);
+	void mousePressed	(int x, int y, int button);
+	void mouseMoved		(int x, int y );
+	void mouseDragged	(int x, int y, int button);
+	void mouseReleased	(int x, int y, int button);
+
+	void windowResized	(int w, int h);
+	
+	ofxBox2d					box2d;	
+	vector<CustomBall>			balls;
+	MyContactListener			contacts;
 };
 
 #endif
-

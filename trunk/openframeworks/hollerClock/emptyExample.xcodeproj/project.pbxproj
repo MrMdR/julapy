@@ -372,6 +372,7 @@
 		B2CDEA6811F58BD600D1E7CD /* ofxTrigLUT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTrigLUT.h; path = ../../../addons/ofxJulapyUtils/ofxTrigLUT.h; sourceTree = SOURCE_ROOT; };
 		B2CDEA6911F58BD600D1E7CD /* ofxVideoSaver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxVideoSaver.cpp; path = ../../../addons/ofxJulapyUtils/ofxVideoSaver.cpp; sourceTree = SOURCE_ROOT; };
 		B2CDEA6A11F58BD600D1E7CD /* ofxVideoSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVideoSaver.h; path = ../../../addons/ofxJulapyUtils/ofxVideoSaver.h; sourceTree = SOURCE_ROOT; };
+		B2F270FE11FD3D42003B876D /* ofxBox2dContactReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBox2dContactReceiver.h; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -625,6 +626,7 @@
 				B2569AE911F3E6B000553DF4 /* ofxBox2dBaseShape.h */,
 				B2569AEA11F3E6B000553DF4 /* ofxBox2dCircle.h */,
 				B2569AEB11F3E6B000553DF4 /* ofxBox2dContactListener.h */,
+				B2F270FE11FD3D42003B876D /* ofxBox2dContactReceiver.h */,
 				B2569AEC11F3E6B000553DF4 /* ofxBox2dJoint.h */,
 				B2569AED11F3E6B000553DF4 /* ofxBox2dLine.h */,
 				B2569AEE11F3E6B000553DF4 /* ofxBox2dPolygon.h */,
