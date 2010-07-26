@@ -1,79 +1,123 @@
 #include "contactApp.h"
 
+//--------------------------------------------------------------	CONTACT LISTNER CLASS.
+
 void MyContactListener :: Add( const b2ContactPoint* point )
 {
-	b2Vec2 p;
-	p = point->position;
-	p *= OFX_BOX2D_SCALE;
-	
 	contactApp* appPtr = ((contactApp*)ofGetAppPtr());
-	
-	appPtr->contact_points.push_back( p );
-	appPtr->contact_velocities.push_back( point->velocity );
+	appPtr->box2dContactEventHandler( point );
 }
 
-void MyContactListener::Remove(const b2ContactPoint* point)
+void MyContactListener :: Remove(const b2ContactPoint* point)
 {
 	//
 }
 
-//--------------------------------------------------------------
-void contactApp::setup() {	 
+//--------------------------------------------------------------	CUSTOM BALL CLASS.
 
-	
+void CustomBall :: update ()
+{
+	r += ( 255 - r ) * 0.1;
+	g += ( 255 - g ) * 0.1;
+	b += ( 255 - b ) * 0.1;
+}
+
+void CustomBall :: draw ()
+{
+	ofSetColor( r, g, b );
+	ofCircle( getPosition().x, getPosition().y, getRadius() );
+}
+
+//--------------------------------------------------------------	BUSINESS AS USUAL.
+
+void contactApp :: setup()
+{
 	ofBackground(0, 0, 0);
 	ofSetVerticalSync(true);
-	ofEnableAlphaBlending();
+	ofSetCircleResolution( 100 );
 	
-	welt.init();
-	welt.createBounds();
-	welt.setGravity(0, 7.0);
+	box2d.init();
+	box2d.createBounds();
+	box2d.setGravity( 0, 0 );
+	box2d.registerGrabbing();
+	box2d.getWorld()->SetContactListener( &contacts );		// register contact class.
 	
-	welt.getWorld()->SetContactListener(&contacts);
-	
-	ball.setPhysics(1.0, 1.0, 0.5);
-	ball.setup(welt.getWorld(), 100, 100, 10, false);
-	ofPoint pt(0, 0);
-	ofPoint target(10000, 0);
-	ball.addForce(target, pt);
-	
-	box.setPhysics(1.0, 0.1, 0.5);
-	box.setup(welt.getWorld(), 300, 200, 100, 100, true);
-	
-
+	for( int i=0; i<20; i++ )
+	{
+		balls.push_back( CustomBall() );
+		CustomBall& circle = balls.back();
+		
+		float mass		= 3.0;
+		float bounce	= 0.53;
+		float friction	= 0.1;
+		float radius	= 40.0;
+		
+		circle.setPhysics( mass, bounce, friction );
+		circle.setup( box2d.getWorld(), ofRandom( 0, ofGetWidth() ), ofRandom( 0, ofGetHeight() ), radius, false );
+		circle.setVelocity( ofRandom( -10, 10 ), ofRandom( -10, 10 ) );
+		
+		circle.r = 255;
+		circle.g = 255;
+		circle.b = 255;
+	}
 }
 
-
-//--------------------------------------------------------------
-void contactApp::update(){
-	
-	welt.update();
-	
+void contactApp :: box2dContactEventHandler ( const b2ContactPoint* point )
+{
+	for( int i=0; i<balls.size(); i++ )
+	{
+		CustomBall& ball = balls[ i ];
+		
+		for( b2Shape* s=ball.body->GetShapeList(); s; s=s->GetNext() )
+		{
+			if( point->shape1 == s || point->shape2 == s )
+			{
+				float vel;								// weight colour change by velocity.
+				vel = point->velocity.Length();
+				vel /= 10;
+				vel = ofClamp( vel, 0, 1 );
+				
+				ball.g = 255 - 255 * vel;
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------
-void contactApp::draw(){
+
+void contactApp :: update(){
+	
+	box2d.update();
+	
+	for( int i=0; i<balls.size(); i++ )
+	{
+		balls[ i ].update();
+	}
+}
+
+//--------------------------------------------------------------
+
+void contactApp :: draw()
+{
 	ofSetBackgroundAuto(true);
-
-	ball.draw();
-	box.draw();
 	
-	// show contacts
-	for(int i=0; i<contact_points.size(); i++) {
-		ofSetColor(0xffffff);
-		ofLine(contact_points[i].x, contact_points[i].y, contact_points[i].x+contact_velocities[i].x, contact_points[i].y+contact_velocities[i].y);
-		ofSetColor(0xff0000);
-		ofCircle(contact_points[i].x, contact_points[i].y, 4);
-	}	
+	//-- draw balls with soft edges.
 	
+	ofFill();
+	for( int i=0; i<balls.size(); i++ )
+		balls[ i ].draw();
+	
+	ofNoFill();
+	ofEnableSmoothing();
+	for( int i=0; i<balls.size(); i++ )
+		balls[ i ].draw();
+	
+	ofDisableSmoothing();
 }
-
 
 void contactApp::windowResized(int w, int h) {
 
 }
-
-
 
 
 //--------------------------------------------------------------

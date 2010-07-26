@@ -20,13 +20,14 @@
 #define RAY_BLOB_HI_RES		200
 #define RAY_BLOB_LO_RES		10
 
-class Clock
+class Clock : public ofxBox2dContactReceiver
 {
-
 public :
 	
 	 Clock();
 	~Clock();
+	
+	void box2dContactEventHandler ( const b2ContactPoint* point );
 	
 	void  setBox2d			( ofxBox2d *box2d );
 	void  setSize			( ofRectangle &size );

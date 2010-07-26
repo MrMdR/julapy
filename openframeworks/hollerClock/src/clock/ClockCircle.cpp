@@ -9,9 +9,14 @@
 
 #include "ClockCircle.h"
 
-ClockCircle :: ClockCircle ( float radius, int color )
+ClockCircle :: ClockCircle ( float r, int c )
 {
-	set( radius, color );
+	radius		= r;
+	colorHex	= c;
+	
+	colorTrgt.r	= colorCurr.r = ( c >> 16 ) & 0xff;
+	colorTrgt.g	= colorCurr.g = ( c >> 8  ) & 0xff;
+	colorTrgt.b	= colorCurr.b = ( c >> 0  ) & 0xff;
 	
 	spinDir = ( ofRandom( 0.0, 1.0 ) > 0.5 ) ? 1 : -1;
 	spinFrc	= ofRandom( 0.2, 0.5 );
@@ -24,13 +29,9 @@ ClockCircle :: ~ClockCircle ()
 	//
 }
 
-void ClockCircle :: set ( float radius, int color )
+void ClockCircle :: enableGravity ( bool b )
 {
-	this->radius	= radius;
-	this->colorHex	= color;
-	this->color.r	= ( color >> 16 ) & 0xff;
-	this->color.g	= ( color >> 8  ) & 0xff;
-	this->color.b	= ( color >> 0  ) & 0xff;
+	ofxBox2dCircle :: enableGravity( b );
 }
 
 void ClockCircle :: update ()
@@ -43,11 +44,10 @@ void ClockCircle :: update ()
 	
 	eye.x = p.x * OFX_BOX2D_SCALE;
 	eye.y = p.y * OFX_BOX2D_SCALE;
-}
-
-void ClockCircle :: enableGravity ( bool b )
-{
-	ofxBox2dCircle :: enableGravity( b );
+	
+	colorCurr.r += ( colorTrgt.r - colorCurr.r ) * 0.1;
+	colorCurr.g += ( colorTrgt.g - colorCurr.g ) * 0.1;
+	colorCurr.b += ( colorTrgt.b - colorCurr.b ) * 0.1;
 }
 
 void ClockCircle :: draw ()

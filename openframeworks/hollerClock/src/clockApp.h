@@ -30,16 +30,18 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 
-	int					frameRate;
-	bool				bDebug;
+	int						frameRate;
+	bool					bDebug;
 	
-	ofxBox2d			box2d;
-	Clock				clock;
+	ofxBox2d				box2d;
+	ofxBox2dContactListener	contactListener;
+
+	Clock					clock;
 	
-	ofTrueTypeFont		font;
-	ofxScreenGrabUtil	screenGrabber;
+	ofTrueTypeFont			font;
+	ofxScreenGrabUtil		screenGrabber;
 	
-	ofxSimpleGuiToo		gui;
+	ofxSimpleGuiToo			gui;
 };
 
 #endif

@@ -23,14 +23,14 @@ public :
 	void update			();
 	void draw			();
 	
-	void set			( float radius, int color );
 	void enableGravity	( bool b );
 	
 	//--
 	
 	float		radius;
 	int			colorHex;
-	ofColor		color;
+	ofColor		colorTrgt;
+	ofColor		colorCurr;
 	ofPoint		lineUpPoint;
 	
 	int			spinDir;

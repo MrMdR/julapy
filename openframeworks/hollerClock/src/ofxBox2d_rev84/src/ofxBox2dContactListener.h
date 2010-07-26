@@ -2,37 +2,30 @@
 #pragma once
 #include "ofMain.h"
 #include "Box2D.h"
+#include "ofxBox2dContactReceiver.h"
 
-class ofxBox2dContactListener : public b2ContactListener {
-	
+class ofxBox2dContactListener : public b2ContactListener
+{
 public:
-	virtual void Add(const b2ContactPoint* point) {
-		
-		// point of collision
-		b2Vec2 p = point->position;
-		p *= OFX_BOX2D_SCALE;
-		
+	
+	vector<ofxBox2dContactReceiver*> receivers;
+	
+	virtual void addReceiver ( ofxBox2dContactReceiver* receiver )
+	{
+		receivers.push_back( receiver );
+	}
+	
+	virtual void Add( const b2ContactPoint* point)
+	{
+		for( int i=0; i<receivers.size(); i++ )
+		{
+			receivers[ i ]->box2dContactEventHandler( point );
+		}
+	}
+	
+	virtual void Remove(const b2ContactPoint* point)
+	{
 		//
-		b2Shape* shape1 = point->shape1;		///< the first shape
-		b2Shape* shape2 = point->shape2;		///< the second shape
-		
-		contactAdd(ofPoint(p.x, p.y));
-		
-		//b2Body * body_1 = point->shape1->GetBody();
-		//MonsterData * theData = (MonsterData*)body_1->GetUserData();
-		
-	}
-	virtual void Remove(const b2ContactPoint* point) {
-	}
-	
-	ofxBox2dContactListener() {
-	}
-	
-	
-	
-	virtual void contactAdd(ofPoint p) {
-	}
-	virtual void contactRemove(ofPoint p) {
 	}
 };
 
