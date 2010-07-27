@@ -6,7 +6,8 @@
 #include "ofxXmlSettings.h"
 #include "ofxScreenGrabUtil.h"
 #include "ofxSimpleGuiToo.h"
-#include "Ball2d.h"
+#include "ofxVideoSaver.h"
+
 #include "ofxBox2d.h"
 #include "Clock.h"
 
@@ -39,9 +40,14 @@ public:
 	Clock					clock;
 	
 	ofTrueTypeFont			font;
+	
 	ofxScreenGrabUtil		screenGrabber;
 	
 	ofxSimpleGuiToo			gui;
+	
+	ofImage					screenImage;
+	ofxVideoSaver			videoSaver;
+	
 };
 
 #endif

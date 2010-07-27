@@ -17,6 +17,13 @@ void clockApp :: setup()
 	screenGrabber.setup( "movie/" );
 	screenGrabber.setPause( true );
 	
+	ofRectangle rect;
+	rect.width	= ofGetWidth();
+	rect.height	= ofGetHeight();
+	
+	videoSaver.setup( rect, OF_IMAGE_COLOR );
+	videoSaver.setPause( true );
+	
 	initClock();
 	initGui();
 }
@@ -100,6 +107,9 @@ void clockApp::draw()
 	gui.draw();
 	
 	screenGrabber.save();
+	
+	screenImage.grabScreen( 0, 0, ofGetWidth(), ofGetHeight() );
+	videoSaver.addFrame( screenImage.getPixels() );
 }
 
 ///////////////////////////////////////////
@@ -110,6 +120,16 @@ void clockApp :: keyPressed(int key)
 {
 	if( key == 's' )
 		screenGrabber.togglePause();
+	
+	if( key == 'v' )
+	{
+		videoSaver.togglePause();
+		
+		if( videoSaver.isPaused() )
+		{
+			videoSaver.saveToDisk( "movies/" );
+		}
+	}
 	
 	if( key == 'd' )
 	{
