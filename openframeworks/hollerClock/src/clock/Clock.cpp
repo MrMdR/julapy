@@ -38,12 +38,19 @@ Clock :: Clock ()
 	secOneM2X = 950;
 	secTwoM2X = 1120;
 	
+	gravitySlant	= 0;
+	
 	forceCenterPull	= 30;
 	forceCenterPush = 30;
 	rayBlobPad		= 50;
 	rayBlobEase		= 0.4;
 	
 	setSize( ofGetWidth(), ofGetHeight() );
+	
+	ofAddListener( ofEvents.mousePressed,	this, &Clock :: mousePressed	);
+	ofAddListener( ofEvents.mouseMoved,		this, &Clock :: mouseMoved		);
+	ofAddListener( ofEvents.mouseDragged,	this, &Clock :: mouseDragged	);
+	ofAddListener( ofEvents.mouseReleased,	this, &Clock :: mouseReleased	);
 }
 
 Clock :: ~Clock()
@@ -316,7 +323,7 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 				if( circle.hasJoint() )
 					circle.destroyJoint();
 				
-//				floatUp( circle );
+				floatUp( circle );
 			}
 			
 			circle.active = false;
@@ -414,7 +421,17 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 
 void Clock :: floatUp ( ClockCircle& circle )
 {
-	b2Vec2 up = b2Vec2( 0, -10 );
+	float r;
+	r = circle.getRadius();
+	
+	float s;
+	s = ( circle.getPosition().y + r ) / ( screenHeight - r * 2 );
+	
+	float gx = gravitySlant * 20;
+	float gy = -30;
+	
+	b2Vec2 up = b2Vec2( gx, gy );
+	up *= s;
 	
 	circle.body->ApplyImpulse( up, circle.body->GetWorldCenter() );
 }
@@ -756,4 +773,35 @@ void Clock :: drawRayBlob ()
 	ofSetLineWidth( 1 );
 	ofDisableSmoothing();
 	ofDisableAlphaBlending();
+}
+
+///////////////////////////////////////////////
+//	HANDLERS.
+///////////////////////////////////////////////
+
+void Clock :: mouseMoved( ofMouseEventArgs &e )
+{
+	if( clockMode == CLOCK_MODE_2 )
+	{
+		float p = e.x / (float)screenWidth;
+		float x = MAX( MIN( p , 1 ), 0 );
+		float g = ( p - 0.5 ) * 2;
+		
+		gravitySlant += ( g - gravitySlant ) * 0.6;
+	}
+}
+
+void Clock :: mousePressed( ofMouseEventArgs &e )
+{
+	//
+}
+
+void Clock :: mouseDragged( ofMouseEventArgs &e )
+{
+	//
+}
+
+void Clock :: mouseReleased( ofMouseEventArgs &e )
+{
+	//
 }

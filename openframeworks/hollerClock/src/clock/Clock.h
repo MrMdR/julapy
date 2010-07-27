@@ -12,7 +12,7 @@
 
 #include "ofMain.h"
 #include "ofxBox2d.h"
-#include "ofxVectorMath.h"
+#include "ofxVec2f.h"
 #include "ClockCircle.h"
 
 #define CLOCK_MODE_1		1
@@ -63,6 +63,11 @@ public :
 	void drawTime			();
 	void drawRayCasts		();
 	void drawRayBlob		();
+	
+	void mouseMoved			( ofMouseEventArgs &e );
+	void mousePressed		( ofMouseEventArgs &e );	
+	void mouseDragged		( ofMouseEventArgs &e );	
+	void mouseReleased		( ofMouseEventArgs &e );
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
@@ -126,6 +131,8 @@ public :
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	
 	ofxBox2dSoftBody*		softBody;
+	
+	float					gravitySlant;
 	
 	int						forceCenterPull;
 	int						forceCenterPush;
