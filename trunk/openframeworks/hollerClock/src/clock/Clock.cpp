@@ -38,14 +38,14 @@ Clock :: Clock ()
 	secOneM2X = 950;
 	secTwoM2X = 1120;
 	
-	gravitySlant	= 0;
-	
 	forceCenterPull	= 30;
 	forceCenterPush = 30;
-	rayBlobPad		= 50;
+	rayBlobPad		= 0.1;
 	rayBlobEase		= 0.4;
 	
 	setSize( ofGetWidth(), ofGetHeight() );
+	setGravitySlant( 0.0 );
+	setForceScale( 1.0 );
 }
 
 Clock :: ~Clock()
@@ -118,6 +118,11 @@ void Clock :: setGravitySlant( float g )
 	{
 		gravitySlant += ( g - gravitySlant ) * 0.6;
 	}
+}
+
+void Clock :: setForceScale ( float f )
+{
+	forceScale = f;
 }
 
 void Clock :: createCircles ()
@@ -377,6 +382,7 @@ void Clock :: pullToCenter ( ClockCircle& circle )
 	v *= s;
 	v *= forceCenterPull;
 	v += perp;
+	v *= forceScale;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -429,6 +435,7 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 	v *= d;
 	v *= forceCenterPull;
 //	v += perp;
+	v *= forceScale;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -448,6 +455,7 @@ void Clock :: floatUp ( ClockCircle& circle )
 	
 	b2Vec2 up = b2Vec2( gx, gy );
 	up *= s;
+	up *= forceScale;
 	
 	circle.body->ApplyImpulse( up, circle.body->GetWorldCenter() );
 }
@@ -468,6 +476,7 @@ void Clock :: lineUp ( ClockCircle& circle )
 	v.normalize();
 	v *= d;
 	v *= 30;
+	v *= forceScale;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -548,7 +557,7 @@ void Clock :: updateRayBlob ()
 				}
 			}
 			
-			hitPoint += hitPoint.getNormalized() * rayBlobPad;
+			hitPoint += hitPoint.getNormalized() * ( rayBlobPad * screenHeight );
 			
 			length		= hitPoint.length();
 			lengthMax	= ( length > lengthMax ) ? length : lengthMax;
