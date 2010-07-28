@@ -7,6 +7,9 @@
 #include "ofxBox2d.h"
 #include "Clock.h"
 
+#define DEVICE_IPAD		0
+#define DEVICE_IPHONE	1
+
 class clockApp : public ofxiPhoneApp {
 	
 public:
@@ -29,7 +32,8 @@ public:
 	void deviceOrientationChanged	(int newOrientation);
 	
 	//------------------------------------------
-	
+
+	int						deviceType;
 	int						frameRate;
 	
 	ofxBox2d				box2d;
