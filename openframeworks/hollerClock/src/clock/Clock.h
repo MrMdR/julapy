@@ -34,6 +34,7 @@ public :
 	void  setSize			( int w, int h );
 	void  setTimeFont		( ofTrueTypeFont *font );
 	void  setGravitySlant	( float g );
+	void  setForceScale		( float f );
 	void  createCircles		();
 	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, float lineX = 0 );
 	float areaToRadius		( float area );
@@ -129,10 +130,11 @@ public :
 	ofxBox2dSoftBody*		softBody;
 	
 	float					gravitySlant;
+	float					forceScale;
 	
 	int						forceCenterPull;
 	int						forceCenterPush;
-	int						rayBlobPad;
+	float					rayBlobPad;
 	float					rayBlobEase;
 	
 };
