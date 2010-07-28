@@ -33,6 +33,21 @@ ClockCircle :: ~ClockCircle ()
 }
 
 ///////////////////////////////////////////////
+//	SIZE.
+///////////////////////////////////////////////
+
+void ClockCircle :: setSize ( ofRectangle &size )
+{
+	setSize( size.width, size.height );
+}
+
+void ClockCircle :: setSize ( int w, int h )
+{
+	screenWidth		= w;
+	screenHeight	= h;
+}
+
+///////////////////////////////////////////////
 //	JOINT.
 ///////////////////////////////////////////////
 
@@ -42,7 +57,7 @@ void ClockCircle :: createJoint ()
 		return;
 	
 	b2BodyDef bd;
-	bd.position.Set( lineUpPoint.x / OFX_BOX2D_SCALE, lineUpPoint.y / OFX_BOX2D_SCALE);
+	bd.position.Set( ( lineUpPoint.x * screenWidth ) / OFX_BOX2D_SCALE, ( lineUpPoint.y * screenHeight ) / OFX_BOX2D_SCALE );
 	point = world->CreateBody( &bd );
 	
 	b2DistanceJointDef jd;

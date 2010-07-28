@@ -15,6 +15,8 @@
 #include "ofxBox2dContactListener.h"
 #include "ofxBox2dContactReceiver.h"
 
+#define OF_MAX_TOUCH_JOINTS		5			// max number of touch points on iPhone + iPad (this may change in the future though).
+
 class ofxBox2d {
 	
 private:
@@ -40,9 +42,9 @@ public:
 	
 	b2Body*				m_bomb;
 	b2MouseJoint*		mouseJoint;
+	b2MouseJoint*		touchJoints[ OF_MAX_TOUCH_JOINTS ];
 	b2Body*				ground;
 	b2Body*				mainBody;
-	
 
 	// ------------------------------------------------------ 
 	ofxBox2d();
@@ -59,10 +61,10 @@ public:
 	void		mouseReleased(ofMouseEventArgs &e);
 #endif
 	
-	void		registerGrabbing();
-	void		grabShapeDown(float x, float y);
-	void		grabShapeUp(float x, float y);
-	void		grabShapeDragged(float x, float y);
+	void		registerGrabbing	();
+	void		grabShapeDown		( float x, float y, int id = -1 );		// -1 is reserved for mouse.
+	void		grabShapeUp			( float x, float y, int id = -1 );		// -1 is reserved for mouse.
+	void		grabShapeDragged	( float x, float y, int id = -1 );		// -1 is reserved for mouse.
 	
 	b2World*	getWorld()		  { return world;				   }
 	int			getBodyCount()    { return world->GetBodyCount();  }
@@ -83,6 +85,7 @@ public:
 	
 	void update(); 
 	void draw();
+	void drawMouseJoint( b2MouseJoint* mj );
 	void drawGround();
 	
 	void raycast ( const ofPoint &p1, const ofPoint &p2, int maxHits = 1, vector<ofPoint>* hitPoints = NULL, vector<b2Shape*>* shapes = NULL );

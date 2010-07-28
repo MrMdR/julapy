@@ -33,8 +33,9 @@ public :
 	void  setSize			( ofRectangle &size );
 	void  setSize			( int w, int h );
 	void  setTimeFont		( ofTrueTypeFont *font );
+	void  setGravitySlant	( float g );
 	void  createCircles		();
-	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, int lineX = 0 );
+	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, float lineX = 0 );
 	float areaToRadius		( float area );
 	void  createSoftBody	();
 	
@@ -63,11 +64,6 @@ public :
 	void drawTime			();
 	void drawRayCasts		();
 	void drawRayBlob		();
-	
-	void mouseMoved			( ofMouseEventArgs &e );
-	void mousePressed		( ofMouseEventArgs &e );	
-	void mouseDragged		( ofMouseEventArgs &e );	
-	void mouseReleased		( ofMouseEventArgs &e );
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
