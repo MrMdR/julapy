@@ -9,13 +9,16 @@ void clockApp :: setup()
 	ofRegisterTouchEvents(this);
 	ofxAccelerometer.setup();
 	ofxiPhoneAlerts.addListener(this);
-	iPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
+	ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
 	
 	//-------------------
+	
+	deviceType = DEVICE_IPAD;
+//	deviceType = DEVICE_IPHONE;
 
 	ofBackground( 0, 0, 0 );
 	ofSetFrameRate( frameRate = 60 );
-	ofSetVerticalSync( true );
+//	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
 	font.loadFont( "fonts/cooperBlack.ttf", 40 );
@@ -35,7 +38,8 @@ void clockApp :: initClock ()
 	contactListener.addReceiver( &clock );
 	
 	clock.setBox2d( &box2d );
-	clock.setSize( 480, 320 );
+	if( deviceType == DEVICE_IPAD )		clock.setSize( 1024, 768 );
+	if( deviceType == DEVICE_IPHONE )	clock.setSize( 480,  320 );
 //	clock.setTimeFont( &font );
 	clock.setup();
 }
@@ -68,6 +72,38 @@ void clockApp :: update()
 		min = ofGetMinutes();
 		sec = ofGetSeconds();
 	}
+	
+	//-- orientation.
+	
+	float ax = ofxAccelerometer.getForce().x;
+	float ot = 0.6;								// orientation threshold.
+	
+	if( ax > ot )
+	{
+		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT )
+		{
+			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
+		}
+	}
+	else if( ax < -ot )
+	{
+		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT )
+		{
+			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
+		}
+	}
+	
+	//-- gravity slant.
+	
+	float g;
+	g = ofxAccelerometer.getForce().y;
+	g *= 2;									// increase the reaction to tilt.
+	g = MIN( 1.0, MAX( -1.0, g ) );			// between -1 and 1.
+	g *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
+	
+	clock.setGravitySlant( g );
+	
+	//-- update.
 	
 	clock.update( hrs, min, sec );
 }
@@ -108,8 +144,9 @@ void clockApp::touchUp(ofTouchEventArgs &touch){
 
 }
 
-void clockApp::touchDoubleTap(ofTouchEventArgs &touch){
-
+void clockApp::touchDoubleTap( ofTouchEventArgs &touch )
+{
+	clock.toggleClockMode();
 }
 
 void clockApp::lostFocus(){
@@ -124,7 +161,8 @@ void clockApp::gotMemoryWarning(){
 
 }
 
-void clockApp::deviceOrientationChanged(int newOrientation){
-
+void clockApp::deviceOrientationChanged(int newOrientation)
+{
+	//
 }
 

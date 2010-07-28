@@ -9,16 +9,32 @@
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeExecutable = B21D403511FE69DE0063486D /* emptyExample */;
-		activeSDKPreference = iphonesimulator3.2;
+		activeSDKPreference = iphoneos3.2;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* emptyExample */;
 		addToTargets = (
 			1D6058900D05DD3D006BFB54 /* emptyExample */,
+		);
+		breakpoints = (
 		);
 		codeSenseManager = B21D404211FE69FD0063486D /* Code sense */;
 		executables = (
 			B21D403511FE69DE0063486D /* emptyExample */,
 		);
 		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXExecutablesDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXExecutablesDataSource_NameID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					22,
+					300,
+					563,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXExecutablesDataSource_ActiveFlagID,
+					PBXExecutablesDataSource_NameID,
+					PBXExecutablesDataSource_CommentsID,
+				);
+			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
@@ -63,15 +79,18 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 301911584;
-			PBXWorkspaceStateSaveDate = 301911584;
+			PBXPerProjectTemplateStateSaveDate = 301989240;
+			PBXWorkspaceStateSaveDate = 301989240;
 		};
 		perUserProjectItems = {
 			B25E8B6311FE729F00CA11BB /* PBXTextBookmark */ = B25E8B6311FE729F00CA11BB /* PBXTextBookmark */;
 			B25E8C7811FEA31C00CA11BB /* PBXBookmark */ = B25E8C7811FEA31C00CA11BB /* PBXBookmark */;
-			B2F11AD311FECEA5009300F6 /* PlistBookmark */ = B2F11AD311FECEA5009300F6 /* PlistBookmark */;
-			B2F11AD411FECEA5009300F6 /* PBXTextBookmark */ = B2F11AD411FECEA5009300F6 /* PBXTextBookmark */;
-			B2F11AD511FECEA5009300F6 /* PBXTextBookmark */ = B2F11AD511FECEA5009300F6 /* PBXTextBookmark */;
+			B266D00D11FED27A00A6A50B /* PlistBookmark */ = B266D00D11FED27A00A6A50B /* PlistBookmark */;
+			B2FBE6DB11FFCD8B00BDF788 /* PBXTextBookmark */ = B2FBE6DB11FFCD8B00BDF788 /* PBXTextBookmark */;
+			B2FBE817120012CC00BDF788 /* PBXTextBookmark */ = B2FBE817120012CC00BDF788 /* PBXTextBookmark */;
+			B2FBE819120012CC00BDF788 /* PBXTextBookmark */ = B2FBE819120012CC00BDF788 /* PBXTextBookmark */;
+			B2FBE81A120012CC00BDF788 /* PBXTextBookmark */ = B2FBE81A120012CC00BDF788 /* PBXTextBookmark */;
+			B2FBE81B120012CC00BDF788 /* PBXTextBookmark */ = B2FBE81B120012CC00BDF788 /* PBXTextBookmark */;
 		};
 		sourceControlManager = B21D404111FE69FD0063486D /* Source Control */;
 		userBuildSettings = {
@@ -91,7 +110,7 @@
 		argumentStrings = (
 		);
 		autoAttachOnCrash = 1;
-		breakpointsEnabled = 0;
+		breakpointsEnabled = 1;
 		configStateDict = {
 		};
 		customDataFormattersEnabled = 1;
@@ -108,9 +127,13 @@
 		executableUserSymbolLevel = 0;
 		libgmallocEnabled = 0;
 		name = emptyExample;
+		savedGlobals = {
+		};
 		showTypeColumn = 0;
 		sourceDirectories = (
 		);
+		variableFormatDictionary = {
+		};
 	};
 	B21D404111FE69FD0063486D /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -140,7 +163,7 @@
 		isa = PBXBookmark;
 		fRef = BB24DD8C10DA77E000E9C588 /* Default.png */;
 	};
-	B2F11AD311FECEA5009300F6 /* PlistBookmark */ = {
+	B266D00D11FED27A00A6A50B /* PlistBookmark */ = {
 		isa = PlistBookmark;
 		fRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */;
 		fallbackIsa = PBXBookmark;
@@ -149,32 +172,102 @@
 		);
 		name = "/Users/lukasz/Documents/workspace/of_0061_iphone/apps/julapy/hollerClock/ofxiphone-Info.plist";
 		rLen = 0;
-		rLoc = 9223372036854775807;
+		rLoc = 9223372036854775808;
 	};
-	B2F11AD411FECEA5009300F6 /* PBXTextBookmark */ = {
+	B2F11A8A11FECE54009300F6 /* ofxBox2d.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {853, 5850}}";
+			sepNavSelRange = "{2348, 0}";
+			sepNavVisRange = "{2357, 993}";
+		};
+	};
+	B2F11A8B11FECE54009300F6 /* ofxBox2d.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {922, 1378}}";
+			sepNavSelRange = "{267, 0}";
+			sepNavVisRange = "{0, 790}";
+		};
+	};
+	B2F11ACB11FECE88009300F6 /* clockApp.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {853, 585}}";
+			sepNavSelRange = "{578, 24}";
+			sepNavVisRange = "{0, 674}";
+			sepNavWindowFrame = "{{1958, 160}, {896, 1014}}";
+		};
+	};
+	B2F11ACC11FECE88009300F6 /* clockApp.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {853, 2158}}";
+			sepNavSelRange = "{1880, 0}";
+			sepNavVisRange = "{1704, 850}";
+		};
+	};
+	B2FBE6DB11FFCD8B00BDF788 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = E4D8928511527878007E1F53 /* main.mm */;
-		name = "main.mm: 10";
+		name = "main.mm: 8";
 		rLen = 0;
-		rLoc = 249;
+		rLoc = 246;
 		rType = 0;
 		vrLen = 249;
 		vrLoc = 0;
 	};
-	B2F11AD511FECEA5009300F6 /* PBXTextBookmark */ = {
+	B2FBE817120012CC00BDF788 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = E4D8928511527878007E1F53 /* main.mm */;
-		name = "main.mm: 10";
-		rLen = 0;
-		rLoc = 249;
+		fRef = B2FBE818120012CC00BDF788 /* ofxiPhoneExtras.h */;
+		name = "ofxiPhoneExtras.h: 145";
+		rLen = 19;
+		rLoc = 5585;
 		rType = 0;
-		vrLen = 249;
+		vrLen = 1422;
+		vrLoc = 4828;
+	};
+	B2FBE818120012CC00BDF788 /* ofxiPhoneExtras.h */ = {
+		isa = PBXFileReference;
+		name = ofxiPhoneExtras.h;
+		path = /Users/lukasz/Documents/workspace/of_0061_iphone/addons/ofxiPhone/ofxiPhoneExtras.h;
+		sourceTree = "<absolute>";
+	};
+	B2FBE819120012CC00BDF788 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2F11ACB11FECE88009300F6 /* clockApp.h */;
+		name = "clockApp.h: 32";
+		rLen = 24;
+		rLoc = 578;
+		rType = 0;
+		vrLen = 674;
 		vrLoc = 0;
+	};
+	B2FBE81A120012CC00BDF788 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2F11ACC11FECE88009300F6 /* clockApp.mm */;
+		name = "clockApp.mm: 80";
+		rLen = 0;
+		rLoc = 1689;
+		rType = 0;
+		vrLen = 648;
+		vrLoc = 1451;
+	};
+	B2FBE81B120012CC00BDF788 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2F11ACC11FECE88009300F6 /* clockApp.mm */;
+		name = "clockApp.mm: 88";
+		rLen = 0;
+		rLoc = 1880;
+		rType = 0;
+		vrLen = 850;
+		vrLoc = 1704;
+	};
+	BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{1935, 181}, {896, 1014}}";
+		};
 	};
 	E4D8928511527878007E1F53 /* main.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {853, 514}}";
-			sepNavSelRange = "{249, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {853, 477}}";
+			sepNavSelRange = "{246, 0}";
 			sepNavVisRange = "{0, 249}";
 		};
 	};
