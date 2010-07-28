@@ -14,7 +14,7 @@ void clockApp :: setup()
 	//-------------------
 	
 	deviceType = DEVICE_IPAD;
-//	deviceType = DEVICE_IPHONE;
+	deviceType = DEVICE_IPHONE;
 
 	ofBackground( 0, 0, 0 );
 	ofSetFrameRate( frameRate = 60 );
@@ -36,10 +36,17 @@ void clockApp :: initClock ()
 	box2d.getWorld()->SetContactListener( &contactListener );
 	
 	contactListener.addReceiver( &clock );
+
+	int w = ( deviceType == DEVICE_IPAD ) ? 1024 : 480;
+	int h = ( deviceType == DEVICE_IPAD ) ? 768  : 320;
+	
+	float a1 = w * h;
+	float a2 = 1280 * 720;
+	float fs = a1 / (float)a2;
 	
 	clock.setBox2d( &box2d );
-	if( deviceType == DEVICE_IPAD )		clock.setSize( 1024, 768 );
-	if( deviceType == DEVICE_IPHONE )	clock.setSize( 480,  320 );
+	clock.setSize( w, h );
+	clock.setForceScale( fs );
 //	clock.setTimeFont( &font );
 	clock.setup();
 }
