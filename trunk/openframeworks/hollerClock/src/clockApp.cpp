@@ -40,6 +40,7 @@ void clockApp :: initClock ()
 	contactListener.addReceiver( &clock );
 	
 	clock.setBox2d( &box2d );
+	clock.setSize( ofGetWidth(), ofGetHeight() );
 	clock.setTimeFont( &font );
 	clock.setup();
 }
@@ -158,7 +159,14 @@ void clockApp :: keyReleased(int key)
 
 void clockApp::mouseMoved(int x, int y )
 {
-
+	float p;
+	p = x / (float)ofGetWidth();
+	p = MAX( MIN( p , 1 ), 0 );
+	
+	float g;
+	g = ( p - 0.5 ) * 2;
+	
+	clock.setGravitySlant( g );
 }
 
 void clockApp::mouseDragged(int x, int y, int button)

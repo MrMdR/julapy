@@ -20,12 +20,18 @@ public :
 	 ClockCircle		( float radius = 0.001, int color = 0xFFFFFF );
 	~ClockCircle		();
 
+	void setSize		( ofRectangle &size );
+	void setSize		( int w, int h );
+	
 	void update			();
 	void draw			();
 	
 	void createJoint	();
 	void destroyJoint	();
 	bool hasJoint		();
+	
+	int			screenWidth;
+	int			screenHeight;
 	
 	float		radius;
 	int			colorHex;

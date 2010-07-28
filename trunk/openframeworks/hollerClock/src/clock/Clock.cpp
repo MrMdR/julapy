@@ -46,11 +46,6 @@ Clock :: Clock ()
 	rayBlobEase		= 0.4;
 	
 	setSize( ofGetWidth(), ofGetHeight() );
-	
-	ofAddListener( ofEvents.mousePressed,	this, &Clock :: mousePressed	);
-	ofAddListener( ofEvents.mouseMoved,		this, &Clock :: mouseMoved		);
-	ofAddListener( ofEvents.mouseDragged,	this, &Clock :: mouseDragged	);
-	ofAddListener( ofEvents.mouseReleased,	this, &Clock :: mouseReleased	);
 }
 
 Clock :: ~Clock()
@@ -103,6 +98,13 @@ void Clock :: setSize ( int w, int h )
 	
 	screenCenter.x	= screenWidth * 0.5;
 	screenCenter.y	= screenHeight * 0.5;
+	
+	//-- update circles.
+	
+	for( int i=0; i<circlesAll.size(); i++ )
+	{
+		circlesAll[ i ]->setSize( w, h );
+	}
 }
 
 void Clock :: setTimeFont ( ofTrueTypeFont *font )
@@ -110,22 +112,32 @@ void Clock :: setTimeFont ( ofTrueTypeFont *font )
 	this->font = font;
 }
 
+void Clock :: setGravitySlant( float g )
+{
+	if( clockMode == CLOCK_MODE_2 )
+	{
+		gravitySlant += ( g - gravitySlant ) * 0.6;
+	}
+}
+
 void Clock :: createCircles ()
 {
 	float area	= 0.015;		// biggest area as start.
 	float dec	= 0.5;		// decrease in area for the next batch of circles.
 	
-	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0x6b007e, 100 );
-	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xf51d2a, 270 );
-	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xf6009d, 540 );
-	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0x8c162f, 710 );
-	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0xc96dfd, 950 );
-	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0xf7719a, 1120 );
+	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0x6b007e, 0.10 );
+	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xf51d2a, 0.23 );
+	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xf6009d, 0.44 );
+	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0x8c162f, 0.57 );
+	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0xc96dfd, 0.76 );
+	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0xf7719a, 0.88 );
 }
 
-void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color, int lx )
+void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color, float lx )
 {
-	for( int i=0; i<numOfCircle; i++ )
+	int t = numOfCircle;
+	
+	for( int i=0; i<t; i++ )
 	{
 		ClockCircle* circle;
 		circle = new ClockCircle( radius, color );
@@ -144,20 +156,24 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		
 		//-- define line up point.
 		
-		int lineX;
+		float rx = radius / (int)screenWidth;
+		float ry = radius / (int)screenHeight;
+		
+		float lineX;
 		lineX = lx;
-		lineX += ( i > 4 ) ? radius * 2.2 : 0;
+		lineX += ( i > 4 ) ? rx * 2.2 : 0;
 
 		int j = i % 5;
 		
-		int lineY;
-		lineY = screenHeight;
-		lineY -= 100;
-		lineY -= radius;
-		lineY -= j * radius * 2;
-		lineY -= j * ( radius * 0.2 );
+		float lineY;
+		lineY = 1.0;
+		lineY -= 0.14;
+		lineY -= ry;
+		lineY -= j * ry * 2;
+		lineY -= j * ( ry * 0.2 );
 		
 		circle->lineUpPoint.set( lineX, lineY );
+		circle->setSize( screenWidth, screenHeight );
 		
 		//-- add to vectors.
 		
@@ -442,7 +458,7 @@ void Clock :: lineUp ( ClockCircle& circle )
 	ofxVec2f p2;
 	ofxVec2f v;
 	
-	p1.set( circle.lineUpPoint );
+	p1.set( circle.lineUpPoint.x * screenWidth, circle.lineUpPoint.y * screenHeight );
 	p2.set( circle.getPosition() );
 	v = p1 - p2;
 	
@@ -773,35 +789,4 @@ void Clock :: drawRayBlob ()
 	ofSetLineWidth( 1 );
 	ofDisableSmoothing();
 	ofDisableAlphaBlending();
-}
-
-///////////////////////////////////////////////
-//	HANDLERS.
-///////////////////////////////////////////////
-
-void Clock :: mouseMoved( ofMouseEventArgs &e )
-{
-	if( clockMode == CLOCK_MODE_2 )
-	{
-		float p = e.x / (float)screenWidth;
-		float x = MAX( MIN( p , 1 ), 0 );
-		float g = ( p - 0.5 ) * 2;
-		
-		gravitySlant += ( g - gravitySlant ) * 0.6;
-	}
-}
-
-void Clock :: mousePressed( ofMouseEventArgs &e )
-{
-	//
-}
-
-void Clock :: mouseDragged( ofMouseEventArgs &e )
-{
-	//
-}
-
-void Clock :: mouseReleased( ofMouseEventArgs &e )
-{
-	//
 }

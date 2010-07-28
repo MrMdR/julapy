@@ -21,7 +21,9 @@ void ofxBox2d::init() {
 	velocityIterations = 40;
 	positionIterations = 20;
 	
-	//mouse grabbing
+	for( int i=0; i<OF_MAX_TOUCH_JOINTS; i++ )
+		touchJoints[ i ] = NULL;
+	
 	mouseJoint = NULL;
 	ground	   = NULL;
 	
@@ -38,7 +40,6 @@ void ofxBox2d::init() {
 	ofLog(OF_LOG_NOTICE, "- Box2D Created -\n");
 	
 	bWorldCreated = true;
-	
 }
 
 
@@ -69,13 +70,13 @@ void ofxBox2d::registerGrabbing() {
 
 #ifdef TARGET_OF_IPHONE
 void ofxBox2d::touchDown(ofTouchEventArgs &touch) {
-	grabShapeDown(touch.x, touch.y);
+	grabShapeDown( touch.x, touch.y, touch.id );
 }
 void ofxBox2d::touchMoved(ofTouchEventArgs &touch) {
-	grabShapeDragged(touch.x, touch.y);
+	grabShapeDragged( touch.x, touch.y, touch.id );
 }
 void ofxBox2d::touchUp(ofTouchEventArgs &touch) {
-	grabShapeUp(touch.x, touch.y);
+	grabShapeUp( touch.x, touch.y, touch.id );
 }
 #else
 void ofxBox2d::mousePressed(ofMouseEventArgs &e) {
@@ -90,76 +91,132 @@ void ofxBox2d::mouseReleased(ofMouseEventArgs &e) {
 #endif;
 
 // ------------------------------------------------------ 
-void ofxBox2d::grabShapeDown(float x, float y) {
-	if(bEnableGrabbing) {
-		b2Vec2 p(x/OFX_BOX2D_SCALE, y/OFX_BOX2D_SCALE);
-		
-		if (mouseJoint != NULL) {
-			return;
+void ofxBox2d::grabShapeDown(float x, float y, int id )
+{
+	if( !bEnableGrabbing )
+		return;
+	
+	if( id == -1 )							// check the grab is valid.
+	{
+		if( mouseJoint != NULL )			// mouse joint already registered.
+		{
+			grabShapeUp( x, y, id );		// destroy the mouse joint before replacing it.
 		}
+	}
+	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
+	{
+		if( touchJoints[ id ] != NULL )		// touch joint already registered.
+		{
+			grabShapeUp( x, y, id );		// destroy the touch joint before replacing it.
+		}
+	}
+	else 
+	{
+		return;								// invalid mouse / touch id.
+	}
 
-		float mouseArea;
-		mouseArea = 1.0 / OFX_BOX2D_SCALE;
+	
+	b2Vec2 p( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
+	
+	b2AABB aabb;									// Make a small box.
+	b2Vec2 d;
+	d.Set(0.001f, 0.001f);
+	aabb.lowerBound = p - d;
+	aabb.upperBound = p + d;
+	
+	const int32 k_maxCount = 10000;					// Query the world for overlapping shapes.
+	b2Shape* shapes[ k_maxCount ];
+	int32 count = world->Query( worldAABB, shapes, k_maxCount );
+	b2Body* body = NULL;
+	
+	for( int32 i=0; i<count; ++i )
+	{
+		b2Body* shapeBody = shapes[ i ]->GetBody();
 		
-		float mouseAreaSqrt;
-		mouseAreaSqrt = sqrt( mouseArea );
-		
-		// Make a small box.
-		b2AABB aabb;
-		b2Vec2 d;
-//		d.Set( mouseAreaSqrt, mouseAreaSqrt );		// doesn't do much.
-		d.Set(0.001f, 0.001f);
-		aabb.lowerBound = p - d;
-		aabb.upperBound = p + d;
-		
-		// Query the world for overlapping shapes.
-		const int32 k_maxCount = 10000;
-		b2Shape* shapes[k_maxCount];
-		int32 count = world->Query(worldAABB, shapes, k_maxCount);
-		b2Body* body = NULL;
-		
-		for (int32 i = 0; i < count; ++i) {
+		if( shapeBody->IsStatic() == false && shapeBody->GetMass() > 0.0f )
+		{
+			bool inside;
+			inside = shapes[ i ]->TestPoint( shapeBody->GetXForm(), p );
 			
-			b2Body* shapeBody = shapes[i]->GetBody();
-			if (shapeBody->IsStatic() == false && shapeBody->GetMass() > 0.0f) {
-				bool inside = shapes[i]->TestPoint(shapeBody->GetXForm(), p);
-				if (inside) {
-					body = shapes[i]->GetBody();
-					break;
-				}
+			if( inside )
+			{
+				body = shapes[ i ]->GetBody();
+				break;
 			}
 		}
-		
-		if (body) {
-			
-			b2MouseJointDef md;
-			md.body1 = world->GetGroundBody();
-			md.body2 = body;
-			md.target = p;
+	}
+	
+	if( body )
+	{
+		b2MouseJointDef md;
+		md.body1 = world->GetGroundBody();
+		md.body2 = body;
+		md.target = p;
 #ifdef TARGET_FLOAT32_IS_FIXED
-			md.maxForce = (body->GetMass() < 16.0)? 
-			(1000.0f * body->GetMass()) : float32(16000.0);
+		md.maxForce = ( body->GetMass() < 16.0 )? 
+		( 1000.0f * body->GetMass() ) : float32( 16000.0 );
 #else
-			md.maxForce = 1000.0f * body->GetMass();
+		md.maxForce = 1000.0f * body->GetMass();
 #endif
-			mouseJoint = (b2MouseJoint*)world->CreateJoint(&md);
-			body->WakeUp();
-			
+
+		if( id == -1 )
+		{
+			mouseJoint = (b2MouseJoint*)world->CreateJoint( &md );
+		}
+		else if( id >= 0 )
+		{
+			touchJoints[ id ] = (b2MouseJoint*)world->CreateJoint( &md );
+		}
+		
+		body->WakeUp();
+	}
+}
+
+void ofxBox2d :: grabShapeUp( float x, float y, int id )
+{
+	if( !bEnableGrabbing )
+		return;
+
+	if( id == -1  )
+	{
+		if( mouseJoint != NULL )
+		{
+			world->DestroyJoint( mouseJoint );
+			mouseJoint = NULL;
+		}
+	}
+	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
+	{
+		if( touchJoints[ id ] != NULL )
+		{
+			world->DestroyJoint( touchJoints[ id ] );
+			touchJoints[ id ] = NULL;
 		}
 	}
 }
-void ofxBox2d::grabShapeUp(float x, float y) {
+
+void ofxBox2d :: grabShapeDragged( float x, float y, int id )
+{
+	if( !bEnableGrabbing )
+		return;
 	
-	if(mouseJoint && bEnableGrabbing) {
-		world->DestroyJoint(mouseJoint);
-		mouseJoint = NULL;
+	b2Vec2 p( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
+
+	if( id == -1  )
+	{
+		if( mouseJoint != NULL )
+		{
+			mouseJoint->SetTarget( p );
+		}
+	}
+	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
+	{
+		if( touchJoints[ id ] != NULL  )
+		{
+			touchJoints[ id ]->SetTarget( p );
+		}
 	}
 }
-void ofxBox2d::grabShapeDragged(float x, float y) {
-	b2Vec2 p(x/OFX_BOX2D_SCALE, y/OFX_BOX2D_SCALE);
-	if (mouseJoint && bEnableGrabbing) mouseJoint->SetTarget(p);
-}
-
 
 // ------------------------------------------------------ set gravity
 void ofxBox2d::setGravity(float x, float y) {
@@ -316,27 +373,37 @@ void ofxBox2d::drawGround() {
 // ------------------------------------------------------ 
 void ofxBox2d::draw() {
 	
-	if(mouseJoint) {
-		b2Body* mbody = mouseJoint->GetBody2();
-		b2Vec2 p1 = mbody->GetWorldPoint(mouseJoint->m_localAnchor);
-		b2Vec2 p2 = mouseJoint->m_target;
-		
-		p1 *= OFX_BOX2D_SCALE;
-		p2 *= OFX_BOX2D_SCALE;
-		
-		//draw a line from touched shape
-		ofEnableAlphaBlending();
-		ofSetLineWidth(2.0);
-		ofSetColor(200, 200, 200, 200);
-		ofLine(p1.x, p1.y, p2.x, p2.y);
-		ofNoFill();
-		ofSetLineWidth(1.0);
-		ofCircle(p1.x, p1.y, 2);
-		ofCircle(p2.x, p2.y, 5);
-		ofDisableAlphaBlending();
+	if( mouseJoint != NULL )
+		drawMouseJoint( mouseJoint );
+	
+	for( int i=0; i<OF_MAX_TOUCH_JOINTS; i++ )
+	{
+		if( touchJoints[ i ] != NULL )
+			drawMouseJoint( touchJoints[ i ] );
 	}
 	
 	drawGround();
+}
+
+void ofxBox2d :: drawMouseJoint ( b2MouseJoint* mj )
+{
+	b2Body* mbody = mj->GetBody2();
+	b2Vec2 p1 = mbody->GetWorldPoint( mj->m_localAnchor);
+	b2Vec2 p2 = mj->m_target;
+	
+	p1 *= OFX_BOX2D_SCALE;
+	p2 *= OFX_BOX2D_SCALE;
+	
+	//draw a line from touched shape
+	ofEnableAlphaBlending();
+	ofSetLineWidth(2.0);
+	ofSetColor(200, 200, 200, 200);
+	ofLine(p1.x, p1.y, p2.x, p2.y);
+	ofNoFill();
+	ofSetLineWidth(1.0);
+	ofCircle(p1.x, p1.y, 2);
+	ofCircle(p2.x, p2.y, 5);
+	ofDisableAlphaBlending();
 }
 
 // -------------------------------------------------------
