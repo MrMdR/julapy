@@ -29,10 +29,10 @@ void clockApp :: setup()
 void clockApp :: initClock ()
 {
 	box2d.init();
-	box2d.createBounds();
 	box2d.setGravity( 0, 0 );
 	box2d.setFPS( 30.0 );
 	box2d.registerGrabbing();
+	box2d.setIterations( 20, 10 );
 	box2d.getWorld()->SetContactListener( &contactListener );
 	
 	contactListener.addReceiver( &clock );
@@ -61,7 +61,7 @@ void clockApp :: update()
 	int min;
 	int sec;
 	
-	if( true )
+	if( false )
 	{
 		int frameNum = ofGetFrameNum();
 		
@@ -102,13 +102,13 @@ void clockApp :: update()
 	
 	//-- gravity slant.
 	
-	float g;
-	g = ofxAccelerometer.getForce().y;
-	g *= 2;									// increase the reaction to tilt.
-	g = MIN( 1.0, MAX( -1.0, g ) );			// between -1 and 1.
-	g *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
+	float gx;
+	gx = ofxAccelerometer.getForce().y;
+	gx *= 2;									// increase the reaction to tilt.
+	gx = MIN( 1.0, MAX( -1.0, gx ) );			// between -1 and 1.
+	gx *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
 	
-	clock.setGravitySlant( g );
+	clock.setGravity( gx, 0 );
 	
 	//-- update.
 	
