@@ -10,7 +10,7 @@ void clockApp :: setup()
 	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
-	bDebug = true;
+	bDebug = false;
 	
 	font.loadFont( "fonts/cooperBlack.ttf", 40 );
 	
@@ -31,7 +31,6 @@ void clockApp :: setup()
 void clockApp :: initClock ()
 {
 	box2d.init();
-	box2d.createBounds();
 	box2d.setGravity( 0, 0 );
 	box2d.setFPS( 30.0 );
 	box2d.registerGrabbing();
@@ -41,7 +40,7 @@ void clockApp :: initClock ()
 	
 	clock.setBox2d( &box2d );
 	clock.setSize( ofGetWidth(), ofGetHeight() );
-	clock.setTimeFont( &font );
+//	clock.setTimeFont( &font );
 	clock.setup();
 }
 
@@ -97,9 +96,6 @@ void clockApp::update()
 
 void clockApp::draw()
 {
-	int bg = 0;
-	ofBackground( bg, bg, bg );
-	
 	clock.draw();
 	
 	ofSetColor( 0xFFFFFF );
@@ -159,14 +155,21 @@ void clockApp :: keyReleased(int key)
 
 void clockApp::mouseMoved(int x, int y )
 {
-	float p;
-	p = x / (float)ofGetWidth();
-	p = MAX( MIN( p , 1 ), 0 );
+	float px;
+	px = x / (float)ofGetWidth();
+	px = MAX( MIN( px , 1 ), 0 );
+
+	float py;
+	py = y / (float)ofGetWidth();
+	py = MAX( MIN( py , 1 ), 0 );
 	
-	float g;
-	g = ( p - 0.5 ) * 2;
+	float gx;
+	gx = ( px - 0.5 ) * 2;
+
+	float gy;
+	gy = ( py - 0.5 ) * 2;
 	
-	clock.setGravitySlant( g );
+	clock.setGravity( gx, gy );
 }
 
 void clockApp::mouseDragged(int x, int y, int button)

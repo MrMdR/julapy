@@ -13,6 +13,7 @@
 #include "ofMain.h"
 #include "ofxBox2d.h"
 #include "ofxVec2f.h"
+#include "ofxContourUtil.h"
 #include "ClockCircle.h"
 
 #define CLOCK_MODE_1		1
@@ -33,8 +34,10 @@ public :
 	void  setSize			( ofRectangle &size );
 	void  setSize			( int w, int h );
 	void  setTimeFont		( ofTrueTypeFont *font );
-	void  setGravitySlant	( float g );
+	void  setGravity		( float x, float y );
 	void  setForceScale		( float f );
+	
+	void  createBounds		();
 	void  createCircles		();
 	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, float lineX = 0 );
 	float areaToRadius		( float area );
@@ -49,22 +52,25 @@ public :
 	void updateText			();
 	void updateForces		();
 	void updateForcesVec	( vector<ClockCircle*> &circlesVec, int count );
-	void pullToCenter		( ClockCircle& circle );
+	
+	void addCenterForce		( ClockCircle& circle );
 	void pushFromCenter		( ClockCircle& circle );
 	void floatUp			( ClockCircle& circle );
 	void lineUp				( ClockCircle& circle );
 	
 	void updateRayBlob		();
+	void updateConvexBlob	();
 	
 	void toggleClockMode	();
 	
-	void drawCircles		();
+	void drawCircles		( vector<ClockCircle*>& circles );
 	void drawCircle			( ClockCircle &circle );
-	void drawCircleLines	();
+	void drawCircleLines	( vector<ClockCircle*>& circles );
 	void drawCircleLine		( ClockCircle &circle );
 	void drawTime			();
 	void drawRayCasts		();
 	void drawRayBlob		();
+	void drawConvexBlob		( const vector<ofPoint>& points );
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
@@ -123,13 +129,15 @@ public :
 	ofTrueTypeFont*			font;
 	
 	ofxBox2d*				box2d;
-	b2Controller*			gravity;
-	
-	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
-	
+	b2Body*					ground;
 	ofxBox2dSoftBody*		softBody;
 	
-	float					gravitySlant;
+	ofxContourUtil			contourUtil;
+	vector<ofPoint>			convexBlobInner;
+	vector<ofPoint>			convexBlobOuter;
+	
+	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
+	ofPoint					gravity;
 	float					forceScale;
 	
 	int						forceCenterPull;
