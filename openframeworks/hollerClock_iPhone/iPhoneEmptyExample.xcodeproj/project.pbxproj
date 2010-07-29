@@ -22,6 +22,7 @@
 		5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688210ED26CC00A9501C /* PocoNet.a */; };
 		5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688310ED26CC00A9501C /* PocoUtil.a */; };
 		5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688410ED26CC00A9501C /* PocoXML.a */; };
+		B22A9F4212014009003422E8 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22A9F4012014009003422E8 /* ofxContourUtil.cpp */; };
 		B25E8CE811FEA70B00CA11BB /* libfreeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */; };
 		B25E8CE911FEA70B00CA11BB /* libfreeimage-iphonesimulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */; };
 		B2F11A1811FECE40009300F6 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F11A0B11FECE40009300F6 /* ofxMatrix3x3.cpp */; };
@@ -113,6 +114,10 @@
 		5E25688210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
 		5E25688310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/osx/PocoUtil.a; sourceTree = SOURCE_ROOT; };
 		5E25688410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/osx/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		B22A9F3D12014009003422E8 /* convexHull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convexHull.h; path = ../../../../of_0061/addons/ofxContourUtil/libs/convexHull.h; sourceTree = SOURCE_ROOT; };
+		B22A9F3E12014009003422E8 /* polylineSimplify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polylineSimplify.h; path = ../../../../of_0061/addons/ofxContourUtil/libs/polylineSimplify.h; sourceTree = SOURCE_ROOT; };
+		B22A9F4012014009003422E8 /* ofxContourUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxContourUtil.cpp; path = ../../../../of_0061/addons/ofxContourUtil/src/ofxContourUtil.cpp; sourceTree = SOURCE_ROOT; };
+		B22A9F4112014009003422E8 /* ofxContourUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxContourUtil.h; path = ../../../../of_0061/addons/ofxContourUtil/src/ofxContourUtil.h; sourceTree = SOURCE_ROOT; };
 		B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfreeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/libfreeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfreeimage-iphonesimulator.a"; path = "../../../libs/FreeImage/lib/iphone/libfreeimage-iphonesimulator.a"; sourceTree = SOURCE_ROOT; };
 		B2F11A0B11FECE40009300F6 /* ofxMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMatrix3x3.cpp; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp; sourceTree = SOURCE_ROOT; };
@@ -415,6 +420,36 @@
 			path = ../../../libs/poco/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
+		B22A9F3B12014009003422E8 /* ofxContourUtil */ = {
+			isa = PBXGroup;
+			children = (
+				B22A9F3C12014009003422E8 /* libs */,
+				B22A9F3F12014009003422E8 /* src */,
+			);
+			name = ofxContourUtil;
+			path = ../../../../of_0061/addons/ofxContourUtil;
+			sourceTree = SOURCE_ROOT;
+		};
+		B22A9F3C12014009003422E8 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				B22A9F3D12014009003422E8 /* convexHull.h */,
+				B22A9F3E12014009003422E8 /* polylineSimplify.h */,
+			);
+			name = libs;
+			path = ../../../../of_0061/addons/ofxContourUtil/libs;
+			sourceTree = SOURCE_ROOT;
+		};
+		B22A9F3F12014009003422E8 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B22A9F4012014009003422E8 /* ofxContourUtil.cpp */,
+				B22A9F4112014009003422E8 /* ofxContourUtil.h */,
+			);
+			name = src;
+			path = ../../../../of_0061/addons/ofxContourUtil/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		B2F11A0911FECE40009300F6 /* ofxVectorMath */ = {
 			isa = PBXGroup;
 			children = (
@@ -688,6 +723,7 @@
 			children = (
 				B2F11A0911FECE40009300F6 /* ofxVectorMath */,
 				B2F11A2B11FECE54009300F6 /* ofxBox2d_rev84 */,
+				B22A9F3B12014009003422E8 /* ofxContourUtil */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1060,6 +1096,7 @@
 				B2F11AC611FECE5D009300F6 /* Clock.cpp in Sources */,
 				B2F11AC711FECE5D009300F6 /* ClockCircle.cpp in Sources */,
 				B2F11ACD11FECE88009300F6 /* clockApp.mm in Sources */,
+				B22A9F4212014009003422E8 /* ofxContourUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
