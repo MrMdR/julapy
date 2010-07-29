@@ -40,11 +40,11 @@ Clock :: Clock ()
 	
 	forceCenterPull	= 30;
 	forceCenterPush = 30;
-	rayBlobPad		= 0.1;
+	rayBlobPad		= 0.07;
 	rayBlobEase		= 0.4;
 	
 	setSize( ofGetWidth(), ofGetHeight() );
-	setGravitySlant( 0.0 );
+	setGravity( 0, 0 );
 	setForceScale( 1.0 );
 }
 
@@ -62,6 +62,7 @@ void Clock :: setup ()
 	if( box2d == NULL )
 		return;
 	
+	createBounds();
 	createCircles();
 //	createSoftBody();
 }
@@ -73,14 +74,6 @@ void Clock :: setup ()
 void Clock :: setBox2d ( ofxBox2d *box2d )
 {
 	this->box2d = box2d;
-	
-	//-- gravity controller.
-	
-	b2GravityControllerDef gDef;
-	gDef.G		= 10;
-	gDef.invSqr	= true;
-	
-	gravity = box2d->getWorld()->CreateController( &gDef );
 }
 
 void Clock :: setSize ( ofRectangle &size )
@@ -112,17 +105,72 @@ void Clock :: setTimeFont ( ofTrueTypeFont *font )
 	this->font = font;
 }
 
-void Clock :: setGravitySlant( float g )
+void Clock :: setGravity( float x, float y )
 {
 	if( clockMode == CLOCK_MODE_2 )
 	{
-		gravitySlant += ( g - gravitySlant ) * 0.6;
+		gravity.x += ( x - gravity.x ) * 0.6;
+		gravity.y += ( y - gravity.y ) * 0.6;
 	}
 }
 
 void Clock :: setForceScale ( float f )
 {
 	forceScale = f;
+}
+
+void Clock :: createBounds ()
+{
+	b2BodyDef bd;
+	bd.position.Set( 0, 0 );
+	ground = box2d->ground = box2d->world->CreateBody( &bd );
+	
+	b2PolygonDef sd;
+	sd.filter.groupIndex = 1;
+	sd.density		= 0.0f;
+	sd.restitution	= 0.0f;
+	sd.friction		= 0.6;
+	
+	float thick		= 0.02 * screenHeight;
+	
+	int w = screenWidth;
+	int h = screenHeight;
+	
+	sd.SetAsBox		//-- right		( float32 hx, float32 hy, const b2Vec2& center, float32 angle )
+	(
+		thick / OFX_BOX2D_SCALE,
+		( h / OFX_BOX2D_SCALE ) / 2,
+		b2Vec2( ( w + thick ) / OFX_BOX2D_SCALE, ( h / OFX_BOX2D_SCALE ) / 2 ),
+		0.0
+	);
+	ground->CreateShape( &sd );
+	
+	sd.SetAsBox		//-- left
+	(
+		thick / OFX_BOX2D_SCALE,
+		( h / OFX_BOX2D_SCALE ) / 2, 
+		b2Vec2( -thick / OFX_BOX2D_SCALE, ( h / OFX_BOX2D_SCALE ) / 2 ),
+		0.0
+	);
+	ground->CreateShape(&sd);
+	
+	sd.SetAsBox		//-- top
+	(
+		( w / OFX_BOX2D_SCALE ) / 2,
+		thick / OFX_BOX2D_SCALE,
+		b2Vec2( ( w / OFX_BOX2D_SCALE ) / 2, -thick /OFX_BOX2D_SCALE ),
+		0.0
+	);
+	ground->CreateShape(&sd);
+	
+	sd.SetAsBox		//-- bottom
+	(
+		( w / OFX_BOX2D_SCALE ) / 2,
+		thick / OFX_BOX2D_SCALE,
+		b2Vec2( ( w / OFX_BOX2D_SCALE ) / 2, ( h + thick ) /OFX_BOX2D_SCALE ),
+		0.0
+	);
+	ground->CreateShape(&sd);
 }
 
 void Clock :: createCircles ()
@@ -179,6 +227,7 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		
 		circle->lineUpPoint.set( lineX, lineY );
 		circle->setSize( screenWidth, screenHeight );
+		circle->init();
 		
 		//-- add to vectors.
 		
@@ -231,8 +280,10 @@ void Clock :: update ( int hrs, int min, int sec )
 	
 	if( clockMode == CLOCK_MODE_1 )
 	{
-		updateRayBlob();
+//		updateRayBlob();
 	}
+	
+	updateConvexBlob();
 	
 	box2d->update();
 	
@@ -275,11 +326,7 @@ void Clock :: initModeOne ()
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		ClockCircle& circle = *circlesAll[ i ];
-		
-		if( circle.hasJoint() )
-			circle.destroyJoint();
-		
-		circle.enableGravity( false );
+		circle.destroyJoint();						// destroy all joints.
 	}
 }
 
@@ -288,8 +335,7 @@ void Clock :: initModeTwo ()
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		ClockCircle& circle = *circlesAll[ i ];
-		
-		circle.enableGravity( true );
+		circle.destroyJoint();						// destroy all joints.
 	}
 }
 
@@ -320,14 +366,15 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 		{
 			if( clockMode == CLOCK_MODE_1 )
 			{
-				pullToCenter( circle );
+				if( !circle.hasCenterJoint() )
+					circle.createCenterJoint();
+				
+				addCenterForce( circle );		// spin force.
 			}
 			else if( clockMode == CLOCK_MODE_2 )
 			{
-//				lineUp( circle );
-				
-				if( !circle.hasJoint() )
-					circle.createJoint();
+				if( !circle.hasLineupJoint() )
+					circle.createLineupJoint();
 			}
 
 			circle.active = true;
@@ -337,11 +384,14 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 		{
 			if( clockMode == CLOCK_MODE_1 )
 			{
-				pushFromCenter( circle );
+				if( !circle.hasOuterJoint() )
+					circle.createOuterJoint();
+				
+//				pushFromCenter( circle );
 			}
 			else if( clockMode == CLOCK_MODE_2 )
 			{
-				if( circle.hasJoint() )
+				if( circle.hasLineupJoint() )
 					circle.destroyJoint();
 				
 				floatUp( circle );
@@ -357,7 +407,7 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 
 //-- CM1 FORCES.
 
-void Clock :: pullToCenter ( ClockCircle& circle )
+void Clock :: addCenterForce ( ClockCircle& circle )
 {
 	ofxVec2f c;
 	ofxVec2f p;
@@ -367,22 +417,25 @@ void Clock :: pullToCenter ( ClockCircle& circle )
 	p.set( circle.getPosition() );
 	v = c - p;
 	
-	float d;
-	d = v.length() / (float)screenMaxLength;
-	
-	float s;
-	s = circle.getRadius() / 20.0;			// the bigger the circle, the stronger the pull towards center.
+//	float d;
+//	d = v.length() / (float)screenMaxLength;
+//	
+//	float s;
+//	s = circle.getRadius() / 20.0;			// the bigger the circle, the stronger the pull towards center.
 	
 	ofxVec2f perp;							// spinning force.
 	perp = v.getPerpendicular();
 	perp *= circle.spinFrc;
+	perp *= forceScale;
 	
-	v.normalize();
-	v *= d;
-	v *= s;
-	v *= forceCenterPull;
-	v += perp;
-	v *= forceScale;
+//	v.normalize();		// old pull to center code.
+//	v *= d;
+//	v *= s;
+//	v *= forceCenterPull;
+//	v *= forceScale;
+//	v += perp;
+	
+	v = perp;			// now only adding perp force to make circles spin.
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -448,13 +501,12 @@ void Clock :: floatUp ( ClockCircle& circle )
 	r = circle.getRadius();
 	
 	float s;
-	s = ( circle.getPosition().y + r ) / ( screenHeight - r * 2 );
+	s = ( circle.getPosition().y - r ) / ( screenHeight - ( r * 2 ) );
 	
-	float gx = gravitySlant * 20;
-	float gy = -30;
+	float gx = gravity.x * 2;
+	float gy = -30 * s;
 	
 	b2Vec2 up = b2Vec2( gx, gy );
-	up *= s;
 	up *= forceScale;
 	
 	circle.body->ApplyImpulse( up, circle.body->GetWorldCenter() );
@@ -587,6 +639,80 @@ void Clock :: updateRayBlob ()
 	}
 }
 
+void Clock :: updateConvexBlob()
+{
+	convexBlobInner.clear();
+	convexBlobOuter.clear();
+
+	vector<ClockCircle*>* circles;
+	
+	//-- inner blob.
+	
+	circles = &circlesActive;
+	
+	for( int i=0; i<circles->size(); i++ )
+	{
+		ClockCircle& circle = *circles->at( i );
+		
+		ofPoint p1 = circle.getPosition();
+		
+		for( int j=0; j<circle.pointsTotal; j++ )
+		{
+			const ofPoint& p2 = circle.points1[ j ];
+			
+			convexBlobInner.push_back( ofPoint() );
+			ofPoint& p3 = convexBlobInner.back();
+			
+			p3.x = p1.x + p2.x;
+			p3.y = p1.y + p2.y;
+		}
+	}
+	
+	contourUtil.convexHull( convexBlobInner );
+	
+	//-- outer blob.
+	
+	if( clockMode == CLOCK_MODE_1 )
+	{
+		circles = &circlesAll;
+	}
+	else
+	{
+		circles = &circlesInactive;
+	}
+
+
+	for( int i=0; i<circles->size(); i++ )
+	{
+		ClockCircle& circle = *circles->at( i );
+		
+		ofPoint p1 = circle.getPosition();
+		
+		for( int j=0; j<circle.pointsTotal; j++ )
+		{
+			ofPoint p2;
+			
+			if( clockMode == CLOCK_MODE_1 )
+			{
+				p2 = circle.points2[ j ];
+			}
+			else
+			{
+				p2 = circle.points1[ j ];
+			}
+
+			
+			convexBlobOuter.push_back( ofPoint() );
+			ofPoint& p3 = convexBlobOuter.back();
+			
+			p3.x = p1.x + p2.x;
+			p3.y = p1.y + p2.y;
+		}
+	}
+
+	contourUtil.convexHull( convexBlobOuter );
+}
+
 //-- CLOCK MODE.
 
 void Clock :: toggleClockMode ()
@@ -645,20 +771,21 @@ void Clock :: box2dContactEventHandler ( const b2ContactPoint* p )
 
 void Clock :: draw ()
 {
-	box2d->draw();
+//	ofBackground( 249, 246, 229 );		// faint yellow.
+	ofBackground( 30, 30, 30 );
 
+	ofSetColor( 255, 255, 255, 25 );
+	drawConvexBlob( convexBlobOuter );
+	ofSetColor( 255, 255, 255, 25 );
+	drawConvexBlob( convexBlobInner );
+
+	drawCircles( circlesInactive );
 	if( clockMode == CLOCK_MODE_1 )
-	{
-		drawRayBlob();
-//		drawRayCasts();
-	}
+		drawCircleLines( circlesInactive );
 	
-	drawCircles();
-	
-	if( clockMode == CLOCK_MODE_1 )
-	{
-		drawCircleLines();
-	}
+	drawCircles( circlesActive );
+//	if( clockMode == CLOCK_MODE_1 )
+//		drawCircleLines( circlesActive );
 	
 	if( softBody != NULL )
 		softBody->draw();
@@ -666,11 +793,11 @@ void Clock :: draw ()
 	drawTime();
 }
 
-void Clock :: drawCircles ()
+void Clock :: drawCircles ( vector<ClockCircle*>& circles )
 {
-	for( int i=0; i<circlesAll.size(); i++ )
+	for( int i=0; i<circles.size(); i++ )
 	{
-		drawCircle( *circlesAll[ i ] );
+		drawCircle( *circles[ i ] );
 	}
 }
 
@@ -691,11 +818,11 @@ void Clock :: drawCircle ( ClockCircle &circle )
 	ofDisableSmoothing();
 }
 
-void Clock :: drawCircleLines ()
+void Clock :: drawCircleLines ( vector<ClockCircle*>& circles )
 {
-	for( int i=0; i<circlesAll.size(); i++ )
+	for( int i=0; i<circles.size(); i++ )
 	{
-		drawCircleLine( *circlesAll[ i ] );
+		drawCircleLine( *circles[ i ] );
 	}
 }
 
@@ -704,7 +831,7 @@ void Clock :: drawCircleLine ( ClockCircle &circle )
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
-	ofSetColor( 255, 255, 255, 50 );
+	ofSetColor( 255, 255, 255, 30 );
 	ofLine( screenCenter.x, screenCenter.y, circle.eye.x, circle.eye.y );
 	
 	ofDisableSmoothing();
@@ -791,6 +918,43 @@ void Clock :: drawRayBlob ()
 		ofPoint& rayPoint = rayBlob[ j ];
 		
 		ofCurveVertex( rayPoint.x, rayPoint.y );
+	}
+	
+	ofEndShape( true );
+	
+	ofSetLineWidth( 1 );
+	ofDisableSmoothing();
+	ofDisableAlphaBlending();
+}
+
+void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
+{
+	ofFill();
+	ofSetLineWidth( 2 );
+	ofEnableSmoothing();
+	ofEnableAlphaBlending();
+	
+	ofBeginShape();
+	
+	bool bCurve = false;
+
+	int t = points.size();
+	
+	if( bCurve )
+		t += 3;
+	
+	for( int i=0; i<t; i++ )
+	{
+		int j = i % t;
+		
+		if( bCurve )
+		{
+			ofCurveVertex( points[ j ].x, points[ j ].y );
+		}
+		else
+		{
+			ofVertex( points[ j ].x, points[ j ].y );
+		}
 	}
 	
 	ofEndShape( true );

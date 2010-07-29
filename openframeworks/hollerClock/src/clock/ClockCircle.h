@@ -12,6 +12,18 @@
 
 #include "ofxBox2d.h"
 
+#define POINT_RES	20
+
+struct ClockCircleTrg 
+{
+	ofPoint p1;
+	ofPoint p2;
+	ofPoint p3;
+	float	rotation;
+	float	rotationInc;
+	ofColor	color;
+};
+
 class ClockCircle : public ofxBox2dCircle
 {
 
@@ -22,16 +34,31 @@ public :
 
 	void setSize		( ofRectangle &size );
 	void setSize		( int w, int h );
-	
+
+	void init			();
 	void update			();
 	void draw			();
 	
-	void createJoint	();
-	void destroyJoint	();
-	bool hasJoint		();
+	void createCenterJoint	();
+	void createOuterJoint	();
+	void createLineupJoint	();
+	void createJoint		( const ofPoint& p );
+	void createJoint		( float x = 0, float y = 0, float length = 0 );
+	void destroyJoint		();
+	bool hasJoint			();
+	bool hasCenterJoint		();
+	bool hasOuterJoint		();
+	bool hasLineupJoint		();
+	
+	void drawTriangles		();
+	void drawCircles		();
 	
 	int			screenWidth;
 	int			screenHeight;
+	
+	int			pointsTotal;
+	ofPoint		points1[ POINT_RES ];
+	ofPoint		points2[ POINT_RES ];
 	
 	float		radius;
 	int			colorHex;
@@ -49,6 +76,14 @@ public :
 	
 	b2Body*				point;
 	b2DistanceJoint*	joint;
+	
+	bool		bCenterJoint;
+	bool		bOuterJoint;
+	bool		bLineupJoint;
+	
+	vector<ClockCircleTrg>	triangles;
+	
+	
 };
 
 #endif
