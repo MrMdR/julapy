@@ -14,6 +14,9 @@ void clockApp :: setup()
 	
 	font.loadFont( "fonts/cooperBlack.ttf", 40 );
 	
+	secTwoSound.loadSound( ofToDataPath( "sound/boop_1.wav" ) );
+	secOneSound.loadSound( ofToDataPath( "sound/boop_2.wav" ) );
+	
 	screenGrabber.setup( "movie/" );
 	screenGrabber.setPause( true );
 	
@@ -41,6 +44,7 @@ void clockApp :: initClock ()
 	clock.setBox2d( &box2d );
 	clock.setSize( ofGetWidth(), ofGetHeight() );
 //	clock.setTimeFont( &font );
+	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setup();
 }
 

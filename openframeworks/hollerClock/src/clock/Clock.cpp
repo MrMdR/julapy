@@ -15,6 +15,9 @@ Clock :: Clock ()
 	font		= NULL;
 	softBody	= NULL;
 	
+	secTwoSound	= NULL;
+	secOneSound	= NULL;
+	
 	clockMode = CLOCK_MODE_1;
 	
 	hrsOneTotal = 2;
@@ -104,6 +107,20 @@ void Clock :: setTimeFont ( ofTrueTypeFont *font )
 {
 	this->font = font;
 }
+
+#ifdef TARGET_OF_IPHONE	
+void Clock :: setSound ( ofxALSoundPlayer* secTwoSound, ofxALSoundPlayer* secOneSound )
+{
+	this->secTwoSound = secTwoSound;
+	this->secOneSound = secOneSound;
+}
+#else
+void Clock :: setSound ( ofSoundPlayer* secTwoSound, ofSoundPlayer* secOneSound )
+{
+	this->secTwoSound = secTwoSound;
+	this->secOneSound = secOneSound;
+}
+#endif
 
 void Clock :: setGravity( float x, float y )
 {
@@ -264,14 +281,36 @@ void Clock :: createSoftBody ()
 
 void Clock :: update ( int hrs, int min, int sec )
 {
-	hrsOneCount = hrs / 10;
-	hrsTwoCount = hrs % 10;
+	int hrsOneNew = hrs / 10;
+	int hrsTwoNew = hrs % 10;
 	
-	minOneCount = min / 10;
-	minTwoCount = min % 10;
+	int minOneNew = min / 10;
+	int minTwoNew = min % 10;
 	
-	secOneCount = sec / 10;
-	secTwoCount = sec % 10;
+	int secOneNew = sec / 10;
+	int secTwoNew = sec % 10;
+	
+	if( secTwoCount != secTwoNew )
+	{
+		if( secTwoNew == 0 )
+		{
+			playSecOneSound();
+		}
+		else 
+		{
+			playSecTwoSound();
+		}
+
+	}
+	
+	hrsOneCount = hrsOneNew;
+	hrsTwoCount = hrsTwoNew;
+	
+	minOneCount = minOneNew;
+	minTwoCount = minTwoNew;
+	
+	secOneCount = secOneNew;
+	secTwoCount = secTwoNew;
 
 	//--
 	
@@ -291,6 +330,18 @@ void Clock :: update ( int hrs, int min, int sec )
 	{
 		circlesAll[ i ]->update();
 	}
+}
+
+void Clock :: playSecTwoSound ()
+{
+	if( secTwoSound != NULL )
+		secTwoSound->play();
+}
+
+void Clock :: playSecOneSound ()
+{
+	if( secOneSound != NULL )
+		secOneSound->play();
 }
 
 void Clock :: updateText ()
