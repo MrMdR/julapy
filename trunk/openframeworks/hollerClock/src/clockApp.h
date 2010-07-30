@@ -48,6 +48,9 @@ public:
 	ofImage					screenImage;
 	ofxVideoSaver			videoSaver;
 	
+	ofSoundPlayer			secTwoSound;
+	ofSoundPlayer			secOneSound;
+	
 };
 
 #endif

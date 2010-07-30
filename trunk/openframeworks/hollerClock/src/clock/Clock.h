@@ -14,6 +14,11 @@
 #include "ofxBox2d.h"
 #include "ofxVec2f.h"
 #include "ofxContourUtil.h"
+
+#ifdef TARGET_OF_IPHONE
+#include "ofxALSoundPlayer.h"
+#endif
+
 #include "ClockCircle.h"
 
 #define CLOCK_MODE_1		1
@@ -34,6 +39,11 @@ public :
 	void  setSize			( ofRectangle &size );
 	void  setSize			( int w, int h );
 	void  setTimeFont		( ofTrueTypeFont *font );
+#ifdef TARGET_OF_IPHONE	
+	void  setSound			( ofxALSoundPlayer* secTwoSound = NULL, ofxALSoundPlayer* secOneSound = NULL );
+#else
+	void  setSound			( ofSoundPlayer* secTwoSound = NULL, ofSoundPlayer* secOneSound = NULL );
+#endif
 	void  setGravity		( float x, float y );
 	void  setForceScale		( float f );
 	
@@ -50,6 +60,10 @@ public :
 	void initModeOne		();
 	void initModeTwo		();
 	void updateText			();
+	
+	void playSecTwoSound	();
+	void playSecOneSound	();
+	
 	void updateForces		();
 	void updateForcesVec	( vector<ClockCircle*> &circlesVec, int count );
 	
@@ -127,6 +141,14 @@ public :
 	ofxVec2f				screenCenter;
 	
 	ofTrueTypeFont*			font;
+	
+#ifdef TARGET_OF_IPHONE	
+	ofxALSoundPlayer*		secTwoSound;
+	ofxALSoundPlayer*		secOneSound;
+#else
+	ofSoundPlayer*			secTwoSound;
+	ofSoundPlayer*			secOneSound;
+#endif
 	
 	ofxBox2d*				box2d;
 	b2Body*					ground;
