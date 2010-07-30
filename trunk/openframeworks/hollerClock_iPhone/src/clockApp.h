@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
+#include "ofxALSoundPlayer.h"
 
 #include "ofxBox2d.h"
 #include "Clock.h"
@@ -43,6 +44,8 @@ public:
 	
 	ofTrueTypeFont			font;
 	
+	ofxALSoundPlayer		secTwoSound;
+	ofxALSoundPlayer		secOneSound;
 };
 
 

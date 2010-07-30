@@ -23,6 +23,9 @@ void clockApp :: setup()
 	
 	font.loadFont( "fonts/cooperBlack.ttf", 40 );
 	
+	secTwoSound.loadSound( ofToDataPath( "sound/boop_1.caf" ) );
+	secOneSound.loadSound( ofToDataPath( "sound/boop_2.caf" ) );
+	
 	initClock();
 }
 
@@ -48,6 +51,7 @@ void clockApp :: initClock ()
 	clock.setSize( w, h );
 	clock.setForceScale( fs );
 //	clock.setTimeFont( &font );
+	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setup();
 }
 
