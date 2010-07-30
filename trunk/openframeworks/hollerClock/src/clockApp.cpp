@@ -7,7 +7,7 @@
 void clockApp :: setup()
 {
 	ofSetFrameRate( frameRate = 60 );
-	ofSetVerticalSync( true );
+//	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
 	bDebug = false;

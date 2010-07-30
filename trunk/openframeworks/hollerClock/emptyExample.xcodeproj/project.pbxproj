@@ -78,6 +78,11 @@
 		B28F078D11EFF73500B54D05 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078711EFF73500B54D05 /* tinyxmlerror.cpp */; };
 		B28F078E11EFF73500B54D05 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078811EFF73500B54D05 /* tinyxmlparser.cpp */; };
 		B28F078F11EFF73500B54D05 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078A11EFF73500B54D05 /* ofxXmlSettings.cpp */; };
+		B2AE666A12026EE800FC3FCC /* assert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE666612026EE800FC3FCC /* assert.cpp */; };
+		B2AE666B12026EE800FC3FCC /* del_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE666712026EE800FC3FCC /* del_impl.cpp */; };
+		B2AE666C12026EE800FC3FCC /* ofxTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE666812026EE800FC3FCC /* ofxTriangle.cpp */; };
+		B2AE676112027E3C00FC3FCC /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE675C12027E3C00FC3FCC /* Delaunay.cpp */; };
+		B2AE676212027E3C00FC3FCC /* ofxDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */; };
 		B2CDEA6B11F58BD600D1E7CD /* ofxColorMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5911F58BD600D1E7CD /* ofxColorMap.cpp */; };
 		B2CDEA6C11F58BD600D1E7CD /* ofxColorUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5B11F58BD600D1E7CD /* ofxColorUtils.cpp */; };
 		B2CDEA6D11F58BD600D1E7CD /* ofxDataNormaliser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5D11F58BD600D1E7CD /* ofxDataNormaliser.cpp */; };
@@ -359,6 +364,19 @@
 		B28F078811EFF73500B54D05 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
 		B28F078A11EFF73500B54D05 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxXmlSettings.cpp; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
 		B28F078B11EFF73500B54D05 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
+		B2AE665F12026EE800FC3FCC /* assert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = assert.hpp; path = ../../../addons/ofxTriangle/include/assert.hpp; sourceTree = SOURCE_ROOT; };
+		B2AE666012026EE800FC3FCC /* del_interface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = del_interface.hpp; path = ../../../addons/ofxTriangle/include/del_interface.hpp; sourceTree = SOURCE_ROOT; };
+		B2AE666112026EE800FC3FCC /* dpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = dpoint.hpp; path = ../../../addons/ofxTriangle/include/dpoint.hpp; sourceTree = SOURCE_ROOT; };
+		B2AE666212026EE800FC3FCC /* triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = triangle.h; path = ../../../addons/ofxTriangle/include/triangle.h; sourceTree = SOURCE_ROOT; };
+		B2AE666312026EE800FC3FCC /* triangle_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = triangle_impl.hpp; path = ../../../addons/ofxTriangle/include/triangle_impl.hpp; sourceTree = SOURCE_ROOT; };
+		B2AE666612026EE800FC3FCC /* assert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = assert.cpp; path = ../../../addons/ofxTriangle/lib/Triangle/assert.cpp; sourceTree = SOURCE_ROOT; };
+		B2AE666712026EE800FC3FCC /* del_impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = del_impl.cpp; path = ../../../addons/ofxTriangle/lib/Triangle/del_impl.cpp; sourceTree = SOURCE_ROOT; };
+		B2AE666812026EE800FC3FCC /* ofxTriangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTriangle.cpp; path = ../../../addons/ofxTriangle/ofxTriangle.cpp; sourceTree = SOURCE_ROOT; };
+		B2AE666912026EE800FC3FCC /* ofxTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTriangle.h; path = ../../../addons/ofxTriangle/ofxTriangle.h; sourceTree = SOURCE_ROOT; };
+		B2AE675C12027E3C00FC3FCC /* Delaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Delaunay.cpp; path = ../../../addons/ofxDelaunay/libs/Delaunay/Delaunay.cpp; sourceTree = SOURCE_ROOT; };
+		B2AE675D12027E3C00FC3FCC /* Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delaunay.h; path = ../../../addons/ofxDelaunay/libs/Delaunay/Delaunay.h; sourceTree = SOURCE_ROOT; };
+		B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDelaunay.cpp; path = ../../../addons/ofxDelaunay/src/ofxDelaunay.cpp; sourceTree = SOURCE_ROOT; };
+		B2AE676012027E3C00FC3FCC /* ofxDelaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxDelaunay.h; path = ../../../addons/ofxDelaunay/src/ofxDelaunay.h; sourceTree = SOURCE_ROOT; };
 		B2CDEA5811F58BD600D1E7CD /* ofxBounce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBounce.h; path = ../../../addons/ofxJulapyUtils/ofxBounce.h; sourceTree = SOURCE_ROOT; };
 		B2CDEA5911F58BD600D1E7CD /* ofxColorMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColorMap.cpp; path = ../../../addons/ofxJulapyUtils/ofxColorMap.cpp; sourceTree = SOURCE_ROOT; };
 		B2CDEA5A11F58BD600D1E7CD /* ofxColorMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColorMap.h; path = ../../../addons/ofxJulapyUtils/ofxColorMap.h; sourceTree = SOURCE_ROOT; };
@@ -467,6 +485,8 @@
 				B208749211F80F1A00592A37 /* ofxSimpleGuiToo_rev204 */,
 				B20874C611F80F2100592A37 /* ofxMSAInteractiveObject_rev186 */,
 				B22A9ECB1201385B003422E8 /* ofxContourUtil */,
+				B2AE665D12026EE800FC3FCC /* ofxTriangle */,
+				B2AE675912027E3C00FC3FCC /* ofxDelaunay */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -932,6 +952,89 @@
 			);
 			name = src;
 			path = ../../../addons/ofxXmlSettings/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE665D12026EE800FC3FCC /* ofxTriangle */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE665E12026EE800FC3FCC /* include */,
+				B2AE666412026EE800FC3FCC /* lib */,
+				B2AE666812026EE800FC3FCC /* ofxTriangle.cpp */,
+				B2AE666912026EE800FC3FCC /* ofxTriangle.h */,
+			);
+			name = ofxTriangle;
+			path = ../../../addons/ofxTriangle;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE665E12026EE800FC3FCC /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE665F12026EE800FC3FCC /* assert.hpp */,
+				B2AE666012026EE800FC3FCC /* del_interface.hpp */,
+				B2AE666112026EE800FC3FCC /* dpoint.hpp */,
+				B2AE666212026EE800FC3FCC /* triangle.h */,
+				B2AE666312026EE800FC3FCC /* triangle_impl.hpp */,
+			);
+			name = include;
+			path = ../../../addons/ofxTriangle/include;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE666412026EE800FC3FCC /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE666512026EE800FC3FCC /* Triangle */,
+			);
+			name = lib;
+			path = ../../../addons/ofxTriangle/lib;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE666512026EE800FC3FCC /* Triangle */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE666612026EE800FC3FCC /* assert.cpp */,
+				B2AE666712026EE800FC3FCC /* del_impl.cpp */,
+			);
+			name = Triangle;
+			path = ../../../addons/ofxTriangle/lib/Triangle;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE675912027E3C00FC3FCC /* ofxDelaunay */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE675A12027E3C00FC3FCC /* libs */,
+				B2AE675E12027E3C00FC3FCC /* src */,
+			);
+			name = ofxDelaunay;
+			path = ../../../addons/ofxDelaunay;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE675A12027E3C00FC3FCC /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE675B12027E3C00FC3FCC /* Delaunay */,
+			);
+			name = libs;
+			path = ../../../addons/ofxDelaunay/libs;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE675B12027E3C00FC3FCC /* Delaunay */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE675C12027E3C00FC3FCC /* Delaunay.cpp */,
+				B2AE675D12027E3C00FC3FCC /* Delaunay.h */,
+			);
+			name = Delaunay;
+			path = ../../../addons/ofxDelaunay/libs/Delaunay;
+			sourceTree = SOURCE_ROOT;
+		};
+		B2AE675E12027E3C00FC3FCC /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */,
+				B2AE676012027E3C00FC3FCC /* ofxDelaunay.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxDelaunay/src;
 			sourceTree = SOURCE_ROOT;
 		};
 		B2CDEA5711F58BD600D1E7CD /* ofxJulapyUtils */ = {
@@ -1408,6 +1511,11 @@
 				B284831611F9635C004F0780 /* contactApp.cpp in Sources */,
 				B2F2717F11FD48DE003B876D /* jointApp.cpp in Sources */,
 				B22A9ED21201385B003422E8 /* ofxContourUtil.cpp in Sources */,
+				B2AE666A12026EE800FC3FCC /* assert.cpp in Sources */,
+				B2AE666B12026EE800FC3FCC /* del_impl.cpp in Sources */,
+				B2AE666C12026EE800FC3FCC /* ofxTriangle.cpp in Sources */,
+				B2AE676112027E3C00FC3FCC /* Delaunay.cpp in Sources */,
+				B2AE676212027E3C00FC3FCC /* ofxDelaunay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

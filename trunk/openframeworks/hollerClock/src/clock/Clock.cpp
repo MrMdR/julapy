@@ -323,6 +323,7 @@ void Clock :: update ( int hrs, int min, int sec )
 	}
 	
 	updateConvexBlob();
+	updateTriangles();
 	
 	box2d->update();
 	
@@ -764,6 +765,58 @@ void Clock :: updateConvexBlob()
 	contourUtil.convexHull( convexBlobOuter );
 }
 
+void Clock :: updateTriangles ()
+{
+#ifndef TARGET_OF_IPHONE
+
+	vector<ClockCircle*>* circles;
+	triangles1.clear();
+	triangles2.clear();
+	
+	trig.clear();
+	trianglePoints.clear();
+
+	//-- OUTER CIRCLE.
+	
+	trianglePoints = convexBlobOuter;					//-- add outer convex points.
+						
+	circles = &circlesInactive;							//-- add intactive circle center points.
+	for( int i=0; i<circles->size(); i++ )
+	{
+		trianglePoints.push_back( circles->at( i )->getPosition() );
+	}
+	
+	if( clockMode == CLOCK_MODE_1 )
+	{
+		trianglePoints.push_back( ofPoint() );				//-- add center point.
+		trianglePoints.back().x = screenWidth * 0.5;
+		trianglePoints.back().y = screenHeight * 0.5;
+	}
+	
+	trig.triangulate( trianglePoints, trianglePoints.size() );
+	
+	triangles1 = trig.getTriangles();
+	
+	//-- INNER CIRCLE.
+	
+	trig.clear();
+	trianglePoints.clear();
+	
+	trianglePoints = convexBlobInner;					//-- add inner convex points.
+	
+	circles = &circlesActive;							//-- add active circle center points.
+	for( int i=0; i<circles->size(); i++ )
+	{
+		trianglePoints.push_back( circles->at( i )->getPosition() );
+	}
+	
+	trig.triangulate( trianglePoints, trianglePoints.size() );
+	
+	triangles2 = trig.getTriangles();
+	
+#endif
+}
+
 //-- CLOCK MODE.
 
 void Clock :: toggleClockMode ()
@@ -825,15 +878,16 @@ void Clock :: draw ()
 //	ofBackground( 249, 246, 229 );		// faint yellow.
 	ofBackground( 30, 30, 30 );
 
-	ofSetColor( 255, 255, 255, 25 );
+	ofSetColor( 255, 255, 255, 20 );
 	drawConvexBlob( convexBlobOuter );
-	ofSetColor( 255, 255, 255, 25 );
-	drawConvexBlob( convexBlobInner );
-
+	drawTrianglesOne();
+//	if( clockMode == CLOCK_MODE_1 )
+//		drawCircleLines( circlesInactive );
 	drawCircles( circlesInactive );
-	if( clockMode == CLOCK_MODE_1 )
-		drawCircleLines( circlesInactive );
 	
+	ofSetColor( 255, 255, 255, 20 );
+	drawConvexBlob( convexBlobInner );
+	drawTrianglesTwo();
 	drawCircles( circlesActive );
 //	if( clockMode == CLOCK_MODE_1 )
 //		drawCircleLines( circlesActive );
@@ -1013,4 +1067,56 @@ void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 	ofSetLineWidth( 1 );
 	ofDisableSmoothing();
 	ofDisableAlphaBlending();
+}
+
+void Clock :: drawTrianglesOne ()
+{
+#ifndef TARGET_OF_IPHONE
+	
+	ofNoFill();
+	ofSetColor( 255, 255, 255, 10 );
+	
+	ofEnableAlphaBlending();
+	ofEnableSmoothing();
+	
+	for( int i=0; i<triangles1.size(); i++ )
+	{
+		ofTriangle
+		(
+			triangles1[ i ].a.x, triangles1[ i ].a.y,
+			triangles1[ i ].b.x, triangles1[ i ].b.y,
+			triangles1[ i ].c.x, triangles1[ i ].c.y
+		);
+	}
+	
+	ofDisableAlphaBlending();
+	ofDisableSmoothing();
+	
+#endif
+}
+
+void Clock :: drawTrianglesTwo ()
+{
+#ifndef TARGET_OF_IPHONE
+	
+	ofNoFill();
+	ofSetColor( 255, 255, 255, 10 );
+	
+	ofEnableAlphaBlending();
+	ofEnableSmoothing();
+	
+	for( int i=0; i<triangles2.size(); i++ )
+	{
+		ofTriangle
+		(
+		 triangles2[ i ].a.x, triangles2[ i ].a.y,
+		 triangles2[ i ].b.x, triangles2[ i ].b.y,
+		 triangles2[ i ].c.x, triangles2[ i ].c.y
+		 );
+	}
+	
+	ofDisableAlphaBlending();
+	ofDisableSmoothing();
+	
+#endif
 }

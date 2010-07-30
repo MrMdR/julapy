@@ -15,6 +15,10 @@
 #include "ofxVec2f.h"
 #include "ofxContourUtil.h"
 
+#ifndef TARGET_OF_IPHONE
+#include "ofxTriangle.h"
+#endif
+
 #ifdef TARGET_OF_IPHONE
 #include "ofxALSoundPlayer.h"
 #endif
@@ -74,6 +78,7 @@ public :
 	
 	void updateRayBlob		();
 	void updateConvexBlob	();
+	void updateTriangles	();
 	
 	void toggleClockMode	();
 	
@@ -85,6 +90,8 @@ public :
 	void drawRayCasts		();
 	void drawRayBlob		();
 	void drawConvexBlob		( const vector<ofPoint>& points );
+	void drawTrianglesOne	();
+	void drawTrianglesTwo	();
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
@@ -157,6 +164,13 @@ public :
 	ofxContourUtil			contourUtil;
 	vector<ofPoint>			convexBlobInner;
 	vector<ofPoint>			convexBlobOuter;
+	
+#ifndef TARGET_OF_IPHONE
+	ofxTriangle				trig;
+	vector<ofPoint>			trianglePoints;
+	vector<ofxTriangleData>	triangles1;
+	vector<ofxTriangleData>	triangles2;
+#endif
 	
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	ofPoint					gravity;
