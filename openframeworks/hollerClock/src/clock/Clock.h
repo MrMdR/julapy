@@ -24,6 +24,7 @@
 #endif
 
 #include "ClockCircle.h"
+#include "ClockInfoScreen.h"
 
 #define CLOCK_MODE_1		1
 #define CLOCK_MODE_2		2
@@ -64,6 +65,7 @@ public :
 	void initModeOne		();
 	void initModeTwo		();
 	void updateText			();
+	void updateInfoScreen	();
 	
 	void playSecTwoSound	();
 	void playSecOneSound	();
@@ -92,6 +94,11 @@ public :
 	void drawConvexBlob		( const vector<ofPoint>& points );
 	void drawTrianglesOne	();
 	void drawTrianglesTwo	();
+	
+	void mouseMoved			( ofMouseEventArgs &e );
+	void mousePressed		( ofMouseEventArgs &e );	
+	void mouseDragged		( ofMouseEventArgs &e );	
+	void mouseReleased		( ofMouseEventArgs &e );
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
@@ -181,6 +188,11 @@ public :
 	float					rayBlobPad;
 	float					rayBlobEase;
 	
+	bool					bMouseDown;
+	int						mouseDownCount;
+	int						mouseDownLimit;
+	
+	ClockInfoScreen			infoScreen;
 };
 
 #endif
