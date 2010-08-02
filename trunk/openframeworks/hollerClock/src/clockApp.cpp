@@ -7,7 +7,7 @@
 void clockApp :: setup()
 {
 	ofSetFrameRate( frameRate = 60 );
-//	ofSetVerticalSync( true );
+	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
 	bDebug = false;
@@ -164,7 +164,7 @@ void clockApp::mouseMoved(int x, int y )
 	px = MAX( MIN( px , 1 ), 0 );
 
 	float py;
-	py = y / (float)ofGetWidth();
+	py = y / (float)ofGetHeight();
 	py = MAX( MIN( py , 1 ), 0 );
 	
 	float gx;

@@ -133,11 +133,8 @@ void Clock :: setSound ( ofSoundPlayer* secTwoSound, ofSoundPlayer* secOneSound 
 
 void Clock :: setGravity( float x, float y )
 {
-	if( clockMode == CLOCK_MODE_2 )
-	{
-		gravity.x += ( x - gravity.x ) * 0.6;
-		gravity.y += ( y - gravity.y ) * 0.6;
-	}
+	gravity.x += ( x - gravity.x ) * 0.6;
+	gravity.y += ( y - gravity.y ) * 0.6;
 }
 
 void Clock :: setForceScale ( float f )
@@ -259,8 +256,6 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		
 		circlesVec.push_back( circle );
 		circlesAll.push_back( circle );
-		
-//		gravity->AddBody( circle->body );
 	}
 }
 
@@ -333,7 +328,8 @@ void Clock :: update ( int hrs, int min, int sec )
 	}
 	
 	updateConvexBlob();
-	updateTriangles();
+//	updateTriangles();
+	updateDelaunay();
 	
 	box2d->update();
 	
@@ -470,6 +466,7 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 				if( !circle.hasOuterJoint() )
 					circle.createOuterJoint();
 				
+				tilt( circle );
 //				pushFromCenter( circle );
 			}
 			else if( clockMode == CLOCK_MODE_2 )
@@ -574,6 +571,14 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 	v *= forceScale;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
+}
+
+void Clock :: tilt ( ClockCircle& circle )
+{
+	b2Vec2 v = b2Vec2( gravity.x, gravity.y );
+	v *= 0.2;
+	
+	circle.body->ApplyImpulse( v, circle.body->GetWorldCenter() );
 }
 
 //-- CM2 FORCES.
@@ -796,56 +801,34 @@ void Clock :: updateConvexBlob()
 	contourUtil.convexHull( convexBlobOuter );
 }
 
-void Clock :: updateTriangles ()
+void Clock :: updateDelaunay ()
 {
-#ifndef TARGET_OF_IPHONE
-
-	vector<ClockCircle*>* circles;
-	triangles1.clear();
-	triangles2.clear();
-	
-	trig.clear();
-	trianglePoints.clear();
-
 	//-- OUTER CIRCLE.
 	
-	trianglePoints = convexBlobOuter;					//-- add outer convex points.
-						
-	circles = &circlesInactive;							//-- add intactive circle center points.
-	for( int i=0; i<circles->size(); i++ )
-	{
-		trianglePoints.push_back( circles->at( i )->getPosition() );
-	}
+	delaunay.reset();
 	
-	if( clockMode == CLOCK_MODE_1 )
-	{
-		trianglePoints.push_back( ofPoint() );				//-- add center point.
-		trianglePoints.back().x = screenWidth * 0.5;
-		trianglePoints.back().y = screenHeight * 0.5;
-	}
+//	delaunay.addPoints( convexBlobOuter );				//-- add outer convex points.
 	
-	trig.triangulate( trianglePoints, trianglePoints.size() );
+	for( int i=0; i<circlesInactive.size(); i++ )		//-- add intactive circle center points.
+		delaunay.addPoint( circlesInactive.at( i )->getPosition() );
 	
-	triangles1 = trig.getTriangles();
+	if( clockMode == CLOCK_MODE_1 )						//-- add center point.
+		delaunay.addPoint( ofPoint( screenWidth * 0.5, screenHeight * 0.5 ) );
+	
+	delaunay.triangulate();
+	delaunayTrg1 = delaunay.triangles;
 	
 	//-- INNER CIRCLE.
 	
-	trig.clear();
-	trianglePoints.clear();
+	delaunay.reset();
 	
-	trianglePoints = convexBlobInner;					//-- add inner convex points.
+//	delaunay.addPoints( convexBlobInner );				//-- add outer convex points.
 	
-	circles = &circlesActive;							//-- add active circle center points.
-	for( int i=0; i<circles->size(); i++ )
-	{
-		trianglePoints.push_back( circles->at( i )->getPosition() );
-	}
+	for( int i=0; i<circlesActive.size(); i++ )			//-- add active circle center points.
+		delaunay.addPoint( circlesActive.at( i )->getPosition() );
 	
-	trig.triangulate( trianglePoints, trianglePoints.size() );
-	
-	triangles2 = trig.getTriangles();
-	
-#endif
+	delaunay.triangulate();
+	delaunayTrg2 = delaunay.triangles;
 }
 
 //-- CLOCK MODE.
@@ -911,14 +894,14 @@ void Clock :: draw ()
 
 	ofSetColor( 255, 255, 255, 20 );
 	drawConvexBlob( convexBlobOuter );
-	drawTrianglesOne();
+	drawDelaunay( delaunayTrg1 );
 //	if( clockMode == CLOCK_MODE_1 )
 //		drawCircleLines( circlesInactive );
 	drawCircles( circlesInactive );
 	
-	ofSetColor( 255, 255, 255, 20 );
+	ofSetColor( 255, 255, 255, 30 );
 	drawConvexBlob( convexBlobInner );
-	drawTrianglesTwo();
+	drawDelaunay( delaunayTrg2 );
 	drawCircles( circlesActive );
 //	if( clockMode == CLOCK_MODE_1 )
 //		drawCircleLines( circlesActive );
@@ -1068,7 +1051,6 @@ void Clock :: drawRayBlob ()
 void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 {
 	ofFill();
-	ofSetLineWidth( 2 );
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
@@ -1097,61 +1079,35 @@ void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 	
 	ofEndShape( true );
 	
-	ofSetLineWidth( 1 );
 	ofDisableSmoothing();
 	ofDisableAlphaBlending();
 }
 
-void Clock :: drawTrianglesOne ()
+void Clock :: drawDelaunay ( vector<ofxDelaunayTriangle>& triangles )
 {
-#ifndef TARGET_OF_IPHONE
-	
 	ofNoFill();
-	ofSetColor( 255, 255, 255, 10 );
+	ofSetColor( 255, 255, 255, 20 );
 	
 	ofEnableAlphaBlending();
 	ofEnableSmoothing();
-	
-	for( int i=0; i<triangles1.size(); i++ )
+
+	for( int i=0; i<triangles.size(); i++ )
 	{
+		ofxDelaunayTriangle& triangle = triangles[ i ];
+		
 		ofTriangle
 		(
-			triangles1[ i ].a.x, triangles1[ i ].a.y,
-			triangles1[ i ].b.x, triangles1[ i ].b.y,
-			triangles1[ i ].c.x, triangles1[ i ].c.y
+			triangle.points[ 0 ].x,
+			triangle.points[ 0 ].y,
+			triangle.points[ 1 ].x,
+			triangle.points[ 1 ].y,
+			triangle.points[ 2 ].x,
+			triangle.points[ 2 ].y
 		);
 	}
 	
 	ofDisableAlphaBlending();
 	ofDisableSmoothing();
-	
-#endif
-}
-
-void Clock :: drawTrianglesTwo ()
-{
-#ifndef TARGET_OF_IPHONE
-	
-	ofNoFill();
-	ofSetColor( 255, 255, 255, 10 );
-	
-	ofEnableAlphaBlending();
-	ofEnableSmoothing();
-	
-	for( int i=0; i<triangles2.size(); i++ )
-	{
-		ofTriangle
-		(
-		 triangles2[ i ].a.x, triangles2[ i ].a.y,
-		 triangles2[ i ].b.x, triangles2[ i ].b.y,
-		 triangles2[ i ].c.x, triangles2[ i ].c.y
-		 );
-	}
-	
-	ofDisableAlphaBlending();
-	ofDisableSmoothing();
-	
-#endif
 }
 
 ///////////////////////////////////////////////
