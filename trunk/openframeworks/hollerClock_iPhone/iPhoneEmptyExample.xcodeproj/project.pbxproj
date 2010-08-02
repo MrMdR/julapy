@@ -25,6 +25,9 @@
 		B22A9F4212014009003422E8 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22A9F4012014009003422E8 /* ofxContourUtil.cpp */; };
 		B25E8CE811FEA70B00CA11BB /* libfreeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */; };
 		B25E8CE911FEA70B00CA11BB /* libfreeimage-iphonesimulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */; };
+		B27B673B1206A14C00643337 /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67361206A14C00643337 /* Delaunay.cpp */; };
+		B27B673C1206A14C00643337 /* ofxDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67391206A14C00643337 /* ofxDelaunay.cpp */; };
+		B27B67431206A17000643337 /* ClockInfoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67411206A17000643337 /* ClockInfoScreen.cpp */; };
 		B2AE65CA1202614900FC3FCC /* ofxALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE65C61202614900FC3FCC /* ofxALSoundPlayer.cpp */; };
 		B2AE65CB1202614900FC3FCC /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE65C81202614900FC3FCC /* SoundEngine.cpp */; };
 		B2F11A1811FECE40009300F6 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F11A0B11FECE40009300F6 /* ofxMatrix3x3.cpp */; };
@@ -122,6 +125,12 @@
 		B22A9F4112014009003422E8 /* ofxContourUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxContourUtil.h; path = ../../../../of_0061/addons/ofxContourUtil/src/ofxContourUtil.h; sourceTree = SOURCE_ROOT; };
 		B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfreeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/libfreeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfreeimage-iphonesimulator.a"; path = "../../../libs/FreeImage/lib/iphone/libfreeimage-iphonesimulator.a"; sourceTree = SOURCE_ROOT; };
+		B27B67361206A14C00643337 /* Delaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Delaunay.cpp; path = ../../../../of_0061/addons/ofxDelaunay/libs/Delaunay/Delaunay.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67371206A14C00643337 /* Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delaunay.h; path = ../../../../of_0061/addons/ofxDelaunay/libs/Delaunay/Delaunay.h; sourceTree = SOURCE_ROOT; };
+		B27B67391206A14C00643337 /* ofxDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDelaunay.cpp; path = ../../../../of_0061/addons/ofxDelaunay/src/ofxDelaunay.cpp; sourceTree = SOURCE_ROOT; };
+		B27B673A1206A14C00643337 /* ofxDelaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxDelaunay.h; path = ../../../../of_0061/addons/ofxDelaunay/src/ofxDelaunay.h; sourceTree = SOURCE_ROOT; };
+		B27B67411206A17000643337 /* ClockInfoScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockInfoScreen.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockInfoScreen.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67421206A17000643337 /* ClockInfoScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockInfoScreen.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockInfoScreen.h; sourceTree = SOURCE_ROOT; };
 		B2AE65B512025FE600FC3FCC /* boop_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = boop_1.mp3; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound/boop_1.mp3; sourceTree = SOURCE_ROOT; };
 		B2AE65B612025FE600FC3FCC /* boop_2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = boop_2.mp3; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound/boop_2.mp3; sourceTree = SOURCE_ROOT; };
 		B2AE65B712025FE600FC3FCC /* brrrp.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = brrrp.mp3; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound/brrrp.mp3; sourceTree = SOURCE_ROOT; };
@@ -459,6 +468,45 @@
 			path = ../../../../of_0061/addons/ofxContourUtil/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		B27B67331206A14C00643337 /* ofxDelaunay */ = {
+			isa = PBXGroup;
+			children = (
+				B27B67341206A14C00643337 /* libs */,
+				B27B67381206A14C00643337 /* src */,
+			);
+			name = ofxDelaunay;
+			path = ../../../../of_0061/addons/ofxDelaunay;
+			sourceTree = SOURCE_ROOT;
+		};
+		B27B67341206A14C00643337 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				B27B67351206A14C00643337 /* Delaunay */,
+			);
+			name = libs;
+			path = ../../../../of_0061/addons/ofxDelaunay/libs;
+			sourceTree = SOURCE_ROOT;
+		};
+		B27B67351206A14C00643337 /* Delaunay */ = {
+			isa = PBXGroup;
+			children = (
+				B27B67361206A14C00643337 /* Delaunay.cpp */,
+				B27B67371206A14C00643337 /* Delaunay.h */,
+			);
+			name = Delaunay;
+			path = ../../../../of_0061/addons/ofxDelaunay/libs/Delaunay;
+			sourceTree = SOURCE_ROOT;
+		};
+		B27B67381206A14C00643337 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B27B67391206A14C00643337 /* ofxDelaunay.cpp */,
+				B27B673A1206A14C00643337 /* ofxDelaunay.h */,
+			);
+			name = src;
+			path = ../../../../of_0061/addons/ofxDelaunay/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		B2AE65B412025FE600FC3FCC /* sound */ = {
 			isa = PBXGroup;
 			children = (
@@ -730,6 +778,8 @@
 				B2F11AC311FECE5D009300F6 /* Clock.h */,
 				B2F11AC411FECE5D009300F6 /* ClockCircle.cpp */,
 				B2F11AC511FECE5D009300F6 /* ClockCircle.h */,
+				B27B67411206A17000643337 /* ClockInfoScreen.cpp */,
+				B27B67421206A17000643337 /* ClockInfoScreen.h */,
 			);
 			name = clock;
 			path = ../../../../of_0061/apps/julapy/hollerClock/src/clock;
@@ -757,6 +807,7 @@
 				B2F11A2B11FECE54009300F6 /* ofxBox2d_rev84 */,
 				B22A9F3B12014009003422E8 /* ofxContourUtil */,
 				B2AE65C51202614900FC3FCC /* ofxALSoundPlayer */,
+				B27B67331206A14C00643337 /* ofxDelaunay */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1133,6 +1184,9 @@
 				B22A9F4212014009003422E8 /* ofxContourUtil.cpp in Sources */,
 				B2AE65CA1202614900FC3FCC /* ofxALSoundPlayer.cpp in Sources */,
 				B2AE65CB1202614900FC3FCC /* SoundEngine.cpp in Sources */,
+				B27B673B1206A14C00643337 /* Delaunay.cpp in Sources */,
+				B27B673C1206A14C00643337 /* ofxDelaunay.cpp in Sources */,
+				B27B67431206A17000643337 /* ClockInfoScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

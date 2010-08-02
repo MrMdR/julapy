@@ -86,23 +86,23 @@ void clockApp :: update()
 	
 	//-- orientation.
 	
-	float ax = ofxAccelerometer.getForce().x;
-	float ot = 0.6;								// orientation threshold.
-	
-	if( ax > ot )
-	{
-		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT )
-		{
-			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
-		}
-	}
-	else if( ax < -ot )
-	{
-		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT )
-		{
-			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
-		}
-	}
+//	float ax = ofxAccelerometer.getForce().x;
+//	float ot = 0.6;								// orientation threshold.
+//	
+//	if( ax > ot )
+//	{
+//		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT )
+//		{
+//			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
+//		}
+//	}
+//	else if( ax < -ot )
+//	{
+//		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT )
+//		{
+//			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
+//		}
+//	}
 	
 	//-- gravity slant.
 	
@@ -111,8 +111,15 @@ void clockApp :: update()
 	gx *= 2;									// increase the reaction to tilt.
 	gx = MIN( 1.0, MAX( -1.0, gx ) );			// between -1 and 1.
 	gx *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
+
+	float gy;
+	gy = ofxAccelerometer.getForce().x;
+	cout << gy << endl;
+	gy *= 2;									// increase the reaction to tilt.
+	gy = MIN( 1.0, MAX( -1.0, gy ) );			// between -1 and 1.
+	gy *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
 	
-	clock.setGravity( gx, 0 );
+	clock.setGravity( gx, gy );
 	
 	//-- update.
 	
