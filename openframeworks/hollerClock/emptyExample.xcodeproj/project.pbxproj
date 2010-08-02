@@ -69,6 +69,18 @@
 		B2569B1A11F3E6B100553DF4 /* b2PulleyJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE311F3E6B000553DF4 /* b2PulleyJoint.cpp */; };
 		B2569B1B11F3E6B100553DF4 /* b2RevoluteJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE511F3E6B000553DF4 /* b2RevoluteJoint.cpp */; };
 		B2569B1C11F3E6B100553DF4 /* ofxBox2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE711F3E6B000553DF4 /* ofxBox2d.cpp */; };
+		B27B66FA1206A04900643337 /* ClockInfoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66F81206A04900643337 /* ClockInfoScreen.cpp */; };
+		B27B67121206A05400643337 /* Back.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66FC1206A05400643337 /* Back.cpp */; };
+		B27B67131206A05400643337 /* Bounce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66FE1206A05400643337 /* Bounce.cpp */; };
+		B27B67141206A05400643337 /* Circ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67001206A05400643337 /* Circ.cpp */; };
+		B27B67151206A05400643337 /* Cubic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67021206A05400643337 /* Cubic.cpp */; };
+		B27B67161206A05400643337 /* Elastic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67041206A05400643337 /* Elastic.cpp */; };
+		B27B67171206A05400643337 /* Expo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67061206A05400643337 /* Expo.cpp */; };
+		B27B67181206A05400643337 /* Linear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67081206A05400643337 /* Linear.cpp */; };
+		B27B67191206A05400643337 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B670A1206A05400643337 /* Quad.cpp */; };
+		B27B671A1206A05400643337 /* Quart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B670C1206A05400643337 /* Quart.cpp */; };
+		B27B671B1206A05400643337 /* Quint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B670E1206A05400643337 /* Quint.cpp */; };
+		B27B671C1206A05400643337 /* Sine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67101206A05400643337 /* Sine.cpp */; };
 		B28481D911F939E3004F0780 /* filteringApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28481D711F939E3004F0780 /* filteringApp.cpp */; };
 		B284831611F9635C004F0780 /* contactApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B284831411F9635C004F0780 /* contactApp.cpp */; };
 		B28C345411F4213A00DF01F7 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28C344711F4213A00DF01F7 /* ofxMatrix3x3.cpp */; };
@@ -341,6 +353,30 @@
 		B2569AF011F3E6B000553DF4 /* ofxBox2dRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dRender.h; path = src/ofxBox2d_rev84/src/ofxBox2dRender.h; sourceTree = SOURCE_ROOT; };
 		B2569AF111F3E6B000553DF4 /* ofxBox2dSoftBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dSoftBody.h; path = src/ofxBox2d_rev84/src/ofxBox2dSoftBody.h; sourceTree = SOURCE_ROOT; };
 		B2569AF211F3E6B000553DF4 /* ofxBox2dUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dUtils.h; path = src/ofxBox2d_rev84/src/ofxBox2dUtils.h; sourceTree = SOURCE_ROOT; };
+		B27B66F81206A04900643337 /* ClockInfoScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockInfoScreen.cpp; path = src/clock/ClockInfoScreen.cpp; sourceTree = SOURCE_ROOT; };
+		B27B66F91206A04900643337 /* ClockInfoScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockInfoScreen.h; path = src/clock/ClockInfoScreen.h; sourceTree = SOURCE_ROOT; };
+		B27B66FC1206A05400643337 /* Back.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Back.cpp; path = src/PennerEasing/Back.cpp; sourceTree = SOURCE_ROOT; };
+		B27B66FD1206A05400643337 /* Back.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Back.h; path = src/PennerEasing/Back.h; sourceTree = SOURCE_ROOT; };
+		B27B66FE1206A05400643337 /* Bounce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bounce.cpp; path = src/PennerEasing/Bounce.cpp; sourceTree = SOURCE_ROOT; };
+		B27B66FF1206A05400643337 /* Bounce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bounce.h; path = src/PennerEasing/Bounce.h; sourceTree = SOURCE_ROOT; };
+		B27B67001206A05400643337 /* Circ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Circ.cpp; path = src/PennerEasing/Circ.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67011206A05400643337 /* Circ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Circ.h; path = src/PennerEasing/Circ.h; sourceTree = SOURCE_ROOT; };
+		B27B67021206A05400643337 /* Cubic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Cubic.cpp; path = src/PennerEasing/Cubic.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67031206A05400643337 /* Cubic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cubic.h; path = src/PennerEasing/Cubic.h; sourceTree = SOURCE_ROOT; };
+		B27B67041206A05400643337 /* Elastic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Elastic.cpp; path = src/PennerEasing/Elastic.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67051206A05400643337 /* Elastic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Elastic.h; path = src/PennerEasing/Elastic.h; sourceTree = SOURCE_ROOT; };
+		B27B67061206A05400643337 /* Expo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Expo.cpp; path = src/PennerEasing/Expo.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67071206A05400643337 /* Expo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Expo.h; path = src/PennerEasing/Expo.h; sourceTree = SOURCE_ROOT; };
+		B27B67081206A05400643337 /* Linear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Linear.cpp; path = src/PennerEasing/Linear.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67091206A05400643337 /* Linear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Linear.h; path = src/PennerEasing/Linear.h; sourceTree = SOURCE_ROOT; };
+		B27B670A1206A05400643337 /* Quad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quad.cpp; path = src/PennerEasing/Quad.cpp; sourceTree = SOURCE_ROOT; };
+		B27B670B1206A05400643337 /* Quad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quad.h; path = src/PennerEasing/Quad.h; sourceTree = SOURCE_ROOT; };
+		B27B670C1206A05400643337 /* Quart.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quart.cpp; path = src/PennerEasing/Quart.cpp; sourceTree = SOURCE_ROOT; };
+		B27B670D1206A05400643337 /* Quart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quart.h; path = src/PennerEasing/Quart.h; sourceTree = SOURCE_ROOT; };
+		B27B670E1206A05400643337 /* Quint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quint.cpp; path = src/PennerEasing/Quint.cpp; sourceTree = SOURCE_ROOT; };
+		B27B670F1206A05400643337 /* Quint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quint.h; path = src/PennerEasing/Quint.h; sourceTree = SOURCE_ROOT; };
+		B27B67101206A05400643337 /* Sine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sine.cpp; path = src/PennerEasing/Sine.cpp; sourceTree = SOURCE_ROOT; };
+		B27B67111206A05400643337 /* Sine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sine.h; path = src/PennerEasing/Sine.h; sourceTree = SOURCE_ROOT; };
 		B28481D711F939E3004F0780 /* filteringApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = filteringApp.cpp; sourceTree = "<group>"; };
 		B28481D811F939E3004F0780 /* filteringApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filteringApp.h; sourceTree = "<group>"; };
 		B284831411F9635C004F0780 /* contactApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = contactApp.cpp; sourceTree = "<group>"; };
@@ -487,6 +523,7 @@
 				B22A9ECB1201385B003422E8 /* ofxContourUtil */,
 				B2AE665D12026EE800FC3FCC /* ofxTriangle */,
 				B2AE675912027E3C00FC3FCC /* ofxDelaunay */,
+				B27B66FB1206A05400643337 /* PennerEasing */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -498,6 +535,8 @@
 				B208000E11EEABCC002AC0F8 /* Clock.cpp */,
 				B208000111EEAB84002AC0F8 /* ClockCircle.h */,
 				B208000211EEAB84002AC0F8 /* ClockCircle.cpp */,
+				B27B66F81206A04900643337 /* ClockInfoScreen.cpp */,
+				B27B66F91206A04900643337 /* ClockInfoScreen.h */,
 			);
 			name = clock;
 			path = src/clock;
@@ -876,6 +915,36 @@
 			);
 			name = Joints;
 			path = src/ofxBox2d_rev84/src/lib/Box2D/Source/Dynamics/Joints;
+			sourceTree = SOURCE_ROOT;
+		};
+		B27B66FB1206A05400643337 /* PennerEasing */ = {
+			isa = PBXGroup;
+			children = (
+				B27B66FC1206A05400643337 /* Back.cpp */,
+				B27B66FD1206A05400643337 /* Back.h */,
+				B27B66FE1206A05400643337 /* Bounce.cpp */,
+				B27B66FF1206A05400643337 /* Bounce.h */,
+				B27B67001206A05400643337 /* Circ.cpp */,
+				B27B67011206A05400643337 /* Circ.h */,
+				B27B67021206A05400643337 /* Cubic.cpp */,
+				B27B67031206A05400643337 /* Cubic.h */,
+				B27B67041206A05400643337 /* Elastic.cpp */,
+				B27B67051206A05400643337 /* Elastic.h */,
+				B27B67061206A05400643337 /* Expo.cpp */,
+				B27B67071206A05400643337 /* Expo.h */,
+				B27B67081206A05400643337 /* Linear.cpp */,
+				B27B67091206A05400643337 /* Linear.h */,
+				B27B670A1206A05400643337 /* Quad.cpp */,
+				B27B670B1206A05400643337 /* Quad.h */,
+				B27B670C1206A05400643337 /* Quart.cpp */,
+				B27B670D1206A05400643337 /* Quart.h */,
+				B27B670E1206A05400643337 /* Quint.cpp */,
+				B27B670F1206A05400643337 /* Quint.h */,
+				B27B67101206A05400643337 /* Sine.cpp */,
+				B27B67111206A05400643337 /* Sine.h */,
+			);
+			name = PennerEasing;
+			path = src/PennerEasing;
 			sourceTree = SOURCE_ROOT;
 		};
 		B28481D611F9399B004F0780 /* testApps */ = {
@@ -1516,6 +1585,18 @@
 				B2AE666C12026EE800FC3FCC /* ofxTriangle.cpp in Sources */,
 				B2AE676112027E3C00FC3FCC /* Delaunay.cpp in Sources */,
 				B2AE676212027E3C00FC3FCC /* ofxDelaunay.cpp in Sources */,
+				B27B66FA1206A04900643337 /* ClockInfoScreen.cpp in Sources */,
+				B27B67121206A05400643337 /* Back.cpp in Sources */,
+				B27B67131206A05400643337 /* Bounce.cpp in Sources */,
+				B27B67141206A05400643337 /* Circ.cpp in Sources */,
+				B27B67151206A05400643337 /* Cubic.cpp in Sources */,
+				B27B67161206A05400643337 /* Elastic.cpp in Sources */,
+				B27B67171206A05400643337 /* Expo.cpp in Sources */,
+				B27B67181206A05400643337 /* Linear.cpp in Sources */,
+				B27B67191206A05400643337 /* Quad.cpp in Sources */,
+				B27B671A1206A05400643337 /* Quart.cpp in Sources */,
+				B27B671B1206A05400643337 /* Quint.cpp in Sources */,
+				B27B671C1206A05400643337 /* Sine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

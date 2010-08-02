@@ -14,6 +14,7 @@
 #include "ofxBox2d.h"
 #include "ofxVec2f.h"
 #include "ofxContourUtil.h"
+#include "ofxDelaunay.h"
 
 #ifndef TARGET_OF_IPHONE
 #include "ofxTriangle.h"
@@ -75,12 +76,13 @@ public :
 	
 	void addCenterForce		( ClockCircle& circle );
 	void pushFromCenter		( ClockCircle& circle );
+	void tilt				( ClockCircle& circle );
 	void floatUp			( ClockCircle& circle );
 	void lineUp				( ClockCircle& circle );
 	
 	void updateRayBlob		();
 	void updateConvexBlob	();
-	void updateTriangles	();
+	void updateDelaunay		();
 	
 	void toggleClockMode	();
 	
@@ -92,12 +94,11 @@ public :
 	void drawRayCasts		();
 	void drawRayBlob		();
 	void drawConvexBlob		( const vector<ofPoint>& points );
-	void drawTrianglesOne	();
-	void drawTrianglesTwo	();
+	void drawDelaunay		( vector<ofxDelaunayTriangle>& triangles );
 	
 	void mouseMoved			( ofMouseEventArgs &e );
-	void mousePressed		( ofMouseEventArgs &e );	
-	void mouseDragged		( ofMouseEventArgs &e );	
+	void mousePressed		( ofMouseEventArgs &e );
+	void mouseDragged		( ofMouseEventArgs &e );
 	void mouseReleased		( ofMouseEventArgs &e );
 	
 	vector<ClockCircle*>	hrsOne;
@@ -172,12 +173,9 @@ public :
 	vector<ofPoint>			convexBlobInner;
 	vector<ofPoint>			convexBlobOuter;
 	
-#ifndef TARGET_OF_IPHONE
-	ofxTriangle				trig;
-	vector<ofPoint>			trianglePoints;
-	vector<ofxTriangleData>	triangles1;
-	vector<ofxTriangleData>	triangles2;
-#endif
+	ofxDelaunay				delaunay;
+	vector<ofxDelaunayTriangle>	delaunayTrg1;
+	vector<ofxDelaunayTriangle>	delaunayTrg2;
 	
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	ofPoint					gravity;
