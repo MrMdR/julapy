@@ -45,10 +45,19 @@ Clock :: Clock ()
 	forceCenterPush = 30;
 	rayBlobPad		= 0.07;
 	rayBlobEase		= 0.4;
+
+	bMouseDown		= false;
+	mouseDownCount	= 0;
+	mouseDownLimit	= 30;
 	
 	setSize( ofGetWidth(), ofGetHeight() );
 	setGravity( 0, 0 );
 	setForceScale( 1.0 );
+	
+	ofAddListener( ofEvents.mousePressed,	this, &Clock::mousePressed	);
+	ofAddListener( ofEvents.mouseMoved,		this, &Clock::mouseMoved	);
+	ofAddListener( ofEvents.mouseDragged,	this, &Clock::mouseDragged	);
+	ofAddListener( ofEvents.mouseReleased,	this, &Clock::mouseReleased	);
 }
 
 Clock :: ~Clock()
@@ -314,6 +323,7 @@ void Clock :: update ( int hrs, int min, int sec )
 
 	//--
 	
+	updateInfoScreen();
 	updateText();
 	updateForces();
 	
@@ -366,6 +376,27 @@ void Clock :: updateText ()
 		minTwoX += ( minTwoM2X - minTwoX ) * ease;
 		secOneX += ( secOneM2X - secOneX ) * ease;
 		secTwoX += ( secTwoM2X - secTwoX ) * ease;
+	}
+}
+
+void Clock :: updateInfoScreen ()
+{
+	if( bMouseDown && !infoScreen.bShowing )
+	{
+		mouseDownCount += 1;
+		
+		if( mouseDownCount > mouseDownLimit )
+		{
+			infoScreen.show();
+			
+			bMouseDown = false;
+		}
+	}
+	else if( bMouseDown && infoScreen.bShowing )
+	{
+		infoScreen.hide();
+		
+		bMouseDown = false;
 	}
 }
 
@@ -896,6 +927,8 @@ void Clock :: draw ()
 		softBody->draw();
 	
 	drawTime();
+	
+	infoScreen.draw();
 }
 
 void Clock :: drawCircles ( vector<ClockCircle*>& circles )
@@ -1119,4 +1152,29 @@ void Clock :: drawTrianglesTwo ()
 	ofDisableSmoothing();
 	
 #endif
+}
+
+///////////////////////////////////////////////
+//	DRAW.
+///////////////////////////////////////////////
+
+void Clock :: mouseMoved( ofMouseEventArgs &e )
+{
+	//
+}
+
+void Clock :: mousePressed( ofMouseEventArgs &e )
+{
+	bMouseDown		= true;
+	mouseDownCount	= 0;
+}
+
+void Clock :: mouseDragged( ofMouseEventArgs &e )
+{
+	bMouseDown		= false;
+}
+
+void Clock :: mouseReleased( ofMouseEventArgs &e )
+{
+	bMouseDown		= false;
 }
