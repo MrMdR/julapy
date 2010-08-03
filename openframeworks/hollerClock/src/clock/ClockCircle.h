@@ -34,6 +34,7 @@ public :
 
 	void setSize		( ofRectangle &size );
 	void setSize		( int w, int h );
+	void setTexture		( ofTexture* tex );
 
 	void init			();
 	void update			();
@@ -50,8 +51,9 @@ public :
 	bool hasOuterJoint		();
 	bool hasLineupJoint		();
 	
-	void drawTriangles		();
 	void drawCircles		();
+	void drawTexture		();
+	void drawTriangles		();
 	
 	int			screenWidth;
 	int			screenHeight;
@@ -83,6 +85,7 @@ public :
 	
 	vector<ClockCircleTrg>	triangles;
 	
+	ofTexture*	tex;
 	
 };
 

@@ -27,6 +27,7 @@
 		B20874C511F80F1A00592A37 /* ofxSimpleGuiToo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20874B511F80F1A00592A37 /* ofxSimpleGuiToo.cpp */; };
 		B20874CA11F80F2100592A37 /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20874C811F80F2100592A37 /* ofxMSAInteractiveObject.cpp */; };
 		B22A9ED21201385B003422E8 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22A9ED01201385B003422E8 /* ofxContourUtil.cpp */; };
+		B2464C341207FD81000BF9BB /* ClockLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2464C331207FD81000BF9BB /* ClockLine.cpp */; };
 		B2569AF311F3E6B100553DF4 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569A9011F3E6B000553DF4 /* b2BroadPhase.cpp */; };
 		B2569AF411F3E6B100553DF4 /* b2CollideCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569A9211F3E6B000553DF4 /* b2CollideCircle.cpp */; };
 		B2569AF511F3E6B100553DF4 /* b2CollidePoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569A9311F3E6B000553DF4 /* b2CollidePoly.cpp */; };
@@ -259,6 +260,8 @@
 		B22A9ECE1201385B003422E8 /* polylineSimplify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polylineSimplify.h; path = ../../../addons/ofxContourUtil/libs/polylineSimplify.h; sourceTree = SOURCE_ROOT; };
 		B22A9ED01201385B003422E8 /* ofxContourUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxContourUtil.cpp; path = ../../../addons/ofxContourUtil/src/ofxContourUtil.cpp; sourceTree = SOURCE_ROOT; };
 		B22A9ED11201385B003422E8 /* ofxContourUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxContourUtil.h; path = ../../../addons/ofxContourUtil/src/ofxContourUtil.h; sourceTree = SOURCE_ROOT; };
+		B2464C321207FD81000BF9BB /* ClockLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockLine.h; sourceTree = "<group>"; };
+		B2464C331207FD81000BF9BB /* ClockLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockLine.cpp; sourceTree = "<group>"; };
 		B2569A8D11F3E6B000553DF4 /* Box2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Box2D.h; path = src/ofxBox2d_rev84/src/lib/Box2D/Include/Box2D.h; sourceTree = SOURCE_ROOT; };
 		B2569A9011F3E6B000553DF4 /* b2BroadPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = b2BroadPhase.cpp; path = src/ofxBox2d_rev84/src/lib/Box2D/Source/Collision/b2BroadPhase.cpp; sourceTree = SOURCE_ROOT; };
 		B2569A9111F3E6B000553DF4 /* b2BroadPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = b2BroadPhase.h; path = src/ofxBox2d_rev84/src/lib/Box2D/Source/Collision/b2BroadPhase.h; sourceTree = SOURCE_ROOT; };
@@ -537,6 +540,8 @@
 				B208000211EEAB84002AC0F8 /* ClockCircle.cpp */,
 				B27B66F81206A04900643337 /* ClockInfoScreen.cpp */,
 				B27B66F91206A04900643337 /* ClockInfoScreen.h */,
+				B2464C321207FD81000BF9BB /* ClockLine.h */,
+				B2464C331207FD81000BF9BB /* ClockLine.cpp */,
 			);
 			name = clock;
 			path = src/clock;
@@ -1597,6 +1602,7 @@
 				B27B671A1206A05400643337 /* Quart.cpp in Sources */,
 				B27B671B1206A05400643337 /* Quint.cpp in Sources */,
 				B27B671C1206A05400643337 /* Sine.cpp in Sources */,
+				B2464C341207FD81000BF9BB /* ClockLine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

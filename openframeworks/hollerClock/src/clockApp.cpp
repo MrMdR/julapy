@@ -9,16 +9,68 @@ void clockApp :: setup()
 	ofSetFrameRate( frameRate = 60 );
 	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
+	ofBackground( 30, 30, 30 );
 	
 	bDebug = false;
 	
-	font.loadFont( "fonts/cooperBlack.ttf", 40 );
+	//-- font.
+	
+	font1.loadFont( "fonts/1859_solferino_caps_light.ttf", 260 );
+	font2.loadFont( "fonts/1859_solferino_caps_light.ttf", 70 );
+	
+	//-- sound.
 	
 	secTwoSound.loadSound( ofToDataPath( "sound/boop_1.wav" ) );
 	secOneSound.loadSound( ofToDataPath( "sound/boop_2.wav" ) );
 	
+	//-- images.
+	
+	texBgSize.width		= ofGetWidth()  * 1.0;
+	texBgSize.height	= ofGetHeight() * 1.0;
+	
+	image.loadImage( "image/background_1280x720.png" );
+	texBg.allocate( texBgSize.width, texBgSize.height, GL_RGBA );
+	texBg.loadData( image.getPixels(), texBgSize.width, texBgSize.height, GL_RGBA );
+	image.clear();
+	
+	vector<string> cellNames;
+	cellNames.push_back( "image/cell01_256x256.png" );
+	cellNames.push_back( "image/cell02_256x256.png" );
+	cellNames.push_back( "image/cell03_256x256.png" );
+	
+	texCellsNum = cellNames.size();
+	texCells	= new ofTexture[ texCellsNum ];
+	
+	for( int i=0; i<cellNames.size(); i++ )
+	{
+		image.loadImage( cellNames[ i ] );
+		texCells[ i ].allocate( image.width, image.height, GL_RGBA );
+		texCells[ i ].loadData( image.getPixels(), image.width, image.height, GL_RGBA );
+		image.clear();
+	}
+	
+	vector<string> lineNames;
+	lineNames.push_back( "image/line01.png" );
+	lineNames.push_back( "image/line02.png" );
+	lineNames.push_back( "image/line03.png" );
+	
+	texLinesNum = lineNames.size();
+	texLines	= new ofTexture[ texLinesNum ];
+
+	for( int i=0; i<lineNames.size(); i++ )
+	{
+		image.loadImage( lineNames[ i ] );
+		texLines[ i ].allocate( image.width, image.height, GL_RGBA );
+		texLines[ i ].loadData( image.getPixels(), image.width, image.height, GL_RGBA );
+		image.clear();
+	}
+	
+	//-- screen grabber.
+	
 	screenGrabber.setup( "movie/" );
 	screenGrabber.setPause( true );
+	
+	//-- video saver.
 	
 	ofRectangle rect;
 	rect.width	= ofGetWidth();
@@ -43,8 +95,11 @@ void clockApp :: initClock ()
 	
 	clock.setBox2d( &box2d );
 	clock.setSize( ofGetWidth(), ofGetHeight() );
-//	clock.setTimeFont( &font );
+	clock.setTimeFonts( &font1, &font2 );
 	clock.setSound( &secTwoSound, &secOneSound );
+	clock.setBgTexture( &texBg );
+	clock.setCellTexture( texCells, texCellsNum );
+	clock.setLineTexture( texLines, texLinesNum );
 	clock.setup();
 }
 
@@ -102,7 +157,7 @@ void clockApp::draw()
 {
 	clock.draw();
 	
-	ofSetColor( 0xFFFFFF );
+	ofSetColor( 0x000000 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, ofGetHeight() - 15 );
 
 	gui.draw();
@@ -195,4 +250,3 @@ void clockApp::windowResized(int w, int h)
 {
 
 }
-
