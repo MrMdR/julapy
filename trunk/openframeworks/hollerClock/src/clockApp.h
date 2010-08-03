@@ -39,7 +39,9 @@ public:
 
 	Clock					clock;
 	
-	ofTrueTypeFont			font;
+	ofTrueTypeFont			font1;
+	ofTrueTypeFont			font2;
+	string					timeStr;
 	
 	ofxScreenGrabUtil		screenGrabber;
 	
@@ -50,6 +52,14 @@ public:
 	
 	ofSoundPlayer			secTwoSound;
 	ofSoundPlayer			secOneSound;
+	
+	ofImage					image;
+	ofRectangle				texBgSize;
+	ofTexture				texBg;
+	ofTexture*				texCells;
+	int						texCellsNum;
+	ofTexture*				texLines;
+	int						texLinesNum;
 	
 };
 

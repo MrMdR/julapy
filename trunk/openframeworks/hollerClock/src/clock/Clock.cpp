@@ -12,11 +12,16 @@
 Clock :: Clock ()
 {
 	box2d		= NULL;
-	font		= NULL;
+	font1		= NULL;
+	font2		= NULL;
 	softBody	= NULL;
 	
 	secTwoSound	= NULL;
 	secOneSound	= NULL;
+	
+	texBg		= NULL;
+	texCells	= NULL;
+	texLines	= NULL;
 	
 	clockMode = CLOCK_MODE_1;
 	
@@ -76,6 +81,7 @@ void Clock :: setup ()
 	
 	createBounds();
 	createCircles();
+	createLines();
 //	createSoftBody();
 }
 
@@ -112,9 +118,10 @@ void Clock :: setSize ( int w, int h )
 	}
 }
 
-void Clock :: setTimeFont ( ofTrueTypeFont *font )
+void Clock :: setTimeFonts ( ofTrueTypeFont *font1, ofTrueTypeFont *font2 )
 {
-	this->font = font;
+	this->font1 = font1;
+	this->font2 = font2;
 }
 
 #ifdef TARGET_OF_IPHONE	
@@ -130,6 +137,23 @@ void Clock :: setSound ( ofSoundPlayer* secTwoSound, ofSoundPlayer* secOneSound 
 	this->secOneSound = secOneSound;
 }
 #endif
+
+void Clock :: setBgTexture ( ofTexture* tex )
+{
+	texBg = tex;
+}
+
+void Clock :: setCellTexture ( ofTexture* tex, int numOfTextures )
+{
+	texCells = tex;
+	texCellsNum = numOfTextures;
+}
+
+void Clock :: setLineTexture ( ofTexture* tex, int numOfTextures )
+{
+	texLines = tex;
+	texLinesNum = numOfTextures;
+}
 
 void Clock :: setGravity( float x, float y )
 {
@@ -250,6 +274,7 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		
 		circle->lineUpPoint.set( lineX, lineY );
 		circle->setSize( screenWidth, screenHeight );
+		circle->setTexture( &texCells[ 0 ] );
 		circle->init();
 		
 		//-- add to vectors.
@@ -277,6 +302,25 @@ void Clock :: createSoftBody ()
 	softBody = new ofxBox2dSoftBody();
 	softBody->setPhysics( mass, bounce, friction );
 	softBody->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ) );
+}
+
+void Clock :: createLines ()
+{
+	if( texLines == NULL )
+		return;
+	
+	int res = 100;
+	for( int i=0; i<res; i++ )
+	{
+		float p = i / (float)res;
+		int r = ofRandom( 0, texLinesNum );
+		
+		lines.push_back( ClockLine() );
+		ClockLine& line = lines.back();
+		
+		line.setTexture( &texLines[ r ] );
+		line.angle = p * 360;
+	}
 }
 
 ///////////////////////////////////////////////
@@ -575,7 +619,14 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 
 void Clock :: tilt ( ClockCircle& circle )
 {
+	float s = 0.3;
+	
 	b2Vec2 v = b2Vec2( gravity.x, gravity.y );
+	if( ofDist( 0, 0, v.x, v.y ) < s )
+	{
+		v.x = 0;
+		v.y = 0;
+	}
 	v *= 0.2;
 	
 	circle.body->ApplyImpulse( v, circle.body->GetWorldCenter() );
@@ -889,54 +940,63 @@ void Clock :: box2dContactEventHandler ( const b2ContactPoint* p )
 
 void Clock :: draw ()
 {
-//	ofBackground( 249, 246, 229 );		// faint yellow.
-	ofBackground( 30, 30, 30 );
+	ofSetColor( 255, 255, 255 );
+	drawBg();
+	
+	drawTime();
+	drawLines();
 
-	ofSetColor( 255, 255, 255, 20 );
+	ofSetColor( 95, 63, 34, 30 );
 	drawConvexBlob( convexBlobOuter );
 	drawDelaunay( delaunayTrg1 );
-//	if( clockMode == CLOCK_MODE_1 )
-//		drawCircleLines( circlesInactive );
 	drawCircles( circlesInactive );
 	
-	ofSetColor( 255, 255, 255, 30 );
+	ofSetColor( 95, 63, 34, 30 );
 	drawConvexBlob( convexBlobInner );
 	drawDelaunay( delaunayTrg2 );
 	drawCircles( circlesActive );
-//	if( clockMode == CLOCK_MODE_1 )
-//		drawCircleLines( circlesActive );
 	
 	if( softBody != NULL )
 		softBody->draw();
 	
-	drawTime();
-	
 	infoScreen.draw();
+}
+
+void Clock :: drawBg ()
+{
+	if( texBg == NULL )
+		return;
+	
+	texBg->draw( 0, 0, screenWidth, screenHeight );
+}
+
+void Clock :: drawLines ()
+{
+	if( texLines == NULL )
+		return;
+	
+	ofEnableAlphaBlending();
+	ofSetColor( 255, 255, 255, 30 );
+	
+	glPushMatrix();
+	glTranslatef( screenWidth * 0.5, screenHeight * 0.5, 0 );
+	
+	for( int i=0; i<lines.size(); i++ )
+	{
+		lines[ i ].draw();
+	}
+	
+	glPopMatrix();
+	
+	ofDisableAlphaBlending();
 }
 
 void Clock :: drawCircles ( vector<ClockCircle*>& circles )
 {
 	for( int i=0; i<circles.size(); i++ )
 	{
-		drawCircle( *circles[ i ] );
+		circles[ i ]->draw();
 	}
-}
-
-void Clock :: drawCircle ( ClockCircle &circle )
-{
-	ofFill();
-	ofSetColor( circle.colorCurr.r, circle.colorCurr.g, circle.colorCurr.b );
-	
-	circle.draw();
-	
-	ofEnableSmoothing();
-	
-	ofNoFill();
-	ofSetColor( circle.colorCurr.r, circle.colorCurr.g, circle.colorCurr.b );
-	
-	circle.draw();
-	
-	ofDisableSmoothing();
 }
 
 void Clock :: drawCircleLines ( vector<ClockCircle*>& circles )
@@ -961,27 +1021,22 @@ void Clock :: drawCircleLine ( ClockCircle &circle )
 
 void Clock :: drawTime ()
 {
-	if( font == NULL )
+	if( font1 == NULL || font2 == NULL )
 		return;
 	
-	int blackH = 80;
-	ofFill();
 	ofEnableAlphaBlending();
-	ofSetColor( 0, 0, 0, 120 );
-	ofRect( 0, screenHeight - blackH, screenWidth, blackH );
-	ofSetColor( 255, 255, 255, 120 );
-	ofRect( 0, screenHeight - blackH - 1, screenWidth, 1 );
-	ofDisableAlphaBlending();
-	
-	ofSetColor( 0xFFFFFF );
+
+	ofSetColor( 95, 63, 34, 180 );
 	
 	int fontY = screenHeight - 30;
-	font->drawString( ofToString( hrsOneCount, 0 ), hrsOneX, fontY );
-	font->drawString( ofToString( hrsTwoCount, 0 ), hrsTwoX, fontY );
-	font->drawString( ofToString( minOneCount, 0 ), minOneX, fontY );
-	font->drawString( ofToString( minTwoCount, 0 ), minTwoX, fontY );
-	font->drawString( ofToString( secOneCount, 0 ), secOneX, fontY );
-	font->drawString( ofToString( secTwoCount, 0 ), secTwoX, fontY );
+	font2->drawString( ofToString( hrsOneCount, 0 ), hrsOneX, fontY );
+	font2->drawString( ofToString( hrsTwoCount, 0 ), hrsTwoX, fontY );
+	font2->drawString( ofToString( minOneCount, 0 ), minOneX, fontY );
+	font2->drawString( ofToString( minTwoCount, 0 ), minTwoX, fontY );
+	font2->drawString( ofToString( secOneCount, 0 ), secOneX, fontY );
+	font2->drawString( ofToString( secTwoCount, 0 ), secTwoX, fontY );
+	
+	ofDisableAlphaBlending();
 }
 
 void Clock :: drawRayCasts ()
@@ -1086,7 +1141,7 @@ void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 void Clock :: drawDelaunay ( vector<ofxDelaunayTriangle>& triangles )
 {
 	ofNoFill();
-	ofSetColor( 255, 255, 255, 20 );
+	ofSetColor( 0, 0, 0, 20 );
 	
 	ofEnableAlphaBlending();
 	ofEnableSmoothing();

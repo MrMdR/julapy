@@ -17,6 +17,8 @@ ClockCircle :: ClockCircle ( float r, int c )
 	colorTrgt.r	= colorCurr.r = ( c >> 16 ) & 0xff;
 	colorTrgt.g	= colorCurr.g = ( c >> 8  ) & 0xff;
 	colorTrgt.b	= colorCurr.b = ( c >> 0  ) & 0xff;
+	
+	tex = NULL;
 }
 
 ClockCircle :: ~ClockCircle ()
@@ -37,6 +39,11 @@ void ClockCircle :: setSize ( int w, int h )
 {
 	screenWidth		= w;
 	screenHeight	= h;
+}
+
+void ClockCircle :: setTexture ( ofTexture* tex )
+{
+	this->tex = tex;
 }
 
 void ClockCircle :: init ()
@@ -243,12 +250,22 @@ void ClockCircle :: draw ()
 		return;
 	}
 	
-	drawCircles();
+	if( tex == NULL )
+	{
+		drawCircles();
+	}
+	else
+	{
+		drawTexture();
+	}
+		
 //	drawTriangles();
 }
 
 void ClockCircle :: drawCircles ()
 {
+	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b );
+	
 	float radius = getRadius();
 	
 	glPushMatrix();
@@ -270,6 +287,27 @@ void ClockCircle :: drawCircles ()
 	
 	
 	glPopMatrix();
+}
+
+void ClockCircle :: drawTexture ()
+{
+	ofEnableAlphaBlending();
+//	ofSetColor( 255, 255, 255 );
+	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b, 200 );
+	
+	float radius = getRadius();
+	
+	glPushMatrix();
+	glTranslatef( getPosition().x, getPosition().y, 0 );
+	
+//	float rot = getRotation();
+//	glRotatef( rot, 0, 0, 1 );
+	
+	tex->draw( -radius, -radius, radius * 2, radius * 2 );
+	
+	glPopMatrix();
+	
+	ofDisableAlphaBlending();
 }
 
 void ClockCircle :: drawTriangles ()

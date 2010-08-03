@@ -26,6 +26,7 @@
 
 #include "ClockCircle.h"
 #include "ClockInfoScreen.h"
+#include "ClockLine.h"
 
 #define CLOCK_MODE_1		1
 #define CLOCK_MODE_2		2
@@ -44,12 +45,15 @@ public :
 	void  setBox2d			( ofxBox2d *box2d );
 	void  setSize			( ofRectangle &size );
 	void  setSize			( int w, int h );
-	void  setTimeFont		( ofTrueTypeFont *font );
+	void  setTimeFonts		( ofTrueTypeFont *font1, ofTrueTypeFont *font2 );
 #ifdef TARGET_OF_IPHONE	
 	void  setSound			( ofxALSoundPlayer* secTwoSound = NULL, ofxALSoundPlayer* secOneSound = NULL );
 #else
 	void  setSound			( ofSoundPlayer* secTwoSound = NULL, ofSoundPlayer* secOneSound = NULL );
 #endif
+	void  setBgTexture		( ofTexture* tex );
+	void  setCellTexture	( ofTexture* tex, int numOfTextures );
+	void  setLineTexture	( ofTexture* tex, int numOfTextures );
 	void  setGravity		( float x, float y );
 	void  setForceScale		( float f );
 	
@@ -58,6 +62,7 @@ public :
 	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, float lineX = 0 );
 	float areaToRadius		( float area );
 	void  createSoftBody	();
+	void  createLines		();
 	
 	void setup				();
 	void update				( int hrs, int min, int sec );
@@ -86,8 +91,9 @@ public :
 	
 	void toggleClockMode	();
 	
+	void drawBg				();
+	void drawLines			();
 	void drawCircles		( vector<ClockCircle*>& circles );
-	void drawCircle			( ClockCircle &circle );
 	void drawCircleLines	( vector<ClockCircle*>& circles );
 	void drawCircleLine		( ClockCircle &circle );
 	void drawTime			();
@@ -155,7 +161,8 @@ public :
 	int						screenTotal;
 	ofxVec2f				screenCenter;
 	
-	ofTrueTypeFont*			font;
+	ofTrueTypeFont*			font1;
+	ofTrueTypeFont*			font2;
 	
 #ifdef TARGET_OF_IPHONE	
 	ofxALSoundPlayer*		secTwoSound;
@@ -164,6 +171,14 @@ public :
 	ofSoundPlayer*			secTwoSound;
 	ofSoundPlayer*			secOneSound;
 #endif
+	
+	ofTexture*				texBg;
+	ofTexture*				texCells;
+	int						texCellsNum;
+	ofTexture*				texLines;
+	int						texLinesNum;
+	
+	vector<ClockLine>		lines;
 	
 	ofxBox2d*				box2d;
 	b2Body*					ground;
