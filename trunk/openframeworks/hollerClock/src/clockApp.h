@@ -54,12 +54,14 @@ public:
 	ofSoundPlayer			secOneSound;
 	
 	ofImage					image;
-	ofRectangle				texBgSize;
+	ofRectangle				texFsSize;
 	ofTexture				texBg;
 	ofTexture*				texCells;
 	int						texCellsNum;
 	ofTexture*				texLines;
 	int						texLinesNum;
+	ofTexture				texInfo;
+	ofTexture				texMembrane;
 	
 };
 

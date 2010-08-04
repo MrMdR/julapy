@@ -19,6 +19,9 @@ public :
 	 ClockInfoScreen();
 	~ClockInfoScreen();
 	
+	void setSize	( int w, int h );
+	void setTexture	( ofTexture* tex );
+	
 	void setup		();
 	void update		();
 	void draw		();
@@ -29,6 +32,8 @@ public :
 	bool	bShowing;
 	int		screenWidth;
 	int		screenHeight;
+	
+	ofTexture* tex;
 };
 
 #endif

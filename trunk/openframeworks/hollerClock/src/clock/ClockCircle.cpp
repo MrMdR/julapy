@@ -293,7 +293,7 @@ void ClockCircle :: drawTexture ()
 {
 	ofEnableAlphaBlending();
 //	ofSetColor( 255, 255, 255 );
-	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b, 200 );
+	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b, 220 );
 	
 	float radius = getRadius();
 	

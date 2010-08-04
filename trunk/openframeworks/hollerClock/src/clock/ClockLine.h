@@ -20,12 +20,26 @@ public :
 	 ClockLine	();
 	~ClockLine	();
 	
-	void setTexture	( ofTexture* tex );
-	void draw		();
+	void setTexture		( ofTexture* tex );
+	void setup			();
+	
+	void draw			( float w = 100, float h = 1 );
+	void drawTexture	( float w = 100, float h = 1 );
+	void drawLine		( float w = 100, float h = 1 );
+	
 	
 	ofTexture*		tex;
 	float			angle;
 	float			scale;
+	ofRectangle		size;
+	
+	float*			pointsPos;
+	float*			pointsVel;
+	int				pointsNum;
+	
+	float			linePoints[ 4 ];
+	float			lineColors[ 8 ];
+	float			rectPoints[ 8 ];
 };
 
 #endif

@@ -20,8 +20,10 @@ Clock :: Clock ()
 	secOneSound	= NULL;
 	
 	texBg		= NULL;
+	texInfo		= NULL;
 	texCells	= NULL;
 	texLines	= NULL;
+	texMembrane	= NULL;
 	
 	clockMode = CLOCK_MODE_1;
 	
@@ -58,11 +60,17 @@ Clock :: Clock ()
 	setSize( ofGetWidth(), ofGetHeight() );
 	setGravity( 0, 0 );
 	setForceScale( 1.0 );
-	
+
+#ifdef TARGET_OF_IPHONE	
+	ofAddListener( ofEvents.touchDown,		this, &Clock::touchDown		);
+	ofAddListener( ofEvents.touchMoved,		this, &Clock::touchMoved	);
+	ofAddListener( ofEvents.touchUp,		this, &Clock::touchUp		);
+#else
 	ofAddListener( ofEvents.mousePressed,	this, &Clock::mousePressed	);
 	ofAddListener( ofEvents.mouseMoved,		this, &Clock::mouseMoved	);
 	ofAddListener( ofEvents.mouseDragged,	this, &Clock::mouseDragged	);
 	ofAddListener( ofEvents.mouseReleased,	this, &Clock::mouseReleased	);
+#endif
 }
 
 Clock :: ~Clock()
@@ -82,7 +90,7 @@ void Clock :: setup ()
 	createBounds();
 	createCircles();
 	createLines();
-//	createSoftBody();
+	createInfoScreen();
 }
 
 ///////////////////////////////////////////////
@@ -116,6 +124,8 @@ void Clock :: setSize ( int w, int h )
 	{
 		circlesAll[ i ]->setSize( w, h );
 	}
+	
+	infoScreen.setSize( w, h );
 }
 
 void Clock :: setTimeFonts ( ofTrueTypeFont *font1, ofTrueTypeFont *font2 )
@@ -143,6 +153,11 @@ void Clock :: setBgTexture ( ofTexture* tex )
 	texBg = tex;
 }
 
+void Clock :: setInfoTexture ( ofTexture* tex )
+{
+	texInfo = tex;
+}
+
 void Clock :: setCellTexture ( ofTexture* tex, int numOfTextures )
 {
 	texCells = tex;
@@ -153,6 +168,11 @@ void Clock :: setLineTexture ( ofTexture* tex, int numOfTextures )
 {
 	texLines = tex;
 	texLinesNum = numOfTextures;
+}
+
+void Clock :: setMembraneTex ( ofTexture* tex )
+{
+	texMembrane = tex;
 }
 
 void Clock :: setGravity( float x, float y )
@@ -225,12 +245,12 @@ void Clock :: createCircles ()
 	float area	= 0.015;		// biggest area as start.
 	float dec	= 0.5;		// decrease in area for the next batch of circles.
 	
-	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0x6b007e, 0.10 );
-	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xf51d2a, 0.23 );
-	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xf6009d, 0.44 );
-	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0x8c162f, 0.57 );
-	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0xc96dfd, 0.76 );
-	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0xf7719a, 0.88 );
+	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0xa65eb3, 0.10 );		// 0x6b007e
+	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xf17a81, 0.23 );		// 0xf51d2a
+	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xf169c0, 0.44 );		// 0xf6009d
+	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0xa94f62, 0.57 );		// 0x8c162f
+	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0xdca6fb, 0.76 );		// 0xc96dfd
+	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0xf8a7c0, 0.88 );		// 0xf7719a
 }
 
 void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color, float lx )
@@ -306,9 +326,6 @@ void Clock :: createSoftBody ()
 
 void Clock :: createLines ()
 {
-	if( texLines == NULL )
-		return;
-	
 	int res = 100;
 	for( int i=0; i<res; i++ )
 	{
@@ -317,10 +334,20 @@ void Clock :: createLines ()
 		
 		lines.push_back( ClockLine() );
 		ClockLine& line = lines.back();
+
+		if( texLines != NULL )
+			line.setTexture( &texLines[ r ] );
 		
-		line.setTexture( &texLines[ r ] );
-		line.angle = p * 360;
+		line.size.width = screenMaxLength * 0.5;
+		line.angle		= p * 360;
+		line.setup();
 	}
+}
+
+void Clock :: createInfoScreen ()
+{
+	if( texInfo != NULL )
+		infoScreen.setTexture( texInfo );
 }
 
 ///////////////////////////////////////////////
@@ -366,21 +393,15 @@ void Clock :: update ( int hrs, int min, int sec )
 	updateText();
 	updateForces();
 	
-	if( clockMode == CLOCK_MODE_1 )
-	{
-//		updateRayBlob();
-	}
-	
-	updateConvexBlob();
-//	updateTriangles();
-	updateDelaunay();
-	
 	box2d->update();
 	
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		circlesAll[ i ]->update();
 	}
+	
+	updateConvexBlob();
+	updateDelaunay();
 }
 
 void Clock :: playSecTwoSound ()
@@ -510,7 +531,7 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 				if( !circle.hasOuterJoint() )
 					circle.createOuterJoint();
 				
-				tilt( circle );
+//				tilt( circle );
 //				pushFromCenter( circle );
 			}
 			else if( clockMode == CLOCK_MODE_2 )
@@ -948,11 +969,13 @@ void Clock :: draw ()
 
 	ofSetColor( 95, 63, 34, 30 );
 	drawConvexBlob( convexBlobOuter );
+	drawConvexBlobRim( convexBlobOuter );
 	drawDelaunay( delaunayTrg1 );
 	drawCircles( circlesInactive );
 	
 	ofSetColor( 95, 63, 34, 30 );
 	drawConvexBlob( convexBlobInner );
+	drawConvexBlobRim( convexBlobInner );
 	drawDelaunay( delaunayTrg2 );
 	drawCircles( circlesActive );
 	
@@ -972,18 +995,14 @@ void Clock :: drawBg ()
 
 void Clock :: drawLines ()
 {
-	if( texLines == NULL )
-		return;
-	
 	ofEnableAlphaBlending();
-	ofSetColor( 255, 255, 255, 30 );
 	
 	glPushMatrix();
 	glTranslatef( screenWidth * 0.5, screenHeight * 0.5, 0 );
 	
 	for( int i=0; i<lines.size(); i++ )
 	{
-		lines[ i ].draw();
+		lines[ i ].draw( screenMaxLength * 0.5 );
 	}
 	
 	glPopMatrix();
@@ -1106,7 +1125,7 @@ void Clock :: drawRayBlob ()
 void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 {
 	ofFill();
-	ofEnableSmoothing();
+//	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
 	ofBeginShape();
@@ -1134,7 +1153,84 @@ void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 	
 	ofEndShape( true );
 	
-	ofDisableSmoothing();
+//	ofDisableSmoothing();
+	ofDisableAlphaBlending();
+}
+
+void Clock :: drawConvexBlobRim	( const vector<ofPoint>& points )
+{
+	if( texMembrane == NULL )
+		return;
+
+	vector<ofPoint> normals;
+	geom.createNormals( points, normals );
+	
+	ofEnableAlphaBlending();
+	ofSetColor( 255, 255, 255, 100 );
+	
+	//--- draw rim.
+	
+	texMembrane->bind();
+	
+	int t;
+	t = points.size() - 1;
+
+	float circ	= 0;				// circumference.
+	float c		= 0;
+	for( int i=0; i<t; i++ )
+	{
+		int j	= ( i + 1 ) % t;
+		float d = ofDist( points[ i ].x, points[ i ].y, points[ j ].x, points[ j ].y );
+		c += d;
+	}
+	circ = c;
+	c = 0;
+	
+	float p;
+	
+	GLfloat* ver_coords = new GLfloat[ ( t + 1 ) * 4 ];
+	GLfloat* tex_coords = new GLfloat[ ( t + 1 ) * 4 ];
+	
+	for( int i=0; i<( t + 1 ); i++ )
+	{
+		int j = i % t;
+		int k = ( i - 1 ) % t;
+		
+		if( i > 0 )
+			c += ofDist( points[ j ].x, points[ j ].y, points[ k ].x, points[ k ].y );
+		
+		p = c / circ;
+		
+		ver_coords[ i * 4 + 0 ] = points[ j ].x;
+		ver_coords[ i * 4 + 1 ] = points[ j ].y;
+		ver_coords[ i * 4 + 2 ] = points[ j ].x - normals[ j ].x * 20;
+		ver_coords[ i * 4 + 3 ] = points[ j ].y - normals[ j ].y * 20;
+		
+		ofPoint tx1 = texMembrane->getCoordFromPercent( p, 0 );
+		ofPoint tx2 = texMembrane->getCoordFromPercent( p, 1 );
+		
+		tex_coords[ i * 4 + 0 ] = tx1.x;
+		tex_coords[ i * 4 + 1 ] = tx1.y;
+		tex_coords[ i * 4 + 2 ] = tx2.x;
+		tex_coords[ i * 4 + 3 ] = tx2.y;
+	}
+	
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	glEnableClientState( GL_VERTEX_ARRAY );		
+	
+	glTexCoordPointer( 2, GL_FLOAT, 0, tex_coords );
+	glVertexPointer( 2, GL_FLOAT, 0, ver_coords );
+	
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, ( t + 1 ) * 2 );
+	
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	glDisableClientState( GL_VERTEX_ARRAY );
+	
+	delete[] ver_coords;
+	delete[] tex_coords;
+	
+	texMembrane->unbind();
+	
 	ofDisableAlphaBlending();
 }
 
@@ -1169,6 +1265,26 @@ void Clock :: drawDelaunay ( vector<ofxDelaunayTriangle>& triangles )
 //	DRAW.
 ///////////////////////////////////////////////
 
+#ifdef TARGET_OF_IPHONE
+
+void Clock :: touchDown	( ofTouchEventArgs &touch )
+{
+	bMouseDown		= true;
+	mouseDownCount	= 0;
+}
+
+void Clock :: touchMoved ( ofTouchEventArgs &touch )
+{
+	bMouseDown		= false;
+}
+
+void Clock :: touchUp ( ofTouchEventArgs &touch )
+{
+	bMouseDown		= false;
+}
+
+#else
+
 void Clock :: mouseMoved( ofMouseEventArgs &e )
 {
 	//
@@ -1189,3 +1305,5 @@ void Clock :: mouseReleased( ofMouseEventArgs &e )
 {
 	bMouseDown		= false;
 }
+
+#endif
