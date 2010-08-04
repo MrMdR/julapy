@@ -25,12 +25,22 @@ void clockApp :: setup()
 	
 	//-- images.
 	
-	texBgSize.width		= ofGetWidth()  * 1.0;
-	texBgSize.height	= ofGetHeight() * 1.0;
+	texFsSize.width		= ofGetWidth()  * 1.0;
+	texFsSize.height	= ofGetHeight() * 1.0;
 	
 	image.loadImage( "image/background_1280x720.png" );
-	texBg.allocate( texBgSize.width, texBgSize.height, GL_RGBA );
-	texBg.loadData( image.getPixels(), texBgSize.width, texBgSize.height, GL_RGBA );
+	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
+	texBg.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGBA );
+	image.clear();
+
+	image.loadImage( "image/info_1280x720.png" );
+	texInfo.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
+	texInfo.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGBA );
+	image.clear();
+	
+	image.loadImage( "image/membrane2_1024x50.png" );
+	texMembrane.allocate( image.width, image.height, GL_RGBA );
+	texMembrane.loadData( image.getPixels(), image.width, image.height, GL_RGBA );
 	image.clear();
 	
 	vector<string> cellNames;
@@ -99,7 +109,9 @@ void clockApp :: initClock ()
 	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setBgTexture( &texBg );
 	clock.setCellTexture( texCells, texCellsNum );
-	clock.setLineTexture( texLines, texLinesNum );
+//	clock.setLineTexture( texLines, texLinesNum );
+	clock.setInfoTexture( &texInfo );
+	clock.setMembraneTex( &texMembrane );
 	clock.setup();
 }
 

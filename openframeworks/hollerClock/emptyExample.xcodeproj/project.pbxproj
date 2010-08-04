@@ -70,6 +70,7 @@
 		B2569B1A11F3E6B100553DF4 /* b2PulleyJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE311F3E6B000553DF4 /* b2PulleyJoint.cpp */; };
 		B2569B1B11F3E6B100553DF4 /* b2RevoluteJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE511F3E6B000553DF4 /* b2RevoluteJoint.cpp */; };
 		B2569B1C11F3E6B100553DF4 /* ofxBox2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE711F3E6B000553DF4 /* ofxBox2d.cpp */; };
+		B26D4AE012092FDB00AFDC69 /* ofxGeom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26D4ADE12092FDB00AFDC69 /* ofxGeom.cpp */; };
 		B27B66FA1206A04900643337 /* ClockInfoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66F81206A04900643337 /* ClockInfoScreen.cpp */; };
 		B27B67121206A05400643337 /* Back.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66FC1206A05400643337 /* Back.cpp */; };
 		B27B67131206A05400643337 /* Bounce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66FE1206A05400643337 /* Bounce.cpp */; };
@@ -91,9 +92,6 @@
 		B28F078D11EFF73500B54D05 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078711EFF73500B54D05 /* tinyxmlerror.cpp */; };
 		B28F078E11EFF73500B54D05 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078811EFF73500B54D05 /* tinyxmlparser.cpp */; };
 		B28F078F11EFF73500B54D05 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078A11EFF73500B54D05 /* ofxXmlSettings.cpp */; };
-		B2AE666A12026EE800FC3FCC /* assert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE666612026EE800FC3FCC /* assert.cpp */; };
-		B2AE666B12026EE800FC3FCC /* del_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE666712026EE800FC3FCC /* del_impl.cpp */; };
-		B2AE666C12026EE800FC3FCC /* ofxTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE666812026EE800FC3FCC /* ofxTriangle.cpp */; };
 		B2AE676112027E3C00FC3FCC /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE675C12027E3C00FC3FCC /* Delaunay.cpp */; };
 		B2AE676212027E3C00FC3FCC /* ofxDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */; };
 		B2CDEA6B11F58BD600D1E7CD /* ofxColorMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5911F58BD600D1E7CD /* ofxColorMap.cpp */; };
@@ -356,6 +354,8 @@
 		B2569AF011F3E6B000553DF4 /* ofxBox2dRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dRender.h; path = src/ofxBox2d_rev84/src/ofxBox2dRender.h; sourceTree = SOURCE_ROOT; };
 		B2569AF111F3E6B000553DF4 /* ofxBox2dSoftBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dSoftBody.h; path = src/ofxBox2d_rev84/src/ofxBox2dSoftBody.h; sourceTree = SOURCE_ROOT; };
 		B2569AF211F3E6B000553DF4 /* ofxBox2dUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dUtils.h; path = src/ofxBox2d_rev84/src/ofxBox2dUtils.h; sourceTree = SOURCE_ROOT; };
+		B26D4ADE12092FDB00AFDC69 /* ofxGeom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxGeom.cpp; path = ../../../addons/ofxJulapyUtils/ofxGeom.cpp; sourceTree = SOURCE_ROOT; };
+		B26D4ADF12092FDB00AFDC69 /* ofxGeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGeom.h; path = ../../../addons/ofxJulapyUtils/ofxGeom.h; sourceTree = SOURCE_ROOT; };
 		B27B66F81206A04900643337 /* ClockInfoScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockInfoScreen.cpp; path = src/clock/ClockInfoScreen.cpp; sourceTree = SOURCE_ROOT; };
 		B27B66F91206A04900643337 /* ClockInfoScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockInfoScreen.h; path = src/clock/ClockInfoScreen.h; sourceTree = SOURCE_ROOT; };
 		B27B66FC1206A05400643337 /* Back.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Back.cpp; path = src/PennerEasing/Back.cpp; sourceTree = SOURCE_ROOT; };
@@ -403,15 +403,6 @@
 		B28F078811EFF73500B54D05 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
 		B28F078A11EFF73500B54D05 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxXmlSettings.cpp; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
 		B28F078B11EFF73500B54D05 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
-		B2AE665F12026EE800FC3FCC /* assert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = assert.hpp; path = ../../../addons/ofxTriangle/include/assert.hpp; sourceTree = SOURCE_ROOT; };
-		B2AE666012026EE800FC3FCC /* del_interface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = del_interface.hpp; path = ../../../addons/ofxTriangle/include/del_interface.hpp; sourceTree = SOURCE_ROOT; };
-		B2AE666112026EE800FC3FCC /* dpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = dpoint.hpp; path = ../../../addons/ofxTriangle/include/dpoint.hpp; sourceTree = SOURCE_ROOT; };
-		B2AE666212026EE800FC3FCC /* triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = triangle.h; path = ../../../addons/ofxTriangle/include/triangle.h; sourceTree = SOURCE_ROOT; };
-		B2AE666312026EE800FC3FCC /* triangle_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = triangle_impl.hpp; path = ../../../addons/ofxTriangle/include/triangle_impl.hpp; sourceTree = SOURCE_ROOT; };
-		B2AE666612026EE800FC3FCC /* assert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = assert.cpp; path = ../../../addons/ofxTriangle/lib/Triangle/assert.cpp; sourceTree = SOURCE_ROOT; };
-		B2AE666712026EE800FC3FCC /* del_impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = del_impl.cpp; path = ../../../addons/ofxTriangle/lib/Triangle/del_impl.cpp; sourceTree = SOURCE_ROOT; };
-		B2AE666812026EE800FC3FCC /* ofxTriangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxTriangle.cpp; path = ../../../addons/ofxTriangle/ofxTriangle.cpp; sourceTree = SOURCE_ROOT; };
-		B2AE666912026EE800FC3FCC /* ofxTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxTriangle.h; path = ../../../addons/ofxTriangle/ofxTriangle.h; sourceTree = SOURCE_ROOT; };
 		B2AE675C12027E3C00FC3FCC /* Delaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Delaunay.cpp; path = ../../../addons/ofxDelaunay/libs/Delaunay/Delaunay.cpp; sourceTree = SOURCE_ROOT; };
 		B2AE675D12027E3C00FC3FCC /* Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delaunay.h; path = ../../../addons/ofxDelaunay/libs/Delaunay/Delaunay.h; sourceTree = SOURCE_ROOT; };
 		B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDelaunay.cpp; path = ../../../addons/ofxDelaunay/src/ofxDelaunay.cpp; sourceTree = SOURCE_ROOT; };
@@ -459,7 +450,7 @@
 		E45BE9770E8CC7DD009D7055 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExampleDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B69B5B0A3A1756003C02F2 /* HollerClock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HollerClock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1E0A3A1BDC003C02F2 /* clockApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; path = clockApp.cpp; sourceTree = "<group>"; };
 		E4B69E1F0A3A1BDC003C02F2 /* clockApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = clockApp.h; sourceTree = "<group>"; };
@@ -524,7 +515,6 @@
 				B208749211F80F1A00592A37 /* ofxSimpleGuiToo_rev204 */,
 				B20874C611F80F2100592A37 /* ofxMSAInteractiveObject_rev186 */,
 				B22A9ECB1201385B003422E8 /* ofxContourUtil */,
-				B2AE665D12026EE800FC3FCC /* ofxTriangle */,
 				B2AE675912027E3C00FC3FCC /* ofxDelaunay */,
 				B27B66FB1206A05400643337 /* PennerEasing */,
 			);
@@ -1028,50 +1018,6 @@
 			path = ../../../addons/ofxXmlSettings/src;
 			sourceTree = SOURCE_ROOT;
 		};
-		B2AE665D12026EE800FC3FCC /* ofxTriangle */ = {
-			isa = PBXGroup;
-			children = (
-				B2AE665E12026EE800FC3FCC /* include */,
-				B2AE666412026EE800FC3FCC /* lib */,
-				B2AE666812026EE800FC3FCC /* ofxTriangle.cpp */,
-				B2AE666912026EE800FC3FCC /* ofxTriangle.h */,
-			);
-			name = ofxTriangle;
-			path = ../../../addons/ofxTriangle;
-			sourceTree = SOURCE_ROOT;
-		};
-		B2AE665E12026EE800FC3FCC /* include */ = {
-			isa = PBXGroup;
-			children = (
-				B2AE665F12026EE800FC3FCC /* assert.hpp */,
-				B2AE666012026EE800FC3FCC /* del_interface.hpp */,
-				B2AE666112026EE800FC3FCC /* dpoint.hpp */,
-				B2AE666212026EE800FC3FCC /* triangle.h */,
-				B2AE666312026EE800FC3FCC /* triangle_impl.hpp */,
-			);
-			name = include;
-			path = ../../../addons/ofxTriangle/include;
-			sourceTree = SOURCE_ROOT;
-		};
-		B2AE666412026EE800FC3FCC /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				B2AE666512026EE800FC3FCC /* Triangle */,
-			);
-			name = lib;
-			path = ../../../addons/ofxTriangle/lib;
-			sourceTree = SOURCE_ROOT;
-		};
-		B2AE666512026EE800FC3FCC /* Triangle */ = {
-			isa = PBXGroup;
-			children = (
-				B2AE666612026EE800FC3FCC /* assert.cpp */,
-				B2AE666712026EE800FC3FCC /* del_impl.cpp */,
-			);
-			name = Triangle;
-			path = ../../../addons/ofxTriangle/lib/Triangle;
-			sourceTree = SOURCE_ROOT;
-		};
 		B2AE675912027E3C00FC3FCC /* ofxDelaunay */ = {
 			isa = PBXGroup;
 			children = (
@@ -1121,6 +1067,8 @@
 				B2CDEA5C11F58BD600D1E7CD /* ofxColorUtils.h */,
 				B2CDEA5D11F58BD600D1E7CD /* ofxDataNormaliser.cpp */,
 				B2CDEA5E11F58BD600D1E7CD /* ofxDataNormaliser.h */,
+				B26D4ADE12092FDB00AFDC69 /* ofxGeom.cpp */,
+				B26D4ADF12092FDB00AFDC69 /* ofxGeom.h */,
 				B2CDEA5F11F58BD600D1E7CD /* ofxJulapyApp.cpp */,
 				B2CDEA6011F58BD600D1E7CD /* ofxJulapyApp.h */,
 				B2CDEA6111F58BD600D1E7CD /* ofxResizeUtil.cpp */,
@@ -1318,7 +1266,7 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
-				E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */,
+				E4B69B5B0A3A1756003C02F2 /* HollerClock.app */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				15C54ACA1164247B00FF3DF7 /* addons */,
@@ -1444,7 +1392,7 @@
 			);
 			name = emptyExample;
 			productName = myOFApp;
-			productReference = E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */;
+			productReference = E4B69B5B0A3A1756003C02F2 /* HollerClock.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1585,9 +1533,6 @@
 				B284831611F9635C004F0780 /* contactApp.cpp in Sources */,
 				B2F2717F11FD48DE003B876D /* jointApp.cpp in Sources */,
 				B22A9ED21201385B003422E8 /* ofxContourUtil.cpp in Sources */,
-				B2AE666A12026EE800FC3FCC /* assert.cpp in Sources */,
-				B2AE666B12026EE800FC3FCC /* del_impl.cpp in Sources */,
-				B2AE666C12026EE800FC3FCC /* ofxTriangle.cpp in Sources */,
 				B2AE676112027E3C00FC3FCC /* Delaunay.cpp in Sources */,
 				B2AE676212027E3C00FC3FCC /* ofxDelaunay.cpp in Sources */,
 				B27B66FA1206A04900643337 /* ClockInfoScreen.cpp in Sources */,
@@ -1603,6 +1548,7 @@
 				B27B671B1206A05400643337 /* Quint.cpp in Sources */,
 				B27B671C1206A05400643337 /* Sine.cpp in Sources */,
 				B2464C341207FD81000BF9BB /* ClockLine.cpp in Sources */,
+				B26D4AE012092FDB00AFDC69 /* ofxGeom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1699,7 +1645,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				PREBINDING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)Universal";
+				PRODUCT_NAME = HollerClock;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1820,7 +1766,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				PREBINDING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)Debug";
+				PRODUCT_NAME = HollerClock;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1869,7 +1815,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				PREBINDING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = HollerClock;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};

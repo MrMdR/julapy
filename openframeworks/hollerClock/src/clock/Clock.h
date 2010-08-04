@@ -15,10 +15,7 @@
 #include "ofxVec2f.h"
 #include "ofxContourUtil.h"
 #include "ofxDelaunay.h"
-
-#ifndef TARGET_OF_IPHONE
-#include "ofxTriangle.h"
-#endif
+#include "ofxGeom.h"
 
 #ifdef TARGET_OF_IPHONE
 #include "ofxALSoundPlayer.h"
@@ -32,6 +29,12 @@
 #define CLOCK_MODE_2		2
 #define RAY_BLOB_HI_RES		200
 #define RAY_BLOB_LO_RES		10
+
+struct Clock_XY 
+{
+	float x;
+	float y;
+};
 
 class Clock : public ofxBox2dContactReceiver
 {
@@ -52,8 +55,10 @@ public :
 	void  setSound			( ofSoundPlayer* secTwoSound = NULL, ofSoundPlayer* secOneSound = NULL );
 #endif
 	void  setBgTexture		( ofTexture* tex );
+	void  setInfoTexture	( ofTexture* tex );
 	void  setCellTexture	( ofTexture* tex, int numOfTextures );
 	void  setLineTexture	( ofTexture* tex, int numOfTextures );
+	void  setMembraneTex	( ofTexture* tex );
 	void  setGravity		( float x, float y );
 	void  setForceScale		( float f );
 	
@@ -63,6 +68,7 @@ public :
 	float areaToRadius		( float area );
 	void  createSoftBody	();
 	void  createLines		();
+	void  createInfoScreen	();
 	
 	void setup				();
 	void update				( int hrs, int min, int sec );
@@ -100,12 +106,19 @@ public :
 	void drawRayCasts		();
 	void drawRayBlob		();
 	void drawConvexBlob		( const vector<ofPoint>& points );
+	void drawConvexBlobRim	( const vector<ofPoint>& points );
 	void drawDelaunay		( vector<ofxDelaunayTriangle>& triangles );
 	
+#ifdef TARGET_OF_IPHONE
+	void touchDown			( ofTouchEventArgs &touch );
+	void touchMoved			( ofTouchEventArgs &touch );
+	void touchUp			( ofTouchEventArgs &touch );
+#else
 	void mouseMoved			( ofMouseEventArgs &e );
 	void mousePressed		( ofMouseEventArgs &e );
 	void mouseDragged		( ofMouseEventArgs &e );
 	void mouseReleased		( ofMouseEventArgs &e );
+#endif
 	
 	vector<ClockCircle*>	hrsOne;
 	vector<ClockCircle*>	hrsTwo;
@@ -177,6 +190,8 @@ public :
 	int						texCellsNum;
 	ofTexture*				texLines;
 	int						texLinesNum;
+	ofTexture*				texInfo;
+	ofTexture*				texMembrane;
 	
 	vector<ClockLine>		lines;
 	
@@ -191,6 +206,8 @@ public :
 	ofxDelaunay				delaunay;
 	vector<ofxDelaunayTriangle>	delaunayTrg1;
 	vector<ofxDelaunayTriangle>	delaunayTrg2;
+	
+	ofxGeom					geom;
 	
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	ofPoint					gravity;

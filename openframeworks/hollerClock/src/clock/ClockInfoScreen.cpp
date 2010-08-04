@@ -15,11 +15,24 @@ ClockInfoScreen :: ClockInfoScreen ()
 	screenHeight	= ofGetHeight();
 	
 	bShowing		= false;
+	
+	tex				= NULL;
 }
 
 ClockInfoScreen :: ~ClockInfoScreen ()
 {
 	//
+}
+
+void ClockInfoScreen :: setSize ( int w, int h )
+{
+	screenWidth		= w;
+	screenHeight	= h;
+}
+
+void ClockInfoScreen :: setTexture ( ofTexture* tex )
+{
+	this->tex = tex;
 }
 
 void ClockInfoScreen :: draw ()
@@ -32,6 +45,12 @@ void ClockInfoScreen :: draw ()
 	ofFill();
 	ofSetColor( 0, 0, 0, 100 );
 	ofRect( 0, 0, screenWidth, screenHeight );
+	
+	if( tex != NULL )
+	{
+		ofSetColor( 255, 255, 255, 255 );
+		tex->draw( 0, 0 );
+	}
 	
 	ofDisableAlphaBlending();
 }
