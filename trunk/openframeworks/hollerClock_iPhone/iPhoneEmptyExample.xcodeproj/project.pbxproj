@@ -25,6 +25,8 @@
 		B22A9F4212014009003422E8 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22A9F4012014009003422E8 /* ofxContourUtil.cpp */; };
 		B25E8CE811FEA70B00CA11BB /* libfreeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */; };
 		B25E8CE911FEA70B00CA11BB /* libfreeimage-iphonesimulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */; };
+		B26D49821208FB0A00AFDC69 /* ClockLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26D49801208FB0A00AFDC69 /* ClockLine.cpp */; };
+		B26D4C311209516B00AFDC69 /* ofxGeom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26D4C2F1209516B00AFDC69 /* ofxGeom.cpp */; };
 		B27B673B1206A14C00643337 /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67361206A14C00643337 /* Delaunay.cpp */; };
 		B27B673C1206A14C00643337 /* ofxDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67391206A14C00643337 /* ofxDelaunay.cpp */; };
 		B27B67431206A17000643337 /* ClockInfoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67411206A17000643337 /* ClockInfoScreen.cpp */; };
@@ -103,7 +105,7 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* emptyExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* HollerClock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HollerClock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
@@ -125,6 +127,10 @@
 		B22A9F4112014009003422E8 /* ofxContourUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxContourUtil.h; path = ../../../../of_0061/addons/ofxContourUtil/src/ofxContourUtil.h; sourceTree = SOURCE_ROOT; };
 		B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfreeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/libfreeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfreeimage-iphonesimulator.a"; path = "../../../libs/FreeImage/lib/iphone/libfreeimage-iphonesimulator.a"; sourceTree = SOURCE_ROOT; };
+		B26D49801208FB0A00AFDC69 /* ClockLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockLine.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockLine.cpp; sourceTree = SOURCE_ROOT; };
+		B26D49811208FB0A00AFDC69 /* ClockLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockLine.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockLine.h; sourceTree = SOURCE_ROOT; };
+		B26D4C2F1209516B00AFDC69 /* ofxGeom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxGeom.cpp; path = ../../../../of_0061/addons/ofxJulapyUtils/ofxGeom.cpp; sourceTree = SOURCE_ROOT; };
+		B26D4C301209516B00AFDC69 /* ofxGeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGeom.h; path = ../../../../of_0061/addons/ofxJulapyUtils/ofxGeom.h; sourceTree = SOURCE_ROOT; };
 		B27B67361206A14C00643337 /* Delaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Delaunay.cpp; path = ../../../../of_0061/addons/ofxDelaunay/libs/Delaunay/Delaunay.cpp; sourceTree = SOURCE_ROOT; };
 		B27B67371206A14C00643337 /* Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delaunay.h; path = ../../../../of_0061/addons/ofxDelaunay/libs/Delaunay/Delaunay.h; sourceTree = SOURCE_ROOT; };
 		B27B67391206A14C00643337 /* ofxDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDelaunay.cpp; path = ../../../../of_0061/addons/ofxDelaunay/src/ofxDelaunay.cpp; sourceTree = SOURCE_ROOT; };
@@ -351,7 +357,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* emptyExample.app */,
+				1D6058910D05DD3D006BFB54 /* HollerClock.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -467,6 +473,15 @@
 			name = src;
 			path = ../../../../of_0061/addons/ofxContourUtil/src;
 			sourceTree = SOURCE_ROOT;
+		};
+		B26D4C2D1209514500AFDC69 /* ofxGeom */ = {
+			isa = PBXGroup;
+			children = (
+				B26D4C2F1209516B00AFDC69 /* ofxGeom.cpp */,
+				B26D4C301209516B00AFDC69 /* ofxGeom.h */,
+			);
+			name = ofxGeom;
+			sourceTree = "<group>";
 		};
 		B27B67331206A14C00643337 /* ofxDelaunay */ = {
 			isa = PBXGroup;
@@ -780,6 +795,8 @@
 				B2F11AC511FECE5D009300F6 /* ClockCircle.h */,
 				B27B67411206A17000643337 /* ClockInfoScreen.cpp */,
 				B27B67421206A17000643337 /* ClockInfoScreen.h */,
+				B26D49801208FB0A00AFDC69 /* ClockLine.cpp */,
+				B26D49811208FB0A00AFDC69 /* ClockLine.h */,
 			);
 			name = clock;
 			path = ../../../../of_0061/apps/julapy/hollerClock/src/clock;
@@ -808,6 +825,7 @@
 				B22A9F3B12014009003422E8 /* ofxContourUtil */,
 				B2AE65C51202614900FC3FCC /* ofxALSoundPlayer */,
 				B27B67331206A14C00643337 /* ofxDelaunay */,
+				B26D4C2D1209514500AFDC69 /* ofxGeom */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1047,9 +1065,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* emptyExample */ = {
+		1D6058900D05DD3D006BFB54 /* HollerClock */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "emptyExample" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "HollerClock" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -1060,9 +1078,9 @@
 			);
 			dependencies = (
 			);
-			name = emptyExample;
+			name = HollerClock;
 			productName = iPhone;
-			productReference = 1D6058910D05DD3D006BFB54 /* emptyExample.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* HollerClock.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1083,7 +1101,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* emptyExample */,
+				1D6058900D05DD3D006BFB54 /* HollerClock */,
 			);
 		};
 /* End PBXProject section */
@@ -1187,6 +1205,8 @@
 				B27B673B1206A14C00643337 /* Delaunay.cpp in Sources */,
 				B27B673C1206A14C00643337 /* ofxDelaunay.cpp in Sources */,
 				B27B67431206A17000643337 /* ClockInfoScreen.cpp in Sources */,
+				B26D49821208FB0A00AFDC69 /* ClockLine.cpp in Sources */,
+				B26D4C311209516B00AFDC69 /* ofxGeom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1425,7 +1445,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "emptyExample" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "HollerClock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
