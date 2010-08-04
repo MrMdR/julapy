@@ -21,10 +21,96 @@ void clockApp :: setup()
 //	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
-	font.loadFont( "fonts/cooperBlack.ttf", 40 );
+	//-- size.
+	
+	if( deviceType == DEVICE_IPHONE )
+	{
+		screenSize.width	= 480;
+		screenSize.height	= 320;
+	}
+	else if( deviceType == DEVICE_IPAD )
+	{
+		screenSize.width	= 1024;
+		screenSize.height	= 768;
+	}
+	
+	//-- font.
+	
+	font1.loadFont( "fonts/1859_solferino_caps_light.ttf", 20 );
+	font2.loadFont( "fonts/1859_solferino_caps_light.ttf", 20 );
+	
+	//-- sound.
 	
 	secTwoSound.loadSound( ofToDataPath( "sound/boop_1.caf" ) );
 	secOneSound.loadSound( ofToDataPath( "sound/boop_2.caf" ) );
+	
+	//-- images.
+	
+	texFsSize.width		= screenSize.width  * 1.0;
+	texFsSize.height	= screenSize.height * 1.0;
+	
+	if( deviceType == DEVICE_IPHONE )
+	{
+		image.loadImage( "image/background_480x320.png" );
+	}
+	else if( deviceType == DEVICE_IPAD )
+	{
+		image.loadImage( "image/background_1024x768.png" );
+	}
+	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
+	texBg.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGBA );
+	image.clear();
+	
+	if( deviceType == DEVICE_IPHONE )
+	{
+		image.loadImage( "image/info_480x320.png" );
+	}
+	else if( deviceType == DEVICE_IPAD )
+	{
+		image.loadImage( "image/info_1024x768.png" );
+	}
+	texInfo.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
+	texInfo.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGBA );
+	image.clear();
+
+	if( deviceType == DEVICE_IPHONE )
+	{
+		image.loadImage( "image/membrane2_512x25.png" );
+	}
+	else if( deviceType == DEVICE_IPAD )
+	{
+		image.loadImage( "image/membrane2_512x25.png" );
+	}
+	texMembrane.allocate( image.width, image.height, GL_RGBA );
+	texMembrane.loadData( image.getPixels(), image.width, image.height, GL_RGBA );
+	image.clear();
+	
+	vector<string> cellNames;
+	if( deviceType == DEVICE_IPHONE )
+	{
+		cellNames.push_back( "image/cell01_64x64.png" );
+		cellNames.push_back( "image/cell02_64x64.png" );
+		cellNames.push_back( "image/cell03_64x64.png" );
+	}
+	else if( deviceType == DEVICE_IPAD )
+	{
+		cellNames.push_back( "image/cell01_128x128.png" );
+		cellNames.push_back( "image/cell02_128x128.png" );
+		cellNames.push_back( "image/cell03_128x128.png" );
+	}
+	
+	texCellsNum = cellNames.size();
+	texCells	= new ofTexture[ texCellsNum ];
+	
+	for( int i=0; i<cellNames.size(); i++ )
+	{
+		image.loadImage( cellNames[ i ] );
+		texCells[ i ].allocate( image.width, image.height, GL_RGBA );
+		texCells[ i ].loadData( image.getPixels(), image.width, image.height, GL_RGBA );
+		image.clear();
+	}
+	
+	//--
 	
 	initClock();
 }
@@ -40,8 +126,8 @@ void clockApp :: initClock ()
 	
 	contactListener.addReceiver( &clock );
 
-	int w = ( deviceType == DEVICE_IPAD ) ? 1024 : 480;
-	int h = ( deviceType == DEVICE_IPAD ) ? 768  : 320;
+	int w = screenSize.width;
+	int h = screenSize.height;
 	
 	float a1 = w * h;
 	float a2 = 1280 * 720;
@@ -50,8 +136,12 @@ void clockApp :: initClock ()
 	clock.setBox2d( &box2d );
 	clock.setSize( w, h );
 	clock.setForceScale( fs );
-//	clock.setTimeFont( &font );
+//	clock.setTimeFonts( &font1, &font2 );
 	clock.setSound( &secTwoSound, &secOneSound );
+	clock.setBgTexture( &texBg );
+	clock.setCellTexture( texCells, texCellsNum );
+	clock.setInfoTexture( &texInfo );
+	clock.setMembraneTex( &texMembrane );
 	clock.setup();
 }
 
@@ -137,7 +227,7 @@ void clockApp :: draw()
 	
 	clock.draw();
 	
-	ofSetColor( 0xFFFFFF );
+	ofSetColor( 0x000000 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, ofGetHeight() - 15 );
 }
 

@@ -1,24 +1,24 @@
 // !$*UTF8*$!
 {
-	1D6058900D05DD3D006BFB54 /* emptyExample */ = {
+	1D6058900D05DD3D006BFB54 /* HollerClock */ = {
 		activeExec = 0;
 		executables = (
-			B21D403511FE69DE0063486D /* emptyExample */,
+			B21D403511FE69DE0063486D /* HollerClock */,
 		);
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Release;
-		activeExecutable = B21D403511FE69DE0063486D /* emptyExample */;
+		activeExecutable = B21D403511FE69DE0063486D /* HollerClock */;
 		activeSDKPreference = iphoneos3.2;
-		activeTarget = 1D6058900D05DD3D006BFB54 /* emptyExample */;
+		activeTarget = 1D6058900D05DD3D006BFB54 /* HollerClock */;
 		addToTargets = (
-			1D6058900D05DD3D006BFB54 /* emptyExample */,
+			1D6058900D05DD3D006BFB54 /* HollerClock */,
 		);
 		breakpoints = (
 		);
 		codeSenseManager = B21D404211FE69FD0063486D /* Code sense */;
 		executables = (
-			B21D403511FE69DE0063486D /* emptyExample */,
+			B21D403511FE69DE0063486D /* HollerClock */,
 		);
 		perUserDictionary = {
 			PBXConfiguration.PBXFileTableDataSource3.PBXExecutablesDataSource = {
@@ -79,23 +79,27 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 302424361;
-			PBXWorkspaceStateSaveDate = 302424361;
+			PBXPerProjectTemplateStateSaveDate = 302578356;
+			PBXWorkspaceStateSaveDate = 302578356;
 		};
 		perUserProjectItems = {
+			B2464A471207B3D4000BF9BB /* PBXTextBookmark */ = B2464A471207B3D4000BF9BB /* PBXTextBookmark */;
 			B25E8B6311FE729F00CA11BB /* PBXTextBookmark */ = B25E8B6311FE729F00CA11BB /* PBXTextBookmark */;
-			B266D00D11FED27A00A6A50B /* PlistBookmark */ = B266D00D11FED27A00A6A50B /* PlistBookmark */;
-			B27B67711206A83D00643337 /* PBXTextBookmark */ = B27B67711206A83D00643337 /* PBXTextBookmark */;
-			B27B677D1206A86100643337 /* PBXTextBookmark */ = B27B677D1206A86100643337 /* PBXTextBookmark */;
-			B27B677E1206A86100643337 /* PBXTextBookmark */ = B27B677E1206A86100643337 /* PBXTextBookmark */;
-			B27B67DA1206B3BA00643337 /* PBXTextBookmark */ = B27B67DA1206B3BA00643337 /* PBXTextBookmark */;
+			B26D4A0F120905B900AFDC69 /* PlistBookmark */ = B26D4A0F120905B900AFDC69 /* PlistBookmark */;
+			B26D4A10120905B900AFDC69 /* PBXBookmark */ = B26D4A10120905B900AFDC69 /* PBXBookmark */;
+			B26D4A5E1209081600AFDC69 /* PBXBookmark */ = B26D4A5E1209081600AFDC69 /* PBXBookmark */;
+			B26D4A5F1209081600AFDC69 /* PBXTextBookmark */ = B26D4A5F1209081600AFDC69 /* PBXTextBookmark */;
+			B26D4A99120923D800AFDC69 /* PBXTextBookmark */ = B26D4A99120923D800AFDC69 /* PBXTextBookmark */;
+			B26D4AC012092C0300AFDC69 /* PBXTextBookmark */ = B26D4AC012092C0300AFDC69 /* PBXTextBookmark */;
+			B26D4AC112092C0300AFDC69 /* PBXTextBookmark */ = B26D4AC112092C0300AFDC69 /* PBXTextBookmark */;
+			B26D4AC212092C0300AFDC69 /* PBXTextBookmark */ = B26D4AC212092C0300AFDC69 /* PBXTextBookmark */;
+			B26D4C27120950D000AFDC69 /* PBXTextBookmark */ = B26D4C27120950D000AFDC69 /* PBXTextBookmark */;
+			B26D4C28120950D000AFDC69 /* PBXTextBookmark */ = B26D4C28120950D000AFDC69 /* PBXTextBookmark */;
+			B26D4C34120951B800AFDC69 /* PBXTextBookmark */ = B26D4C34120951B800AFDC69 /* PBXTextBookmark */;
 			B2AE65CF1202616D00FC3FCC /* PBXTextBookmark */ = B2AE65CF1202616D00FC3FCC /* PBXTextBookmark */;
 			B2AE65D01202616D00FC3FCC /* PBXTextBookmark */ = B2AE65D01202616D00FC3FCC /* PBXTextBookmark */;
 			B2AE65F0120261E800FC3FCC /* PBXTextBookmark */ = B2AE65F0120261E800FC3FCC /* PBXTextBookmark */;
-			B2AE66241202661600FC3FCC /* PBXBookmark */ = B2AE66241202661600FC3FCC /* PBXBookmark */;
-			B2AE66251202661600FC3FCC /* PBXBookmark */ = B2AE66251202661600FC3FCC /* PBXBookmark */;
 			B2AE66391202674300FC3FCC /* PBXTextBookmark */ = B2AE66391202674300FC3FCC /* PBXTextBookmark */;
-			B2AE676F12027EF500FC3FCC /* PBXTextBookmark */ = B2AE676F12027EF500FC3FCC /* PBXTextBookmark */;
 			B2FBE817120012CC00BDF788 /* PBXTextBookmark */ = B2FBE817120012CC00BDF788 /* PBXTextBookmark */;
 		};
 		sourceControlManager = B21D404111FE69FD0063486D /* Source Control */;
@@ -109,7 +113,7 @@
 			sepNavVisRange = "{0, 181}";
 		};
 	};
-	B21D403511FE69DE0063486D /* emptyExample */ = {
+	B21D403511FE69DE0063486D /* HollerClock */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
 		);
@@ -132,7 +136,7 @@
 		executableSystemSymbolLevel = 0;
 		executableUserSymbolLevel = 0;
 		libgmallocEnabled = 0;
-		name = emptyExample;
+		name = HollerClock;
 		savedGlobals = {
 		};
 		showTypeColumn = 0;
@@ -155,6 +159,16 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
+	B2464A471207B3D4000BF9BB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4D8928511527878007E1F53 /* main.mm */;
+		name = "main.mm: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 249;
+		vrLoc = 0;
+	};
 	B25E8B6311FE729F00CA11BB /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */;
@@ -165,56 +179,118 @@
 		vrLen = 181;
 		vrLoc = 0;
 	};
-	B266D00D11FED27A00A6A50B /* PlistBookmark */ = {
+	B26D4A0F120905B900AFDC69 /* PlistBookmark */ = {
 		isa = PlistBookmark;
 		fRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */;
 		fallbackIsa = PBXBookmark;
 		isK = 0;
 		kPath = (
 		);
-		name = "/Users/lukasz/Documents/workspace/of_0061_iphone/apps/julapy/hollerClock/ofxiphone-Info.plist";
+		name = "/Users/lukasz/Documents/workspace/of_0061_iPhone/apps/julapy/hollerClock/ofxiphone-Info.plist";
 		rLen = 0;
-		rLoc = 9223372036854775808;
+		rLoc = 9223372036854775807;
 	};
-	B27B67711206A83D00643337 /* PBXTextBookmark */ = {
+	B26D4A10120905B900AFDC69 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BB24DD8D10DA77E000E9C588 /* Icon.png */;
+	};
+	B26D4A5E1209081600AFDC69 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BB24DD8C10DA77E000E9C588 /* Default.png */;
+	};
+	B26D4A5F1209081600AFDC69 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = B2F11ACC11FECE88009300F6 /* clockApp.mm */;
-		name = "clockApp.mm: 20";
-		rLen = 0;
-		rLoc = 454;
+		fRef = B2F11AC411FECE5D009300F6 /* ClockCircle.cpp */;
+		name = "ClockCircle.cpp: 18";
+		rLen = 29;
+		rLoc = 307;
 		rType = 0;
-		vrLen = 1200;
+		vrLen = 849;
 		vrLoc = 0;
 	};
-	B27B677D1206A86100643337 /* PBXTextBookmark */ = {
+	B26D4A99120923D800AFDC69 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2F11AC311FECE5D009300F6 /* Clock.h */;
+		name = "Clock.h: 11";
+		rLen = 0;
+		rLoc = 175;
+		rType = 0;
+		vrLen = 1003;
+		vrLoc = 0;
+	};
+	B26D4AC012092C0300AFDC69 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B27B67421206A17000643337 /* ClockInfoScreen.h */;
+		name = "ClockInfoScreen.h: 22";
+		rLen = 24;
+		rLoc = 317;
+		rType = 0;
+		vrLen = 497;
+		vrLoc = 0;
+	};
+	B26D4AC112092C0300AFDC69 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B27B67411206A17000643337 /* ClockInfoScreen.cpp */;
+		name = "ClockInfoScreen.cpp: 25";
+		rLen = 7;
+		rLoc = 402;
+		rType = 0;
+		vrLen = 629;
+		vrLoc = 185;
+	};
+	B26D4AC212092C0300AFDC69 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = B2F11AC211FECE5D009300F6 /* Clock.cpp */;
-		name = "Clock.cpp: 942";
+		name = "Clock.cpp: 111";
 		rLen = 0;
-		rLoc = 19391;
+		rLoc = 2151;
 		rType = 0;
-		vrLen = 857;
-		vrLoc = 0;
+		vrLen = 962;
+		vrLoc = 1734;
 	};
-	B27B677E1206A86100643337 /* PBXTextBookmark */ = {
+	B26D4C27120950D000AFDC69 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = B2F11ACB11FECE88009300F6 /* clockApp.h */;
-		name = "clockApp.h: 33";
+		name = "clockApp.h: 58";
 		rLen = 0;
-		rLoc = 654;
+		rLoc = 1144;
 		rType = 0;
-		vrLen = 928;
+		vrLen = 913;
 		vrLoc = 0;
 	};
-	B27B67DA1206B3BA00643337 /* PBXTextBookmark */ = {
+	B26D4C28120950D000AFDC69 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = B2F11ACC11FECE88009300F6 /* clockApp.mm */;
 		name = "clockApp.mm: 99";
 		rLen = 0;
-		rLoc = 2190;
+		rLoc = 2912;
 		rType = 0;
-		vrLen = 1276;
-		vrLoc = 1832;
+		vrLen = 1240;
+		vrLoc = 1452;
+	};
+	B26D4C34120951B800AFDC69 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = B2F11ACC11FECE88009300F6 /* clockApp.mm */;
+		name = "clockApp.mm: 70";
+		rLen = 0;
+		rLoc = 1646;
+		rType = 0;
+		vrLen = 1445;
+		vrLoc = 1468;
+	};
+	B27B67411206A17000643337 /* ClockInfoScreen.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {911, 767}}";
+			sepNavSelRange = "{384, 7}";
+			sepNavVisRange = "{185, 629}";
+		};
+	};
+	B27B67421206A17000643337 /* ClockInfoScreen.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {911, 601}}";
+			sepNavSelRange = "{317, 24}";
+			sepNavVisRange = "{0, 497}";
+		};
 	};
 	B2AE65C61202614900FC3FCC /* ofxALSoundPlayer.cpp */ = {
 		uiCtxt = {
@@ -271,14 +347,6 @@
 		path = /Users/lukasz/Documents/workspace/of_0061_iphone/apps/julapy/hollerClock/src/clockApp.mm;
 		sourceTree = "<absolute>";
 	};
-	B2AE66241202661600FC3FCC /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = BB24DD8D10DA77E000E9C588 /* Icon.png */;
-	};
-	B2AE66251202661600FC3FCC /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = BB24DD8C10DA77E000E9C588 /* Default.png */;
-	};
 	B2AE66391202674300FC3FCC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = B2AE65C71202614900FC3FCC /* ofxALSoundPlayer.h */;
@@ -288,16 +356,6 @@
 		rType = 0;
 		vrLen = 1509;
 		vrLoc = 473;
-	};
-	B2AE676F12027EF500FC3FCC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = E4D8928511527878007E1F53 /* main.mm */;
-		name = "main.mm: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 249;
-		vrLoc = 0;
 	};
 	B2F11A8A11FECE54009300F6 /* ofxBox2d.cpp */ = {
 		uiCtxt = {
@@ -315,16 +373,24 @@
 	};
 	B2F11AC211FECE5D009300F6 /* Clock.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {911, 14625}}";
-			sepNavSelRange = "{19388, 0}";
-			sepNavVisRange = "{0, 857}";
+			sepNavIntBoundsRect = "{{0, 0}, {911, 15795}}";
+			sepNavSelRange = "{2130, 0}";
+			sepNavVisRange = "{1734, 962}";
+			sepNavWindowFrame = "{{1935, 181}, {896, 1014}}";
 		};
 	};
 	B2F11AC311FECE5D009300F6 /* Clock.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {957, 2314}}";
-			sepNavSelRange = "{2308, 16}";
-			sepNavVisRange = "{1865, 1202}";
+			sepNavIntBoundsRect = "{{0, 0}, {911, 2821}}";
+			sepNavSelRange = "{175, 0}";
+			sepNavVisRange = "{0, 1003}";
+		};
+	};
+	B2F11AC411FECE5D009300F6 /* ClockCircle.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {911, 4433}}";
+			sepNavSelRange = "{307, 29}";
+			sepNavVisRange = "{0, 849}";
 		};
 	};
 	B2F11AC511FECE5D009300F6 /* ClockCircle.h */ = {
@@ -336,17 +402,17 @@
 	};
 	B2F11ACB11FECE88009300F6 /* clockApp.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {911, 676}}";
-			sepNavSelRange = "{654, 0}";
-			sepNavVisRange = "{0, 928}";
+			sepNavIntBoundsRect = "{{0, 0}, {911, 806}}";
+			sepNavSelRange = "{1144, 0}";
+			sepNavVisRange = "{0, 913}";
 			sepNavWindowFrame = "{{1958, 160}, {896, 1014}}";
 		};
 	};
 	B2F11ACC11FECE88009300F6 /* clockApp.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {911, 2262}}";
-			sepNavSelRange = "{2190, 0}";
-			sepNavVisRange = "{1832, 1276}";
+			sepNavIntBoundsRect = "{{0, 0}, {911, 3406}}";
+			sepNavSelRange = "{1646, 0}";
+			sepNavVisRange = "{1468, 1445}";
 		};
 	};
 	B2FBE817120012CC00BDF788 /* PBXTextBookmark */ = {
@@ -373,7 +439,7 @@
 	};
 	E4D8928511527878007E1F53 /* main.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1329, 210}}";
+			sepNavIntBoundsRect = "{{0, 0}, {911, 655}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 249}";
 		};
