@@ -17,6 +17,9 @@ ClockInfoScreen :: ClockInfoScreen ()
 	bShowing		= false;
 	
 	tex				= NULL;
+	
+	alphaBg			= 0;
+	alphaTex		= 0;
 }
 
 ClockInfoScreen :: ~ClockInfoScreen ()

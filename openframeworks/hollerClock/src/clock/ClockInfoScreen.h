@@ -11,6 +11,7 @@
 #define CLOCK_INFO_SCREEN_H
 
 #include "ofMain.h"
+#include "Quad.h"
 
 class ClockInfoScreen
 {
@@ -34,6 +35,9 @@ public :
 	int		screenHeight;
 	
 	ofTexture* tex;
+	
+	float	alphaBg;
+	float	alphaTex;
 };
 
 #endif
