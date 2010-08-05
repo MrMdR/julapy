@@ -272,6 +272,7 @@
 								<string>B2569A8811F3E6B000553DF4</string>
 								<string>B2569A8911F3E6B000553DF4</string>
 								<string>B2569A8A11F3E6B000553DF4</string>
+								<string>B27B66FB1206A05400643337</string>
 								<string>E4C2422310CC54B6004149E2</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
@@ -280,13 +281,14 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>5</integer>
+									<integer>20</integer>
+									<integer>14</integer>
 									<integer>3</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {383, 978}}</string>
+							<string>{{0, 54}, {383, 978}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -323,7 +325,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>clockApp.cpp</string>
+								<string>ClockInfoScreen.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -331,11 +333,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>clockApp.cpp</string>
+										<string>ClockInfoScreen.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>B297D4A3120A942C00F2A72B</string>
+										<string>B297D4DD120AAE5E00F2A72B</string>
 										<key>history</key>
 										<array>
 											<string>B28F07DD11EFFB7100B54D05</string>
@@ -451,14 +453,19 @@
 											<string>B2AE674812027D3900FC3FCC</string>
 											<string>B2C29D4912067DAA0086E7AA</string>
 											<string>B27B67DB1206B3BC00643337</string>
-											<string>B26D49901208FDD500AFDC69</string>
 											<string>B26D4A4B1209066300AFDC69</string>
 											<string>B26D4A7B1209228B00AFDC69</string>
 											<string>B26D4C3A1209588200AFDC69</string>
 											<string>B297D44B120A84B100F2A72B</string>
 											<string>B297D44C120A84B100F2A72B</string>
 											<string>B297D48C120A8FAE00F2A72B</string>
-											<string>B297D48D120A8FAE00F2A72B</string>
+											<string>B297D4D6120AAE5E00F2A72B</string>
+											<string>B297D4D7120AAE5E00F2A72B</string>
+											<string>B297D4D8120AAE5E00F2A72B</string>
+											<string>B297D4D9120AAE5E00F2A72B</string>
+											<string>B297D4DA120AAE5E00F2A72B</string>
+											<string>B297D4DB120AAE5E00F2A72B</string>
+											<string>B297D4DC120AAE5E00F2A72B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -658,10 +665,10 @@
 	<array>
 		<string>B297D269120A58F900F2A72B</string>
 		<string>B297D26A120A58F900F2A72B</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>B208FFF511EEAA6B002AC0F8</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/lukasz/Documents/workspace/of_0061/apps/julapy/hollerClock/emptyExample.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -1038,7 +1045,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
