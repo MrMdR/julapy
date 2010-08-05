@@ -43,9 +43,6 @@ public:
 	
 	Clock					clock;
 	
-	ofTrueTypeFont			font1;
-	ofTrueTypeFont			font2;
-	
 	ofxALSoundPlayer		secTwoSound;
 	ofxALSoundPlayer		secOneSound;
 	
@@ -56,6 +53,8 @@ public:
 	int						texCellsNum;
 	ofTexture				texInfo;
 	ofTexture				texMembrane;
+	ofTexture*				texDigits;
+	int						texDigitsNum;
 };
 
 

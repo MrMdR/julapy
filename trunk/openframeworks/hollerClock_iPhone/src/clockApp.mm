@@ -14,7 +14,7 @@ void clockApp :: setup()
 	//-------------------
 	
 	deviceType = DEVICE_IPAD;
-	deviceType = DEVICE_IPHONE;
+//	deviceType = DEVICE_IPHONE;
 
 	ofBackground( 0, 0, 0 );
 	ofSetFrameRate( frameRate = 60 );
@@ -34,15 +34,11 @@ void clockApp :: setup()
 		screenSize.height	= 768;
 	}
 	
-	//-- font.
-	
-	font1.loadFont( "fonts/1859_solferino_caps_light.ttf", 20 );
-	font2.loadFont( "fonts/1859_solferino_caps_light.ttf", 20 );
-	
 	//-- sound.
 	
-	secTwoSound.loadSound( ofToDataPath( "sound/boop_1.caf" ) );
-	secOneSound.loadSound( ofToDataPath( "sound/boop_2.caf" ) );
+	secTwoSound.loadSound( ofToDataPath( "sound/beep_600hz_0_70.caf" ) );
+	secTwoSound.setVolume( 0.5 );
+	secOneSound.loadSound( ofToDataPath( "sound/beep_400hz_1_40.caf" ) );
 	
 	//-- images.
 	
@@ -110,6 +106,29 @@ void clockApp :: setup()
 		image.clear();
 	}
 	
+	vector<string> digitNames;
+	digitNames.push_back( "image/digits/0_64x64.png" );
+	digitNames.push_back( "image/digits/1_64x64.png" );
+	digitNames.push_back( "image/digits/2_64x64.png" );
+	digitNames.push_back( "image/digits/3_64x64.png" );
+	digitNames.push_back( "image/digits/4_64x64.png" );
+	digitNames.push_back( "image/digits/5_64x64.png" );
+	digitNames.push_back( "image/digits/6_64x64.png" );
+	digitNames.push_back( "image/digits/7_64x64.png" );
+	digitNames.push_back( "image/digits/8_64x64.png" );
+	digitNames.push_back( "image/digits/9_64x64.png" );
+	
+	texDigitsNum	= digitNames.size();
+	texDigits		= new ofTexture[ texDigitsNum ];
+	
+	for( int i=0; i<digitNames.size(); i++ )
+	{
+		image.loadImage( digitNames[ i ] );
+		texDigits[ i ].allocate( image.width, image.height, GL_RGBA );
+		texDigits[ i ].loadData( image.getPixels(), image.width, image.height, GL_RGBA );
+		image.clear();
+	}
+	
 	//--
 	
 	initClock();
@@ -135,13 +154,13 @@ void clockApp :: initClock ()
 	
 	clock.setBox2d( &box2d );
 	clock.setSize( w, h );
-	clock.setForceScale( fs );
-//	clock.setTimeFonts( &font1, &font2 );
+	clock.setScreenScale( fs );
 	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setBgTexture( &texBg );
 	clock.setCellTexture( texCells, texCellsNum );
 	clock.setInfoTexture( &texInfo );
 	clock.setMembraneTex( &texMembrane );
+	clock.setDigitTexture( texDigits, texDigitsNum );
 	clock.setup();
 }
 
@@ -228,7 +247,7 @@ void clockApp :: draw()
 	clock.draw();
 	
 	ofSetColor( 0x000000 );
-	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, ofGetHeight() - 15 );
+	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, 15 );
 }
 
 void clockApp :: exit()

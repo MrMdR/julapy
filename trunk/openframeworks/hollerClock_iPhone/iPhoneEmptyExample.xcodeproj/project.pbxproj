@@ -137,9 +137,6 @@
 		B27B673A1206A14C00643337 /* ofxDelaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxDelaunay.h; path = ../../../../of_0061/addons/ofxDelaunay/src/ofxDelaunay.h; sourceTree = SOURCE_ROOT; };
 		B27B67411206A17000643337 /* ClockInfoScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockInfoScreen.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockInfoScreen.cpp; sourceTree = SOURCE_ROOT; };
 		B27B67421206A17000643337 /* ClockInfoScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockInfoScreen.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockInfoScreen.h; sourceTree = SOURCE_ROOT; };
-		B2AE65B512025FE600FC3FCC /* boop_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = boop_1.mp3; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound/boop_1.mp3; sourceTree = SOURCE_ROOT; };
-		B2AE65B612025FE600FC3FCC /* boop_2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = boop_2.mp3; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound/boop_2.mp3; sourceTree = SOURCE_ROOT; };
-		B2AE65B712025FE600FC3FCC /* brrrp.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = brrrp.mp3; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound/brrrp.mp3; sourceTree = SOURCE_ROOT; };
 		B2AE65C61202614900FC3FCC /* ofxALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxALSoundPlayer.cpp; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/src/ofxALSoundPlayer/ofxALSoundPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		B2AE65C71202614900FC3FCC /* ofxALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxALSoundPlayer.h; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/src/ofxALSoundPlayer/ofxALSoundPlayer.h; sourceTree = SOURCE_ROOT; };
 		B2AE65C81202614900FC3FCC /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundEngine.cpp; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/src/ofxALSoundPlayer/SoundEngine.cpp; sourceTree = SOURCE_ROOT; };
@@ -522,17 +519,6 @@
 			path = ../../../../of_0061/addons/ofxDelaunay/src;
 			sourceTree = SOURCE_ROOT;
 		};
-		B2AE65B412025FE600FC3FCC /* sound */ = {
-			isa = PBXGroup;
-			children = (
-				B2AE65B512025FE600FC3FCC /* boop_1.mp3 */,
-				B2AE65B612025FE600FC3FCC /* boop_2.mp3 */,
-				B2AE65B712025FE600FC3FCC /* brrrp.mp3 */,
-			);
-			name = sound;
-			path = ../../../../of_0061_iphone/apps/julapy/hollerClock/bin/data/sound;
-			sourceTree = SOURCE_ROOT;
-		};
 		B2AE65C51202614900FC3FCC /* ofxALSoundPlayer */ = {
 			isa = PBXGroup;
 			children = (
@@ -833,7 +819,6 @@
 		BB24DD8B10DA77E000E9C588 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				B2AE65B412025FE600FC3FCC /* sound */,
 				BB24DD8C10DA77E000E9C588 /* Default.png */,
 				BB24DD8D10DA77E000E9C588 /* Icon.png */,
 			);
