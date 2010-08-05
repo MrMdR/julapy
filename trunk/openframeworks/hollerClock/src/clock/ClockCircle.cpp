@@ -13,10 +13,13 @@ ClockCircle :: ClockCircle ( float r, int c )
 {
 	radius		= r;
 	colorHex	= c;
+	rotation	= 0;
 	
 	colorTrgt.r	= colorCurr.r = ( c >> 16 ) & 0xff;
 	colorTrgt.g	= colorCurr.g = ( c >> 8  ) & 0xff;
 	colorTrgt.b	= colorCurr.b = ( c >> 0  ) & 0xff;
+	
+	forceScale	= 1.0;
 	
 	tex = NULL;
 }
@@ -44,6 +47,11 @@ void ClockCircle :: setSize ( int w, int h )
 void ClockCircle :: setTexture ( ofTexture* tex )
 {
 	this->tex = tex;
+}
+
+void ClockCircle :: setForceScale ( float scale )
+{
+	forceScale = scale;
 }
 
 void ClockCircle :: init ()
@@ -117,6 +125,63 @@ void ClockCircle :: init ()
 	bCenterJoint	= false;
 	bOuterJoint		= false;
 	bLineupJoint	= false;
+}
+
+void ClockCircle :: setup( b2World* b2dworld, float x, float y, float size, bool isFixed )
+{
+	if( b2dworld == NULL )
+	{
+		ofLog( OF_LOG_NOTICE, "- must have a valid world -" );
+		return;
+	}
+	
+	world				= b2dworld;
+	circle.radius		= size/OFX_BOX2D_SCALE;
+	bIsFixed			= isFixed;
+	
+	if( isFixed )
+	{
+		circle.density		= 0;
+		circle.restitution  = 0;
+		circle.friction		= 0;
+	}
+	else
+	{
+		circle.density		= mass;
+		circle.restitution  = bounce;
+		circle.friction		= friction;
+	}
+	
+	bodyDef.position.Set( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
+	
+	body = world->CreateBody( &bodyDef );
+	
+	if( body )
+	{
+		body->SetLinearVelocity( b2Vec2( 0.0, 0.0 ) );
+		body->CreateShape( &circle );
+		
+		if( true )
+		{
+			b2Vec2 localPos;
+			localPos = body->GetWorldCenter();
+			
+			b2MassData massData;
+			massData.mass	= 3.0 * forceScale;
+			massData.center = localPos;
+			massData.I		= 0;
+			
+//			massData.mass	= mass * PI * circle.radius * circle.radius;
+//			massData.center	= localPos;
+//			massData.I		= massData.mass * ( 0.5f * circle.radius * circle.radius + b2Dot( localPos, localPos ) );
+			
+			body->SetMass( &massData );
+		}
+		else
+		{
+			body->SetMassFromShapes();
+		}
+	}
 }
 
 ///////////////////////////////////////////////
@@ -213,14 +278,18 @@ bool ClockCircle :: hasLineupJoint ()	{ return bLineupJoint; }
 
 void ClockCircle :: update ()
 {
-	float angle			= getRotation();
-	const b2XForm& xf	= body->GetXForm();
-	b2Vec2	center		= body->GetPosition();
-	b2Vec2	axis		= xf.R.col1;
-	b2Vec2	p			= center + ( radius * 0.6 ) / OFX_BOX2D_SCALE * axis;
+	rotation = getRotation();
 	
-	eye.x = p.x * OFX_BOX2D_SCALE;
-	eye.y = p.y * OFX_BOX2D_SCALE;
+	if( tex == NULL )
+	{
+		const b2XForm& xf	= body->GetXForm();
+		b2Vec2	center		= body->GetPosition();
+		b2Vec2	axis		= xf.R.col1;
+		b2Vec2	p			= center + ( radius * 0.6 ) / OFX_BOX2D_SCALE * axis;
+		
+		eye.x = p.x * OFX_BOX2D_SCALE;
+		eye.y = p.y * OFX_BOX2D_SCALE;
+	}
 	
 	//--
 	
@@ -266,8 +335,6 @@ void ClockCircle :: drawCircles ()
 {
 	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b );
 	
-	float radius = getRadius();
-	
 	glPushMatrix();
 	glTranslatef( getPosition().x, getPosition().y, 0 );
 	
@@ -295,13 +362,10 @@ void ClockCircle :: drawTexture ()
 //	ofSetColor( 255, 255, 255 );
 	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b, 220 );
 	
-	float radius = getRadius();
-	
 	glPushMatrix();
 	glTranslatef( getPosition().x, getPosition().y, 0 );
 	
-//	float rot = getRotation();
-//	glRotatef( rot, 0, 0, 1 );
+	glRotatef( rotation, 0, 0, 1 );
 	
 	tex->draw( -radius, -radius, radius * 2, radius * 2 );
 	

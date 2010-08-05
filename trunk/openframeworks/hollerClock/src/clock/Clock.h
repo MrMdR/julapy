@@ -30,10 +30,13 @@
 #define RAY_BLOB_HI_RES		200
 #define RAY_BLOB_LO_RES		10
 
-struct Clock_XY 
+struct ClockDigit
 {
-	float x;
-	float y;
+	int		value;
+	int		valueMax;
+	ofPoint	p;
+	ofPoint p1;
+	ofPoint p2;
 };
 
 class Clock : public ofxBox2dContactReceiver
@@ -48,19 +51,21 @@ public :
 	void  setBox2d			( ofxBox2d *box2d );
 	void  setSize			( ofRectangle &size );
 	void  setSize			( int w, int h );
-	void  setTimeFonts		( ofTrueTypeFont *font1, ofTrueTypeFont *font2 );
+	void  setGravity		( float x, float y );
+	void  setScreenScale	( float scale );
+	
 #ifdef TARGET_OF_IPHONE	
 	void  setSound			( ofxALSoundPlayer* secTwoSound = NULL, ofxALSoundPlayer* secOneSound = NULL );
 #else
 	void  setSound			( ofSoundPlayer* secTwoSound = NULL, ofSoundPlayer* secOneSound = NULL );
 #endif
+	
 	void  setBgTexture		( ofTexture* tex );
 	void  setInfoTexture	( ofTexture* tex );
 	void  setCellTexture	( ofTexture* tex, int numOfTextures );
 	void  setLineTexture	( ofTexture* tex, int numOfTextures );
 	void  setMembraneTex	( ofTexture* tex );
-	void  setGravity		( float x, float y );
-	void  setForceScale		( float f );
+	void  setDigitTexture	( ofTexture* tex, int numOfTextures );
 	
 	void  createBounds		();
 	void  createCircles		();
@@ -85,7 +90,8 @@ public :
 	void updateForces		();
 	void updateForcesVec	( vector<ClockCircle*> &circlesVec, int count );
 	
-	void addCenterForce		( ClockCircle& circle );
+	void spinInner			( ClockCircle& circle );
+	void spinOuter			( ClockCircle& circle );
 	void pushFromCenter		( ClockCircle& circle );
 	void tilt				( ClockCircle& circle );
 	void floatUp			( ClockCircle& circle );
@@ -132,50 +138,18 @@ public :
 	
 	int						clockMode;
 	
-	int						hrsOneCount;
-	int						hrsTwoCount;
-	int						minOneCount;
-	int						minTwoCount;
-	int						secOneCount;
-	int						secTwoCount;
-	
-	int						hrsOneTotal;
-	int						hrsTwoTotal;
-	int						minOneTotal;
-	int						minTwoTotal;
-	int						secOneTotal;
-	int						secTwoTotal;
-	
-	int						hrsOneX;
-	int						hrsTwoX;
-	int						minOneX;
-	int						minTwoX;
-	int						secOneX;
-	int						secTwoX;
-
-	int						hrsOneM1X;
-	int						hrsTwoM1X;
-	int						minOneM1X;
-	int						minTwoM1X;
-	int						secOneM1X;
-	int						secTwoM1X;
-
-	int						hrsOneM2X;
-	int						hrsTwoM2X;
-	int						minOneM2X;
-	int						minTwoM2X;
-	int						secOneM2X;
-	int						secTwoM2X;
+	ClockDigit				digits[ 6 ];
 	
 	int						screenWidth;
 	int						screenHeight;
+	float					screenWidthScale;
+	float					screenHeightScale;
 	int						screenMinLength;
 	int						screenMaxLength;
 	int						screenTotal;
+	float					screenDiagonal;
 	ofxVec2f				screenCenter;
-	
-	ofTrueTypeFont*			font1;
-	ofTrueTypeFont*			font2;
+	float					screenScale;
 	
 #ifdef TARGET_OF_IPHONE	
 	ofxALSoundPlayer*		secTwoSound;
@@ -192,6 +166,8 @@ public :
 	int						texLinesNum;
 	ofTexture*				texInfo;
 	ofTexture*				texMembrane;
+	ofTexture*				texDigits;
+	int						texDigitsNum;
 	
 	vector<ClockLine>		lines;
 	
@@ -211,7 +187,6 @@ public :
 	
 	ofPoint					rayBlob[ RAY_BLOB_LO_RES ];
 	ofPoint					gravity;
-	float					forceScale;
 	
 	int						forceCenterPull;
 	int						forceCenterPush;

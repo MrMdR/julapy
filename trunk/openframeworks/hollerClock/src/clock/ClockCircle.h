@@ -35,6 +35,8 @@ public :
 	void setSize		( ofRectangle &size );
 	void setSize		( int w, int h );
 	void setTexture		( ofTexture* tex );
+	void setForceScale	( float scale );
+	void setup			( b2World * b2dworld, float x, float y, float size, bool isFixed=false );
 
 	void init			();
 	void update			();
@@ -63,6 +65,7 @@ public :
 	ofPoint		points2[ POINT_RES ];
 	
 	float		radius;
+	float		rotation;
 	int			colorHex;
 	ofColor		colorTrgt;
 	ofColor		colorCurr;
@@ -71,6 +74,8 @@ public :
 	
 	int			spinDir;
 	float		spinFrc;
+	
+	float		forceScale;
 	
 	bool		active;
 	
