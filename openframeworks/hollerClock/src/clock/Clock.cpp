@@ -12,8 +12,6 @@
 Clock :: Clock ()
 {
 	box2d		= NULL;
-	font1		= NULL;
-	font2		= NULL;
 	softBody	= NULL;
 	
 	secTwoSound	= NULL;
@@ -24,29 +22,40 @@ Clock :: Clock ()
 	texCells	= NULL;
 	texLines	= NULL;
 	texMembrane	= NULL;
+	texDigits	= NULL;
 	
 	clockMode = CLOCK_MODE_1;
 	
-	hrsOneTotal = 2;
-	hrsTwoTotal = 9;
-	minOneTotal = 5;
-	minTwoTotal = 9;
-	secOneTotal = 5;
-	secTwoTotal = 9;
+	digits[ 0 ].valueMax = 2;
+	digits[ 1 ].valueMax = 9;
+	digits[ 2 ].valueMax = 5;
+	digits[ 3 ].valueMax = 9;
+	digits[ 4 ].valueMax = 5;
+	digits[ 5 ].valueMax = 9;
 	
-	hrsOneX = hrsOneM1X	= 150;
-	hrsTwoX = hrsTwoM1X	= 220;
-	minOneX = minOneM1X	= 590;
-	minTwoX = minTwoM1X	= 660;
-	secOneX = secOneM1X	= 1000;
-	secTwoX = secTwoM1X	= 1070;
+	float x ,d, g;
 	
-	hrsOneM2X = 100;
-	hrsTwoM2X = 270;
-	minOneM2X = 540;
-	minTwoM2X = 710;
-	secOneM2X = 950;
-	secTwoM2X = 1120;
+	x = 0.05;
+	d = 0.022;
+	g = 0.05;
+	
+	digits[ 0 ].p.x = digits[ 0 ].p1.x	= x;
+	digits[ 1 ].p.x = digits[ 1 ].p1.x	= x += d;
+	digits[ 2 ].p.x = digits[ 2 ].p1.x	= x += g;
+	digits[ 3 ].p.x = digits[ 3 ].p1.x	= x += d;
+	digits[ 4 ].p.x = digits[ 4 ].p1.x	= x += g;
+	digits[ 5 ].p.x = digits[ 5 ].p1.x	= x += d;
+
+	x = 0.102;
+	d = 0.075;
+	g = 0.26;
+	
+	digits[ 0 ].p2.x = x;
+	digits[ 1 ].p2.x = x += d;
+	digits[ 2 ].p2.x = x += g;
+	digits[ 3 ].p2.x = x += d;
+	digits[ 4 ].p2.x = x += g;
+	digits[ 5 ].p2.x = x += d - 0.02;
 	
 	forceCenterPull	= 30;
 	forceCenterPush = 30;
@@ -59,7 +68,7 @@ Clock :: Clock ()
 	
 	setSize( ofGetWidth(), ofGetHeight() );
 	setGravity( 0, 0 );
-	setForceScale( 1.0 );
+	setScreenScale( 1.0 );
 
 #ifdef TARGET_OF_IPHONE	
 	ofAddListener( ofEvents.touchDown,		this, &Clock::touchDown		);
@@ -115,8 +124,13 @@ void Clock :: setSize ( int w, int h )
 	screenMaxLength = MAX( w, h );
 	screenTotal		= w * h;
 	
+	screenWidthScale	= screenWidth / 1280.0;
+	screenHeightScale	= screenHeight / 720.0;
+	
 	screenCenter.x	= screenWidth * 0.5;
 	screenCenter.y	= screenHeight * 0.5;
+	
+	screenDiagonal	= ofDist( 0, 0, screenCenter.x, screenCenter.y );
 	
 	//-- update circles.
 	
@@ -128,11 +142,18 @@ void Clock :: setSize ( int w, int h )
 	infoScreen.setSize( w, h );
 }
 
-void Clock :: setTimeFonts ( ofTrueTypeFont *font1, ofTrueTypeFont *font2 )
+void Clock :: setGravity( float x, float y )
 {
-	this->font1 = font1;
-	this->font2 = font2;
+	gravity.x += ( x - gravity.x ) * 0.6;
+	gravity.y += ( y - gravity.y ) * 0.6;
 }
+
+void Clock :: setScreenScale ( float scale )
+{
+	screenScale = scale;
+}
+
+//-- SOUND.
 
 #ifdef TARGET_OF_IPHONE	
 void Clock :: setSound ( ofxALSoundPlayer* secTwoSound, ofxALSoundPlayer* secOneSound )
@@ -147,6 +168,8 @@ void Clock :: setSound ( ofSoundPlayer* secTwoSound, ofSoundPlayer* secOneSound 
 	this->secOneSound = secOneSound;
 }
 #endif
+
+//-- TEXTURES.
 
 void Clock :: setBgTexture ( ofTexture* tex )
 {
@@ -175,16 +198,13 @@ void Clock :: setMembraneTex ( ofTexture* tex )
 	texMembrane = tex;
 }
 
-void Clock :: setGravity( float x, float y )
+void Clock :: setDigitTexture ( ofTexture* tex, int numOfTextures )
 {
-	gravity.x += ( x - gravity.x ) * 0.6;
-	gravity.y += ( y - gravity.y ) * 0.6;
+	texDigits = tex;
+	texDigitsNum = numOfTextures;
 }
 
-void Clock :: setForceScale ( float f )
-{
-	forceScale = f;
-}
+//-- CREATE.
 
 void Clock :: createBounds ()
 {
@@ -245,12 +265,12 @@ void Clock :: createCircles ()
 	float area	= 0.015;		// biggest area as start.
 	float dec	= 0.5;		// decrease in area for the next batch of circles.
 	
-	createCircle( hrsOne, hrsOneTotal, areaToRadius( area ),		0xa65eb3, 0.10 );		// 0x6b007e
-	createCircle( hrsTwo, hrsTwoTotal, areaToRadius( area *= dec ),	0xf17a81, 0.23 );		// 0xf51d2a
-	createCircle( minOne, minOneTotal, areaToRadius( area *= dec ),	0xf169c0, 0.44 );		// 0xf6009d
-	createCircle( minTwo, minTwoTotal, areaToRadius( area *= dec ),	0xa94f62, 0.57 );		// 0x8c162f
-	createCircle( secOne, secOneTotal, areaToRadius( area *= dec ),	0xdca6fb, 0.76 );		// 0xc96dfd
-	createCircle( secTwo, secTwoTotal, areaToRadius( area *= dec ),	0xf8a7c0, 0.88 );		// 0xf7719a
+	createCircle( hrsOne, digits[ 0 ].valueMax, areaToRadius( area ),			0xa65eb3, 0.10 );		// 0x6b007e
+	createCircle( hrsTwo, digits[ 1 ].valueMax, areaToRadius( area *= dec ),	0xf17a81, 0.23 );		// 0xf51d2a
+	createCircle( minOne, digits[ 2 ].valueMax, areaToRadius( area *= dec ),	0xf169c0, 0.44 );		// 0xf6009d
+	createCircle( minTwo, digits[ 3 ].valueMax, areaToRadius( area *= dec ),	0xa94f62, 0.57 );		// 0x8c162f
+	createCircle( secOne, digits[ 4 ].valueMax, areaToRadius( area *= dec ),	0xdca6fb, 0.76 );		// 0xc96dfd
+	createCircle( secTwo, digits[ 5 ].valueMax, areaToRadius( area *= dec ),	0xf8a7c0, 0.88 );		// 0xf7719a
 }
 
 void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color, float lx )
@@ -261,18 +281,6 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 	{
 		ClockCircle* circle;
 		circle = new ClockCircle( radius, color );
-		
-		//-- define circles physics.
-		
-		float mass		= 3.0;
-		float bounce	= 0.53;
-		float friction	= 0.1;
-		
-//		circle->enableGravity( false );
-		circle->setPhysics( mass, bounce, friction );
-		circle->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ), radius, false );
-		circle->setRotationFriction( 1.0 );
-		circle->setDamping( 1.0 );
 		
 		//-- define line up point.
 		
@@ -295,7 +303,19 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		circle->lineUpPoint.set( lineX, lineY );
 		circle->setSize( screenWidth, screenHeight );
 		circle->setTexture( &texCells[ 0 ] );
+		circle->setForceScale( screenScale );
 		circle->init();
+
+		//-- define circles physics.
+		
+		float mass		= 3.0;
+		float bounce	= 0.53;
+		float friction	= 0.1;
+		
+		circle->setPhysics( mass, bounce, friction );
+		circle->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ), radius, false );
+		circle->setRotationFriction( 1.0 );
+		circle->setDamping( 1.0 );
 		
 		//-- add to vectors.
 		
@@ -327,6 +347,10 @@ void Clock :: createSoftBody ()
 void Clock :: createLines ()
 {
 	int res = 100;
+#ifdef TARGET_OF_IPHONE
+	res = 70;
+#endif
+	
 	for( int i=0; i<res; i++ )
 	{
 		float p = i / (float)res;
@@ -338,7 +362,7 @@ void Clock :: createLines ()
 		if( texLines != NULL )
 			line.setTexture( &texLines[ r ] );
 		
-		line.size.width = screenMaxLength * 0.5;
+		line.size.width = screenDiagonal;
 		line.angle		= p * 360;
 		line.setup();
 	}
@@ -365,7 +389,7 @@ void Clock :: update ( int hrs, int min, int sec )
 	int secOneNew = sec / 10;
 	int secTwoNew = sec % 10;
 	
-	if( secTwoCount != secTwoNew )
+	if( digits[ 5 ].value != secTwoNew )
 	{
 		if( secTwoNew == 0 )
 		{
@@ -378,14 +402,14 @@ void Clock :: update ( int hrs, int min, int sec )
 
 	}
 	
-	hrsOneCount = hrsOneNew;
-	hrsTwoCount = hrsTwoNew;
+	digits[ 0 ].value = hrsOneNew;
+	digits[ 1 ].value = hrsTwoNew;
 	
-	minOneCount = minOneNew;
-	minTwoCount = minTwoNew;
+	digits[ 2 ].value = minOneNew;
+	digits[ 3 ].value = minTwoNew;
 	
-	secOneCount = secOneNew;
-	secTwoCount = secTwoNew;
+	digits[ 4 ].value = secOneNew;
+	digits[ 5 ].value = secTwoNew;
 
 	//--
 	
@@ -422,21 +446,17 @@ void Clock :: updateText ()
 	
 	if( clockMode == CLOCK_MODE_1 )
 	{
-		hrsOneX += ( hrsOneM1X - hrsOneX ) * ease;
-		hrsTwoX += ( hrsTwoM1X - hrsTwoX ) * ease;
-		minOneX += ( minOneM1X - minOneX ) * ease;
-		minTwoX += ( minTwoM1X - minTwoX ) * ease;
-		secOneX += ( secOneM1X - secOneX ) * ease;
-		secTwoX += ( secTwoM1X - secTwoX ) * ease;
+		for( int i=0; i<6; i++ )
+		{
+			digits[ i ].p.x += ( digits[ i ].p1.x - digits[ i ].p.x ) * ease;
+		}
 	}
 	else if ( clockMode == CLOCK_MODE_2 )
 	{
-		hrsOneX += ( hrsOneM2X - hrsOneX ) * ease;
-		hrsTwoX += ( hrsTwoM2X - hrsTwoX ) * ease;
-		minOneX += ( minOneM2X - minOneX ) * ease;
-		minTwoX += ( minTwoM2X - minTwoX ) * ease;
-		secOneX += ( secOneM2X - secOneX ) * ease;
-		secTwoX += ( secTwoM2X - secTwoX ) * ease;
+		for( int i=0; i<6; i++ )
+		{
+			digits[ i ].p.x += ( digits[ i ].p2.x - digits[ i ].p.x ) * ease;
+		}
 	}
 }
 
@@ -492,12 +512,12 @@ void Clock :: updateForces ()
 	circlesActive.clear();
 	circlesInactive.clear();
 	
-	updateForcesVec( hrsOne, hrsOneCount );
-	updateForcesVec( hrsTwo, hrsTwoCount );
-	updateForcesVec( minOne, minOneCount );
-	updateForcesVec( minTwo, minTwoCount );
-	updateForcesVec( secOne, secOneCount );
-	updateForcesVec( secTwo, secTwoCount );
+	updateForcesVec( hrsOne, digits[ 0 ].value );
+	updateForcesVec( hrsTwo, digits[ 1 ].value );
+	updateForcesVec( minOne, digits[ 2 ].value );
+	updateForcesVec( minTwo, digits[ 3 ].value );
+	updateForcesVec( secOne, digits[ 4 ].value );
+	updateForcesVec( secTwo, digits[ 5 ].value );
 }
 
 void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
@@ -513,7 +533,7 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 				if( !circle.hasCenterJoint() )
 					circle.createCenterJoint();
 				
-				addCenterForce( circle );		// spin force.
+				spinInner( circle );		// spin force.
 			}
 			else if( clockMode == CLOCK_MODE_2 )
 			{
@@ -532,7 +552,7 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 					circle.createOuterJoint();
 				
 //				tilt( circle );
-//				pushFromCenter( circle );
+				spinOuter( circle );		// spin force.
 			}
 			else if( clockMode == CLOCK_MODE_2 )
 			{
@@ -552,35 +572,30 @@ void Clock :: updateForcesVec ( vector<ClockCircle*> &circlesVec, int count )
 
 //-- CM1 FORCES.
 
-void Clock :: addCenterForce ( ClockCircle& circle )
+void Clock :: spinInner ( ClockCircle& circle )
 {
-	ofxVec2f c;
-	ofxVec2f p;
 	ofxVec2f v;
+	v.set( ofGetWidth() * 0.5, ofGetHeight() * 0.5 );
+	v -= circle.getPosition();
+	v.perpendicular();
+	v *= circle.spinFrc;
+	v *= ( gravity.x > 0 ) ? -1.0 : 1.0;
+	v *= 0.8;
+	v *= screenScale;
 	
-	c.set( ofGetWidth() * 0.5, ofGetHeight() * 0.5 );
-	p.set( circle.getPosition() );
-	v = c - p;
-	
-//	float d;
-//	d = v.length() / (float)screenMaxLength;
-//	
-//	float s;
-//	s = circle.getRadius() / 20.0;			// the bigger the circle, the stronger the pull towards center.
-	
-	ofxVec2f perp;							// spinning force.
-	perp = v.getPerpendicular();
-	perp *= circle.spinFrc;
-	perp *= forceScale;
-	
-//	v.normalize();		// old pull to center code.
-//	v *= d;
-//	v *= s;
-//	v *= forceCenterPull;
-//	v *= forceScale;
-//	v += perp;
-	
-	v = perp;			// now only adding perp force to make circles spin.
+	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
+}
+
+void Clock :: spinOuter ( ClockCircle& circle )
+{
+	ofxVec2f v;
+	v.set( ofGetWidth() * 0.5, ofGetHeight() * 0.5 );
+	v -= circle.getPosition();
+	v.perpendicular();
+	v *= circle.spinFrc;
+	v *= ( gravity.x < 0 ) ? -1.0 : 1.0;
+	v *= screenScale;
+	v *= 0.5;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -633,7 +648,7 @@ void Clock :: pushFromCenter ( ClockCircle& circle )
 	v *= d;
 	v *= forceCenterPull;
 //	v += perp;
-	v *= forceScale;
+	v *= screenScale;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -667,7 +682,7 @@ void Clock :: floatUp ( ClockCircle& circle )
 	float gy = -30 * s;
 	
 	b2Vec2 up = b2Vec2( gx, gy );
-	up *= forceScale;
+	up *= screenScale;
 	
 	circle.body->ApplyImpulse( up, circle.body->GetWorldCenter() );
 }
@@ -688,7 +703,7 @@ void Clock :: lineUp ( ClockCircle& circle )
 	v.normalize();
 	v *= d;
 	v *= 30;
-	v *= forceScale;
+	v *= screenScale;
 	
 	circle.body->ApplyImpulse( b2Vec2( v.x, v.y ), circle.body->GetWorldCenter() );
 }
@@ -1002,7 +1017,7 @@ void Clock :: drawLines ()
 	
 	for( int i=0; i<lines.size(); i++ )
 	{
-		lines[ i ].draw( screenMaxLength * 0.5 );
+		lines[ i ].draw( screenDiagonal );
 	}
 	
 	glPopMatrix();
@@ -1040,20 +1055,22 @@ void Clock :: drawCircleLine ( ClockCircle &circle )
 
 void Clock :: drawTime ()
 {
-	if( font1 == NULL || font2 == NULL )
+	if( texDigits == NULL )
 		return;
 	
 	ofEnableAlphaBlending();
 
 	ofSetColor( 95, 63, 34, 180 );
 	
-	int fontY = screenHeight - 30;
-	font2->drawString( ofToString( hrsOneCount, 0 ), hrsOneX, fontY );
-	font2->drawString( ofToString( hrsTwoCount, 0 ), hrsTwoX, fontY );
-	font2->drawString( ofToString( minOneCount, 0 ), minOneX, fontY );
-	font2->drawString( ofToString( minTwoCount, 0 ), minTwoX, fontY );
-	font2->drawString( ofToString( secOneCount, 0 ), secOneX, fontY );
-	font2->drawString( ofToString( secTwoCount, 0 ), secTwoX, fontY );
+	float size	= 65 * MIN( screenWidthScale, screenHeightScale );
+	float x		= 0;
+	float y		= screenHeight * 0.905;
+	
+	for( int i=0; i<6; i++ )
+	{
+		x = digits[ i ].p.x * screenWidth;
+		texDigits[ digits[ i ].value ].draw( x, y, size, size  );
+	}
 	
 	ofDisableAlphaBlending();
 }

@@ -62,6 +62,8 @@ public:
 	int						texLinesNum;
 	ofTexture				texInfo;
 	ofTexture				texMembrane;
+	ofTexture*				texDigits;
+	int						texDigitsNum;
 	
 };
 
