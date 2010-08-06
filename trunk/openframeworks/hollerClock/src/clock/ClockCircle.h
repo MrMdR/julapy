@@ -35,6 +35,7 @@ public :
 	void setSize		( ofRectangle &size );
 	void setSize		( int w, int h );
 	void setTexture		( ofTexture* tex );
+	void setTextureAnim	( vector<ofTexture*>* tex );
 	void setForceScale	( float scale );
 	void setup			( b2World * b2dworld, float x, float y, float size, bool isFixed=false );
 
@@ -55,6 +56,7 @@ public :
 	
 	void drawCircles		();
 	void drawTexture		();
+	void drawTextureAnim	();
 	void drawTriangles		();
 	
 	int			screenWidth;
@@ -90,7 +92,9 @@ public :
 	
 	vector<ClockCircleTrg>	triangles;
 	
-	ofTexture*	tex;
+	ofTexture*			tex;
+	vector<ofTexture*>*	texAnim;
+	int					texAnimIndex;
 	
 };
 

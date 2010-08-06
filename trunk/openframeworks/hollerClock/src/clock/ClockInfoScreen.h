@@ -31,6 +31,7 @@ public :
 	void hide		();
 	
 	bool	bShowing;
+	bool	bVisible;
 	int		screenWidth;
 	int		screenHeight;
 	
@@ -38,6 +39,8 @@ public :
 	
 	float	alphaBg;
 	float	alphaTex;
+	float	tweenTime;
+	float	tweenTimeTotal;
 };
 
 #endif

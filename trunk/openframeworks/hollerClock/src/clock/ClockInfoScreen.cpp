@@ -15,11 +15,14 @@ ClockInfoScreen :: ClockInfoScreen ()
 	screenHeight	= ofGetHeight();
 	
 	bShowing		= false;
+	bVisible		= false;
 	
 	tex				= NULL;
 	
 	alphaBg			= 0;
 	alphaTex		= 0;
+	tweenTime		= 0;
+	tweenTimeTotal	= 20;
 }
 
 ClockInfoScreen :: ~ClockInfoScreen ()
@@ -38,20 +41,39 @@ void ClockInfoScreen :: setTexture ( ofTexture* tex )
 	this->tex = tex;
 }
 
+void ClockInfoScreen :: update ()
+{
+	if( bShowing && alphaBg != 1.0 )
+	{
+		alphaBg		= Quad :: easeOut( tweenTime, 0, 1.0, tweenTimeTotal );
+		tweenTime	= MIN( tweenTime + 1, tweenTimeTotal );
+	}
+	else if( !bShowing && alphaBg != 0.0 )
+	{
+		alphaBg		= 1 - Quad :: easeOut( tweenTime, 0.0, 1.0, tweenTimeTotal );
+		tweenTime	= MIN( tweenTime + 1, tweenTimeTotal );
+	}
+	else if( !bShowing && alphaBg == 0.0 )
+	{
+		bVisible	= false;
+	}
+
+}
+
 void ClockInfoScreen :: draw ()
 {
-	if( !bShowing )
+	if( !bVisible )
 		return;
 	
 	ofEnableAlphaBlending();
 	
 	ofFill();
-	ofSetColor( 0, 0, 0, 100 );
+	ofSetColor( 0, 0, 0, alphaBg * 100 );
 	ofRect( 0, 0, screenWidth, screenHeight );
 	
 	if( tex != NULL )
 	{
-		ofSetColor( 255, 255, 255, 255 );
+		ofSetColor( 255, 255, 255, alphaBg * 255 );
 		tex->draw( 0, 0 );
 	}
 	
@@ -62,7 +84,9 @@ void ClockInfoScreen :: show ()
 {
 	if( !bShowing )
 	{
-		bShowing = true;
+		tweenTime	= 0;
+		bShowing	= true;
+		bVisible	= true;
 	}
 }
 
@@ -70,6 +94,7 @@ void ClockInfoScreen :: hide ()
 {
 	if( bShowing )
 	{
-		bShowing = false;
+		tweenTime	= 0;
+		bShowing	= false;
 	}
 }

@@ -70,6 +70,10 @@
 		B2569B1A11F3E6B100553DF4 /* b2PulleyJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE311F3E6B000553DF4 /* b2PulleyJoint.cpp */; };
 		B2569B1B11F3E6B100553DF4 /* b2RevoluteJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE511F3E6B000553DF4 /* b2RevoluteJoint.cpp */; };
 		B2569B1C11F3E6B100553DF4 /* ofxBox2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569AE711F3E6B000553DF4 /* ofxBox2d.cpp */; };
+		B260F36C120BA4FE0023B90D /* ofxFlash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F36B120BA4FE0023B90D /* ofxFlash.cpp */; };
+		B260F380120BA6080023B90D /* ofxSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F37F120BA6080023B90D /* ofxSprite.cpp */; };
+		B260F383120BA6150023B90D /* ofxMovieClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F382120BA6150023B90D /* ofxMovieClip.cpp */; };
+		B260F386120BA62C0023B90D /* ofxStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F385120BA62C0023B90D /* ofxStage.cpp */; };
 		B26D4AE012092FDB00AFDC69 /* ofxGeom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26D4ADE12092FDB00AFDC69 /* ofxGeom.cpp */; };
 		B27B66FA1206A04900643337 /* ClockInfoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66F81206A04900643337 /* ClockInfoScreen.cpp */; };
 		B27B67121206A05400643337 /* Back.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B66FC1206A05400643337 /* Back.cpp */; };
@@ -354,6 +358,14 @@
 		B2569AF011F3E6B000553DF4 /* ofxBox2dRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dRender.h; path = src/ofxBox2d_rev84/src/ofxBox2dRender.h; sourceTree = SOURCE_ROOT; };
 		B2569AF111F3E6B000553DF4 /* ofxBox2dSoftBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dSoftBody.h; path = src/ofxBox2d_rev84/src/ofxBox2dSoftBody.h; sourceTree = SOURCE_ROOT; };
 		B2569AF211F3E6B000553DF4 /* ofxBox2dUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBox2dUtils.h; path = src/ofxBox2d_rev84/src/ofxBox2dUtils.h; sourceTree = SOURCE_ROOT; };
+		B260F36A120BA4FE0023B90D /* ofxFlash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFlash.h; sourceTree = "<group>"; };
+		B260F36B120BA4FE0023B90D /* ofxFlash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFlash.cpp; sourceTree = "<group>"; };
+		B260F37E120BA6080023B90D /* ofxSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSprite.h; sourceTree = "<group>"; };
+		B260F37F120BA6080023B90D /* ofxSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSprite.cpp; sourceTree = "<group>"; };
+		B260F381120BA6150023B90D /* ofxMovieClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMovieClip.h; sourceTree = "<group>"; };
+		B260F382120BA6150023B90D /* ofxMovieClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMovieClip.cpp; sourceTree = "<group>"; };
+		B260F384120BA62C0023B90D /* ofxStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxStage.h; sourceTree = "<group>"; };
+		B260F385120BA62C0023B90D /* ofxStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxStage.cpp; sourceTree = "<group>"; };
 		B26D4ADE12092FDB00AFDC69 /* ofxGeom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxGeom.cpp; path = ../../../addons/ofxJulapyUtils/ofxGeom.cpp; sourceTree = SOURCE_ROOT; };
 		B26D4ADF12092FDB00AFDC69 /* ofxGeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGeom.h; path = ../../../addons/ofxJulapyUtils/ofxGeom.h; sourceTree = SOURCE_ROOT; };
 		B27B66F81206A04900643337 /* ClockInfoScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockInfoScreen.cpp; path = src/clock/ClockInfoScreen.cpp; sourceTree = SOURCE_ROOT; };
@@ -517,6 +529,7 @@
 				B22A9ECB1201385B003422E8 /* ofxContourUtil */,
 				B2AE675912027E3C00FC3FCC /* ofxDelaunay */,
 				B27B66FB1206A05400643337 /* PennerEasing */,
+				B260F368120BA4D50023B90D /* ofxFlash */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -910,6 +923,22 @@
 			);
 			name = Joints;
 			path = src/ofxBox2d_rev84/src/lib/Box2D/Source/Dynamics/Joints;
+			sourceTree = SOURCE_ROOT;
+		};
+		B260F368120BA4D50023B90D /* ofxFlash */ = {
+			isa = PBXGroup;
+			children = (
+				B260F36A120BA4FE0023B90D /* ofxFlash.h */,
+				B260F36B120BA4FE0023B90D /* ofxFlash.cpp */,
+				B260F384120BA62C0023B90D /* ofxStage.h */,
+				B260F385120BA62C0023B90D /* ofxStage.cpp */,
+				B260F37E120BA6080023B90D /* ofxSprite.h */,
+				B260F37F120BA6080023B90D /* ofxSprite.cpp */,
+				B260F381120BA6150023B90D /* ofxMovieClip.h */,
+				B260F382120BA6150023B90D /* ofxMovieClip.cpp */,
+			);
+			name = ofxFlash;
+			path = ../../../addons/ofxFlash;
 			sourceTree = SOURCE_ROOT;
 		};
 		B27B66FB1206A05400643337 /* PennerEasing */ = {
@@ -1549,6 +1578,10 @@
 				B27B671C1206A05400643337 /* Sine.cpp in Sources */,
 				B2464C341207FD81000BF9BB /* ClockLine.cpp in Sources */,
 				B26D4AE012092FDB00AFDC69 /* ofxGeom.cpp in Sources */,
+				B260F36C120BA4FE0023B90D /* ofxFlash.cpp in Sources */,
+				B260F380120BA6080023B90D /* ofxSprite.cpp in Sources */,
+				B260F383120BA6150023B90D /* ofxMovieClip.cpp in Sources */,
+				B260F386120BA62C0023B90D /* ofxStage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

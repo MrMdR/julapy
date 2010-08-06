@@ -98,6 +98,8 @@ void clockApp :: setup()
 		image.clear();
 	}
 	
+	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Test_Organism_", 5, "png", 200 );
+	
 	//-- screen grabber.
 	
 	screenGrabber.setup( "movie/" );
@@ -131,6 +133,7 @@ void clockApp :: initClock ()
 	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setBgTexture( &texBg );
 	clock.setCellTexture( texCells, texCellsNum );
+//	clock.setCellAnimTex( &texCellAnim.getFrames() );
 //	clock.setLineTexture( texLines, texLinesNum );
 	clock.setInfoTexture( &texInfo );
 	clock.setMembraneTex( &texMembrane );

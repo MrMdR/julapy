@@ -7,6 +7,7 @@
 #include "ofxScreenGrabUtil.h"
 #include "ofxSimpleGuiToo.h"
 #include "ofxVideoSaver.h"
+#include "ofxFlash.h"
 
 #include "ofxBox2d.h"
 #include "Clock.h"
@@ -58,6 +59,7 @@ public:
 	ofTexture				texBg;
 	ofTexture*				texCells;
 	int						texCellsNum;
+	ofxMovieClip			texCellAnim;
 	ofTexture*				texLines;
 	int						texLinesNum;
 	ofTexture				texInfo;
