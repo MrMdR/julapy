@@ -4,6 +4,8 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 #include "ofxALSoundPlayer.h"
+#include "Quad.h"
+#include "ofxFlash.h"
 
 #include "ofxBox2d.h"
 #include "Clock.h"
@@ -21,6 +23,9 @@ public:
 	void exit	();
 	
 	void initClock		();
+	
+	void flipLeft		();
+	void flipRight		();
 	
 	void touchDown		(ofTouchEventArgs &touch);
 	void touchMoved		(ofTouchEventArgs &touch);
@@ -55,6 +60,13 @@ public:
 	ofTexture				texMembrane;
 	ofTexture*				texDigits;
 	int						texDigitsNum;
+	ofxMovieClip			texCellAnim;
+	
+	float					rot;
+	float					rotTime;
+	float					rotTimeTotal;
+	bool					bFlipLeft;
+	bool					bFlipRight;
 };
 
 

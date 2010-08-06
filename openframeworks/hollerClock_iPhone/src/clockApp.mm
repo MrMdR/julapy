@@ -15,10 +15,15 @@ void clockApp :: setup()
 	
 	deviceType = DEVICE_IPAD;
 //	deviceType = DEVICE_IPHONE;
+	
+	rot				= 0;
+	rotTime			= 0;
+	rotTimeTotal	= 30;
+	bFlipLeft		= false;
+	bFlipRight		= false;
 
 	ofBackground( 0, 0, 0 );
 	ofSetFrameRate( frameRate = 60 );
-//	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	
 	//-- size.
@@ -129,6 +134,8 @@ void clockApp :: setup()
 		image.clear();
 	}
 	
+	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Test_Organism_", 5, "png", 200 );
+	
 	//--
 	
 	initClock();
@@ -158,6 +165,7 @@ void clockApp :: initClock ()
 	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setBgTexture( &texBg );
 	clock.setCellTexture( texCells, texCellsNum );
+//	clock.setCellAnimTex( &texCellAnim.getFrames() );
 	clock.setInfoTexture( &texInfo );
 	clock.setMembraneTex( &texMembrane );
 	clock.setDigitTexture( texDigits, texDigitsNum );
@@ -195,23 +203,36 @@ void clockApp :: update()
 	
 	//-- orientation.
 	
-//	float ax = ofxAccelerometer.getForce().x;
-//	float ot = 0.6;								// orientation threshold.
-//	
-//	if( ax > ot )
-//	{
-//		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT )
-//		{
-//			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
-//		}
-//	}
-//	else if( ax < -ot )
-//	{
-//		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT )
-//		{
-//			ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
-//		}
-//	}
+	float ax = ofxAccelerometer.getForce().x;
+	float ot = 0.6;								// orientation threshold.
+	
+	if( ax > ot )
+	{
+		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT && !bFlipLeft )
+		{
+			rotTime		= 0;
+			bFlipLeft	= true;
+			bFlipRight	= false;
+		}
+	}
+	else if( ax < -ot )
+	{
+		if( ofxiPhoneGetOrientation() != OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT && !bFlipRight )
+		{
+			rotTime		= 0;
+			bFlipLeft	= false;
+			bFlipRight	= true;
+		}
+	}
+	
+	if( bFlipLeft )
+	{
+		flipLeft();
+	}
+	else if( bFlipRight )
+	{
+		flipRight();
+	}
 	
 	//-- gravity slant.
 	
@@ -223,7 +244,6 @@ void clockApp :: update()
 
 	float gy;
 	gy = ofxAccelerometer.getForce().x;
-	cout << gy << endl;
 	gy *= 2;									// increase the reaction to tilt.
 	gy = MIN( 1.0, MAX( -1.0, gy ) );			// between -1 and 1.
 	gy *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
@@ -235,12 +255,50 @@ void clockApp :: update()
 	clock.update( hrs, min, sec );
 }
 
+void clockApp :: flipLeft ()
+{
+	if( ++rotTime >= rotTimeTotal )
+	{
+		ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
+		
+		bFlipLeft	= false;
+		rot			= 0;
+		
+		return;
+	}
+	
+	rot = Quad :: easeOut( rotTime, 0, -180, rotTimeTotal );
+}
+
+void clockApp :: flipRight ()
+{
+	if( ++rotTime >= rotTimeTotal )
+	{
+		ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT );
+		
+		bFlipRight	= false;
+		rot			= 0;
+		
+		return;
+	}
+	
+	rot = Quad :: easeOut( rotTime, 0, 180, rotTimeTotal );
+}
+
 ///////////////////////////////////////////
 //	DRAW.
 ///////////////////////////////////////////
 
 void clockApp :: draw()
 {
+	if( bFlipLeft || bFlipRight )
+	{
+		glPushMatrix();
+		glTranslatef( screenSize.width * 0.5, screenSize.height * 0.5, 0 );
+		glRotatef( rot, 0, 0, 1 );
+		glTranslatef( -screenSize.width * 0.5, -screenSize.height * 0.5, 0 );
+	}
+	
 	int bg = 0;
 	ofBackground( bg, bg, bg );
 	
@@ -248,6 +306,11 @@ void clockApp :: draw()
 	
 	ofSetColor( 0x000000 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, 15 );
+	
+	if( bFlipLeft || bFlipRight )
+	{
+		glPopMatrix();
+	}
 }
 
 void clockApp :: exit()
