@@ -21,7 +21,9 @@ ClockCircle :: ClockCircle ( float r, int c )
 	
 	forceScale	= 1.0;
 	
-	tex = NULL;
+	tex				= NULL;
+	texAnim			= NULL;
+	texAnimIndex	= 0;
 }
 
 ClockCircle :: ~ClockCircle ()
@@ -47,6 +49,11 @@ void ClockCircle :: setSize ( int w, int h )
 void ClockCircle :: setTexture ( ofTexture* tex )
 {
 	this->tex = tex;
+}
+
+void ClockCircle :: setTextureAnim ( vector<ofTexture*>* tex )
+{
+	texAnim = tex;
 }
 
 void ClockCircle :: setForceScale ( float scale )
@@ -304,6 +311,16 @@ void ClockCircle :: update ()
 		ClockCircleTrg& trg = triangles[ i ];
 		trg.rotation += trg.rotationInc;
 	}
+	
+	//--
+	
+	if( texAnim != NULL )
+	{
+		if( ++texAnimIndex > texAnim->size() - 1 )
+		{
+			texAnimIndex = 0;
+		}
+	}
 }
 
 ///////////////////////////////////////////////
@@ -319,13 +336,18 @@ void ClockCircle :: draw ()
 		return;
 	}
 	
-	if( tex == NULL )
+	if ( tex != NULL )
 	{
-		drawCircles();
+		drawTexture();
+		
+		if( texAnim != NULL )
+		{
+			drawTextureAnim();
+		}
 	}
 	else
 	{
-		drawTexture();
+		drawCircles();
 	}
 		
 //	drawTriangles();
@@ -368,6 +390,24 @@ void ClockCircle :: drawTexture ()
 	glRotatef( rotation, 0, 0, 1 );
 	
 	tex->draw( -radius, -radius, radius * 2, radius * 2 );
+	
+	glPopMatrix();
+	
+	ofDisableAlphaBlending();
+}
+
+void ClockCircle :: drawTextureAnim ()
+{
+	ofEnableAlphaBlending();
+//	ofSetColor( 255, 255, 255, 255 );
+	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b, 220 );
+	
+	glPushMatrix();
+	glTranslatef( getPosition().x, getPosition().y, 0 );
+	
+	glRotatef( rotation, 0, 0, 1 );
+
+	texAnim->at( texAnimIndex )->draw( -radius, -radius, radius * 2, radius * 2 );
 	
 	glPopMatrix();
 	

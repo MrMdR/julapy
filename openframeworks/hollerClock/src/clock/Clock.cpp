@@ -20,6 +20,7 @@ Clock :: Clock ()
 	texBg		= NULL;
 	texInfo		= NULL;
 	texCells	= NULL;
+	texCellAnim	= NULL;
 	texLines	= NULL;
 	texMembrane	= NULL;
 	texDigits	= NULL;
@@ -187,6 +188,11 @@ void Clock :: setCellTexture ( ofTexture* tex, int numOfTextures )
 	texCellsNum = numOfTextures;
 }
 
+void Clock :: setCellAnimTex ( vector<ofTexture*>* tex )
+{
+	texCellAnim = tex;
+}
+
 void Clock :: setLineTexture ( ofTexture* tex, int numOfTextures )
 {
 	texLines = tex;
@@ -303,6 +309,7 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		circle->lineUpPoint.set( lineX, lineY );
 		circle->setSize( screenWidth, screenHeight );
 		circle->setTexture( &texCells[ 0 ] );
+		circle->setTextureAnim( texCellAnim );
 		circle->setForceScale( screenScale );
 		circle->init();
 
@@ -426,6 +433,8 @@ void Clock :: update ( int hrs, int min, int sec )
 	
 	updateConvexBlob();
 	updateDelaunay();
+	
+	infoScreen.update();
 }
 
 void Clock :: playSecTwoSound ()

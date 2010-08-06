@@ -63,6 +63,7 @@ public :
 	void  setBgTexture		( ofTexture* tex );
 	void  setInfoTexture	( ofTexture* tex );
 	void  setCellTexture	( ofTexture* tex, int numOfTextures );
+	void  setCellAnimTex	( vector<ofTexture*>* tex );
 	void  setLineTexture	( ofTexture* tex, int numOfTextures );
 	void  setMembraneTex	( ofTexture* tex );
 	void  setDigitTexture	( ofTexture* tex, int numOfTextures );
@@ -168,6 +169,8 @@ public :
 	ofTexture*				texMembrane;
 	ofTexture*				texDigits;
 	int						texDigitsNum;
+	vector<ofTexture*>*		texCellAnim;
+	int						texCellAnimNum;
 	
 	vector<ClockLine>		lines;
 	
