@@ -7,16 +7,30 @@
  *
  */
 
-#ifndef OFX_FLASH_STAGE
-#define OFX_FLASH_STAGE
+#pragma once
 
-class ofxStage
+#include "ofMain.h"
+#include "ofxSprite.h"
+
+class ofxStage : public ofxSprite
 {	
 	
-public :
+public:
 	
 	 ofxStage();
 	~ofxStage();
-};
+	
+	void update	( ofEventArgs &e );
+	void draw	( ofEventArgs &e );
+	
+	///////////////////////////////////////////////
+	//
+	//	PRIVATE.
+	//
+	///////////////////////////////////////////////
+	
+private:
 
-#endif
+	void updateChildren	( vector<ofxSprite*>& children );
+	void drawChildren	( vector<ofxSprite*>& children );
+};
