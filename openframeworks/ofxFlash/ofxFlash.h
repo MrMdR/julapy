@@ -7,12 +7,8 @@
  *
  */
 
-#ifndef OFX_FLASH
-#define OFX_FLASH
+#pragma once
 
-#include "ofMain.h"
 #include "ofxStage.h"
 #include "ofxSprite.h"
 #include "ofxMovieClip.h"
-
-#endif

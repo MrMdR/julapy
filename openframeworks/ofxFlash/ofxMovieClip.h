@@ -7,12 +7,12 @@
  *
  */
 
-#ifndef OFX_FLASH_MOVIE_CLIP
-#define OFX_FLASH_MOVIE_CLIP
+#pragma once
 
-#include "ofxFlash.h"
+#include "ofMain.h"
+#include "ofxSprite.h"
 
-class ofxMovieClip // : public ofxSprite
+class ofxMovieClip : public ofxSprite
 {
 
 public :
@@ -52,5 +52,3 @@ private :
 	
 	bool				bPlay;
 };
-
-#endif
