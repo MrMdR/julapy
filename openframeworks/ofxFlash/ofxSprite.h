@@ -35,9 +35,10 @@ public :
 	~ofxSprite();
 	
 	virtual void setup	();
+	virtual void clear	();
+	
 	virtual void update	();
 	virtual void draw	();
-	virtual void clear	();
 	
 	///////////////////////////////////////////////
 	//
@@ -66,7 +67,6 @@ public :
 	string		name;
 	ofxSprite*	mask;			// DisplayObject in AS3.
 	ofxSprite*	parent;			// DisplayObjectContainer in AS3.
-	ofxSprite*	stage;			// TODO :: stage can not be of type ofxStage due to circular includes, need to work this out.
 	
 	ofRectangle getRect			( ofxSprite* targetCoordinateSpace );
 	ofPoint		globalToLocal	( const ofPoint& point );
@@ -103,7 +103,6 @@ public :
 	///////////////////////////////////////////////
 	
 	bool		mouseChildren;
-	int			numChildren;
 	bool		tabChildren;
 	
 	vector<ofxSprite*>	children;
@@ -120,6 +119,11 @@ public :
 	void				setChildIndex			( ofxSprite* child, int index );
 	void				swapChildren			( ofxSprite* child1, ofxSprite* child2 );
 	void				swapChildrenAt			( int index1, int index2 );
+	
+	//-- added methods.
+	
+	int					numChildren				();
+	bool				hasChildren				();
 	
 	
 	///////////////////////////////////////////////
@@ -145,7 +149,13 @@ public :
 	//
 	///////////////////////////////////////////////
 	
-protected:	
+protected:
+
+	static ofxSprite* stageRef;
+	static vector<ofxSprite*> sprites;
+	
+	static void addSprite		( ofxSprite* sprite );
+	static void removeSprite	( ofxSprite* sprite );
 	
 	///////////////////////////////////////////////
 	//
@@ -155,8 +165,12 @@ protected:
 	
 private:
 	
+	ofRectangle	rect;
+	
 	void	initDisplayObjectProps			();
 	void	initInteractiveObjectProps		();
 	void	initDisplayObjectContainerProps	();
 	void	initSpriteProps					();
+	
+	void	localToGlobalRecursive			( ofxSprite* parent, ofPoint& point );
 };
