@@ -9,25 +9,69 @@
 
 #include "ofxStage.h"
 
+///////////////////////////////////////////////
+//	SINGLETON.
+///////////////////////////////////////////////
+
+ofxStage* ofxStage :: _instance = NULL;
+ofxStage* ofxStage :: stage()
+{
+	if( _instance == NULL )
+		_instance = new ofxStage();
+	
+	return _instance;
+}
+
+///////////////////////////////////////////////
+//	DE/CONSTRUCTOR.
+///////////////////////////////////////////////
+
 ofxStage :: ofxStage ()
 {
-	ofAddListener( ofEvents.update,	this, &ofxStage::update	);
-	ofAddListener( ofEvents.draw,	this, &ofxStage::draw	);
+	setup();
 }
 
 ofxStage :: ~ofxStage ()
 {
+	clear();
+}
+
+///////////////////////////////////////////////
+//	CORE.
+///////////////////////////////////////////////
+
+void ofxStage :: setup ()
+{
+	stageRef = this;
+	
+	ofAddListener( ofEvents.update,	this, &ofxStage::updateHandler	);
+	ofAddListener( ofEvents.draw,	this, &ofxStage::drawHandler	);
+	
+	removeSprite( this );	// remove stage from sprites array as stage is the container for all other sprites.
+}
+
+void ofxStage :: clear ()
+{
 	//
 }
 
-void ofxStage :: update ( ofEventArgs &e )
+void ofxStage :: update ()
 {
-	updateChildren( children );
+	//
 }
 
-void ofxStage :: draw ( ofEventArgs &e )
+void ofxStage :: draw ()
 {
-	drawChildren( children );
+	//
+}
+
+///////////////////////////////////////////////
+//	UPDATE.
+///////////////////////////////////////////////
+
+void ofxStage :: updateHandler ( ofEventArgs &e )
+{
+	updateChildren( children );
 }
 
 void ofxStage :: updateChildren ( vector<ofxSprite*>& children )
@@ -38,11 +82,20 @@ void ofxStage :: updateChildren ( vector<ofxSprite*>& children )
 		child = children[ i ];
 		child->update();
 		
-		if( child->children.size() > 0 )
+		if( child->hasChildren() )
 		{
 			updateChildren( child->children );
 		}
 	}
+}
+
+///////////////////////////////////////////////
+//	DRAW.
+///////////////////////////////////////////////
+
+void ofxStage :: drawHandler ( ofEventArgs &e )
+{
+	drawChildren( children );
 }
 
 void ofxStage :: drawChildren ( vector<ofxSprite*>& children )
@@ -51,8 +104,6 @@ void ofxStage :: drawChildren ( vector<ofxSprite*>& children )
 	{
 		ofxSprite* child;
 		child = children[ i ];
-		
-		child->draw();
 
 		bool bTranslate;
 		bTranslate = ( child->x != 0 || child->y != 0 || child->z != 0 );
@@ -63,7 +114,9 @@ void ofxStage :: drawChildren ( vector<ofxSprite*>& children )
 			glTranslatef( child->x, child->y, child->z );
 		}
 		
-		if( child->children.size() > 0 )
+		child->draw();
+		
+		if( child->hasChildren() )
 		{
 			drawChildren( child->children );
 		}
