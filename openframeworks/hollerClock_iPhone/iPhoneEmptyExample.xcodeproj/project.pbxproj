@@ -22,6 +22,7 @@
 		5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688210ED26CC00A9501C /* PocoNet.a */; };
 		5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688310ED26CC00A9501C /* PocoUtil.a */; };
 		5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688410ED26CC00A9501C /* PocoXML.a */; };
+		B22322E7121144220015ED6A /* ClockFreeCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22322E5121144220015ED6A /* ClockFreeCircle.cpp */; };
 		B22A9F4212014009003422E8 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22A9F4012014009003422E8 /* ofxContourUtil.cpp */; };
 		B25E8CE811FEA70B00CA11BB /* libfreeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE611FEA70B00CA11BB /* libfreeimage-iphone.a */; };
 		B25E8CE911FEA70B00CA11BB /* libfreeimage-iphonesimulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B25E8CE711FEA70B00CA11BB /* libfreeimage-iphonesimulator.a */; };
@@ -47,6 +48,7 @@
 		B27B67431206A17000643337 /* ClockInfoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67411206A17000643337 /* ClockInfoScreen.cpp */; };
 		B2AE65CA1202614900FC3FCC /* ofxALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE65C61202614900FC3FCC /* ofxALSoundPlayer.cpp */; };
 		B2AE65CB1202614900FC3FCC /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE65C81202614900FC3FCC /* SoundEngine.cpp */; };
+		B2BA93891210ED3900668BDF /* ClockLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2BA93871210ED3900668BDF /* ClockLabel.cpp */; };
 		B2F11A1811FECE40009300F6 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F11A0B11FECE40009300F6 /* ofxMatrix3x3.cpp */; };
 		B2F11A1911FECE40009300F6 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F11A0D11FECE40009300F6 /* ofxMatrix4x4.cpp */; };
 		B2F11A1A11FECE40009300F6 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F11A1211FECE40009300F6 /* ofxQuaternion.cpp */; };
@@ -136,6 +138,8 @@
 		5E25688210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
 		5E25688310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/osx/PocoUtil.a; sourceTree = SOURCE_ROOT; };
 		5E25688410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/osx/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		B22322E5121144220015ED6A /* ClockFreeCircle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockFreeCircle.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockFreeCircle.cpp; sourceTree = SOURCE_ROOT; };
+		B22322E6121144220015ED6A /* ClockFreeCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockFreeCircle.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockFreeCircle.h; sourceTree = SOURCE_ROOT; };
 		B22A9F3D12014009003422E8 /* convexHull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convexHull.h; path = ../../../../of_0061/addons/ofxContourUtil/libs/convexHull.h; sourceTree = SOURCE_ROOT; };
 		B22A9F3E12014009003422E8 /* polylineSimplify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polylineSimplify.h; path = ../../../../of_0061/addons/ofxContourUtil/libs/polylineSimplify.h; sourceTree = SOURCE_ROOT; };
 		B22A9F4012014009003422E8 /* ofxContourUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxContourUtil.cpp; path = ../../../../of_0061/addons/ofxContourUtil/src/ofxContourUtil.cpp; sourceTree = SOURCE_ROOT; };
@@ -186,6 +190,8 @@
 		B2AE65C71202614900FC3FCC /* ofxALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxALSoundPlayer.h; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/src/ofxALSoundPlayer/ofxALSoundPlayer.h; sourceTree = SOURCE_ROOT; };
 		B2AE65C81202614900FC3FCC /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundEngine.cpp; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/src/ofxALSoundPlayer/SoundEngine.cpp; sourceTree = SOURCE_ROOT; };
 		B2AE65C91202614900FC3FCC /* SoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundEngine.h; path = ../../../../of_0061_iphone/apps/julapy/hollerClock/src/ofxALSoundPlayer/SoundEngine.h; sourceTree = SOURCE_ROOT; };
+		B2BA93871210ED3900668BDF /* ClockLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockLabel.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockLabel.cpp; sourceTree = SOURCE_ROOT; };
+		B2BA93881210ED3900668BDF /* ClockLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockLabel.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockLabel.h; sourceTree = SOURCE_ROOT; };
 		B2F11A0B11FECE40009300F6 /* ofxMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMatrix3x3.cpp; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp; sourceTree = SOURCE_ROOT; };
 		B2F11A0C11FECE40009300F6 /* ofxMatrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMatrix3x3.h; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.h; sourceTree = SOURCE_ROOT; };
 		B2F11A0D11FECE40009300F6 /* ofxMatrix4x4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMatrix4x4.cpp; path = ../../../addons/ofxVectorMath/src/ofxMatrix4x4.cpp; sourceTree = SOURCE_ROOT; };
@@ -870,10 +876,14 @@
 				B2F11AC311FECE5D009300F6 /* Clock.h */,
 				B2F11AC411FECE5D009300F6 /* ClockCircle.cpp */,
 				B2F11AC511FECE5D009300F6 /* ClockCircle.h */,
+				B2BA93871210ED3900668BDF /* ClockLabel.cpp */,
+				B2BA93881210ED3900668BDF /* ClockLabel.h */,
 				B27B67411206A17000643337 /* ClockInfoScreen.cpp */,
 				B27B67421206A17000643337 /* ClockInfoScreen.h */,
 				B26D49801208FB0A00AFDC69 /* ClockLine.cpp */,
 				B26D49811208FB0A00AFDC69 /* ClockLine.h */,
+				B22322E5121144220015ED6A /* ClockFreeCircle.cpp */,
+				B22322E6121144220015ED6A /* ClockFreeCircle.h */,
 			);
 			name = clock;
 			path = ../../../../of_0061/apps/julapy/hollerClock/src/clock;
@@ -1300,6 +1310,8 @@
 				B260F6B6120BE96C0023B90D /* ofxMovieClip.cpp in Sources */,
 				B260F6B7120BE96C0023B90D /* ofxSprite.cpp in Sources */,
 				B260F6B8120BE96C0023B90D /* ofxStage.cpp in Sources */,
+				B2BA93891210ED3900668BDF /* ClockLabel.cpp in Sources */,
+				B22322E7121144220015ED6A /* ClockFreeCircle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
