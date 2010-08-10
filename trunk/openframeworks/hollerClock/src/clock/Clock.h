@@ -24,6 +24,8 @@
 #include "ClockCircle.h"
 #include "ClockInfoScreen.h"
 #include "ClockLine.h"
+#include "ClockLabel.h"
+#include "ClockFreeCircle.h"
 
 #define CLOCK_MODE_1		1
 #define CLOCK_MODE_2		2
@@ -75,6 +77,8 @@ public :
 	void  createSoftBody	();
 	void  createLines		();
 	void  createInfoScreen	();
+	void  createLabels		();
+	void  creatFreeCircles	();
 	
 	void setup				();
 	void update				( int hrs, int min, int sec );
@@ -84,6 +88,8 @@ public :
 	void initModeTwo		();
 	void updateText			();
 	void updateInfoScreen	();
+	void toggleInfoScreen	();
+	void checkLabelPress	( int x, int y );
 	
 	void playSecTwoSound	();
 	void playSecOneSound	();
@@ -109,6 +115,9 @@ public :
 	void drawCircles		( vector<ClockCircle*>& circles );
 	void drawCircleLines	( vector<ClockCircle*>& circles );
 	void drawCircleLine		( ClockCircle &circle );
+	void drawCircleNumbers	();
+	void drawFreeCircles	();
+	void drawLabels			();
 	void drawTime			();
 	void drawRayCasts		();
 	void drawRayBlob		();
@@ -136,6 +145,10 @@ public :
 	vector<ClockCircle*>	circlesAll;
 	vector<ClockCircle*>	circlesActive;
 	vector<ClockCircle*>	circlesInactive;
+	
+	vector<ClockLabel*>		labels;
+	
+	vector<ClockFreeCircle*>	freeCircles;
 	
 	int						clockMode;
 	
@@ -199,6 +212,7 @@ public :
 	bool					bMouseDown;
 	int						mouseDownCount;
 	int						mouseDownLimit;
+	ofPoint					mouseDownPoint;
 	
 	ClockInfoScreen			infoScreen;
 };

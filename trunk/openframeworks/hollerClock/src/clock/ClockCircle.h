@@ -11,6 +11,7 @@
 #define CLOCK_CIRCLE_H
 
 #include "ofxBox2d.h"
+#include "ofxVec2f.h"
 
 #define POINT_RES	20
 
@@ -37,6 +38,7 @@ public :
 	void setTexture		( ofTexture* tex );
 	void setTextureAnim	( vector<ofTexture*>* tex );
 	void setForceScale	( float scale );
+	void setDigitIndex	( int index );
 	void setup			( b2World * b2dworld, float x, float y, float size, bool isFixed=false );
 
 	void init			();
@@ -58,19 +60,24 @@ public :
 	void drawTexture		();
 	void drawTextureAnim	();
 	void drawTriangles		();
+	void drawInfoLine		();
 	
 	int			screenWidth;
 	int			screenHeight;
+	int			screenMinLength;
+	int			screenMaxLength;
 	
 	int			pointsTotal;
 	ofPoint		points1[ POINT_RES ];
 	ofPoint		points2[ POINT_RES ];
 	
+	int			digitIndex;
 	float		radius;
 	float		rotation;
 	int			colorHex;
-	ofColor		colorTrgt;
+	ofColor		colorInit;
 	ofColor		colorCurr;
+	ofColor		colorTrgt;
 	
 	ofPoint		lineUpPoint;
 	
@@ -95,6 +102,14 @@ public :
 	ofTexture*			tex;
 	vector<ofTexture*>*	texAnim;
 	int					texAnimIndex;
+	
+	ofxVec2f	centerPoint;
+	ofxVec2f	circlePoint;
+	ofxVec2f	linePoint1;
+	ofxVec2f	linePoint2;
+	ofxVec2f	linePoint3;
+	ofxVec2f	linePoint4;
+	float		lineLength;
 	
 };
 

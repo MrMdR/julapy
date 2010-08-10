@@ -10,8 +10,23 @@ void clockApp :: setup()
 //	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 	ofBackground( 30, 30, 30 );
-	
+	ofSetFullscreen( bFullScreen = false );
+
 	bDebug = false;
+	
+	standardRect.width	= 1280;
+	standardRect.height	= 720;
+	
+	if( bFullScreen )
+	{
+		screenRect.width	= ofGetScreenWidth();
+		screenRect.height	= ofGetScreenHeight();
+	}
+	else
+	{
+		screenRect.width	= standardRect.width;
+		screenRect.height	= standardRect.height;
+	}
 	
 	//-- font.
 	
@@ -25,8 +40,8 @@ void clockApp :: setup()
 	
 	//-- images.
 	
-	texFsSize.width		= ofGetWidth()  * 1.0;
-	texFsSize.height	= ofGetHeight() * 1.0;
+	texFsSize.width		= standardRect.width  * 1.0;
+	texFsSize.height	= standardRect.height * 1.0;
 	
 	image.loadImage( "image/background_1280x720.png" );
 	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
@@ -98,7 +113,7 @@ void clockApp :: setup()
 		image.clear();
 	}
 	
-	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Test_Organism_", 5, "png", 200 );
+	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Black_Organism_02_", 5, "png", 62 );
 	
 	//-- screen grabber.
 	
@@ -107,11 +122,7 @@ void clockApp :: setup()
 	
 	//-- video saver.
 	
-	ofRectangle rect;
-	rect.width	= ofGetWidth();
-	rect.height	= ofGetHeight();
-	
-	videoSaver.setup( rect, OF_IMAGE_COLOR );
+	videoSaver.setup( standardRect, OF_IMAGE_COLOR );
 	videoSaver.setPause( true );
 	
 	initClock();
@@ -129,7 +140,7 @@ void clockApp :: initClock ()
 	contactListener.addReceiver( &clock );
 	
 	clock.setBox2d( &box2d );
-	clock.setSize( ofGetWidth(), ofGetHeight() );
+	clock.setSize( screenRect );
 	clock.setSound( &secTwoSound, &secOneSound );
 	clock.setBgTexture( &texBg );
 	clock.setCellTexture( texCells, texCellsNum );
@@ -238,11 +249,6 @@ void clockApp :: keyPressed(int key)
 			gui.hide();
 		}
 	}
-	
-	if( key == ' ' )
-	{
-		clock.toggleClockMode();
-	}
 }
 
 void clockApp :: keyReleased(int key)
@@ -267,6 +273,8 @@ void clockApp::mouseMoved(int x, int y )
 	gy = ( py - 0.5 ) * 2;
 	
 	clock.setGravity( gx, gy );
+	
+	box2d.setGravity( gx * 20, gy * 20 );
 }
 
 void clockApp::mouseDragged(int x, int y, int button)
