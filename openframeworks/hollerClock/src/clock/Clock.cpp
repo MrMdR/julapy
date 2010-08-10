@@ -101,6 +101,8 @@ void Clock :: setup ()
 	createCircles();
 	createLines();
 	createInfoScreen();
+	createLabels();
+//	creatFreeCircles();
 }
 
 ///////////////////////////////////////////////
@@ -311,6 +313,7 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		circle->setTexture( &texCells[ 0 ] );
 		circle->setTextureAnim( texCellAnim );
 		circle->setForceScale( screenScale );
+		circle->setDigitIndex( i );
 		circle->init();
 
 		//-- define circles physics.
@@ -319,6 +322,7 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		float bounce	= 0.53;
 		float friction	= 0.1;
 		
+		circle->enableGravity( false );
 		circle->setPhysics( mass, bounce, friction );
 		circle->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ), radius, false );
 		circle->setRotationFriction( 1.0 );
@@ -381,6 +385,82 @@ void Clock :: createInfoScreen ()
 		infoScreen.setTexture( texInfo );
 }
 
+void Clock :: createLabels ()
+{
+	ClockLabel* label;
+	
+	float w = screenHeight * 0.15;
+	float h = screenHeight * 0.10;
+	float x = screenWidth - w * 2;
+	float y = 0.3 * screenHeight;
+
+	float mass			= 3.0;
+	float bounce		= 0.53;
+	float friction		= 0.1;
+	float rotFriction	= 0.5;
+	float damping		= 1.5;
+	
+	//-- label one.
+	
+	label = new ClockLabel();
+	label->setSize( screenWidth, screenHeight );
+	label->setForceScale( screenScale );
+	label->init();
+	
+	label->setPhysics( mass, bounce, friction );
+	label->setup( box2d->getWorld(), x, y, w, h, false );
+	label->setRotationFriction( rotFriction );
+	label->setDamping( damping );
+	
+	labels.push_back( label );
+	
+	//-- label two.
+	
+	y += 0.15 * screenHeight;
+	
+	label = new ClockLabel();
+	label->setSize( screenWidth, screenHeight );
+	label->setForceScale( screenScale );
+	label->init();
+	
+	label->setPhysics( mass, bounce, friction );
+	label->setup( box2d->getWorld(), x, y, w, h, false );
+	label->setRotationFriction( rotFriction );
+	label->setDamping( damping );
+	
+	labels.push_back( label );
+}
+
+void Clock :: creatFreeCircles ()
+{
+	int t = 20;
+	for( int i=0; i<t; i++ )
+	{
+		ClockFreeCircle* circle;
+		circle = new ClockFreeCircle();
+		
+//		circle->setSize( screenWidth, screenHeight );
+//		circle->setTexture( &texCells[ 0 ] );
+//		circle->setForceScale( screenScale );
+//		circle->init();
+		
+		float mass		= 3.0;
+		float bounce	= 0.53;
+		float friction	= 0.1;
+		
+		float radius;
+		radius = screenMinLength * 0.015;
+		radius *= ofRandom( 0.5, 1.0 );
+		
+		circle->setPhysics( mass, bounce, friction );
+		circle->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ), radius, false );
+		circle->setRotationFriction( 1.0 );
+		circle->setDamping( 1.0 );
+		
+		freeCircles.push_back( circle );
+	}
+}
+
 ///////////////////////////////////////////////
 //	UPDATE.
 ///////////////////////////////////////////////
@@ -406,7 +486,6 @@ void Clock :: update ( int hrs, int min, int sec )
 		{
 			playSecTwoSound();
 		}
-
 	}
 	
 	digits[ 0 ].value = hrsOneNew;
@@ -420,7 +499,7 @@ void Clock :: update ( int hrs, int min, int sec )
 
 	//--
 	
-	updateInfoScreen();
+//	updateInfoScreen();
 	updateText();
 	updateForces();
 	
@@ -429,6 +508,11 @@ void Clock :: update ( int hrs, int min, int sec )
 	for( int i=0; i<circlesAll.size(); i++ )
 	{
 		circlesAll[ i ]->update();
+	}
+	
+	for( int i=0; i<freeCircles.size(); i++ )
+	{
+		freeCircles[ i ]->update();
 	}
 	
 	updateConvexBlob();
@@ -487,6 +571,53 @@ void Clock :: updateInfoScreen ()
 		infoScreen.hide();
 		
 		bMouseDown = false;
+	}
+}
+
+void Clock :: toggleInfoScreen ()
+{
+	if( infoScreen.bShowing )
+	{
+		infoScreen.hide();
+	}
+	else
+	{
+		infoScreen.show();
+	}
+}
+
+void Clock :: checkLabelPress ( int x, int y )
+{
+	float d = ofDist( mouseDownPoint.x, mouseDownPoint.y, x, y );
+	
+	if( d < 30 )	// little movement, will count as click.
+	{
+		b2Vec2 p( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
+		
+		for( int i=0; i<labels.size(); i++ )
+		{
+			ClockLabel* label = labels[ i ];
+			
+			for( b2Shape* s=label->body->GetShapeList(); s; s=s->GetNext() )
+			{
+				b2Body* shapeBody = s->GetBody();
+				
+				bool inside;
+				inside = s->TestPoint( shapeBody->GetXForm(), p );
+				
+				if( inside )
+				{
+					if( i == 0 )
+					{
+						toggleInfoScreen();
+					}
+					else if( i == 1 )
+					{
+						toggleClockMode();
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -966,13 +1097,13 @@ void Clock :: box2dContactEventHandler ( const b2ContactPoint* p )
 				
 				if( vel > 0.5 )
 				{
-//					circle.colorCurr.r = circle.colorTrgt.r * ( 1 - vel );
-//					circle.colorCurr.g = circle.colorTrgt.g * ( 1 - vel );
-//					circle.colorCurr.b = circle.colorTrgt.b * ( 1 - vel );
+					circle.colorTrgt.r = 255;
+					circle.colorTrgt.g = 255;
+					circle.colorTrgt.b = 255;
 					
-					circle.colorCurr.r = 255;
-					circle.colorCurr.g = 255;
-					circle.colorCurr.b = 255;
+//					circle.colorCurr.r = circle.colorTrgt.r;
+//					circle.colorCurr.g = circle.colorTrgt.g;
+//					circle.colorCurr.b = circle.colorTrgt.b;
 				}
 			}
 		}
@@ -991,6 +1122,8 @@ void Clock :: draw ()
 	drawTime();
 	drawLines();
 
+	drawFreeCircles();
+	
 	ofSetColor( 95, 63, 34, 30 );
 	drawConvexBlob( convexBlobOuter );
 	drawConvexBlobRim( convexBlobOuter );
@@ -1002,6 +1135,13 @@ void Clock :: draw ()
 	drawConvexBlobRim( convexBlobInner );
 	drawDelaunay( delaunayTrg2 );
 	drawCircles( circlesActive );
+	
+	if( clockMode == CLOCK_MODE_1 )
+	{
+		drawCircleNumbers();
+	}
+	
+	drawLabels();
 	
 	if( softBody != NULL )
 		softBody->draw();
@@ -1052,14 +1192,60 @@ void Clock :: drawCircleLines ( vector<ClockCircle*>& circles )
 
 void Clock :: drawCircleLine ( ClockCircle &circle )
 {
-	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
 	ofSetColor( 255, 255, 255, 30 );
 	ofLine( screenCenter.x, screenCenter.y, circle.eye.x, circle.eye.y );
 	
-	ofDisableSmoothing();
 	ofDisableAlphaBlending();
+}
+
+void Clock :: drawCircleNumbers ()
+{
+//	for( int i=0; i<circlesInactive.size(); i++ )
+//	{
+//		ClockCircle* circle = circlesInactive[ i ];
+//		circle->drawInfoLine();
+//	}
+
+	ofEnableAlphaBlending();
+	
+	ofFill();
+	ofSetColor( 0, 0, 0, 95 );
+
+	float size = screenHeight * 0.025;
+	
+	for( int i=0; i<circlesInactive.size(); i++ )
+	{
+		ClockCircle* circle = circlesInactive[ i ];
+		
+		float x = circle->linePoint2.x - size * 0.5;
+		float y = circle->linePoint2.y - size * 0.5;
+		
+		texDigits[ circle->digitIndex ].draw( x, y, size, size );
+	}
+	
+	ofDisableAlphaBlending();
+}
+
+void Clock :: drawFreeCircles ()
+{
+	ofEnableAlphaBlending();
+	
+	for( int i=0; i<freeCircles.size(); i++ )
+	{
+		freeCircles[ i ]->draw();
+	}
+	
+	ofDisableAlphaBlending();
+}
+
+void Clock :: drawLabels ()
+{
+	for( int i=0; i<labels.size(); i++ )
+	{
+		labels[ i ]->draw();
+	}
 }
 
 void Clock :: drawTime ()
@@ -1069,7 +1255,8 @@ void Clock :: drawTime ()
 	
 	ofEnableAlphaBlending();
 
-	ofSetColor( 95, 63, 34, 180 );
+//	ofSetColor( 95, 63, 34, 180 );		// brownie.
+	ofSetColor( 76, 66, 54, 150 );
 	
 	float size	= 65 * MIN( screenWidthScale, screenHeightScale );
 	float x		= 0;
@@ -1127,7 +1314,6 @@ void Clock :: drawRayBlob ()
 	ofNoFill();
 	ofSetColor( 255, 255, 255, 100 );
 	ofSetLineWidth( 2 );
-	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
 	ofBeginShape();
@@ -1144,14 +1330,12 @@ void Clock :: drawRayBlob ()
 	ofEndShape( true );
 	
 	ofSetLineWidth( 1 );
-	ofDisableSmoothing();
 	ofDisableAlphaBlending();
 }
 
 void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 {
 	ofFill();
-//	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
 	ofBeginShape();
@@ -1179,7 +1363,6 @@ void Clock :: drawConvexBlob ( const vector<ofPoint>& points )
 	
 	ofEndShape( true );
 	
-//	ofDisableSmoothing();
 	ofDisableAlphaBlending();
 }
 
@@ -1266,7 +1449,6 @@ void Clock :: drawDelaunay ( vector<ofxDelaunayTriangle>& triangles )
 	ofSetColor( 0, 0, 0, 20 );
 	
 	ofEnableAlphaBlending();
-	ofEnableSmoothing();
 
 	for( int i=0; i<triangles.size(); i++ )
 	{
@@ -1284,7 +1466,6 @@ void Clock :: drawDelaunay ( vector<ofxDelaunayTriangle>& triangles )
 	}
 	
 	ofDisableAlphaBlending();
-	ofDisableSmoothing();
 }
 
 ///////////////////////////////////////////////
@@ -1297,6 +1478,7 @@ void Clock :: touchDown	( ofTouchEventArgs &touch )
 {
 	bMouseDown		= true;
 	mouseDownCount	= 0;
+	mouseDownPoint.set( touch.x, touch.y );
 }
 
 void Clock :: touchMoved ( ofTouchEventArgs &touch )
@@ -1307,6 +1489,15 @@ void Clock :: touchMoved ( ofTouchEventArgs &touch )
 void Clock :: touchUp ( ofTouchEventArgs &touch )
 {
 	bMouseDown		= false;
+	
+	if( infoScreen.bShowing )
+	{
+		toggleInfoScreen();
+	}
+	else
+	{
+		checkLabelPress( touch.x, touch.y );
+	}
 }
 
 #else
@@ -1320,6 +1511,7 @@ void Clock :: mousePressed( ofMouseEventArgs &e )
 {
 	bMouseDown		= true;
 	mouseDownCount	= 0;
+	mouseDownPoint.set( e.x, e.y );
 }
 
 void Clock :: mouseDragged( ofMouseEventArgs &e )
@@ -1330,6 +1522,15 @@ void Clock :: mouseDragged( ofMouseEventArgs &e )
 void Clock :: mouseReleased( ofMouseEventArgs &e )
 {
 	bMouseDown		= false;
+	
+	if( infoScreen.bShowing )
+	{
+		toggleInfoScreen();
+	}
+	else
+	{
+		checkLabelPress( e.x, e.y );
+	}
 }
 
 #endif

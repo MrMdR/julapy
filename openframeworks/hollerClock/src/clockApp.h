@@ -34,6 +34,10 @@ public:
 
 	int						frameRate;
 	bool					bDebug;
+	bool					bFullScreen;
+	
+	ofRectangle				screenRect;
+	ofRectangle				standardRect;
 	
 	ofxBox2d				box2d;
 	ofxBox2dContactListener	contactListener;

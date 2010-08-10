@@ -11,19 +11,25 @@
 
 ClockCircle :: ClockCircle ( float r, int c )
 {
+	digitIndex	= 0;
+	
 	radius		= r;
 	colorHex	= c;
 	rotation	= 0;
 	
-	colorTrgt.r	= colorCurr.r = ( c >> 16 ) & 0xff;
-	colorTrgt.g	= colorCurr.g = ( c >> 8  ) & 0xff;
-	colorTrgt.b	= colorCurr.b = ( c >> 0  ) & 0xff;
+	colorInit.r	= colorCurr.r = colorTrgt.r = ( c >> 16 ) & 0xff;
+	colorInit.g	= colorCurr.g = colorTrgt.g = ( c >> 8  ) & 0xff;
+	colorInit.b	= colorCurr.b = colorTrgt.b = ( c >> 0  ) & 0xff;
 	
 	forceScale	= 1.0;
 	
 	tex				= NULL;
 	texAnim			= NULL;
 	texAnimIndex	= 0;
+	
+//	lineLength		= ofRandom( 0.08, 0.15 );
+	lineLength		= 0.02;
+//	lineLength		= 0.01;
 }
 
 ClockCircle :: ~ClockCircle ()
@@ -44,6 +50,9 @@ void ClockCircle :: setSize ( int w, int h )
 {
 	screenWidth		= w;
 	screenHeight	= h;
+	
+	screenMinLength	= MIN( screenWidth, screenHeight );
+	screenMaxLength	= MAX( screenWidth, screenHeight );
 }
 
 void ClockCircle :: setTexture ( ofTexture* tex )
@@ -59,6 +68,11 @@ void ClockCircle :: setTextureAnim ( vector<ofTexture*>* tex )
 void ClockCircle :: setForceScale ( float scale )
 {
 	forceScale = scale;
+}
+
+void ClockCircle :: setDigitIndex ( int index )
+{
+	digitIndex = index;
 }
 
 void ClockCircle :: init ()
@@ -82,41 +96,39 @@ void ClockCircle :: init ()
 	
 	//--
 	
-	for( int i=0; i<10; i++ )
+	if( false )
 	{
-		triangles.push_back( ClockCircleTrg() );
-		ClockCircleTrg& trg = triangles.back();
-
-		float s = 1.0;
-		float r = 0.0;
-		
-		r = ofRandom( 0.0, 1.0 );
-		s = ofRandom( 1.0, 1.05 );
-		trg.p1.x = radius * s * sin( r * TWO_PI );
-		trg.p1.y = radius * s * cos( r * TWO_PI );
-		
-		r = ofRandom( 0.0, 1.0 );
-		s = ofRandom( 1.0, 1.05 );
-		trg.p2.x = radius * s * sin( r * TWO_PI );
-		trg.p2.y = radius * s * cos( r * TWO_PI );
-
-		r = ofRandom( 0.0, 1.0 );
-		s = ofRandom( 1.0, 1.05 );
-		trg.p3.x = radius * s * sin( r * TWO_PI );
-		trg.p3.y = radius * s * cos( r * TWO_PI );
-		
-		trg.rotation	= 0;
-		trg.rotationInc	= ofRandom( -2, 2 );
-		
-//		trg.color.r = 255;
-//		trg.color.g = 255;
-//		trg.color.b = 255;
-//		trg.color.a = 30;
-
-		trg.color.r = ofRandom( 0, 255 );
-		trg.color.g = ofRandom( 0, 255 );
-		trg.color.b = ofRandom( 0, 255 );
-		trg.color.a = 80;
+		for( int i=0; i<10; i++ )
+		{
+			triangles.push_back( ClockCircleTrg() );
+			ClockCircleTrg& trg = triangles.back();
+			
+			float s = 1.0;
+			float r = 0.0;
+			
+			r = ofRandom( 0.0, 1.0 );
+			s = ofRandom( 1.0, 1.05 );
+			trg.p1.x = radius * s * sin( r * TWO_PI );
+			trg.p1.y = radius * s * cos( r * TWO_PI );
+			
+			r = ofRandom( 0.0, 1.0 );
+			s = ofRandom( 1.0, 1.05 );
+			trg.p2.x = radius * s * sin( r * TWO_PI );
+			trg.p2.y = radius * s * cos( r * TWO_PI );
+			
+			r = ofRandom( 0.0, 1.0 );
+			s = ofRandom( 1.0, 1.05 );
+			trg.p3.x = radius * s * sin( r * TWO_PI );
+			trg.p3.y = radius * s * cos( r * TWO_PI );
+			
+			trg.rotation	= 0;
+			trg.rotationInc	= ofRandom( -2, 2 );
+			
+			trg.color.r = ofRandom( 0, 255 );
+			trg.color.g = ofRandom( 0, 255 );
+			trg.color.b = ofRandom( 0, 255 );
+			trg.color.a = 80;
+		}
 	}
 	
 	//--
@@ -132,6 +144,9 @@ void ClockCircle :: init ()
 	bCenterJoint	= false;
 	bOuterJoint		= false;
 	bLineupJoint	= false;
+	
+	centerPoint.x = screenWidth * 0.5;
+	centerPoint.y = screenHeight * 0.5;
 }
 
 void ClockCircle :: setup( b2World* b2dworld, float x, float y, float size, bool isFixed )
@@ -300,9 +315,41 @@ void ClockCircle :: update ()
 	
 	//--
 	
-	colorCurr.r += ( colorTrgt.r - colorCurr.r ) * 0.1;
-	colorCurr.g += ( colorTrgt.g - colorCurr.g ) * 0.1;
-	colorCurr.b += ( colorTrgt.b - colorCurr.b ) * 0.1;
+	colorTrgt.r += ( colorInit.r - colorTrgt.r ) * 0.05;
+	colorTrgt.g += ( colorInit.g - colorTrgt.g ) * 0.05;
+	colorTrgt.b += ( colorInit.b - colorTrgt.b ) * 0.05;
+	
+	colorCurr.r += ( colorTrgt.r - colorCurr.r ) * 0.3;
+	colorCurr.g += ( colorTrgt.g - colorCurr.g ) * 0.3;
+	colorCurr.b += ( colorTrgt.b - colorCurr.b ) * 0.3;
+	
+	//--
+	
+	if( !active )
+	{
+		circlePoint.set( body->GetPosition().x * OFX_BOX2D_SCALE, body->GetPosition().y * OFX_BOX2D_SCALE );
+		
+		linePoint1.set( circlePoint - centerPoint );
+		linePoint1.normalize();
+		linePoint1 *= radius + screenMinLength * 0.01;
+		linePoint1 += circlePoint;
+		
+		linePoint2.set( circlePoint - centerPoint );
+		linePoint2.normalize();
+		linePoint2 *= radius + screenMinLength * 0.015;
+		linePoint2 += circlePoint;
+		
+		float linePoint3x;
+		linePoint3x = linePoint2.x;
+		linePoint3x += ( circlePoint.x < centerPoint.x ) ? ( -screenMinLength * lineLength ) : ( screenMinLength * lineLength );
+		
+		linePoint3.x += ( linePoint3x  - linePoint3.x ) * 0.1;
+		linePoint3.y = linePoint2.y;
+		
+		linePoint4.x = linePoint3.x;
+		linePoint4.x += ( circlePoint.x < centerPoint.x ) ? ( -screenMinLength * 0.01 ) : ( screenMinLength * 0.01 );
+		linePoint4.y = linePoint2.y;
+	}
 	
 	//--
 	
@@ -349,7 +396,7 @@ void ClockCircle :: draw ()
 	{
 		drawCircles();
 	}
-		
+	
 //	drawTriangles();
 }
 
@@ -399,8 +446,13 @@ void ClockCircle :: drawTexture ()
 void ClockCircle :: drawTextureAnim ()
 {
 	ofEnableAlphaBlending();
-//	ofSetColor( 255, 255, 255, 255 );
-	ofSetColor( colorCurr.r, colorCurr.g, colorCurr.b, 220 );
+//	ofSetColor( 0, 0, 0, 100 );
+	
+	float colScale = 0.6;
+	int r = (int)( colorCurr.r * colScale );
+	int g = (int)( colorCurr.g * colScale );
+	int b = (int)( colorCurr.b * colScale );
+	ofSetColor( r, g, b, 255 );
 	
 	glPushMatrix();
 	glTranslatef( getPosition().x, getPosition().y, 0 );
@@ -442,4 +494,17 @@ void ClockCircle :: drawTriangles ()
 	ofDisableAlphaBlending();
 	
 	glPopMatrix();
+}
+
+void ClockCircle :: drawInfoLine ()
+{
+	ofEnableAlphaBlending();
+	
+	ofNoFill();
+	ofSetColor( 0, 0, 0, 20 );
+	
+	ofLine( linePoint1.x, linePoint1.y, linePoint2.x, linePoint2.y );
+	ofLine( linePoint2.x, linePoint2.y, linePoint3.x, linePoint3.y );
+	
+	ofDisableAlphaBlending();
 }

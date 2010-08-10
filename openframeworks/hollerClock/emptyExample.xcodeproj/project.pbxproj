@@ -26,6 +26,7 @@
 		B20874C411F80F1A00592A37 /* ofxSimpleGuiPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20874B311F80F1A00592A37 /* ofxSimpleGuiPage.cpp */; };
 		B20874C511F80F1A00592A37 /* ofxSimpleGuiToo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20874B511F80F1A00592A37 /* ofxSimpleGuiToo.cpp */; };
 		B20874CA11F80F2100592A37 /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20874C811F80F2100592A37 /* ofxMSAInteractiveObject.cpp */; };
+		B22322B012113D570015ED6A /* ClockFreeCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22322AF12113D570015ED6A /* ClockFreeCircle.cpp */; };
 		B22A9ED21201385B003422E8 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22A9ED01201385B003422E8 /* ofxContourUtil.cpp */; };
 		B2464C341207FD81000BF9BB /* ClockLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2464C331207FD81000BF9BB /* ClockLine.cpp */; };
 		B2569AF311F3E6B100553DF4 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2569A9011F3E6B000553DF4 /* b2BroadPhase.cpp */; };
@@ -98,6 +99,7 @@
 		B28F078F11EFF73500B54D05 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28F078A11EFF73500B54D05 /* ofxXmlSettings.cpp */; };
 		B2AE676112027E3C00FC3FCC /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE675C12027E3C00FC3FCC /* Delaunay.cpp */; };
 		B2AE676212027E3C00FC3FCC /* ofxDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */; };
+		B2BA91EB1210D4B200668BDF /* ClockLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2BA91EA1210D4B200668BDF /* ClockLabel.cpp */; };
 		B2CDEA6B11F58BD600D1E7CD /* ofxColorMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5911F58BD600D1E7CD /* ofxColorMap.cpp */; };
 		B2CDEA6C11F58BD600D1E7CD /* ofxColorUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5B11F58BD600D1E7CD /* ofxColorUtils.cpp */; };
 		B2CDEA6D11F58BD600D1E7CD /* ofxDataNormaliser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDEA5D11F58BD600D1E7CD /* ofxDataNormaliser.cpp */; };
@@ -121,7 +123,7 @@
 		E45BE9840E8CC7DD009D7055 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		E4B69E210A3A1BDC003C02F2 /* clockApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* clockApp.cpp */; };
-		E4C2422B10CC554B004149E2 /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2421E10CC549C004149E2 /* openFrameworks.a */; };
+		E4C2422B10CC554B004149E2 /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2421E10CC549C004149E2 /* openFrameworksDebug.a */; };
 		E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424410CC5A17004149E2 /* AppKit.framework */; };
 		E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424510CC5A17004149E2 /* Cocoa.framework */; };
 		E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424610CC5A17004149E2 /* IOKit.framework */; };
@@ -258,6 +260,8 @@
 		B20B120411F6756300D3FC57 /* VaryingRestitution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VaryingRestitution.h; path = src/box2d_tests/VaryingRestitution.h; sourceTree = SOURCE_ROOT; };
 		B20B120511F6756300D3FC57 /* VerticalStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalStack.h; path = src/box2d_tests/VerticalStack.h; sourceTree = SOURCE_ROOT; };
 		B20B120611F6756300D3FC57 /* Web.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Web.h; path = src/box2d_tests/Web.h; sourceTree = SOURCE_ROOT; };
+		B22322AE12113D570015ED6A /* ClockFreeCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockFreeCircle.h; sourceTree = "<group>"; };
+		B22322AF12113D570015ED6A /* ClockFreeCircle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockFreeCircle.cpp; sourceTree = "<group>"; };
 		B22A9ECD1201385B003422E8 /* convexHull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convexHull.h; path = ../../../addons/ofxContourUtil/libs/convexHull.h; sourceTree = SOURCE_ROOT; };
 		B22A9ECE1201385B003422E8 /* polylineSimplify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polylineSimplify.h; path = ../../../addons/ofxContourUtil/libs/polylineSimplify.h; sourceTree = SOURCE_ROOT; };
 		B22A9ED01201385B003422E8 /* ofxContourUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxContourUtil.cpp; path = ../../../addons/ofxContourUtil/src/ofxContourUtil.cpp; sourceTree = SOURCE_ROOT; };
@@ -419,6 +423,8 @@
 		B2AE675D12027E3C00FC3FCC /* Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delaunay.h; path = ../../../addons/ofxDelaunay/libs/Delaunay/Delaunay.h; sourceTree = SOURCE_ROOT; };
 		B2AE675F12027E3C00FC3FCC /* ofxDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDelaunay.cpp; path = ../../../addons/ofxDelaunay/src/ofxDelaunay.cpp; sourceTree = SOURCE_ROOT; };
 		B2AE676012027E3C00FC3FCC /* ofxDelaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxDelaunay.h; path = ../../../addons/ofxDelaunay/src/ofxDelaunay.h; sourceTree = SOURCE_ROOT; };
+		B2BA91E91210D4B200668BDF /* ClockLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockLabel.h; sourceTree = "<group>"; };
+		B2BA91EA1210D4B200668BDF /* ClockLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockLabel.cpp; sourceTree = "<group>"; };
 		B2CDEA5811F58BD600D1E7CD /* ofxBounce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBounce.h; path = ../../../addons/ofxJulapyUtils/ofxBounce.h; sourceTree = SOURCE_ROOT; };
 		B2CDEA5911F58BD600D1E7CD /* ofxColorMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxColorMap.cpp; path = ../../../addons/ofxJulapyUtils/ofxColorMap.cpp; sourceTree = SOURCE_ROOT; };
 		B2CDEA5A11F58BD600D1E7CD /* ofxColorMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxColorMap.h; path = ../../../addons/ofxJulapyUtils/ofxColorMap.h; sourceTree = SOURCE_ROOT; };
@@ -487,7 +493,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4C2422B10CC554B004149E2 /* openFrameworks.a in Frameworks */,
+				E4C2422B10CC554B004149E2 /* openFrameworksDebug.a in Frameworks */,
 				E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */,
 				E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
@@ -541,10 +547,14 @@
 				B208000E11EEABCC002AC0F8 /* Clock.cpp */,
 				B208000111EEAB84002AC0F8 /* ClockCircle.h */,
 				B208000211EEAB84002AC0F8 /* ClockCircle.cpp */,
-				B27B66F81206A04900643337 /* ClockInfoScreen.cpp */,
-				B27B66F91206A04900643337 /* ClockInfoScreen.h */,
+				B2BA91E91210D4B200668BDF /* ClockLabel.h */,
+				B2BA91EA1210D4B200668BDF /* ClockLabel.cpp */,
 				B2464C321207FD81000BF9BB /* ClockLine.h */,
 				B2464C331207FD81000BF9BB /* ClockLine.cpp */,
+				B27B66F81206A04900643337 /* ClockInfoScreen.cpp */,
+				B27B66F91206A04900643337 /* ClockInfoScreen.h */,
+				B22322AE12113D570015ED6A /* ClockFreeCircle.h */,
+				B22322AF12113D570015ED6A /* ClockFreeCircle.cpp */,
 			);
 			name = clock;
 			path = src/clock;
@@ -1321,7 +1331,7 @@
 		E4C2421710CC549C004149E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E4C2421E10CC549C004149E2 /* openFrameworks.a */,
+				E4C2421E10CC549C004149E2 /* openFrameworksDebug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1449,10 +1459,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E4C2421E10CC549C004149E2 /* openFrameworks.a */ = {
+		E4C2421E10CC549C004149E2 /* openFrameworksDebug.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = openFrameworks.a;
+			path = openFrameworksDebug.a;
 			remoteRef = E4C2421D10CC549C004149E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1582,6 +1592,8 @@
 				B260F380120BA6080023B90D /* ofxSprite.cpp in Sources */,
 				B260F383120BA6150023B90D /* ofxMovieClip.cpp in Sources */,
 				B260F386120BA62C0023B90D /* ofxStage.cpp in Sources */,
+				B2BA91EB1210D4B200668BDF /* ClockLabel.cpp in Sources */,
+				B22322B012113D570015ED6A /* ClockFreeCircle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
