@@ -56,9 +56,10 @@ public :
 	void  setColor( Color *c );
 	void  getColor( Color *c );
 	
-	void  setColorScale( float s );
-	void  setColorRadius( float r );
-	void  setColorAngle( float a );
+	void  setColorScale		( float s );
+	void  setColorRadius	( float r );
+	void  setColorAngle		( float a );
+	void  addToColorAngle	( float a );
 	
 	void  setCircularUpperBounds( float value );
 	void  setCircularLowerBounds( float value );

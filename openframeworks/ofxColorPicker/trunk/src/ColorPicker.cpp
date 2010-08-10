@@ -244,6 +244,11 @@ void ColorPicker :: setColorAngle ( float a )
 	colorAngle = a * 360;
 }
 
+void ColorPicker :: addToColorAngle ( float a )
+{
+	colorAngle += ( a * 360 );
+}
+
 //////////////////////////////////////////////
 //	VISIBLE.
 //////////////////////////////////////////////
