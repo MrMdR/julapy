@@ -13,9 +13,6 @@ void clockApp :: setup()
 	
 	//-------------------
 	
-	deviceType = DEVICE_IPAD;
-//	deviceType = DEVICE_IPHONE;
-	
 	rot				= 0;
 	rotTime			= 0;
 	rotTimeTotal	= 30;
@@ -27,17 +24,17 @@ void clockApp :: setup()
 	ofSetCircleResolution( 100 );
 	
 	//-- size.
+
+	screenSize.width	= ofGetScreenWidth();
+	screenSize.height	= ofGetScreenHeight();
+
+	deviceType = DEVICE_IPAD;	// default.
 	
-	if( deviceType == DEVICE_IPHONE )
-	{
-		screenSize.width	= 480;
-		screenSize.height	= 320;
-	}
-	else if( deviceType == DEVICE_IPAD )
-	{
-		screenSize.width	= 1024;
-		screenSize.height	= 768;
-	}
+	if( screenSize.width == 480 && screenSize.height == 320 )
+		deviceType = DEVICE_IPHONE;
+
+	if( screenSize.width == 1024 && screenSize.height == 768 )
+		deviceType = DEVICE_IPAD;
 	
 	//-- sound.
 	
