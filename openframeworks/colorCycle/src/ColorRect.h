@@ -17,12 +17,14 @@ class ColorRect
 public:
 	
 	 ColorRect();
+	 ColorRect( float w, float h );
 	~ColorRect();
 	
-	void setCornerColor( const ofColor& c, int cornerIndex );
-	void draw ();
+	void init			( float w, float h );
+	void setCornerColor	( const ofColor& c, int cornerIndex );
+	void draw			();
 	
-	float*	rectVert;
-	float*	rectCol;
+	GLfloat*	rectPoints;
+	GLfloat*	rectColors;
 
 };
