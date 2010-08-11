@@ -28,12 +28,11 @@ public:
 	
 	ofxColorPicker	colorPicker0;
 	ofxColorPicker	colorPicker1;
+	float			colorScale;
 	
 	bool			bMouseDown;
 	ofPoint			mousePos;
 	ofPoint			mouseVel;
-	
-	float			colorScale;
 	
 };
 
