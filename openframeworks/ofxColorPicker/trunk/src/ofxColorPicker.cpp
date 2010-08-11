@@ -32,7 +32,7 @@ void ofxColorPicker :: draw()
 	glTranslatef( dimensions.x, dimensions.y, 0 );
 	
 	drawBackground( colorWheelWidth, colorWheelHeight );
-	drawColorWheel( colorWheelWidth, colorWheelHeight );
+	drawColorWheel( colorWheelWidth * 0.5 );
 	drawColorPoint( colorWheelWidth, colorWheelHeight );
 	drawColorScaleBar( colorWheelWidth, colorWheelHeight );
 	drawColorRect( colorWheelWidth, colorWheelHeight );
@@ -167,7 +167,10 @@ void ofxColorPicker :: init()
 	colorRadius			= 0;
 	colorAngle			= 0;
 	
-	oscillationAngle	= 0; 
+	oscillationAngle	= 0;
+	
+	wheelLayer.radius		= COLOR_WHEEL_RADIUS;
+	wheelLayer.colorScale	= colorScale;
 	
 	show();
 	
@@ -404,56 +407,57 @@ void ofxColorPicker :: drawBackground( int w, int h )
 	ofRect( -bx, -by, w + bx * 2, h + 160 + bx * 2 );	
 }
 
-void ofxColorPicker :: drawColorWheel( int w, int h )
+void ofxColorPicker :: drawColorWheel( float radius )
 {
-	int res				= 200;
-	float angle			= 0.0f;
-	float angleAdder	= M_TWO_PI / (float)res;
-	float radius		= w * 0.5;
-	int k				= 0;
-	
-	float *circlePts	= new float[ ( res + 1 ) * 2 ];
-	float *circleAngs	= new float[ res + 1 ];
-	
-	for( int i=0; i<res + 1; i++ )
+	if( wheelLayer.radius !=radius || wheelLayer.colorScale != colorScale )
 	{
-		circleAngs[ i ]    = angle * RAD_TO_DEG;
-		circlePts[ k + 0 ] = cos( -angle );
-		circlePts[ k + 1 ] = sin( -angle );
-		angle	+= angleAdder;
-		k		+= 2;
+		wheelLayer.radius		= radius;
+		wheelLayer.colorScale	= colorScale;
+		
+		for( int i=0; i<COLOR_WHEEL_RES+1; i++ )
+		{
+			int j = i % COLOR_WHEEL_RES;
+			float p = j / (float)COLOR_WHEEL_RES;
+			float a = p * TWO_PI;
+			
+			wheelLayer.points[ i * 4 + 0 ] = cos( -a ) * wheelLayer.radius;
+			wheelLayer.points[ i * 4 + 1 ] = sin( -a ) * wheelLayer.radius;
+			
+			wheelLayer.points[ i * 4 + 2 ] = 0;
+			wheelLayer.points[ i * 4 + 3 ] = 0;
+			
+			ofColor c;
+			getCircularColor( a * RAD_TO_DEG, 1.0, wheelLayer.colorScale, &c );
+			
+			wheelLayer.colors[ i * 8 + 0 ] = c.r / 255.0;
+			wheelLayer.colors[ i * 8 + 1 ] = c.g / 255.0;
+			wheelLayer.colors[ i * 8 + 2 ] = c.b / 255.0;
+			wheelLayer.colors[ i * 8 + 3 ] = 1.0;
+			
+			wheelLayer.colors[ i * 8 + 4 ] = 1.0;
+			wheelLayer.colors[ i * 8 + 5 ] = 1.0;
+			wheelLayer.colors[ i * 8 + 6 ] = 1.0;
+			wheelLayer.colors[ i * 8 + 7 ] = 1.0;
+		}
 	}
 	
 	glPushMatrix();
-	glTranslatef( w * 0.5, h * 0.5, 0 );
-	
-	ofColor c;
+	glTranslatef( radius, radius, 0 );
 	
 	glEnable( GL_SMOOTH );
 	
-	for( int i=0; i<res; i++ )
-	{
-		glBegin( GL_TRIANGLES );
-		
-			getCircularColor( circleAngs[ i + 0 ], 0.0, colorScale, &c );
-			glColor3f( c.r / 255.0, c.g / 255.0, c.b / 255.0 );
-			glVertex2f( 0, 0 );
-
-			getCircularColor( circleAngs[ i + 0 ], 1.0, colorScale, &c );
-			glColor3f( c.r / 255.0, c.g / 255.0, c.b / 255.0 );
-			glVertex2f( circlePts[ i * 2 + 0 ] * radius, circlePts[ i * 2 + 1 ] * radius );
-
-			getCircularColor( circleAngs[ i + 1 ], 1.0, colorScale, &c );
-			glColor3f( c.r / 255.0, c.g / 255.0, c.b / 255.0 );
-			glVertex2f( circlePts[ i * 2 + 2 ] * radius, circlePts[ i * 2 + 3 ] * radius );
-		
-		glEnd();
-	}
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	glVertexPointer( 2, GL_FLOAT, 0, &wheelLayer.points[ 0 ] );
+	glColorPointer(  4, GL_FLOAT, 0, &wheelLayer.colors[ 0 ] );
+	
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, ( COLOR_WHEEL_RES + 1 ) * 2 );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
 	
 	glPopMatrix();
-	
-	delete[] circlePts;
-	delete[] circleAngs;
 }
 
 void ofxColorPicker :: drawColorPoint( int w, int h )
@@ -498,21 +502,54 @@ void ofxColorPicker :: drawColorScaleBar( int w, int h )
 	ofColor c;
 	getCircularColor( colorAngle, colorRadius, 1.0, &c );
 	
+	//--
+	
 	int rx, ry, rw, rh;
 	rx = -bx;
 	ry = h + 20 - bx;
 	rw = w + bx * 2;
 	rh = 20 + bx * 2;
 	
+	rectScaleLayer.points[ 0 ] = rx;
+	rectScaleLayer.points[ 1 ] = ry;
+	rectScaleLayer.points[ 2 ] = rx;
+	rectScaleLayer.points[ 3 ] = ry + rh;
+	rectScaleLayer.points[ 4 ] = rx + rw;
+	rectScaleLayer.points[ 5 ] = ry + rh;
+	rectScaleLayer.points[ 6 ] = rx + rw;
+	rectScaleLayer.points[ 7 ] = ry;
+		
+	rectScaleLayer.colors[ 0 ]  = 0;
+	rectScaleLayer.colors[ 1 ]  = 0;
+	rectScaleLayer.colors[ 2 ]  = 0;
+	rectScaleLayer.colors[ 3 ]  = 1;
+	rectScaleLayer.colors[ 4 ]  = 0;
+	rectScaleLayer.colors[ 5 ]  = 0;
+	rectScaleLayer.colors[ 6 ]  = 0;
+	rectScaleLayer.colors[ 7 ]  = 1;
+	rectScaleLayer.colors[ 8 ]  = c.r / 255.0;
+	rectScaleLayer.colors[ 9 ]  = c.g / 255.0;
+	rectScaleLayer.colors[ 10 ] = c.b / 255.0;
+	rectScaleLayer.colors[ 11 ] = 1;
+	rectScaleLayer.colors[ 12 ] = c.r / 255.0;
+	rectScaleLayer.colors[ 13 ] = c.g / 255.0;
+	rectScaleLayer.colors[ 14 ] = c.b / 255.0;
+	rectScaleLayer.colors[ 15 ] = 1;
+	
 	glEnable( GL_SMOOTH );
-	glBegin( GL_QUADS );
-		glColor3f( 0, 0, 0 );
-		glVertex2f( rx, ry );
-		glVertex2f( rx, ry + rh );
-		glColor3f( c.r / 255.0, c.g / 255.0, c.b / 255.0 );
-		glVertex2f( rx + rw, ry + rh );
-		glVertex2f( rx + rw, ry );
-	glEnd();
+	
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	glVertexPointer( 2, GL_FLOAT, 0, &rectScaleLayer.points[ 0 ] );
+	glColorPointer(  4, GL_FLOAT, 0, &rectScaleLayer.colors[ 0 ] );
+	
+	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
+	
+	//--
 	
 	int cx = colorScale * w;
 	int cw = 3;
