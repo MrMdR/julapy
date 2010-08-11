@@ -16,9 +16,26 @@
 #define		COLOR_PICKER_DEFAULT_WIDTH				100
 #define		COLOR_PICKER_DEFAULT_HEIGHT				100
 
+#define		COLOR_WHEEL_RES							200
+#define		COLOR_WHEEL_RADIUS						100
+
 #define		COLOR_PICKER_MODE_CIRLCE_ROTATION		0
 #define		COLOR_PICKER_MODE_RANDOM_WALK			1
 #define		COLOR_PICKER_MODE_MOUSE					2
+
+struct Rectangle
+{
+	float	points[ 2 * 4 ];
+	float	colors[ 4 * 4 ];
+};
+
+struct ColorWheel
+{
+	float	points[ ( COLOR_WHEEL_RES + 1 ) * 2 * 2 ];
+	float	colors[ ( COLOR_WHEEL_RES + 1 ) * 2 * 4 ];
+	float	colorScale;
+	float	radius;
+};
 
 class ofxColorPicker : public ofBaseDraws
 {
@@ -85,7 +102,7 @@ private :
 	void  updateMouseInterpolation();
 	
 	void  drawBackground( int w, int h );
-	void  drawColorWheel( int w, int h );
+	void  drawColorWheel( float radius );
 	void  drawColorPoint( int w, int h );
 	void  drawColorScaleBar( int w, int h );
 	void  drawColorRect( int w, int h );
@@ -122,6 +139,9 @@ private :
 	ofRectangle dimensions;
 	int			colorWheelWidth;			// color wheel display.
 	int			colorWheelHeight;
+	
+	ColorWheel	wheelLayer;
+	Rectangle	rectScaleLayer;
 };
 
 #endif
