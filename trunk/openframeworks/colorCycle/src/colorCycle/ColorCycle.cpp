@@ -110,6 +110,8 @@ void ColorCycle :: update ()
 	rect.setCornerColor( lowerColor, 3 );
 	
 	updatePhysics();
+	updateDelaunay();
+	updateTriangles();
 }
 
 void ColorCycle :: updatePhysics ()
@@ -120,8 +122,85 @@ void ColorCycle :: updatePhysics ()
 	{
 		ofColor c;
 		c = interpolateColor( upperColor, lowerColor, physics.circles[ i ]->posColor.y );
-//		c = interpolateColor( c, black, 0.2 );
 		physics.circles[ i ]->setColor( c );
+	}
+}
+
+void ColorCycle :: updateDelaunay ()
+{
+	delaunay.reset();
+	
+	for( int i=0; i<physics.circles.size(); i++ )
+	{
+		ofPoint& pos = physics.circles[ i ]->pos;
+		delaunay.addPoint( pos.x, pos.y, pos.z );
+	}
+	
+	delaunay.triangulate();
+}
+
+void ColorCycle :: updateTriangles ()
+{
+	for( int i=0; i<triangles.size(); i++ )
+	{
+		delete triangles[ i ];
+	}
+	triangles.clear();
+	
+	//--
+	
+	for( int i=0; i<delaunay.triangles.size(); i++ )
+	{
+		const ofxDelaunayTriangle& delTri = delaunay.triangles[ i ];
+		
+		ColorTriangle* triangle;
+		triangle = new ColorTriangle();
+		
+		for( int j=0; j<3; j++ )
+		{
+			//-- copy triangle points.
+			
+			triangle->points[ j ].x = delTri.points[ j ].x;
+			triangle->points[ j ].y = delTri.points[ j ].y;
+			
+			//-- work out triangle colour.
+			
+			int c2 = ( j + 1 ) % 3;
+			int c3 = ( j + 2 ) % 3;
+			
+			ofxVec2f p1, p2, p3;
+			p1.set( delTri.points[ ( j + 0 ) % 3 ] );
+			p2.set( delTri.points[ ( j + 1 ) % 3 ] );
+			p3.set( delTri.points[ ( j + 2 ) % 3 ] );
+			
+			p2 -= p1;
+			p2.normalize();
+			
+			p3 -= p1;
+			p3.normalize();
+			
+			p2 += p3;
+			p2.normalize();
+			
+			p1 += p2 * ( screen.screenMin * 0.25 );
+			
+			float px, py;
+			px = p1.x / (float)screen.screenWidth;
+			py = p1.y / (float)screen.screenHeight;
+			
+			px = MIN( MAX( px, 0.0 ), 1.0 );
+			py = MIN( MAX( py, 0.0 ), 1.0 );
+			
+			ofColor c;
+			c = interpolateColor( upperColor, lowerColor, py );
+			
+			triangle->colors[ j ] = c;
+		}
+		
+		//--
+
+		triangle->init();
+		triangles.push_back( triangle );
 	}
 }
 
@@ -142,7 +221,10 @@ ofColor ColorCycle :: interpolateColor ( const ofColor& c1, const ofColor& c2, f
 void ColorCycle :: draw ()
 {
 	rect.draw();
-	physics.draw();
+	
+	drawTriangles();
+	
+//	physics.draw();
 	
 	drawColorPickers();
 }
@@ -161,6 +243,19 @@ void ColorCycle :: drawColorPickers ()
 	py += colorPicker0.getHeight() + 10;
 	
 	colorPicker1.draw( px, py, s, s );
+}
+
+void ColorCycle :: drawTriangles ()
+{
+	for( int i=0; i<triangles.size(); i++ )
+	{
+		triangles[ i ]->drawFill();
+	}
+	
+	for( int i=0; i<triangles.size(); i++ )
+	{
+		triangles[ i ]->drawStroke();
+	}
 }
 
 ///////////////////////////////////////////////////////

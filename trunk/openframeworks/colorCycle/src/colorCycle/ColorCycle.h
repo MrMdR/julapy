@@ -12,8 +12,10 @@
 #include "ofMain.h"
 #include "ofxScreen.h"
 #include "ofxColorPicker.h"
+#include "ofxDelaunay.h"
 #include "ColorRect.h"
 #include "ColorPhysics.h"
+#include "ColorTriangle.h"
 
 class ColorCycle
 {
@@ -32,10 +34,13 @@ public:
 	void update			();
 	void draw			();
 	
-	void updatePhysics	();
+	void updatePhysics			();
+	void updateDelaunay			();
+	void updateTriangles		();
 	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
 	
 	void drawColorPickers		();
+	void drawTriangles			();
 	
 	void showPanel		();
 	void hidePanel		();
@@ -47,6 +52,8 @@ public:
 	
 	ofxScreen		screen;
 	int				frameRate;
+	
+	bool			bPanel;
 	
 	ofxColorPicker	colorPicker0;
 	ofxColorPicker	colorPicker1;
@@ -65,5 +72,6 @@ public:
 	ofPoint			inputPos2;
 	ofPoint			inputVel;
 	
-	bool			bPanel;
+	ofxDelaunay				delaunay;
+	vector<ColorTriangle*>	triangles;
 };

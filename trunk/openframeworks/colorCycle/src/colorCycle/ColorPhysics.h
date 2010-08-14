@@ -33,6 +33,9 @@ public:
 	void  createCircles	();
 	float areaToRadius	( float area );
 	
+	void  createJoints	();
+	void  destroyJoints	();
+	
 	ofxScreen				screen;
 	
 	ofxBox2d*				box2d;
