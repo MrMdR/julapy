@@ -25,12 +25,6 @@ public:
 	
 	ColorCycle		cc;
 	
-	float			colorScale;
-	
-	bool			bMouseDown;
-	ofPoint			mousePos;
-	ofPoint			mouseVel;
-	
 };
 
 #endif
