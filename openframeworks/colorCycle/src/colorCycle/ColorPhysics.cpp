@@ -110,7 +110,7 @@ void ColorPhysics :: createBounds ()
 
 void ColorPhysics :: createCircles ()
 {
-	int t = 20;
+	int t = 50;
 	for( int i=0; i<t; i++ )
 	{
 		ColorCircle* circle;
@@ -118,7 +118,7 @@ void ColorPhysics :: createCircles ()
 		
 		//-- define line up point.
 		
-		float area		= ofRandom( 0.001, 0.005 );
+		float area		= 0.0005;
 		float radius	= areaToRadius( area );
 		float rx = radius / (float)screen.screenWidth;
 		float ry = radius / (float)screen.screenHeight;
@@ -152,6 +152,20 @@ float ColorPhysics :: areaToRadius ( float area )
 	r *= 0.5;
 	
 	return r;
+}
+
+///////////////////////////////////////////////////////
+//	JOINTS.
+///////////////////////////////////////////////////////
+
+void ColorPhysics :: createJoints ()
+{
+	
+}
+
+void ColorPhysics :: destroyJoints ()
+{
+	
 }
 
 ///////////////////////////////////////////////////////

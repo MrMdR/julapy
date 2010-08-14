@@ -26,8 +26,11 @@ ColorCircle :: ColorCircle ()
 	dir *= ofRandom( 0.0, rndLength );
 	vec += dir;
 	
-	posOffset.x = vec.x;
-	posOffset.y = vec.y;
+//	posOffset.x = vec.x;
+//	posOffset.y = vec.y;
+	
+	posOffset.x = 0;
+	posOffset.y = 0;
 }
 
 ColorCircle :: ~ColorCircle ()
@@ -78,7 +81,7 @@ void ColorCircle :: draw ()
 	
 	drawFill();
 	drawStroke();
-	drawColorLine();
+//	drawColorLine();
 }
 
 void ColorCircle :: drawFill ()
