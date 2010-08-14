@@ -25,7 +25,7 @@ ofxColorPicker :: ~ofxColorPicker()
 
 void ofxColorPicker :: draw()
 {
-	if( !visible )
+	if( !bVisible )
 		return;
 	
 	glPushMatrix();
@@ -173,6 +173,7 @@ void ofxColorPicker :: init()
 	wheelLayer.colorScale	= colorScale;
 	
 	show();
+	enable();
 	
 	setMode( COLOR_PICKER_MODE_MOUSE );
 	
@@ -264,22 +265,51 @@ void ofxColorPicker :: addToColorAngle ( float a )
 
 void ofxColorPicker :: show ()
 {
-	visible = true;
+	bVisible = true;
+	
+	colorWheel.enabled		= bVisible && bEnabled;
+	colorScaleBar.enabled	= bVisible && bEnabled;
 }
 
 void ofxColorPicker :: hide ()
 {
-	visible = false;
+	bVisible = false;
+	
+	colorWheel.enabled		= bVisible && bEnabled;
+	colorScaleBar.enabled	= bVisible && bEnabled;
 }
 
 void ofxColorPicker :: toggleShow ()
 {
-	visible = !visible;
+	bVisible = !bVisible;
+	
+	colorWheel.enabled		= bVisible && bEnabled;
+	colorScaleBar.enabled	= bVisible && bEnabled;
 }
 
 bool ofxColorPicker :: isShowing ()
 {
-	return visible;
+	return bVisible;
+}
+
+//////////////////////////////////////////////
+//	ENABLE / DISABLE.
+//////////////////////////////////////////////
+
+void ofxColorPicker :: enable ()
+{
+	bEnabled = true;
+	
+	colorWheel.enabled		= bVisible && bEnabled;
+	colorScaleBar.enabled	= bVisible && bEnabled;
+}
+
+void ofxColorPicker :: disable ()
+{
+	bEnabled = false;
+	
+	colorWheel.enabled		= bVisible && bEnabled;
+	colorScaleBar.enabled	= bVisible && bEnabled;
 }
 
 //////////////////////////////////////////////

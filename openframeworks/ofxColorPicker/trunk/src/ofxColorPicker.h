@@ -64,6 +64,9 @@ public :
 	void  toggleShow		();
 	bool  isShowing			();
 	
+	void  enable			();
+	void  disable			();
+	
 	void  setMode			( int m );
 	void  setRandomColor	();
 	
@@ -114,7 +117,8 @@ private :
 	ofxMSAInteractiveObject colorWheel;
 	ofxMSAInteractiveObject colorScaleBar;
 	
-	bool		visible;
+	bool		bVisible;
+	bool		bEnabled;
 	
 	ofColor		color;
 	ofPoint		colorPoint;
