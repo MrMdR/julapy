@@ -3,8 +3,7 @@
 
 
 #include "ofMain.h"
-#include "ColorRect.h"
-#include "ofxColorPicker.h"
+#include "ColorCycle.h"
 
 class testApp : public ofBaseApp{
 
@@ -24,10 +23,8 @@ public:
 
 	int				frameRate;
 	
-	ColorRect		rect;
+	ColorCycle		cc;
 	
-	ofxColorPicker	colorPicker0;
-	ofxColorPicker	colorPicker1;
 	float			colorScale;
 	
 	bool			bMouseDown;
