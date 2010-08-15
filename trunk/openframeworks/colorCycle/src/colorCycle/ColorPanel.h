@@ -30,6 +30,9 @@ public:
 		tweenVal		= 0;
 		tweenTime		= 0;
 		tweenTimeTotal	= 10;
+		
+		timeoutStart	= 0;
+		timeoutTotal	= 1000;
 	};
 	
 	~ColorPanel()
@@ -46,6 +49,10 @@ public:
 	float		tweenVal;
 	float		tweenTime;
 	float		tweenTimeTotal;
+	
+	int			timeoutStart;
+	int			timeoutTotal;
+	bool		bTimeoutPending;
 	
 	ofxColorPicker* colorPicker0;
 	ofxColorPicker* colorPicker1;
@@ -65,15 +72,14 @@ public:
 			bShowing	= true;
 			bVisible	= true;
 		}
+		
+		bTimeoutPending = false;
 	};
 	
 	void hide ()
 	{
-		if( bShowing )
-		{
-			tweenTime	= 0;
-			bShowing	= false;
-		}
+		timeoutStart	= ofGetElapsedTimeMillis();
+		bTimeoutPending = true;
 	};
 	
 	void toggleShow ()
@@ -90,6 +96,20 @@ public:
 	
 	void update ()
 	{
+		if( bTimeoutPending )
+		{
+			int t1 = timeoutStart + timeoutTotal;
+			int t2 = ofGetElapsedTimeMillis();
+			
+			if( t2 > t1 )
+			{
+				bTimeoutPending	= false;
+				
+				tweenTime		= 0;
+				bShowing		= false;
+			}
+		}
+		
 		if( bShowing && tweenVal != 1.0 )
 		{
 			tweenVal	= Quad :: easeOut( tweenTime, 0, 1.0, tweenTimeTotal );
