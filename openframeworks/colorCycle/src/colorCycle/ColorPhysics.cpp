@@ -31,9 +31,12 @@ void ColorPhysics :: setGravity	( float gx, float gy )
 	gravity.x = MIN( 1.0, MAX( -1.0, gx ) );
 	gravity.y = MIN( 1.0, MAX( -1.0, gy ) );
 	
+	gravity.x *= 20;
+	gravity.y *= 20;
+	
 	if( box2d != NULL )
 	{
-		box2d->setGravity( gravity.x * 10, gravity.y * 10 );
+		box2d->setGravity( gravity.x, gravity.y );
 	}
 }
 
@@ -52,6 +55,7 @@ void ColorPhysics :: setup ()
 	
 	createBounds();
 	createCircles();
+	createJoints();
 }
 
 void ColorPhysics :: createBounds ()
@@ -118,7 +122,9 @@ void ColorPhysics :: createCircles ()
 		
 		//-- define line up point.
 		
-		float area		= 0.0005;
+//		float area		= 0.0005;
+//		float area		= ofRandom( 0.001, 0.004 );
+		float area		= 0.001;
 		float radius	= areaToRadius( area );
 		float rx = radius / (float)screen.screenWidth;
 		float ry = radius / (float)screen.screenHeight;
@@ -132,7 +138,10 @@ void ColorPhysics :: createCircles ()
 		float bounce	= 0.53;
 		float friction	= 0.1;
 		
-		circle->enableGravity( true );
+		bool bEnableGravity;
+		bEnableGravity = ofRandom( 0.0, 1.0 ) > 0.5;
+		
+		circle->enableGravity( bEnableGravity );
 		circle->setPhysics( mass, bounce, friction );
 		circle->setup( box2d->getWorld(), ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ), radius, false );
 		circle->setRotationFriction( 1.0 );
@@ -160,12 +169,57 @@ float ColorPhysics :: areaToRadius ( float area )
 
 void ColorPhysics :: createJoints ()
 {
-	
+	for( int i=0; i<circles.size(); i++ )
+	{
+		int r = (int)ofRandom( 0, circles.size () - 1 );
+		
+		ColorCircle& c1 = *circles[ i ];
+		ColorCircle& c2 = *circles[ r ];
+		
+		b2DistanceJointDef jd;
+		b2Vec2 p1, p2, d;
+		
+		jd.frequencyHz  = 10.0;
+		jd.dampingRatio = 0.05;
+		
+		jd.body1 = c1.body;
+		jd.body2 = c2.body;
+		
+		jd.localAnchor1.Set( 0, 0 );
+		jd.localAnchor2.Set( 0, 0 );
+		jd.collideConnected = false;
+		
+		p1	= jd.body1->GetWorldPoint( jd.localAnchor1 );
+		p2	= jd.body2->GetWorldPoint( jd.localAnchor2 );
+		d	= p2 - p1;
+		
+		float length;
+		length = ofRandom( 0.3, 0.5 ) * screen.screenMin;
+		
+		jd.length = length / OFX_BOX2D_SCALE;
+		
+		b2DistanceJoint* joint;
+		joint = (b2DistanceJoint*)box2d->getWorld()->CreateJoint( &jd );
+		
+		joints.push_back( joint );
+	}
 }
 
 void ColorPhysics :: destroyJoints ()
 {
+	for( int i=0; i<joints.size(); i++ )
+	{
+		box2d->getWorld()->DestroyJoint( joints[ i ] );
+		joints[ i ] = NULL;
+	}
 	
+	joints.clear();
+}
+
+void ColorPhysics :: resetJoints ()
+{
+	destroyJoints();
+	createJoints();
 }
 
 ///////////////////////////////////////////////////////

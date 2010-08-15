@@ -79,7 +79,7 @@ void ColorCircle :: draw ()
 		return;
 	}
 	
-	drawFill();
+//	drawFill();
 	drawStroke();
 //	drawColorLine();
 }
