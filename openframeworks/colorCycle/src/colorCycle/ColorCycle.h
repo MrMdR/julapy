@@ -16,6 +16,7 @@
 #include "ColorRect.h"
 #include "ColorPhysics.h"
 #include "ColorTriangle.h"
+#include "ColorPanel.h"
 
 class ColorCycle
 {
@@ -55,8 +56,6 @@ public:
 	ofxScreen		screen;
 	int				frameRate;
 	
-	bool			bPanel;
-	
 	ofxColorPicker	colorPicker0;
 	ofxColorPicker	colorPicker1;
 	float			colorScale;
@@ -64,6 +63,8 @@ public:
 	ofColor			lowerColor;
 	ofColor			white;
 	ofColor			black;
+	
+	ColorPanel		panel;
 	
 	ColorRect		rect;
 	

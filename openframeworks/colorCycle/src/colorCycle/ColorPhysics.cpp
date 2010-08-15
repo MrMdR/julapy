@@ -114,7 +114,13 @@ void ColorPhysics :: createBounds ()
 
 void ColorPhysics :: createCircles ()
 {
-	int t = 50;
+	int numOfCircle;
+	numOfCircle = 50;
+#ifdef TARGET_OF_IPHONE
+	numOfCircle = 25;
+#endif
+	
+	int t = numOfCircle;
 	for( int i=0; i<t; i++ )
 	{
 		ColorCircle* circle;
@@ -126,8 +132,6 @@ void ColorPhysics :: createCircles ()
 //		float area		= ofRandom( 0.001, 0.004 );
 		float area		= 0.001;
 		float radius	= areaToRadius( area );
-		float rx = radius / (float)screen.screenWidth;
-		float ry = radius / (float)screen.screenHeight;
 		
 		circle->setScreen( screen );
 		circle->init();		// do things here before creating the circle in box2d.
@@ -161,6 +165,31 @@ float ColorPhysics :: areaToRadius ( float area )
 	r *= 0.5;
 	
 	return r;
+}
+
+bool ColorPhysics :: checkHit ( float x, float y )
+{
+	b2Vec2 p( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
+	
+	for( int i=0; i<circles.size(); i++ )
+	{
+		ColorCircle* circle = circles[ i ];
+		
+		for( b2Shape* s=circle->body->GetShapeList(); s; s=s->GetNext() )
+		{
+			b2Body* shapeBody = s->GetBody();
+			
+			bool inside;
+			inside = s->TestPoint( shapeBody->GetXForm(), p );
+			
+			if( inside )
+			{
+				return true;
+			}
+		}
+	}
+	
+	return false;
 }
 
 ///////////////////////////////////////////////////////
@@ -244,8 +273,6 @@ void ColorPhysics :: update ()
 
 void ColorPhysics :: draw ()
 {
-	box2d->draw();
-	
 	for( int i=0; i<circles.size(); i++ )
 	{
 		ColorCircle& circle = *circles[ i ];

@@ -32,6 +32,7 @@ public:
 	void  createBounds	();
 	void  createCircles	();
 	float areaToRadius	( float area );
+	bool  checkHit		( float x, float y );
 	
 	void  createJoints	();
 	void  destroyJoints	();

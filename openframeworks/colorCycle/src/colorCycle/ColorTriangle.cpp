@@ -55,7 +55,11 @@ void ColorTriangle :: drawFill ()
 
 void ColorTriangle :: drawStroke ()
 {
-	bool bSmooth = true;
+	bool bSmooth;
+	bSmooth = true;
+#ifdef TARGET_OF_IPHONE
+	bSmooth = false;
+#endif
 	
 	if( bSmooth )
 	{
