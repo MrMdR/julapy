@@ -53,8 +53,8 @@ void ColorCycle :: setup ()
 	colorPicker0.setColorRadius( 1.0 );
 	colorPicker1.setColorRadius( 1.0 );
 	
-	colorPicker0.setColorAngle( 0 );
-	colorPicker1.setColorAngle( 1 / 3.0 );
+	colorPicker0.setColorAngle( 3 / 6.0 );
+	colorPicker1.setColorAngle( 5 / 6.0 );
 	
 	colorPicker0.disable();
 	colorPicker1.disable();
@@ -90,7 +90,7 @@ void ColorCycle :: update ()
 	
 	float ang;
 	ang = inputVel.y / 10000.0;
-	ang += frameRate * 0.00001;
+//	ang += frameRate * 0.00001;
 	
 	colorPicker0.addToColorAngle( ang );
 	colorPicker1.addToColorAngle( ang );
@@ -224,7 +224,7 @@ void ColorCycle :: draw ()
 	
 	drawTriangles();
 	
-//	physics.draw();
+	physics.draw();
 	
 	drawColorPickers();
 }
@@ -292,6 +292,14 @@ void ColorCycle ::  togglePanel	()
 	}
 }
 
+///////////////////////////////////////////////////////
+//	JOINTS.
+///////////////////////////////////////////////////////
+
+void ColorCycle :: resetJoints ()
+{
+	physics.resetJoints();
+}
 
 ///////////////////////////////////////////////////////
 //	INPUT.

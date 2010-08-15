@@ -35,12 +35,14 @@ public:
 	
 	void  createJoints	();
 	void  destroyJoints	();
+	void  resetJoints	();
 	
 	ofxScreen				screen;
 	
-	ofxBox2d*				box2d;
-	b2Body*					ground;
-	vector<ColorCircle*>	circles;
-	ofPoint					gravity;
+	ofxBox2d*					box2d;
+	b2Body*						ground;
+	vector<ColorCircle*>		circles;
+	vector<b2DistanceJoint*>	joints;
+	ofPoint						gravity;
 	
 };

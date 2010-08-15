@@ -46,6 +46,8 @@ public:
 	void hidePanel		();
 	void togglePanel	();
 	
+	void resetJoints	();
+	
 	void down			( int x, int y );
 	void drag			( int x, int y );
 	void up				( int x, int y );

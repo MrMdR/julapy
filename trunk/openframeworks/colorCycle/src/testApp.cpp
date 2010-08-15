@@ -42,6 +42,11 @@ void testApp :: keyPressed( int key )
 	{
 		cc.togglePanel();
 	}
+	
+	if( key == 'r' )
+	{
+		cc.resetJoints();
+	}
 }
 
 void testApp :: keyReleased( int key )
