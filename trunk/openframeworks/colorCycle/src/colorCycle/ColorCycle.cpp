@@ -13,7 +13,6 @@ ColorCycle :: ColorCycle ()
 {
 	setScreenSize( ofGetWidth(), ofGetHeight() );
 	setFrameRate( ofGetFrameRate() );
-	showPanel();
 	
 	white.r = 255;
 	white.g = 255;
@@ -50,6 +49,8 @@ void ColorCycle :: setGravity ( float gx, float gy )
 
 void ColorCycle :: setup ()
 {
+	rect.init( screen.screenWidth, screen.screenHeight );
+	
 	colorPicker0.setColorRadius( 1.0 );
 	colorPicker1.setColorRadius( 1.0 );
 	
@@ -58,6 +59,10 @@ void ColorCycle :: setup ()
 	
 	colorPicker0.disable();
 	colorPicker1.disable();
+	
+	panel.colorPicker0 = &colorPicker0;
+	panel.colorPicker1 = &colorPicker1;
+	panel.setScreen( screen );
 	
 	colorScale = 1.0;
 	
@@ -89,13 +94,13 @@ void ColorCycle :: update ()
 	}
 	
 	float ang;
-	ang = inputVel.y / 10000.0;
+	ang = inputVel.y / 5000.0;
 //	ang += frameRate * 0.00001;
 	
 	colorPicker0.addToColorAngle( ang );
 	colorPicker1.addToColorAngle( ang );
 	
-	colorScale += ( inputVel.x / 10000.0 );
+	colorScale += ( inputVel.x / 3000.0 );
 	colorScale = MAX( MIN( colorScale, 1.0 ), 0.5 );
 	
 	colorPicker0.setColorScale( colorScale );
@@ -108,6 +113,8 @@ void ColorCycle :: update ()
 	rect.setCornerColor( upperColor, 1 );
 	rect.setCornerColor( lowerColor, 2 );
 	rect.setCornerColor( lowerColor, 3 );
+	
+	panel.update();
 	
 	updatePhysics();
 	updateDelaunay();
@@ -164,9 +171,6 @@ void ColorCycle :: updateTriangles ()
 			triangle->points[ j ].y = delTri.points[ j ].y;
 			
 			//-- work out triangle colour.
-			
-			int c2 = ( j + 1 ) % 3;
-			int c3 = ( j + 2 ) % 3;
 			
 			ofxVec2f p1, p2, p3;
 			p1.set( delTri.points[ ( j + 0 ) % 3 ] );
@@ -226,23 +230,7 @@ void ColorCycle :: draw ()
 	
 	physics.draw();
 	
-	drawColorPickers();
-}
-
-void ColorCycle :: drawColorPickers ()
-{
-	if( !bPanel )
-		return;
-	
-	int s  = screen.screenHeight * 0.209;
-	int py = 30;
-	int px = 30;
-	
-	colorPicker0.draw( px, py, s, s );
-	
-	py += colorPicker0.getHeight() + 10;
-	
-	colorPicker1.draw( px, py, s, s );
+	panel.draw();
 }
 
 void ColorCycle :: drawTriangles ()
@@ -264,32 +252,17 @@ void ColorCycle :: drawTriangles ()
 
 void ColorCycle :: showPanel ()
 {
-	bPanel = true;
-	
-	colorPicker0.show();
-	colorPicker1.show();
+	panel.show();
 }
 
 void ColorCycle ::  hidePanel ()
 {
-	bPanel = false;
-	
-	colorPicker0.hide();
-	colorPicker1.hide();
+	panel.hide();
 }
 
 void ColorCycle ::  togglePanel	()
 {
-	bPanel = !bPanel;
-	
-	if( bPanel )
-	{
-		showPanel();
-	}
-	else
-	{
-		hidePanel();
-	}
+	panel.toggleShow();
 }
 
 ///////////////////////////////////////////////////////
@@ -307,22 +280,36 @@ void ColorCycle :: resetJoints ()
 
 void ColorCycle :: down ( int x, int y )
 {
-	bInputDown = true;
-	
-	inputPos1.x = inputPos2.x = x;
-	inputPos1.y = inputPos2.y = y;
+	if( physics.checkHit( x, y ) )
+	{
+		// do nothing.
+	}
+	else
+	{
+		panel.show();
+		
+		bInputDown = true;
+		
+		inputPos1.x = inputPos2.x = x;
+		inputPos1.y = inputPos2.y = y;
+	}
 }
 
 void ColorCycle :: drag ( int x, int y )
 {
-	inputPos2.x = inputPos1.x;	// copy old values.
-	inputPos2.y = inputPos1.y;
+	if( bInputDown )
+	{
+		inputPos2.x = inputPos1.x;	// copy old values.
+		inputPos2.y = inputPos1.y;
 	
-	inputPos1.x = x;			// save new values.
-	inputPos1.y = y;
+		inputPos1.x = x;			// save new values.
+		inputPos1.y = y;
+	}
 }
 
 void ColorCycle :: up ( int x, int y )
 {
 	bInputDown = false;
+	
+	panel.hide();
 }

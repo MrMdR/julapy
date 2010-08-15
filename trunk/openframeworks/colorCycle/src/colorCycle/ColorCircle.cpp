@@ -93,18 +93,33 @@ void ColorCircle :: drawFill ()
 
 void ColorCircle :: drawStroke ()
 {
-	ofEnableSmoothing();
+	bool bSmooth;
+	bSmooth = true;
+#ifdef TARGET_OF_IPHONE
+	bSmooth = false;
+#endif
+	
+	if( bSmooth )
+		ofEnableSmoothing();
 	
 	ofNoFill();
 	ofSetColor( color.r, color.g, color.b );
 	ofCircle( pos.x, pos.y, getRadius() );
-	
-	ofDisableSmoothing();
+
+	if( bSmooth )
+		ofDisableSmoothing();
 }
 
 void ColorCircle :: drawColorLine ()
 {
-	ofEnableSmoothing();
+	bool bSmooth;
+	bSmooth = true;
+#ifdef TARGET_OF_IPHONE
+	bSmooth = false;
+#endif
+	
+	if( bSmooth )
+		ofEnableSmoothing();
 	
 	float cx = posColor.x * screen.screenWidth;
 	float cy = posColor.y * screen.screenHeight;
@@ -113,6 +128,7 @@ void ColorCircle :: drawColorLine ()
 	ofSetColor( 255, 255, 255 );
 	ofLine( pos.x, pos.y, cx, cy );
 	
-	ofDisableSmoothing();
+	if( bSmooth )
+		ofDisableSmoothing();
 	
 }

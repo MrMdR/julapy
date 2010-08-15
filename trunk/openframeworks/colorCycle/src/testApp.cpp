@@ -30,6 +30,9 @@ void testApp :: update()
 void testApp :: draw()
 {
 	cc.draw();
+	
+	ofSetColor( 0, 0, 0 );
+	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetWidth() - 30, 20 );
 }
 
 //////////////////////////////////////////////
