@@ -218,6 +218,96 @@ void ofxBox2d :: grabShapeDragged( float x, float y, int id )
 	}
 }
 
+//---------------------------------------------------MAJOR HACK!!! - i hate myself right now.
+//---------------------------------------------------MUST REMOVE FOR ANY SORT OF RELEASE.
+
+void ofxBox2d :: grabShapeDown2 (float x, float y, int id, b2Body* body )
+{
+	if( id == -1 )							// check the grab is valid.
+	{
+		if( mouseJoint != NULL )			// mouse joint already registered.
+		{
+			grabShapeUp( x, y, id );		// destroy the mouse joint before replacing it.
+		}
+	}
+	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
+	{
+		if( touchJoints[ id ] != NULL )		// touch joint already registered.
+		{
+			grabShapeUp( x, y, id );		// destroy the touch joint before replacing it.
+		}
+	}
+	else 
+	{
+		return;								// invalid mouse / touch id.
+	}
+	
+	if( body )
+	{
+		b2MouseJointDef md;
+		md.body1	= world->GetGroundBody();
+		md.body2	= body;
+		md.target	= body->GetWorldCenter();
+#ifdef TARGET_FLOAT32_IS_FIXED
+		md.maxForce = ( body->GetMass() < 16.0 )? 
+		( 1000.0f * body->GetMass() ) : float32( 16000.0 );
+#else
+		md.maxForce = 1000.0f * body->GetMass();
+#endif
+		
+		if( id == -1 )
+		{
+			mouseJoint = (b2MouseJoint*)world->CreateJoint( &md );
+		}
+		else if( id >= 0 )
+		{
+			touchJoints[ id ] = (b2MouseJoint*)world->CreateJoint( &md );
+		}
+		
+		body->WakeUp();
+	}
+}
+
+void ofxBox2d :: grabShapeUp2 ( float x, float y, int id )
+{
+	if( id == -1  )
+	{
+		if( mouseJoint != NULL )
+		{
+			world->DestroyJoint( mouseJoint );
+			mouseJoint = NULL;
+		}
+	}
+	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
+	{
+		if( touchJoints[ id ] != NULL )
+		{
+			world->DestroyJoint( touchJoints[ id ] );
+			touchJoints[ id ] = NULL;
+		}
+	}
+}
+
+void ofxBox2d :: grabShapeDragged2 ( float x, float y, int id )
+{
+	b2Vec2 p( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
+	
+	if( id == -1  )
+	{
+		if( mouseJoint != NULL )
+		{
+			mouseJoint->SetTarget( p );
+		}
+	}
+	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
+	{
+		if( touchJoints[ id ] != NULL  )
+		{
+			touchJoints[ id ]->SetTarget( p );
+		}
+	}
+}
+
 // ------------------------------------------------------ set gravity
 void ofxBox2d::setGravity(float x, float y) {
 	world->SetGravity(b2Vec2(x, y));

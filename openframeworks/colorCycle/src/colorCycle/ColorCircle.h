@@ -40,4 +40,6 @@ public:
 	ofPoint		posNorm;
 	ofPoint		posOffset;
 	ofPoint		posColor;
+	
+	bool		bSelected;
 };

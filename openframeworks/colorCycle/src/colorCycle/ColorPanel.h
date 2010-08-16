@@ -139,11 +139,11 @@ public:
 		glTranslatef( x, 0, 0 );
 		
 		int s  = screen.screenHeight * 0.209;
-		int py = 30;
+		int py = screen.screenHeight * 0.0412;
 		
 		colorPicker0->draw( 0, py, s, s );
 		
-		py += colorPicker0->getHeight() + 10;
+		py += colorPicker0->getHeight() + screen.screenHeight * 0.0139;
 		
 		colorPicker1->draw( 0, py, s, s );
 		
