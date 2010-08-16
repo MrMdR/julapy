@@ -21,12 +21,16 @@ public:
 	
 	void init		();
 	
+	bool isPointInsideTriangle		( const ofPoint& p );
+	ofPoint getNearestTrianglePoint	( float x, float y );
+	
 	void draw		();
 	void drawFill	();
 	void drawStroke	();
 	
 	ofPoint		points[ 3 ];
 	ofColor		colors[ 3 ];
+	int			indexs[ 3 ];
 	
 	float		gl_points[ 6 ];
 	float		gl_colors[ 12 ];

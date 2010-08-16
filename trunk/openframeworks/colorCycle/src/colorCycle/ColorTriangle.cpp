@@ -33,6 +33,74 @@ void ColorTriangle :: init ()
 	}
 }
 
+bool ColorTriangle :: isPointInsideTriangle( const ofPoint& p )
+{
+	int counter;
+	counter = 0;
+	
+	ofPoint p1, p2;
+	
+	p1 = points[ 0 ];
+	
+	for( int i=1; i<=3; i++ )
+	{
+		p2 = points[ i % 3 ];
+		
+		if( p.y > MIN( p1.y, p2.y ) )
+		{
+			if( p.y <= MAX( p1.y, p2.y ) )
+			{
+				if( p.x <= MAX( p1.x, p2.x ) )
+				{
+                    if( p1.y != p2.y )
+					{
+                        double xinters;
+						xinters = ( p.y - p1.y ) * ( p2.x - p1.x ) / ( p2.y - p1.y ) + p1.x;
+						
+						if( p1.x == p2.x || p.x <= xinters )
+						{
+							counter++;
+						}
+					}
+				}
+			}
+		}
+        p1 = p2;
+    }
+	
+	if (counter % 2 == 0)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+ofPoint ColorTriangle :: getNearestTrianglePoint ( float x, float y )
+{
+	int index	= 0;
+	int dist	= 99999;
+	
+	for( int i=0; i<3; i++ )
+	{
+		float d = ofDist( x, y, points[ i ].x, points[ i ].y );
+		
+		if( d < dist )
+		{
+			dist	= d;
+			index	= i;
+		}
+	}
+	
+	ofPoint p;
+	p.x = points[ index ].x;
+	p.y = points[ index ].y;
+	
+	return p;
+}
+
 void ColorTriangle :: draw ()
 {
 	drawFill();

@@ -31,6 +31,8 @@ ColorCircle :: ColorCircle ()
 	
 	posOffset.x = 0;
 	posOffset.y = 0;
+	
+	bSelected = false;
 }
 
 ColorCircle :: ~ColorCircle ()

@@ -66,7 +66,8 @@ void ColorCycle :: setup ()
 	
 	colorScale = 1.0;
 	
-	bInputDown = false;
+	bColorSelectMode	= false;
+	inputLastID			= -2;
 	
 	physics.setScreen( screen );
 	physics.setup();
@@ -78,7 +79,7 @@ void ColorCycle :: setup ()
 
 void ColorCycle :: update ()
 {
-	if( bInputDown )
+	if( bColorSelectMode )
 	{
 		float velx = inputPos1.x - inputPos2.x;
 		float vely = inputPos1.y - inputPos2.y;
@@ -170,6 +171,8 @@ void ColorCycle :: updateTriangles ()
 			triangle->points[ j ].x = delTri.points[ j ].x;
 			triangle->points[ j ].y = delTri.points[ j ].y;
 			
+			triangle->indexs[ j ] = delTri.pointIndex[ j ];
+			
 			//-- work out triangle colour.
 			
 			ofxVec2f p1, p2, p3;
@@ -206,6 +209,42 @@ void ColorCycle :: updateTriangles ()
 		triangle->init();
 		triangles.push_back( triangle );
 	}
+}
+
+bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
+{
+	ofPoint p;
+	p.set( x, y, 0 );
+	
+	for( int i=0; i<triangles.size(); i++ )
+	{
+		ColorTriangle* triangle = triangles[ i ];
+		bool hit = triangle->isPointInsideTriangle( p );
+		
+		if( hit )
+		{
+			ofPoint p;
+			p = triangle->getNearestTrianglePoint( x, y );
+
+			ColorCircle* circle;
+			for( int j=0; j<physics.circles.size(); j++ )
+			{
+				circle = physics.circles[ j ];
+				
+				if( circle->pos.x == p.x && circle->pos.y == p.y )
+				{
+					circle->bSelected = true;
+					break;
+				}
+			}
+			
+			physics.box2d->grabShapeDown2( x, y, id, circle->body );
+			
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 ofColor ColorCycle :: interpolateColor ( const ofColor& c1, const ofColor& c2, float p )
@@ -278,38 +317,67 @@ void ColorCycle :: resetJoints ()
 //	INPUT.
 ///////////////////////////////////////////////////////
 
-void ColorCycle :: down ( int x, int y )
+void ColorCycle :: down ( int x, int y, int id )
 {
-	if( physics.checkHit( x, y ) )
+	if( bColorSelectMode )
 	{
-		// do nothing.
+		if( inputLastID != id )		// still in color select mode, but different id.
+		{
+			inputLastID = id;
+			
+			inputPos1.x = inputPos2.x = x;
+			inputPos1.y = inputPos2.y = y;
+		}
 	}
 	else
 	{
-		panel.show();
-		
-		bInputDown = true;
-		
-		inputPos1.x = inputPos2.x = x;
-		inputPos1.y = inputPos2.y = y;
+		if( checkTriangleHit( x, y, id ) )		// touch inside triangles.
+		{
+			// do nothing.
+		}
+		else									// touch on background.
+		{
+			bColorSelectMode	= true;
+			inputLastID			= id;
+			
+			inputPos1.x = inputPos2.x = x;
+			inputPos1.y = inputPos2.y = y;
+			
+			panel.show();
+		}
 	}
+	
+//	physics.checkHit( x, y )	// don't forget this, could be handy later.
 }
 
-void ColorCycle :: drag ( int x, int y )
+void ColorCycle :: drag ( int x, int y, int id )
 {
-	if( bInputDown )
+	if( bColorSelectMode )
 	{
-		inputPos2.x = inputPos1.x;	// copy old values.
-		inputPos2.y = inputPos1.y;
+		if( inputLastID == id )
+		{
+			inputPos2.x = inputPos1.x;	// copy old values.
+			inputPos2.y = inputPos1.y;
 	
-		inputPos1.x = x;			// save new values.
-		inputPos1.y = y;
+			inputPos1.x = x;			// save new values.
+			inputPos1.y = y;
+		}
+	}
+	else
+	{
+		physics.box2d->grabShapeDragged2( x, y, id );
 	}
 }
 
-void ColorCycle :: up ( int x, int y )
+void ColorCycle :: up ( int x, int y, int id )
 {
-	bInputDown = false;
+	if( inputLastID == id )
+	{
+		bColorSelectMode	= false;
+		inputLastID			= -2;
 	
-	panel.hide();
+		panel.hide();
+	}
+	
+	physics.box2d->grabShapeUp2( x, y, id );
 }

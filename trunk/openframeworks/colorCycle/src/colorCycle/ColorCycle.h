@@ -38,6 +38,7 @@ public:
 	void updatePhysics			();
 	void updateDelaunay			();
 	void updateTriangles		();
+	bool checkTriangleHit		( float x, float y, int id );
 	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
 	
 	void drawColorPickers		();
@@ -49,9 +50,9 @@ public:
 	
 	void resetJoints	();
 	
-	void down			( int x, int y );
-	void drag			( int x, int y );
-	void up				( int x, int y );
+	void down			( int x, int y, int id = -1 );
+	void drag			( int x, int y, int id = -1 );
+	void up				( int x, int y, int id = -1 );
 	
 	ofxScreen		screen;
 	int				frameRate;
@@ -70,10 +71,11 @@ public:
 	
 	ColorPhysics	physics;
 	
-	bool			bInputDown;
+	bool			bColorSelectMode;
 	ofPoint			inputPos1;
 	ofPoint			inputPos2;
 	ofPoint			inputVel;
+	int				inputLastID;
 	
 	ofxDelaunay				delaunay;
 	vector<ColorTriangle*>	triangles;

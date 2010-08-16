@@ -66,6 +66,10 @@ public:
 	void		grabShapeUp			( float x, float y, int id = -1 );		// -1 is reserved for mouse.
 	void		grabShapeDragged	( float x, float y, int id = -1 );		// -1 is reserved for mouse.
 	
+	void		grabShapeDown2		( float x, float y, int id = -1, b2Body* body = NULL );	// when you want to force grab.
+	void		grabShapeUp2		( float x, float y, int id = -1 );		// -1 is reserved for mouse.
+	void		grabShapeDragged2	( float x, float y, int id = -1 );		// -1 is reserved for mouse.
+
 	b2World*	getWorld()		  { return world;				   }
 	int			getBodyCount()    { return world->GetBodyCount();  }
 	int			getJointCount()   { return world->GetJointCount(); }
