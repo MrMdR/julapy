@@ -20,105 +20,110 @@ ofxColorPicker :: ~ofxColorPicker()
 }
 
 //////////////////////////////////////////////
+//	INIT.
+//////////////////////////////////////////////
+
+void ofxColorPicker :: init()
+{
+	dimensions.x		= 0;
+	dimensions.y		= 0;
+	dimensions.width	= 0;
+	dimensions.height	= 0;
+	
+	colorScale			= 1.0;
+	colorRadius			= 0;
+	colorAngle			= 0;
+	
+	mousePoint			= getPoint( colorAngle, colorRadius );
+
+	wheelLayer.radius		= 0;
+	wheelLayer.colorScale	= colorScale;
+	
+	setSize( 0, 0, COLOR_PICKER_DEFAULT_WIDTH, COLOR_PICKER_DEFAULT_HEIGHT );
+
+	colorWheel.enableMouseEvents();
+	colorScaleBar.enableMouseEvents();
+
+	show();
+	enable();
+	
+	ofAddListener( ofEvents.update, this, &ofxColorPicker :: update );
+	ofAddListener( ofEvents.exit,   this, &ofxColorPicker :: exit );
+}
+
+void ofxColorPicker :: exit( ofEventArgs &e )
+{
+	//
+}
+
+//////////////////////////////////////////////
 //	RENDER RELATED METHODS.
 //////////////////////////////////////////////
 
-void ofxColorPicker :: draw()
-{
-	if( !bVisible )
-		return;
-	
-	glPushMatrix();
-	glTranslatef( dimensions.x, dimensions.y, 0 );
-	
-	drawBackground( colorWheelWidth, colorWheelHeight );
-	drawColorWheel( colorWheelWidth * 0.5 );
-	drawColorPoint( colorWheelWidth, colorWheelHeight );
-	drawColorScaleBar( colorWheelWidth, colorWheelHeight );
-	drawColorRect( colorWheelWidth, colorWheelHeight );
-	
-	glPopMatrix();
-}
-
-void ofxColorPicker :: draw( float x, float y )
-{
-	setPos( x, y );
-	draw();
-}
-
-void ofxColorPicker :: draw( float x, float y, float w, float h ) 
-{
-	setSize( x, y, w, h );
-	draw();
-}
-
 void ofxColorPicker :: setPos( float x, float y )
 {
-	if( checkPos( x, y ) )
-	{
-		colorWheel.setPos( dimensions.x, dimensions.y );
-		colorScaleBar.setPos( dimensions.x, dimensions.y + colorWheelHeight + 20 );
-	}
+	checkDimensions( x, y, dimensions.width, dimensions.height );
 }
 
 void ofxColorPicker :: setSize( float x, float y, float w, float h )
 {
-	if( checkPos( x, y ) || checkSize( w, h ) )
+	checkDimensions( x, y, w, h );
+}
+
+bool ofxColorPicker :: checkDimensions( int x, int y, int w, int h )
+{
+	if( dimensions.x != x || dimensions.y != y || dimensions.width != w || dimensions.height != h )
 	{
-		colorWheel.setPos( dimensions.x, dimensions.y );
-		colorWheel.setSize( colorWheelWidth, colorWheelHeight );
+		dimensions.x				= x;
+		dimensions.y				= y;
+		dimensions.width			= w;
+		dimensions.height			= h;
 		
-		colorScaleBar.setPos( dimensions.x, dimensions.y + colorWheelHeight + 20 );
-		colorScaleBar.setSize( colorWheelWidth, 20 );
-	}
-}
+		int minWH					= MIN( w, h );
+		
+		colorWheelRadius			= (int)( minWH * 0.5 * 0.9 );
+		colorWheelPad				= (int)( ( minWH - colorWheelRadius * 2 ) * 0.5 );
+		
+		rectBackground.x			= (int)( dimensions.x );
+		rectBackground.y			= (int)( dimensions.y );
+		rectBackground.width		= (int)( dimensions.width );
+		rectBackground.height		= (int)( dimensions.height );
+		
+		rectColorWheel.x			= (int)( dimensions.x + colorWheelPad );
+		rectColorWheel.y			= (int)( dimensions.y + colorWheelPad );
+		rectColorWheel.width		= (int)( colorWheelRadius * 2 );
+		rectColorWheel.height		= (int)( colorWheelRadius * 2 );
 
-bool ofxColorPicker :: checkPos( int x, int y )
-{
-	bool posChange = false;
-	
-	if( dimensions.x != x )
-	{
-		dimensions.x = x;
-		posChange	 = true;
-	}
-	
-	if( dimensions.y != y )
-	{
-		dimensions.y = y;
-		posChange	 = true;
-	}
-	
-	return posChange;
-}
+		rectColorScaleBar.width		= (int)( dimensions.width - colorWheelPad * 2 );
+		rectColorScaleBar.height	= (int)( rectColorScaleBar.width * 0.2 );
+		rectColorScaleBar.x			= (int)( dimensions.x + colorWheelPad );
+		rectColorScaleBar.y			= (int)( dimensions.y + colorWheelPad * 2 + colorWheelRadius * 2 );
 
-bool ofxColorPicker :: checkSize( int w, int h )
-{
-	bool sizeChange = false;
-
-	if( colorWheelWidth	!= w )
-	{
-		colorWheelWidth  = w;
-		sizeChange		 = true;
+		rectColorBox.x				= (int)( dimensions.x + colorWheelPad );
+		rectColorBox.y				= (int)( rectColorScaleBar.y + rectColorScaleBar.height + colorWheelPad );
+		rectColorBox.width			= (int)( dimensions.width - colorWheelPad * 2 );
+		rectColorBox.height			= (int)( dimensions.height - ( rectColorBox.y - dimensions.y ) - colorWheelPad );
+		
+		colorWheel.setPos		( rectColorWheel.x,     rectColorWheel.y			);
+		colorWheel.setSize		( rectColorWheel.width, rectColorWheel.height		);
+		
+		colorScaleBar.setPos	( rectColorScaleBar.x,     rectColorScaleBar.y		);
+		colorScaleBar.setSize	( rectColorScaleBar.width, rectColorScaleBar.height	);
+		
+		return true;
 	}
 	
-	if( colorWheelHeight != h )
-	{
-		colorWheelHeight = h;
-		sizeChange		 = true;
-	}
-	
-	return sizeChange;
+	return false;
 }
 
 float ofxColorPicker :: getWidth() 
 {
-	return colorWheelWidth + 30;
+	return dimensions.width;
 }
 
 float ofxColorPicker :: getHeight()
 { 
-	return colorWheelHeight + 190; 
+	return dimensions.height; 
 }
 
 //////////////////////////////////////////////
@@ -133,130 +138,74 @@ void ofxColorPicker :: update()		// HACK - so update can be called manually when
 
 void ofxColorPicker :: update( ofEventArgs &e )
 {
-	if( colorMode == COLOR_PICKER_MODE_CIRLCE_ROTATION )
-		updateCircularInterpolation();
-	
-	if( colorMode == COLOR_PICKER_MODE_RANDOM_WALK )
-		updateRandomWalkInterpolation();
-	
-	if( colorMode == COLOR_PICKER_MODE_MOUSE )
-		updateMouseInterpolation();
-	
+	updateColor();
 	updateColorScale();
 	
-	getCircularColor( colorAngle, colorRadius, colorScale, &color );
+	color = getCircularColor( colorAngle, colorRadius, colorScale );
 }
 
-void ofxColorPicker :: exit( ofEventArgs &e )
+void ofxColorPicker :: updateColor ()
 {
-	//
+	if( colorWheel.isMouseDown() )
+	{
+		mousePoint.x = colorWheel.getMouseX() - rectColorWheel.x;
+		mousePoint.y = colorWheel.getMouseY() - rectColorWheel.y;
+		
+		PolCord pc;
+		pc = getPolarCoordinate( mousePoint.x, mousePoint.y );
+		
+		colorAngle	= pc.angle;
+		colorRadius	= pc.radius;
+		colorRadius = MIN( 1, MAX( 0, colorRadius ) );				// constrain to the radius of color circle.
+	}
+}
+
+void ofxColorPicker :: updateColorScale()
+{
+	if( colorScaleBar.isMouseDown() )
+	{
+		int relX = colorScaleBar.getMouseX() - rectColorScaleBar.x;
+		
+		colorScale = MIN( 1, MAX( 0, relX / (float)( colorWheelRadius * 2 ) ) );
+	}
 }
 
 //////////////////////////////////////////////
 //	COLOR PICKER SETUP.
 //////////////////////////////////////////////
 
-void ofxColorPicker :: init()
-{
-	dimensions.x	 = 0;
-	dimensions.y	 = 0;
-	colorWheelWidth  = COLOR_PICKER_DEFAULT_WIDTH;
-	colorWheelHeight = COLOR_PICKER_DEFAULT_HEIGHT;
-	
-	colorScale			= 1.0;
-	colorRadius			= 0;
-	colorAngle			= 0;
-	
-	oscillationAngle	= 0;
-	
-	wheelLayer.radius		= COLOR_WHEEL_RADIUS;
-	wheelLayer.colorScale	= colorScale;
-	
-	show();
-	enable();
-	
-	setMode( COLOR_PICKER_MODE_MOUSE );
-	
-	setCircularSpeed( 1.0 );
-	setCircularOscillationSpeed( 0.1 );
-	setCircularUpperBounds( 1.0 );
-	setCircularLowerBounds( 0.0 );
-	
-	setRandomWalkVelocityMax( 4.0 );
-	setRandomWalkVelocityEase( 0.1 );
-	
-	colorWheel.setPos( dimensions.x, dimensions.y );
-	colorWheel.setSize( colorWheelWidth, colorWheelHeight );
-	colorWheel.enableMouseEvents();
-	
-	colorScaleBar.setPos( dimensions.x, dimensions.y + colorWheelHeight + 20 );
-	colorScaleBar.setSize( colorWheelWidth, 20 );
-	colorScaleBar.enableMouseEvents();
-	
-	ofAddListener( ofEvents.update, this, &ofxColorPicker :: update );
-	ofAddListener( ofEvents.exit,   this, &ofxColorPicker :: exit );
-}
-
-void ofxColorPicker :: setMode( int m )
-{
-	if
-	(
-		m == COLOR_PICKER_MODE_CIRLCE_ROTATION	||
-		m == COLOR_PICKER_MODE_RANDOM_WALK		||
-		m == COLOR_PICKER_MODE_MOUSE
-	)
-	{
-		colorMode = m;
-	}
-	
-	if( m == COLOR_PICKER_MODE_CIRLCE_ROTATION )
-		initCircularInterpolation();
-	
-	if( m == COLOR_PICKER_MODE_RANDOM_WALK )
-		initRandomWalkInterpolation();
-	
-	if( m == COLOR_PICKER_MODE_MOUSE )
-		initMouseInterpolation();
-}
-
-void ofxColorPicker :: setRandomColor()
-{
-	colorAngle  = ofRandom( 0, 360 );
-	colorRadius = ofRandom( 0, 1 );
-	colorScale  = ofRandom( 0, 1 );
-	
-	getCircularColor( colorAngle, colorRadius, colorScale, &color );
-}
-
-ofColor ofxColorPicker :: getColor()
-{
-	ofColor c;
-	c.r = color.r;
-	c.g = color.g;
-	c.b = color.b;
-	c.a = color.a;
-	
-	return c;
-}
-
 void ofxColorPicker :: setColorScale( float s )
 {
 	colorScale = s;
 }
+
+float ofxColorPicker :: getColorScale ()
+{
+	return colorScale;
+}
+
+//------
 
 void ofxColorPicker :: setColorRadius ( float r )
 {
 	colorRadius = r;
 }
 
+float ofxColorPicker :: getColorRadius ()
+{
+	return colorRadius;
+}
+
+//------
+
 void ofxColorPicker :: setColorAngle ( float a )
 {
 	colorAngle = a * 360;
 }
 
-void ofxColorPicker :: addToColorAngle ( float a )
+float ofxColorPicker :: getColorAngle ()
 {
-	colorAngle += ( a * 360 );
+	return colorAngle / 360.0;
 }
 
 //////////////////////////////////////////////
@@ -313,136 +262,68 @@ void ofxColorPicker :: disable ()
 }
 
 //////////////////////////////////////////////
-//	COLOR SCALE.
-//////////////////////////////////////////////
-
-void ofxColorPicker :: updateColorScale()
-{
-	if( colorScaleBar.isMouseDown() )
-	{
-		int relX = colorScaleBar.getMouseX() - dimensions.x;
-		
-		colorScale = MIN( 1, MAX( 0, relX / (float)colorWheelWidth ) );
-	}
-}
-
-//////////////////////////////////////////////
-//	CIRCULAR INTERPOLATION.
-//////////////////////////////////////////////
-
-void ofxColorPicker :: initCircularInterpolation()
-{
-	//
-}
-
-void ofxColorPicker :: updateCircularInterpolation()
-{
-	colorAngle += colorAngleInc;
-	
-	oscillationAngle += oscillationAngleInc;
-	colorRadius = ( upperColorRadiusBounds - lowerColorRadiusBounds ) * ( 0.5 * sin( oscillationAngle * DEG_TO_RAD ) + 0.5 ) + lowerColorRadiusBounds;
-}
-
-void ofxColorPicker :: setCircularUpperBounds( float value )
-{
-	upperColorRadiusBounds = MIN( 1, MAX( 0, value ) );
-}
-
-void ofxColorPicker :: setCircularLowerBounds( float value )
-{
-	lowerColorRadiusBounds = MIN( 1, MAX( 0, value ) );
-}
-
-void ofxColorPicker :: setCircularSpeed( float value )
-{
-	colorAngleInc = value;
-}
-
-void ofxColorPicker :: setCircularOscillationSpeed( float value )
-{
-	oscillationAngleInc = value;
-}
-
-//////////////////////////////////////////////
-//	RANDOM WALK INTERPOLATION.
-//////////////////////////////////////////////
-
-void ofxColorPicker :: initRandomWalkInterpolation()
-{
-	getPoint( colorAngle, colorRadius, &randomWalkPoint );
-}
-
-void ofxColorPicker :: updateRandomWalkInterpolation()
-{
-	randomWalkVel.x += ( ( ofRandom( -randomWalkVelMax, randomWalkVelMax ) ) - randomWalkVel.x ) * randomWalkVelEase;
-	randomWalkVel.y += ( ( ofRandom( -randomWalkVelMax, randomWalkVelMax ) ) - randomWalkVel.y ) * randomWalkVelEase;
-	
-	randomWalkPoint.x += randomWalkVel.x;
-	randomWalkPoint.y += randomWalkVel.y;
-
-	getAngleCoordinates( randomWalkPoint.x, randomWalkPoint.y, &colorAngle, &colorRadius );
-	
-	colorRadius = MIN( 1, MAX( 0, colorRadius ) );				// constrain to the radius of color circle.
-	
-	getPoint( colorAngle, colorRadius, &randomWalkPoint );		// re-calc contstrained values back to XY.
-}
-
-void ofxColorPicker :: setRandomWalkVelocityMax( float value )
-{
-	randomWalkVelMax = value;
-}
-
-void ofxColorPicker :: setRandomWalkVelocityEase( float value )
-{
-	randomWalkVelEase = value;
-}
-
-//////////////////////////////////////////////
-//	MOUSE INTERPOLATION.
-//////////////////////////////////////////////
-
-void ofxColorPicker :: initMouseInterpolation()
-{
-	getPoint( colorAngle, colorRadius, &mousePoint );
-}
-
-void ofxColorPicker :: updateMouseInterpolation()
-{
-	if( colorWheel.isMouseDown() )
-	{
-		mousePoint.x = colorWheel.getMouseX() - dimensions.x;
-		mousePoint.y = colorWheel.getMouseY() - dimensions.y;
-		
-		getAngleCoordinates( mousePoint.x, mousePoint.y, &colorAngle, &colorRadius );
-		
-		colorRadius = MIN( 1, MAX( 0, colorRadius ) );
-	}
-}
-
-//////////////////////////////////////////////
 //	DISPLAY.
 //////////////////////////////////////////////
 
-void ofxColorPicker :: drawBackground( int w, int h )
+void ofxColorPicker :: draw( float x, float y, float w, float h ) 
 {
-	int bx, by;
-	
-	bx = by = 10;
-	ofFill();
-	ofSetColor( 113, 113, 113 );
-	ofRect( -bx, -by, w + bx * 2, h + 160 + bx * 2 );
-	
-	bx = by = 9;
-	ofSetColor( 232, 232, 232 );
-	ofRect( -bx, -by, w + bx * 2, h + 160 + bx * 2 );	
+	setSize( x, y, w, h );
+	draw();
 }
 
-void ofxColorPicker :: drawColorWheel( float radius )
+void ofxColorPicker :: draw( float x, float y )
 {
-	if( wheelLayer.radius !=radius || wheelLayer.colorScale != colorScale )
+	setPos( x, y );
+	draw();
+}
+
+void ofxColorPicker :: draw()
+{
+	if( !bVisible )
+		return;
+	
+	drawBackground();
+	drawColorWheel();
+	drawColorPoint();
+	drawColorScaleBar();
+	drawColorRect();
+	
+	drawDebug();
+}
+
+void ofxColorPicker :: drawBackground()
+{
+	int x = rectBackground.x;
+	int y = rectBackground.y;
+	int w = rectBackground.width;
+	int h = rectBackground.height;
+	
+	int bx, by;
+	
+	bx = by = 0;
+	ofFill();
+	ofSetColor( 113, 113, 113 );
+	ofRect( x + bx, y + by, w - bx * 2, h - by * 2 );
+	
+	bx = by = 1;
+	ofSetColor( 232, 232, 232 );
+	ofRect( x + bx, y + by, w - bx * 2, h - by * 2 );
+}
+
+void ofxColorPicker :: drawColorWheel()
+{
+	int x = rectColorWheel.x;
+	int y = rectColorWheel.y;
+	int w = rectColorWheel.width;
+	int h = rectColorWheel.height;
+	
+	if( wheelLayer.radius != colorWheelRadius || wheelLayer.colorScale != colorScale )
 	{
-		wheelLayer.radius		= radius;
+		wheelLayer.radius		= colorWheelRadius;
 		wheelLayer.colorScale	= colorScale;
+		
+		int cx = x + colorWheelRadius;
+		int cy = y + colorWheelRadius;
 		
 		for( int i=0; i<COLOR_WHEEL_RES+1; i++ )
 		{
@@ -450,14 +331,14 @@ void ofxColorPicker :: drawColorWheel( float radius )
 			float p = j / (float)COLOR_WHEEL_RES;
 			float a = p * TWO_PI;
 			
-			wheelLayer.points[ i * 4 + 0 ] = cos( -a ) * wheelLayer.radius;
-			wheelLayer.points[ i * 4 + 1 ] = sin( -a ) * wheelLayer.radius;
+			wheelLayer.points[ i * 4 + 0 ] = cx + cos( -a ) * wheelLayer.radius;
+			wheelLayer.points[ i * 4 + 1 ] = cy + sin( -a ) * wheelLayer.radius;
 			
-			wheelLayer.points[ i * 4 + 2 ] = 0;
-			wheelLayer.points[ i * 4 + 3 ] = 0;
+			wheelLayer.points[ i * 4 + 2 ] = cx;
+			wheelLayer.points[ i * 4 + 3 ] = cy;
 			
 			ofColor c;
-			getCircularColor( a * RAD_TO_DEG, 1.0, wheelLayer.colorScale, &c );
+			c = getCircularColor( a * RAD_TO_DEG, 1.0, wheelLayer.colorScale );
 			
 			wheelLayer.colors[ i * 8 + 0 ] = c.r / 255.0;
 			wheelLayer.colors[ i * 8 + 1 ] = c.g / 255.0;
@@ -471,9 +352,6 @@ void ofxColorPicker :: drawColorWheel( float radius )
 		}
 	}
 	
-	glPushMatrix();
-	glTranslatef( radius, radius, 0 );
-	
 	glEnable( GL_SMOOTH );
 	
 	glEnableClientState( GL_VERTEX_ARRAY );
@@ -486,19 +364,21 @@ void ofxColorPicker :: drawColorWheel( float radius )
 	
 	glDisableClientState( GL_VERTEX_ARRAY );
 	glDisableClientState( GL_COLOR_ARRAY );
-	
-	glPopMatrix();
 }
 
-void ofxColorPicker :: drawColorPoint( int w, int h )
+void ofxColorPicker :: drawColorPoint()
 {
-	getPoint( colorAngle, colorRadius, &colorPoint );
+	int x = rectColorWheel.x;
+	int y = rectColorWheel.y;
+	int w = rectColorWheel.width;
+	int h = rectColorWheel.height;
 	
-	if( colorPoint.x < 0 || colorPoint.x > w )
-		return;
+	colorPoint = getPoint( colorAngle, colorRadius );
+	colorPoint.x += x;
+	colorPoint.y += y;
 	
-	if( colorPoint.y < 0 || colorPoint.y > h )
-		return;
+	colorPoint.x = ofClamp( colorPoint.x, x, x + w );
+	colorPoint.y = ofClamp( colorPoint.y, y, y + h );
 	
 	ofFill();
 	ofSetColor( 0, 0, 0 );
@@ -513,32 +393,31 @@ void ofxColorPicker :: drawColorPoint( int w, int h )
 	ofCircle( colorPoint.x, colorPoint.y, 2 );
 }
 
-void ofxColorPicker :: drawColorScaleBar( int w, int h )
+void ofxColorPicker :: drawColorScaleBar()
 {
+	int x = rectColorScaleBar.x;
+	int y = rectColorScaleBar.y;
+	int w = rectColorScaleBar.width;
+	int h = rectColorScaleBar.height;
+	
 	ofFill();
 	
-	int bx, by;
-	
-	bx = by = 2;
 	ofSetColor( 149, 149, 149 );
-	ofRect( -bx, h + 20 - bx, w + bx * 2, 20 + bx * 2 );
+	ofRect( x, y, w, h );
 	
-	bx = by = 1;
 	ofSetColor( 255, 255, 255 );
-	ofRect( -bx, h + 20 - bx, w + bx * 2, 20 + bx * 2 );
-	
-	bx = by = 0;
+	ofRect( x + 1, y + 1, w - 2, h - 2 );
 	
 	ofColor c;
-	getCircularColor( colorAngle, colorRadius, 1.0, &c );
+	c = getCircularColor( colorAngle, colorRadius, 1.0 );
 	
 	//--
 	
 	int rx, ry, rw, rh;
-	rx = -bx;
-	ry = h + 20 - bx;
-	rw = w + bx * 2;
-	rh = 20 + bx * 2;
+	rx = x + 2;
+	ry = y + 2;
+	rw = w - 4;
+	rh = h - 4;
 	
 	rectScaleLayer.points[ 0 ] = rx;
 	rectScaleLayer.points[ 1 ] = ry;
@@ -581,39 +460,59 @@ void ofxColorPicker :: drawColorScaleBar( int w, int h )
 	
 	//--
 	
-	int cx = colorScale * w;
+	int bx, by;
 	int cw = 3;
+	int cx = colorScale * ( rw - cw );
+	
+	//-- red guide. this is not seen but is a guide for dev.
+	
+	ofSetColor( 255, 0, 0 );
+	ofRect( rx + cx, ry - by, cw, rh + by * 2 );
+
+	//-- grey rect for handle. bx and by are border values.
 	
 	bx = 2;
 	by = 4;
+	
 	ofSetColor( 149, 149, 149 );
-	ofFill();
-	ofRect( cx - bx, h + 20 - by, cw + bx * 2, 20 + by * 2 );
+	ofRect( rx + cx - bx, ry - by, cw + bx * 2, rh + by * 2 );
 
+	//-- white rect for handle. bx and by are border values.
+	
 	bx = 1;
 	by = 3;
+	
 	ofSetColor( 255, 255, 255 );
-	ofFill();
-	ofRect( cx - bx, w + 20 - by, cw + bx * 2, 20 + by * 2 );
+	ofRect( rx + cx - bx, ry - by, cw + bx * 2, rh + by * 2 );
 }
 
-void ofxColorPicker :: drawColorRect( int w, int h )
+void ofxColorPicker :: drawColorRect()
 {
 	ofFill();
+
+	int x = rectColorBox.x;
+	int y = rectColorBox.y;
+	int w = rectColorBox.width;
+	int h = rectColorBox.height;
 	
 	int bx, by;
 
-	bx = by = 2;
+	bx = by = 0;
 	ofSetColor( 149, 149, 149 );
-	ofRect( -bx, h + 60 - bx, w + bx * 2, 100 + bx * 2 );
+	ofRect( x + bx, y + by, w - bx * 2, h - by * 2 );
 
 	bx = by = 1;
 	ofSetColor( 255, 255, 255 );
-	ofRect( -bx, h + 60 - bx, w + bx * 2, 100 + bx * 2 );
+	ofRect( x + bx, y + by, w - bx * 2, h - by * 2 );
 	
-	bx = by = 0;
+	bx = by = 2;
 	ofSetColor( color.r, color.g, color.b, color.a );
-	ofRect( -bx, h + 60 - bx, w + bx * 2, 100 + bx * 2 );
+	ofRect( x + bx, y + by, w - bx * 2, h - by * 2 );
+}
+
+void ofxColorPicker :: drawDebug ()
+{
+	
 }
 
 //////////////////////////////////////////////
@@ -686,7 +585,18 @@ void ofxColorPicker :: setColor( const ofColor& c )
 	}
 }
 
-void ofxColorPicker :: getCircularColor( float angle, float radius, float scale, ofColor *c )
+ofColor ofxColorPicker :: getColor()
+{
+	ofColor c;
+	c.r = color.r;
+	c.g = color.g;
+	c.b = color.b;
+	c.a = color.a;
+	
+	return c;
+}
+
+ofColor ofxColorPicker :: getCircularColor( float angle, float radius, float scale )
 {
 	radius = MIN( 1.0, MAX( 0.0, radius ) );
 	
@@ -696,69 +606,76 @@ void ofxColorPicker :: getCircularColor( float angle, float radius, float scale,
 	
 	float da;
 	
+	ofColor c;
+	
 	if( angle < 60 )
 	{
-		da   = angle / 60;
-		c->r = (int)( 255 * scale );
-		c->g = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
-		c->b = (int)( 255 * ( 1 - radius ) * scale );
-		c->a = 255;
+		da  = angle / 60;
+		c.r = (int)( 255 * scale );
+		c.g = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c.b = (int)( 255 * ( 1 - radius ) * scale );
+		c.a = 255;
 	}
 	else if( angle < 120 )
 	{
-		da   = ( 120 - angle ) / 60;
-		c->r = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
-		c->g = (int)( 255 * scale );
-		c->b = (int)( 255 * ( 1 - radius ) * scale );
-		c->a = 255;
+		da  = ( 120 - angle ) / 60;
+		c.r = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c.g = (int)( 255 * scale );
+		c.b = (int)( 255 * ( 1 - radius ) * scale );
+		c.a = 255;
 	}
 	else if( angle < 180 )
 	{
-		da   = 1 - ( 180 - angle ) / 60;
-		c->r = (int)( 255 * ( 1 - radius ) * scale );
-		c->g = (int)( 255 * scale );
-		c->b = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
-		c->a = 255;
+		da  = 1 - ( 180 - angle ) / 60;
+		c.r = (int)( 255 * ( 1 - radius ) * scale );
+		c.g = (int)( 255 * scale );
+		c.b = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c.a = 255;
 	}
 	else if( angle < 240 )
 	{
-		da   = ( 240 - angle ) / 60;
-		c->r = (int)( 255 * ( 1 - radius ) * scale );
-		c->g = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
-		c->b = (int)( 255 * scale );
-		c->a = 255;
+		da  = ( 240 - angle ) / 60;
+		c.r = (int)( 255 * ( 1 - radius ) * scale );
+		c.g = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c.b = (int)( 255 * scale );
+		c.a = 255;
 	}
 	else if( angle < 300 )
 	{
-		da   = 1 - ( 300 - angle ) / 60;
-		c->r = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
-		c->g = (int)( 255 * ( 1 - radius ) * scale );
-		c->b = (int)( 255 * scale );
-		c->a = 255;
+		da  = 1 - ( 300 - angle ) / 60;
+		c.r = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c.g = (int)( 255 * ( 1 - radius ) * scale );
+		c.b = (int)( 255 * scale );
+		c.a = 255;
 	}
 	else if( angle <= 360 )
 	{
-		da   = ( 360 - angle ) / 60;
-		c->r = (int)( 255 * scale );
-		c->g = (int)( 255 * ( 1 - radius ) * scale );
-		c->b = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
-		c->a = 255;
+		da  = ( 360 - angle ) / 60;
+		c.r = (int)( 255 * scale );
+		c.g = (int)( 255 * ( 1 - radius ) * scale );
+		c.b = (int)( 255 * ( da + ( 1 - da ) * ( 1 - radius ) ) * scale );
+		c.a = 255;
 	}
-}
-
-void ofxColorPicker :: getPoint( float a, float r, ofPoint *p )
-{
-	float cx = colorWheelWidth  * 0.5;
-	float cy = colorWheelHeight * 0.5;
 	
-	p->x = cx * r * cos( -a * DEG_TO_RAD ) + cx;
-	p->y = cy * r * sin( -a * DEG_TO_RAD ) + cy;
+	return c;
 }
 
-void ofxColorPicker :: getAngleCoordinates( float x, float y, float *a, float *r )
+ofPoint ofxColorPicker :: getPoint ( float a, float r )
 {
-	float cx = colorWheelWidth * 0.5;
-	float cy = colorWheelHeight * 0.5;
+	float cx = colorWheelRadius;
+	float cy = colorWheelRadius;
+	
+	ofPoint p;
+	p.x = cx * r * cos( -a * DEG_TO_RAD ) + cx;
+	p.y = cy * r * sin( -a * DEG_TO_RAD ) + cy;
+	
+	return p;
+}
+
+PolCord ofxColorPicker :: getPolarCoordinate ( float x, float y )
+{
+	float cx = colorWheelRadius;
+	float cy = colorWheelRadius;
 	
 	float px = x - cx;						// point x from center.
 	float py = y - cy;						// point x from center.
@@ -769,6 +686,9 @@ void ofxColorPicker :: getAngleCoordinates( float x, float y, float *a, float *r
 	pa -= 90;
 	pl /= cx;
 	
-	*a = pa;
-	*r = pl;
+	PolCord pc;
+	pc.angle	= pa;
+	pc.radius	= pl;
+	
+	return pc;
 }
