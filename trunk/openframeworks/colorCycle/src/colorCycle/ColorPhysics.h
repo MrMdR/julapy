@@ -34,6 +34,9 @@ public:
 	float areaToRadius	( float area );
 	bool  checkHit		( float x, float y );
 	
+	void  showCircles	();
+	void  hideCircles	();
+	
 	void  createJoints	();
 	void  destroyJoints	();
 	void  resetJoints	();
@@ -45,5 +48,7 @@ public:
 	vector<ColorCircle*>		circles;
 	vector<b2DistanceJoint*>	joints;
 	ofPoint						gravity;
+	
+	float						circleRadius;
 	
 };

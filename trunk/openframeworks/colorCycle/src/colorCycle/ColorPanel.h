@@ -30,9 +30,6 @@ public:
 		tweenVal		= 0;
 		tweenTime		= 0;
 		tweenTimeTotal	= 10;
-		
-		timeoutStart	= 0;
-		timeoutTotal	= 1000;
 	};
 	
 	~ColorPanel()
@@ -49,10 +46,6 @@ public:
 	float		tweenVal;
 	float		tweenTime;
 	float		tweenTimeTotal;
-	
-	int			timeoutStart;
-	int			timeoutTotal;
-	bool		bTimeoutPending;
 	
 	ofxColorPicker* colorPicker0;
 	ofxColorPicker* colorPicker1;
@@ -72,14 +65,12 @@ public:
 			bShowing	= true;
 			bVisible	= true;
 		}
-		
-		bTimeoutPending = false;
 	};
 	
 	void hide ()
 	{
-		timeoutStart	= ofGetElapsedTimeMillis();
-		bTimeoutPending = true;
+		tweenTime		= 0;
+		bShowing		= false;
 	};
 	
 	void toggleShow ()
@@ -96,20 +87,6 @@ public:
 	
 	void update ()
 	{
-		if( bTimeoutPending )
-		{
-			int t1 = timeoutStart + timeoutTotal;
-			int t2 = ofGetElapsedTimeMillis();
-			
-			if( t2 > t1 )
-			{
-				bTimeoutPending	= false;
-				
-				tweenTime		= 0;
-				bShowing		= false;
-			}
-		}
-		
 		if( bShowing && tweenVal != 1.0 )
 		{
 			tweenVal	= Quad :: easeOut( tweenTime, 0, 1.0, tweenTimeTotal );
@@ -135,18 +112,14 @@ public:
 		float x2	= 0.023 * screen.screenWidth;
 		float x		= ( x2 - x1 ) * tweenVal + x1;
 		
-		glPushMatrix();
-		glTranslatef( x, 0, 0 );
+		int w = screen.screenHeight * 0.228;
+		int h = w * 2;
+		int y = x2;
 		
-		int s  = screen.screenHeight * 0.209;
-		int py = screen.screenHeight * 0.0412;
+		colorPicker0->draw( x, y, w, h );
 		
-		colorPicker0->draw( 0, py, s, s );
+		y = screen.screenHeight - h - y;
 		
-		py += colorPicker0->getHeight() + screen.screenHeight * 0.0139;
-		
-		colorPicker1->draw( 0, py, s, s );
-		
-		glPopMatrix();
+		colorPicker1->draw( x, y, w, h );
 	}
 };
