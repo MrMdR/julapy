@@ -16,7 +16,7 @@ ofxColorPicker :: ofxColorPicker()
 
 ofxColorPicker :: ~ofxColorPicker()
 {
-	//
+	removeListeners();
 }
 
 //////////////////////////////////////////////
@@ -34,10 +34,13 @@ void ofxColorPicker :: init()
 	colorRadius			= 0;
 	colorAngle			= 0;
 	
+	bVisible			= true;
+	bEnabled			= true;
+	
 	mousePoint			= getPoint( colorAngle, colorRadius );
 
-	wheelLayer.radius		= 0;
-	wheelLayer.colorScale	= colorScale;
+	glColorWheel.radius		= 0;
+	glColorWheel.colorScale	= colorScale;
 	
 	setSize( 0, 0, COLOR_PICKER_DEFAULT_WIDTH, COLOR_PICKER_DEFAULT_HEIGHT );
 
@@ -46,15 +49,28 @@ void ofxColorPicker :: init()
 
 	show();
 	enable();
-	
-	ofAddListener( ofEvents.update, this, &ofxColorPicker :: update );
-	ofAddListener( ofEvents.exit,   this, &ofxColorPicker :: exit );
 }
 
 void ofxColorPicker :: exit( ofEventArgs &e )
 {
 	//
 }
+
+void ofxColorPicker :: addListeners() 
+{
+	ofAddListener( ofEvents.update, this, &ofxColorPicker :: update	);
+	ofAddListener( ofEvents.draw,	this, &ofxColorPicker :: draw	);
+	ofAddListener( ofEvents.exit,	this, &ofxColorPicker :: exit	);
+}
+
+
+void ofxColorPicker :: removeListeners()
+{
+	ofRemoveListener( ofEvents.update, this, &ofxColorPicker :: update	);
+	ofRemoveListener( ofEvents.draw,   this, &ofxColorPicker :: draw	);
+	ofRemoveListener( ofEvents.exit,   this, &ofxColorPicker :: exit	);
+}
+
 
 //////////////////////////////////////////////
 //	RENDER RELATED METHODS.
@@ -130,13 +146,12 @@ float ofxColorPicker :: getHeight()
 //	EVENT HANDLERS.
 //////////////////////////////////////////////
 
-void ofxColorPicker :: update()		// HACK - so update can be called manually when it needs to be.
+void ofxColorPicker :: update( ofEventArgs &e )
 {
-	ofEventArgs e;
-	update( e );
+	update();
 }
 
-void ofxColorPicker :: update( ofEventArgs &e )
+void ofxColorPicker :: update()
 {
 	updateColor();
 	updateColorScale();
@@ -262,8 +277,50 @@ void ofxColorPicker :: disable ()
 }
 
 //////////////////////////////////////////////
+//	TOUCH INPUT.
+//////////////////////////////////////////////
+
+void ofxColorPicker :: touchDown ( float x, float y, int id )
+{
+	ofMouseEventArgs e;
+	e.x = x;
+	e.y = y;
+	e.button = id;
+	
+	colorWheel._mousePressed( e );
+	colorScaleBar._mousePressed( e );
+}
+
+void ofxColorPicker :: touchMoved ( float x, float y, int id )
+{
+	ofMouseEventArgs e;
+	e.x = x;
+	e.y = y;
+	e.button = id;
+	
+	colorWheel._mouseDragged( e );
+	colorScaleBar._mouseDragged( e );
+}
+
+void ofxColorPicker :: touchUp ( float x, float y, int id )
+{
+	ofMouseEventArgs e;
+	e.x = x;
+	e.y = y;
+	e.button = id;
+	
+	colorWheel._mouseReleased( e );
+	colorScaleBar._mouseReleased( e );
+}
+
+//////////////////////////////////////////////
 //	DISPLAY.
 //////////////////////////////////////////////
+
+void ofxColorPicker :: draw( ofEventArgs &e )
+{
+	draw();
+}
 
 void ofxColorPicker :: draw( float x, float y, float w, float h ) 
 {
@@ -317,10 +374,17 @@ void ofxColorPicker :: drawColorWheel()
 	int w = rectColorWheel.width;
 	int h = rectColorWheel.height;
 	
-	if( wheelLayer.radius != colorWheelRadius || wheelLayer.colorScale != colorScale )
+	bool b1 = glColorWheel.radius != colorWheelRadius;
+	bool b2 = glColorWheel.colorScale != colorScale;
+	bool b3 = glColorWheel.pos.x != rectColorWheel.x;
+	bool b4 = glColorWheel.pos.y != rectColorWheel.y;
+	
+	if( b1 || b2 || b3 || b4 )							// check if glColorWheel needs to be re-calculated.
 	{
-		wheelLayer.radius		= colorWheelRadius;
-		wheelLayer.colorScale	= colorScale;
+		glColorWheel.radius		= colorWheelRadius;
+		glColorWheel.colorScale	= colorScale;
+		glColorWheel.pos.x		= rectColorWheel.x;
+		glColorWheel.pos.y		= rectColorWheel.y;
 		
 		int cx = x + colorWheelRadius;
 		int cy = y + colorWheelRadius;
@@ -331,24 +395,24 @@ void ofxColorPicker :: drawColorWheel()
 			float p = j / (float)COLOR_WHEEL_RES;
 			float a = p * TWO_PI;
 			
-			wheelLayer.points[ i * 4 + 0 ] = cx + cos( -a ) * wheelLayer.radius;
-			wheelLayer.points[ i * 4 + 1 ] = cy + sin( -a ) * wheelLayer.radius;
+			glColorWheel.points[ i * 4 + 0 ] = cx + cos( -a ) * glColorWheel.radius;
+			glColorWheel.points[ i * 4 + 1 ] = cy + sin( -a ) * glColorWheel.radius;
 			
-			wheelLayer.points[ i * 4 + 2 ] = cx;
-			wheelLayer.points[ i * 4 + 3 ] = cy;
+			glColorWheel.points[ i * 4 + 2 ] = cx;
+			glColorWheel.points[ i * 4 + 3 ] = cy;
 			
 			ofColor c;
-			c = getCircularColor( a * RAD_TO_DEG, 1.0, wheelLayer.colorScale );
+			c = getCircularColor( a * RAD_TO_DEG, 1.0, glColorWheel.colorScale );
 			
-			wheelLayer.colors[ i * 8 + 0 ] = c.r / 255.0;
-			wheelLayer.colors[ i * 8 + 1 ] = c.g / 255.0;
-			wheelLayer.colors[ i * 8 + 2 ] = c.b / 255.0;
-			wheelLayer.colors[ i * 8 + 3 ] = 1.0;
+			glColorWheel.colors[ i * 8 + 0 ] = c.r / 255.0;
+			glColorWheel.colors[ i * 8 + 1 ] = c.g / 255.0;
+			glColorWheel.colors[ i * 8 + 2 ] = c.b / 255.0;
+			glColorWheel.colors[ i * 8 + 3 ] = 1.0;
 			
-			wheelLayer.colors[ i * 8 + 4 ] = 1.0;
-			wheelLayer.colors[ i * 8 + 5 ] = 1.0;
-			wheelLayer.colors[ i * 8 + 6 ] = 1.0;
-			wheelLayer.colors[ i * 8 + 7 ] = 1.0;
+			glColorWheel.colors[ i * 8 + 4 ] = 1.0;
+			glColorWheel.colors[ i * 8 + 5 ] = 1.0;
+			glColorWheel.colors[ i * 8 + 6 ] = 1.0;
+			glColorWheel.colors[ i * 8 + 7 ] = 1.0;
 		}
 	}
 	
@@ -357,8 +421,8 @@ void ofxColorPicker :: drawColorWheel()
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glEnableClientState( GL_COLOR_ARRAY );
 	
-	glVertexPointer( 2, GL_FLOAT, 0, &wheelLayer.points[ 0 ] );
-	glColorPointer(  4, GL_FLOAT, 0, &wheelLayer.colors[ 0 ] );
+	glVertexPointer( 2, GL_FLOAT, 0, &glColorWheel.points[ 0 ] );
+	glColorPointer(  4, GL_FLOAT, 0, &glColorWheel.colors[ 0 ] );
 	
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, ( COLOR_WHEEL_RES + 1 ) * 2 );
 	
@@ -419,39 +483,39 @@ void ofxColorPicker :: drawColorScaleBar()
 	rw = w - 4;
 	rh = h - 4;
 	
-	rectScaleLayer.points[ 0 ] = rx;
-	rectScaleLayer.points[ 1 ] = ry;
-	rectScaleLayer.points[ 2 ] = rx;
-	rectScaleLayer.points[ 3 ] = ry + rh;
-	rectScaleLayer.points[ 4 ] = rx + rw;
-	rectScaleLayer.points[ 5 ] = ry + rh;
-	rectScaleLayer.points[ 6 ] = rx + rw;
-	rectScaleLayer.points[ 7 ] = ry;
+	glColorScaleBar.points[ 0 ] = rx;
+	glColorScaleBar.points[ 1 ] = ry;
+	glColorScaleBar.points[ 2 ] = rx;
+	glColorScaleBar.points[ 3 ] = ry + rh;
+	glColorScaleBar.points[ 4 ] = rx + rw;
+	glColorScaleBar.points[ 5 ] = ry + rh;
+	glColorScaleBar.points[ 6 ] = rx + rw;
+	glColorScaleBar.points[ 7 ] = ry;
 		
-	rectScaleLayer.colors[ 0 ]  = 0;
-	rectScaleLayer.colors[ 1 ]  = 0;
-	rectScaleLayer.colors[ 2 ]  = 0;
-	rectScaleLayer.colors[ 3 ]  = 1;
-	rectScaleLayer.colors[ 4 ]  = 0;
-	rectScaleLayer.colors[ 5 ]  = 0;
-	rectScaleLayer.colors[ 6 ]  = 0;
-	rectScaleLayer.colors[ 7 ]  = 1;
-	rectScaleLayer.colors[ 8 ]  = c.r / 255.0;
-	rectScaleLayer.colors[ 9 ]  = c.g / 255.0;
-	rectScaleLayer.colors[ 10 ] = c.b / 255.0;
-	rectScaleLayer.colors[ 11 ] = 1;
-	rectScaleLayer.colors[ 12 ] = c.r / 255.0;
-	rectScaleLayer.colors[ 13 ] = c.g / 255.0;
-	rectScaleLayer.colors[ 14 ] = c.b / 255.0;
-	rectScaleLayer.colors[ 15 ] = 1;
+	glColorScaleBar.colors[ 0 ]  = 0;
+	glColorScaleBar.colors[ 1 ]  = 0;
+	glColorScaleBar.colors[ 2 ]  = 0;
+	glColorScaleBar.colors[ 3 ]  = 1;
+	glColorScaleBar.colors[ 4 ]  = 0;
+	glColorScaleBar.colors[ 5 ]  = 0;
+	glColorScaleBar.colors[ 6 ]  = 0;
+	glColorScaleBar.colors[ 7 ]  = 1;
+	glColorScaleBar.colors[ 8 ]  = c.r / 255.0;
+	glColorScaleBar.colors[ 9 ]  = c.g / 255.0;
+	glColorScaleBar.colors[ 10 ] = c.b / 255.0;
+	glColorScaleBar.colors[ 11 ] = 1;
+	glColorScaleBar.colors[ 12 ] = c.r / 255.0;
+	glColorScaleBar.colors[ 13 ] = c.g / 255.0;
+	glColorScaleBar.colors[ 14 ] = c.b / 255.0;
+	glColorScaleBar.colors[ 15 ] = 1;
 	
 	glEnable( GL_SMOOTH );
 	
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glEnableClientState( GL_COLOR_ARRAY );
 	
-	glVertexPointer( 2, GL_FLOAT, 0, &rectScaleLayer.points[ 0 ] );
-	glColorPointer(  4, GL_FLOAT, 0, &rectScaleLayer.colors[ 0 ] );
+	glVertexPointer( 2, GL_FLOAT, 0, &glColorScaleBar.points[ 0 ] );
+	glColorPointer(  4, GL_FLOAT, 0, &glColorScaleBar.colors[ 0 ] );
 	
 	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 	
@@ -464,11 +528,6 @@ void ofxColorPicker :: drawColorScaleBar()
 	int cw = 3;
 	int cx = colorScale * ( rw - cw );
 	
-	//-- red guide. this is not seen but is a guide for dev.
-	
-	ofSetColor( 255, 0, 0 );
-	ofRect( rx + cx, ry - by, cw, rh + by * 2 );
-
 	//-- grey rect for handle. bx and by are border values.
 	
 	bx = 2;
