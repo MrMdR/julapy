@@ -13,6 +13,7 @@
 #include "ofxScreen.h"
 #include "ofxColorPicker.h"
 #include "ofxDelaunay.h"
+#include "ofxEaseValue.h"
 #include "ColorRect.h"
 #include "ColorPhysics.h"
 #include "ColorTriangle.h"
@@ -44,15 +45,12 @@ public:
 	void drawColorPickers		();
 	void drawTriangles			();
 	
-	void showPanel		();
-	void hidePanel		();
-	void togglePanel	();
-	
 	void resetJoints	();
 	
 	void down			( int x, int y, int id = -1 );
 	void drag			( int x, int y, int id = -1 );
 	void up				( int x, int y, int id = -1 );
+	void inputCheck		();
 	
 	ofxScreen		screen;
 	int				frameRate;
@@ -72,11 +70,16 @@ public:
 	ColorPhysics	physics;
 	
 	bool			bColorSelectMode;
+	bool			bColorSelectTimeout;
+	int				colorSelectTimeout;
+	
 	ofPoint			inputPos1;
 	ofPoint			inputPos2;
 	ofPoint			inputVel;
 	int				inputLastID;
+	bool			bInputDown;
 	
 	ofxDelaunay				delaunay;
 	vector<ColorTriangle*>	triangles;
+	ofxEaseValue			triColorScale;
 };

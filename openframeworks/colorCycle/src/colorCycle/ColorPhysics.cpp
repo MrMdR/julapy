@@ -53,6 +53,8 @@ void ColorPhysics :: setup ()
 //	box2d->registerGrabbing();
 //	box2d->getWorld()->SetContactListener( &contactListener );
 	
+	circleRadius = areaToRadius( 0.001 );
+	
 	createBounds();
 	createCircles();
 	createJoints();
@@ -79,7 +81,7 @@ void ColorPhysics :: createBounds ()
 	(
 		thick / OFX_BOX2D_SCALE,
 		( h / OFX_BOX2D_SCALE ) / 2,
-		b2Vec2( ( w + thick ) / OFX_BOX2D_SCALE, ( h / OFX_BOX2D_SCALE ) / 2 ),
+		b2Vec2( ( w + thick + circleRadius ) / OFX_BOX2D_SCALE, ( h / OFX_BOX2D_SCALE ) / 2 ),
 		0.0
 	);
 	ground->CreateShape( &sd );
@@ -88,7 +90,7 @@ void ColorPhysics :: createBounds ()
 	(
 		thick / OFX_BOX2D_SCALE,
 		( h / OFX_BOX2D_SCALE ) / 2, 
-		b2Vec2( -thick / OFX_BOX2D_SCALE, ( h / OFX_BOX2D_SCALE ) / 2 ),
+		b2Vec2( -( thick + circleRadius ) / OFX_BOX2D_SCALE, ( h / OFX_BOX2D_SCALE ) / 2 ),
 		0.0
 	);
 	ground->CreateShape(&sd);
@@ -97,7 +99,7 @@ void ColorPhysics :: createBounds ()
 	(
 		( w / OFX_BOX2D_SCALE ) / 2,
 		thick / OFX_BOX2D_SCALE,
-		b2Vec2( ( w / OFX_BOX2D_SCALE ) / 2, -thick /OFX_BOX2D_SCALE ),
+		b2Vec2( ( w / OFX_BOX2D_SCALE ) / 2, -( thick + circleRadius ) /OFX_BOX2D_SCALE ),
 		0.0
 	);
 	ground->CreateShape(&sd);
@@ -106,7 +108,7 @@ void ColorPhysics :: createBounds ()
 	(
 		( w / OFX_BOX2D_SCALE ) / 2,
 		thick / OFX_BOX2D_SCALE,
-		b2Vec2( ( w / OFX_BOX2D_SCALE ) / 2, ( h + thick ) /OFX_BOX2D_SCALE ),
+		b2Vec2( ( w / OFX_BOX2D_SCALE ) / 2, ( h + thick + circleRadius ) /OFX_BOX2D_SCALE ),
 		0.0
 	);
 	ground->CreateShape(&sd);
@@ -128,11 +130,6 @@ void ColorPhysics :: createCircles ()
 		
 		//-- define line up point.
 		
-//		float area		= 0.0005;
-//		float area		= ofRandom( 0.001, 0.004 );
-		float area		= 0.001;
-		float radius	= areaToRadius( area );
-		
 		circle->setScreen( screen );
 		circle->init();		// do things here before creating the circle in box2d.
 		
@@ -147,7 +144,7 @@ void ColorPhysics :: createCircles ()
 		
 		circle->enableGravity( bEnableGravity );
 		circle->setPhysics( mass, bounce, friction );
-		circle->setup( box2d->getWorld(), ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ), radius, false );
+		circle->setup( box2d->getWorld(), ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ), circleRadius, false );
 		circle->setRotationFriction( 1.0 );
 		circle->setDamping( 1.0 );
 		circle->body->AllowSleeping( false );
@@ -190,6 +187,16 @@ bool ColorPhysics :: checkHit ( float x, float y )
 	}
 	
 	return false;
+}
+
+void ColorPhysics :: showCircles ()
+{
+	
+}
+
+void ColorPhysics :: hideCircles ()
+{
+	
 }
 
 ///////////////////////////////////////////////////////

@@ -57,8 +57,11 @@ void ColorCycle :: setup ()
 	colorPicker0.setColorAngle( 3 / 6.0 );
 	colorPicker1.setColorAngle( 5 / 6.0 );
 	
-	colorPicker0.disable();
-	colorPicker1.disable();
+//	colorPicker0.disable();
+//	colorPicker1.disable();
+	
+	colorPicker0.enable();
+	colorPicker1.enable();
 	
 	panel.colorPicker0 = &colorPicker0;
 	panel.colorPicker1 = &colorPicker1;
@@ -66,8 +69,16 @@ void ColorCycle :: setup ()
 	
 	colorScale = 1.0;
 	
-	bColorSelectMode	= false;
-	inputLastID			= -2;
+	bColorSelectMode		= false;
+	bColorSelectTimeout		= false;
+	colorSelectTimeout		= 0;
+	
+	bInputDown				= false;
+	inputLastID				= -2;
+	
+	triColorScale.value		= 1.0;
+	triColorScale.target	= 1.0;
+	triColorScale.ease		= 0.2;
 	
 	physics.setScreen( screen );
 	physics.setup();
@@ -79,7 +90,7 @@ void ColorCycle :: setup ()
 
 void ColorCycle :: update ()
 {
-	if( bColorSelectMode )
+	if( bInputDown )
 	{
 		float velx = inputPos1.x - inputPos2.x;
 		float vely = inputPos1.y - inputPos2.y;
@@ -98,14 +109,18 @@ void ColorCycle :: update ()
 	ang = inputVel.y / 5000.0;
 //	ang += frameRate * 0.00001;
 	
-	colorPicker0.addToColorAngle( ang );
-	colorPicker1.addToColorAngle( ang );
+	colorPicker0.setColorAngle( colorPicker0.getColorAngle() + ang );
+	colorPicker1.setColorAngle( colorPicker1.getColorAngle() + ang );
 	
-	colorScale += ( inputVel.x / 3000.0 );
-	colorScale = MAX( MIN( colorScale, 1.0 ), 0.5 );
+	float scl = inputVel.x / 3000.0;
 	
-	colorPicker0.setColorScale( colorScale );
-	colorPicker1.setColorScale( colorScale );
+	colorPicker0.setColorScale( colorPicker0.getColorScale() + scl );
+	colorPicker0.setColorScale( MAX( MIN( colorPicker0.getColorScale(), 1.0 ), 0.5 ) );
+	colorPicker1.setColorScale( colorPicker1.getColorScale() + scl );
+	colorPicker1.setColorScale( MAX( MIN( colorPicker1.getColorScale(), 1.0 ), 0.5 ) );
+	
+	colorPicker0.update();
+	colorPicker1.update();
 	
 	upperColor = colorPicker0.getColor();
 	lowerColor = colorPicker1.getColor();
@@ -120,6 +135,8 @@ void ColorCycle :: update ()
 	updatePhysics();
 	updateDelaunay();
 	updateTriangles();
+	
+	inputCheck();
 }
 
 void ColorCycle :: updatePhysics ()
@@ -149,6 +166,10 @@ void ColorCycle :: updateDelaunay ()
 
 void ColorCycle :: updateTriangles ()
 {
+	triColorScale.update();
+	
+	//--
+	
 	for( int i=0; i<triangles.size(); i++ )
 	{
 		delete triangles[ i ];
@@ -188,6 +209,7 @@ void ColorCycle :: updateTriangles ()
 			
 			p2 += p3;
 			p2.normalize();
+			p2 *= triColorScale.value;
 			
 			p1 += p2 * ( screen.screenMin * 0.25 );
 			
@@ -286,31 +308,15 @@ void ColorCycle :: drawTriangles ()
 }
 
 ///////////////////////////////////////////////////////
-//	PANEL.
-///////////////////////////////////////////////////////
-
-void ColorCycle :: showPanel ()
-{
-	panel.show();
-}
-
-void ColorCycle ::  hidePanel ()
-{
-	panel.hide();
-}
-
-void ColorCycle ::  togglePanel	()
-{
-	panel.toggleShow();
-}
-
-///////////////////////////////////////////////////////
 //	JOINTS.
 ///////////////////////////////////////////////////////
 
 void ColorCycle :: resetJoints ()
 {
-	physics.resetJoints();
+	if( !bColorSelectMode )
+	{
+		physics.resetJoints();
+	}
 }
 
 ///////////////////////////////////////////////////////
@@ -324,9 +330,12 @@ void ColorCycle :: down ( int x, int y, int id )
 		if( inputLastID != id )		// still in color select mode, but different id.
 		{
 			inputLastID = id;
+			bInputDown	= true;
 			
 			inputPos1.x = inputPos2.x = x;
 			inputPos1.y = inputPos2.y = y;
+			
+			bColorSelectTimeout = false;
 		}
 	}
 	else
@@ -337,15 +346,23 @@ void ColorCycle :: down ( int x, int y, int id )
 		}
 		else									// touch on background.
 		{
-			bColorSelectMode	= true;
-			inputLastID			= id;
+			bColorSelectMode = true;
+			
+			inputLastID	= id;
+			bInputDown	= true;
 			
 			inputPos1.x = inputPos2.x = x;
 			inputPos1.y = inputPos2.y = y;
 			
 			panel.show();
+			
+			physics.hideCircles();
+			triColorScale.target = 0.2;
 		}
 	}
+	
+	colorPicker0.touchDown( x, y, id );
+	colorPicker1.touchDown( x, y, id );
 	
 //	physics.checkHit( x, y )	// don't forget this, could be handy later.
 }
@@ -367,17 +384,44 @@ void ColorCycle :: drag ( int x, int y, int id )
 	{
 		physics.box2d->grabShapeDragged2( x, y, id );
 	}
+	
+	colorPicker0.touchMoved( x, y, id );
+	colorPicker1.touchMoved( x, y, id );
 }
 
 void ColorCycle :: up ( int x, int y, int id )
 {
-	if( inputLastID == id )
+	if( bColorSelectMode )
 	{
-		bColorSelectMode	= false;
-		inputLastID			= -2;
-	
-		panel.hide();
+		if( inputLastID == id )
+		{
+			inputLastID	= -2;
+			bInputDown	= false;
+		}
+		
+		colorSelectTimeout	= ofGetElapsedTimeMillis() + 1000;
+		bColorSelectTimeout	= true;
 	}
 	
+	colorPicker0.touchUp( x, y, id );
+	colorPicker1.touchUp( x, y, id );
+	
 	physics.box2d->grabShapeUp2( x, y, id );
+}
+
+void ColorCycle :: inputCheck ()
+{
+	if( bColorSelectTimeout )
+	{
+		if( ofGetElapsedTimeMillis() > colorSelectTimeout )
+		{
+			bColorSelectTimeout	= false;
+			bColorSelectMode	= false;
+			
+			panel.hide();
+			
+			physics.showCircles();
+			triColorScale.target = 1.0;
+		}
+	}
 }
