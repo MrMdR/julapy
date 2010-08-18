@@ -13,27 +13,23 @@
 #include "ofMain.h"
 #include "ofxMSAInteractiveObject.h"
 
-#define		COLOR_PICKER_DEFAULT_WIDTH				100
-#define		COLOR_PICKER_DEFAULT_HEIGHT				200
-
+#define		COLOR_PICKER_DEFAULT_WIDTH				150
+#define		COLOR_PICKER_DEFAULT_HEIGHT				300
 #define		COLOR_WHEEL_RES							200
 
-#define		COLOR_PICKER_MODE_CIRLCE_ROTATION		0
-#define		COLOR_PICKER_MODE_RANDOM_WALK			1
-#define		COLOR_PICKER_MODE_MOUSE					2
-
-struct Rectangle
+struct GLColorScaleBar
 {
 	float	points[ 2 * 4 ];
 	float	colors[ 4 * 4 ];
 };
 
-struct ColorWheel
+struct GLColorWheel
 {
 	float	points[ ( COLOR_WHEEL_RES + 1 ) * 2 * 2 ];
 	float	colors[ ( COLOR_WHEEL_RES + 1 ) * 2 * 4 ];
 	float	colorScale;
 	float	radius;
+	ofPoint	pos;
 };
 
 struct PolCord
@@ -50,9 +46,10 @@ public :
 	 ofxColorPicker();
 	~ofxColorPicker();
 
+	void addListeners		();
+	void removeListeners	();
+	
 	void  update			();
-	void  update			( ofEventArgs &e );
-	void  exit				( ofEventArgs &e );
 
 	void  setPos			( float x, float y );
 	void  setSize			( float x, float y, float w, float h );
@@ -82,10 +79,18 @@ public :
 	void  setColorAngle		( float a );
 	float getColorAngle		();
 	
+	void  touchDown			( float x, float y, int id );
+	void  touchMoved		( float x, float y, int id );
+	void  touchUp			( float x, float y, int id );
+	
 private :
 
 	void init				();
 	bool checkDimensions	( int x, int y, int w, int h );
+	
+	void  update			( ofEventArgs &e );
+	void  draw				( ofEventArgs &e );
+	void  exit				( ofEventArgs &e );
 
 	void updateColor		();
 	void updateColorScale	();
@@ -104,28 +109,28 @@ private :
 	ofxMSAInteractiveObject colorWheel;
 	ofxMSAInteractiveObject colorScaleBar;
 	
-	bool		bVisible;
-	bool		bEnabled;
+	bool			bVisible;
+	bool			bEnabled;
 	
-	ofColor		color;
-	ofPoint		colorPoint;
-	float		colorScale;
-	float		colorRadius;				
-	float		colorAngle;
+	ofColor			color;
+	ofPoint			colorPoint;
+	float			colorScale;
+	float			colorRadius;				
+	float			colorAngle;
 	
-	ofPoint		mousePoint;					// mouse interpolation.
+	ofPoint			mousePoint;					// mouse interpolation.
 	
-	ofRectangle dimensions;
-	int			colorWheelRadius;
-	int			colorWheelPad;
+	ofRectangle		dimensions;
+	int				colorWheelRadius;
+	int				colorWheelPad;
 
-	ofRectangle rectBackground;
-	ofRectangle rectColorWheel;
-	ofRectangle rectColorScaleBar;
-	ofRectangle rectColorBox;
+	ofRectangle		rectBackground;
+	ofRectangle		rectColorWheel;
+	ofRectangle		rectColorScaleBar;
+	ofRectangle		rectColorBox;
 	
-	ColorWheel	wheelLayer;
-	Rectangle	rectScaleLayer;
+	GLColorWheel	glColorWheel;
+	GLColorScaleBar	glColorScaleBar;
 };
 
 #endif
