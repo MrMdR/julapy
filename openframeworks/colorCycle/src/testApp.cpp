@@ -43,7 +43,7 @@ void testApp :: keyPressed( int key )
 {
 	if( key == ' ' )
 	{
-		cc.togglePanel();
+//		cc.togglePanel();
 	}
 	
 	if( key == 'r' )
