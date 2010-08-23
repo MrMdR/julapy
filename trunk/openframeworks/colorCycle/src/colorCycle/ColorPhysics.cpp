@@ -117,7 +117,7 @@ void ColorPhysics :: createBounds ()
 void ColorPhysics :: createCircles ()
 {
 	int numOfCircle;
-	numOfCircle = 50;
+	numOfCircle = 25;
 #ifdef TARGET_OF_IPHONE
 	numOfCircle = 25;
 #endif
