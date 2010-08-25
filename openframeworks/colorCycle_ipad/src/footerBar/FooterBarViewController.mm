@@ -28,7 +28,12 @@
 - (void)viewDidLoad
 {
 	[ self.view setAlpha: 0.0 ];
-	_showing = NO;
+	
+	_showing			= NO;
+	_shuffleSelected	= NO;
+	_colorSelected		= NO;
+	_addSelected		= NO;
+	_removeSelected		= NO;
 	
 	if( [ MFMailComposeViewController canSendMail ] )
 	{
@@ -107,15 +112,17 @@
 // METHODS
 //////////////////////////////////////////////////////
 
--(void)snap
+-(void)snapButtonHandler
 {
 	ofxiPhoneScreenGrab( 0 );
+
+	[ self hide ];
 	
 	UIAlertView* alertView = 
 	[ 
 		[ UIAlertView alloc] 
 		initWithTitle		: @"" 
-		message				: @"Saved!"
+		message				: @"Composition Saved!"
 		delegate			: self 
 		cancelButtonTitle	: @"OK" 
 		otherButtonTitles	: nil
@@ -125,28 +132,43 @@
 	[ alertView release ];
 }
 
--(void)forward:(id)sender
+-(void)colorButtonHandler
 {
-	if( _config == nil )
-	{
-		CGRect rect = [ [ UIScreen mainScreen ] applicationFrame ];
-		CGSize size = CGSizeMake( rect.size.width * 0.5, rect.size.height * 0.5 );
-
-		self.config = [ [ [ FooterBarConfigViewController alloc ] init ] autorelease ];
-		_config.delegate = self;
-		_config.contentSizeForViewInPopover = size;
-//		_config.view.clipsToBounds = YES;
-		
-		self.configPopover = [ UIPopoverController alloc ];
-		[ self.configPopover initWithContentViewController:_config ];
-		[ self.configPopover autorelease ];
-	}
-	
-	[ self.configPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES ];
-//	[ self.configPopover presentPopoverFromRect:CGRectMake( 0, 0, 100, 100) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:true ];
+	_colorSelected = YES;
 }
 
--(void)email
+-(void)addButtonHandler
+{
+	_addSelected = YES;
+}
+
+-(void)removeButtonHandler
+{
+	_removeSelected = YES;
+}
+
+-(void)shuffleButtonHandler
+{
+	_shuffleSelected = YES;
+}
+
+-(void)pirateButtonHandler
+{
+	UIAlertView* alertView = 
+	[ 
+		[ UIAlertView alloc] 
+		initWithTitle		: @"" 
+		message				: @"Argh, me hearties!"
+		delegate			: self 
+		cancelButtonTitle	: @"YAR"
+		otherButtonTitles	: nil
+	];
+	
+	[ alertView show ];
+	[ alertView release ];
+}
+
+-(void)emailButtonHandler
 {
 	MFMailComposeViewController *controller = [ [ MFMailComposeViewController alloc ] init ];
 	controller.mailComposeDelegate = self;
@@ -156,19 +178,30 @@
 	[ controller release ];
 }
 
--(void)refresh
-{
-	if( _config != nil )
-	{
-		[ self.configPopover dismissPopoverAnimated:NO ];		// to remove it.
-	
-		self.config = nil;
-	}
-}
-
--(void)info
+-(void)infoButtonHandler
 {
 	//
+}
+
+-(void)forward:(id)sender
+{
+	if( _config == nil )
+	{
+		CGRect rect = [ [ UIScreen mainScreen ] applicationFrame ];
+		CGSize size = CGSizeMake( rect.size.width * 0.5, rect.size.height * 0.5 );
+		
+		self.config = [ [ [ FooterBarConfigViewController alloc ] init ] autorelease ];
+		_config.delegate = self;
+		_config.contentSizeForViewInPopover = size;
+		//		_config.view.clipsToBounds = YES;
+		
+		self.configPopover = [ UIPopoverController alloc ];
+		[ self.configPopover initWithContentViewController:_config ];
+		[ self.configPopover autorelease ];
+	}
+	
+	[ self.configPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES ];
+	//	[ self.configPopover presentPopoverFromRect:CGRectMake( 0, 0, 100, 100) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:true ];
 }
 
 //////////////////////////////////////////////////////
@@ -179,6 +212,68 @@
 {
 	[self becomeFirstResponder];
 	[self dismissModalViewControllerAnimated:YES];
+}
+
+//////////////////////////////////////////////////////
+// CHECKERS
+//////////////////////////////////////////////////////
+
+-(BOOL) isShuffleSelected
+{
+	if( _shuffleSelected )
+	{
+		_shuffleSelected = NO;
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
+-(BOOL) isColorSelected
+{
+	if( _colorSelected )
+	{
+		_colorSelected = NO;
+		
+//		[ self hide ];
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
+-(BOOL) isAddSelected
+{
+	if( _addSelected )
+	{
+		_addSelected = NO;
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
+-(BOOL) isRemoveSelected
+{
+	if( _removeSelected )
+	{
+		_removeSelected = NO;
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
 }
 
 //////////////////////////////////////////////////////

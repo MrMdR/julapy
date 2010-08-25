@@ -24,6 +24,18 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
+	if( footer->isShuffleSelected() )
+		cc.shuffle();
+	
+	if( footer->isColorSelected() )
+		cc.down( 0, 0, 0 );
+	
+	if( footer->isAddSelected() )
+		cc.addCircle();
+	
+	if( footer->isRemoveSelected() )
+		cc.removeCircle();
+	
 	float gx;
 	gx = ofxAccelerometer.getForce().y;
 	gx *= 2;									// increase the reaction to tilt.
@@ -76,8 +88,6 @@ void testApp::touchUp(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch)
 {
-//	cc.resetJoints();
-	
 	if( footer != NULL )
 		footer->toggleShow();
 }

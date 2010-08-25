@@ -25,26 +25,42 @@
 	id<FooterBarViewDelegate>	_delegate;
 	
 	IBOutlet UIBarButtonItem*	_snapButton;
-	IBOutlet UIBarButtonItem*	_forwardButton;
+	IBOutlet UIBarButtonItem*	_colorButton;
+	IBOutlet UIBarButtonItem*	_addButton;
+	IBOutlet UIBarButtonItem*	_removeButton;
+	IBOutlet UIBarButtonItem*	_shuffleButton;
+	IBOutlet UIBarButtonItem*	_pirateButton;
 	IBOutlet UIBarButtonItem*	_emailButton;
-	IBOutlet UIBarButtonItem*	_refreshButton;
 	IBOutlet UIBarButtonItem*	_infoButton;
 	
 	FooterBarConfigViewController*	_config;
 	UIPopoverController*			_configPopover;
 	NSTimer*						_hideTimer;
 	BOOL							_showing;
+	BOOL							_shuffleSelected;
+	BOOL							_colorSelected;
+	BOOL							_addSelected;
+	BOOL							_removeSelected;
 }
 
 @property (nonatomic, assign) id<FooterBarViewDelegate>			delegate;
 @property (nonatomic, retain) FooterBarConfigViewController*	config;
 @property (nonatomic, retain) UIPopoverController*				configPopover;
 
-- (IBAction) snap;
+- (IBAction) snapButtonHandler;
+- (IBAction) colorButtonHandler;
+- (IBAction) addButtonHandler;
+- (IBAction) removeButtonHandler;
+- (IBAction) shuffleButtonHandler;
+- (IBAction) pirateButtonHandler;
+- (IBAction) emailButtonHandler;
+- (IBAction) infoButtonHandler;
 - (IBAction) forward:(id)sender;
-- (IBAction) email;
-- (IBAction) refresh;
-- (IBAction) info;
+
+- (BOOL) isShuffleSelected;
+- (BOOL) isColorSelected;
+- (BOOL) isAddSelected;
+- (BOOL) isRemoveSelected;
 
 - (void) show;
 - (void) hide;
