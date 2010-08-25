@@ -104,13 +104,30 @@ void ColorCycle :: update ()
 		inputVel.x *= ease;
 		inputVel.y *= ease;
 	}
+
+	float angDrag;
+	angDrag = inputVel.y / 5000.0;
 	
-	float ang;
-	ang = inputVel.y / 5000.0;
-//	ang += frameRate * 0.00001;
+	float angRnd0 = rndColorAngle0.value;
+	rndColorAngle0.update();
+	angRnd0 = rndColorAngle0.value - angRnd0;
+
+	float angRnd1 = rndColorAngle1.value;
+	rndColorAngle1.update();
+	angRnd1 = rndColorAngle1.value - angRnd1;
 	
-	colorPicker0.setColorAngle( colorPicker0.getColorAngle() + ang );
-	colorPicker1.setColorAngle( colorPicker1.getColorAngle() + ang );
+	float ang0 = 0;
+	ang0 += angDrag;
+	ang0 += angRnd0;
+//	ang0 += frameRate * 0.00001;
+
+	float ang1 = 0;
+	ang1 += angDrag;
+	ang1 += angRnd1;
+//	ang1 += frameRate * 0.00001;
+	
+	colorPicker0.setColorAngle( colorPicker0.getColorAngle() + ang0 );
+	colorPicker1.setColorAngle( colorPicker1.getColorAngle() + ang1 );
 	
 	float scl = inputVel.x / 3000.0;
 	
@@ -311,12 +328,25 @@ void ColorCycle :: drawTriangles ()
 //	JOINTS.
 ///////////////////////////////////////////////////////
 
-void ColorCycle :: resetJoints ()
+void ColorCycle :: addCircle ()
+{
+	physics.addSingleCircle();
+}
+
+void ColorCycle :: removeCircle ()
+{
+	physics.removeCircle();
+}
+
+void ColorCycle :: shuffle ()
 {
 	if( !bColorSelectMode )
 	{
 		physics.resetJoints();
 	}
+	
+	rndColorAngle0.target = ofRandom( -0.2, 0.2 );
+	rndColorAngle1.target = ofRandom( -0.2, 0.2 );
 }
 
 ///////////////////////////////////////////////////////

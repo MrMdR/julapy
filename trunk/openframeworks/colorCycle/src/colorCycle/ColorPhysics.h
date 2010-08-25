@@ -29,17 +29,21 @@ public:
 	void update	();
 	void draw	();
 	
-	void  createBounds	();
-	void  createCircles	();
-	float areaToRadius	( float area );
-	bool  checkHit		( float x, float y );
+	void  createBounds		();
+	void  createCircles		();
+	void  addCircle			();
+	void  addSingleCircle	();
+	void  removeCircle		();
+	float areaToRadius		( float area );
+	bool  checkHit			( float x, float y );
 	
 	void  showCircles	();
 	void  hideCircles	();
 	
-	void  createJoints	();
-	void  destroyJoints	();
-	void  resetJoints	();
+	void  createJoints			();
+	void  createJointsForCircle	( ColorCircle* circle );
+	void  destroyJoints			();
+	void  resetJoints			();
 	
 	ofxScreen				screen;
 	

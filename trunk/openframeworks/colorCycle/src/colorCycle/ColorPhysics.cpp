@@ -125,33 +125,79 @@ void ColorPhysics :: createCircles ()
 	int t = numOfCircle;
 	for( int i=0; i<t; i++ )
 	{
-		ColorCircle* circle;
-		circle = new ColorCircle();
+		addCircle();
+	}
+}
+
+void ColorPhysics :: addCircle ()
+{
+	ColorCircle* circle;
+	circle = new ColorCircle();
+	
+	//-- define line up point.
+	
+	circle->setScreen( screen );
+	circle->init();		// do things here before creating the circle in box2d.
+	
+	//-- define circles physics.
+	
+	float mass		= 3.0;
+	float bounce	= 0.53;
+	float friction	= 0.1;
+	
+	bool bEnableGravity;
+	bEnableGravity = ofRandom( 0.0, 1.0 ) > 0.5;
+	
+	circle->enableGravity( bEnableGravity );
+	circle->setPhysics( mass, bounce, friction );
+	circle->setup( box2d->getWorld(), ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ), circleRadius, false );
+	circle->setRotationFriction( 1.0 );
+	circle->setDamping( 1.0 );
+	circle->body->AllowSleeping( false );
+	
+	//-- add to vectors.
+	
+	circles.push_back( circle );
+}
+
+void ColorPhysics :: addSingleCircle ()
+{
+	if( circles.size() <= 30 )
+	{
+		addCircle();
+		createJointsForCircle( circles.back() );
+	}
+}
+
+void ColorPhysics :: removeCircle ()
+{
+	if( circles.size() > 5 )
+	{
+		int i;
 		
-		//-- define line up point.
+		//-- remove last joint.
 		
-		circle->setScreen( screen );
-		circle->init();		// do things here before creating the circle in box2d.
+//		i = joints.size() - 1;
+//		
+//		if( i > 0 )
+//		{
+//			box2d->getWorld()->DestroyJoint( joints[ i ] );
+//			joints.erase( joints.begin() + i );
+//		}
 		
-		//-- define circles physics.
+		destroyJoints();
 		
-		float mass		= 3.0;
-		float bounce	= 0.53;
-		float friction	= 0.1;
+		//-- remove last circle.
 		
-		bool bEnableGravity;
-		bEnableGravity = ofRandom( 0.0, 1.0 ) > 0.5;
+		i = circles.size() - 1;
+
+		if( i > 0 )
+		{
+			circles[ i ]->destroyShape();
+			circles.erase( circles.begin() + i );
+		}
 		
-		circle->enableGravity( bEnableGravity );
-		circle->setPhysics( mass, bounce, friction );
-		circle->setup( box2d->getWorld(), ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ), circleRadius, false );
-		circle->setRotationFriction( 1.0 );
-		circle->setDamping( 1.0 );
-		circle->body->AllowSleeping( false );
-		
-		//-- add to vectors.
-		
-		circles.push_back( circle );
+		createJoints();
 	}
 }
 
@@ -207,38 +253,43 @@ void ColorPhysics :: createJoints ()
 {
 	for( int i=0; i<circles.size(); i++ )
 	{
-		int r = (int)ofRandom( 0, circles.size () - 1 );
-		
-		ColorCircle& c1 = *circles[ i ];
-		ColorCircle& c2 = *circles[ r ];
-		
-		b2DistanceJointDef jd;
-		b2Vec2 p1, p2, d;
-		
-		jd.frequencyHz  = 10.0;
-		jd.dampingRatio = 0.05;
-		
-		jd.body1 = c1.body;
-		jd.body2 = c2.body;
-		
-		jd.localAnchor1.Set( 0, 0 );
-		jd.localAnchor2.Set( 0, 0 );
-		jd.collideConnected = false;
-		
-		p1	= jd.body1->GetWorldPoint( jd.localAnchor1 );
-		p2	= jd.body2->GetWorldPoint( jd.localAnchor2 );
-		d	= p2 - p1;
-		
-		float length;
-		length = ofRandom( 0.3, 0.5 ) * screen.screenMin;
-		
-		jd.length = length / OFX_BOX2D_SCALE;
-		
-		b2DistanceJoint* joint;
-		joint = (b2DistanceJoint*)box2d->getWorld()->CreateJoint( &jd );
-		
-		joints.push_back( joint );
+		createJointsForCircle( circles[ i ] );
 	}
+}
+
+void ColorPhysics :: createJointsForCircle	( ColorCircle* circle )
+{
+	int r = (int)ofRandom( 0, circles.size () - 1 );
+	
+	ColorCircle& c1 = *circle;
+	ColorCircle& c2 = *circles[ r ];
+	
+	b2DistanceJointDef jd;
+	b2Vec2 p1, p2, d;
+	
+	jd.frequencyHz  = 10.0;
+	jd.dampingRatio = 0.05;
+	
+	jd.body1 = c1.body;
+	jd.body2 = c2.body;
+	
+	jd.localAnchor1.Set( 0, 0 );
+	jd.localAnchor2.Set( 0, 0 );
+	jd.collideConnected = false;
+	
+	p1	= jd.body1->GetWorldPoint( jd.localAnchor1 );
+	p2	= jd.body2->GetWorldPoint( jd.localAnchor2 );
+	d	= p2 - p1;
+	
+	float length;
+	length = ofRandom( 0.3, 0.5 ) * screen.screenMin;
+	
+	jd.length = length / OFX_BOX2D_SCALE;
+	
+	b2DistanceJoint* joint;
+	joint = (b2DistanceJoint*)box2d->getWorld()->CreateJoint( &jd );
+	
+	joints.push_back( joint );
 }
 
 void ColorPhysics :: destroyJoints ()
