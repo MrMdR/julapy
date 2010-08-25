@@ -44,6 +44,8 @@
 		_emailButton.enabled = NO;
 	}
 	
+//	_infoButton.buttonType = UIButtonTypeInfoLight;		// only way seems to instanciate the button programatically.
+	
     [ super viewDidLoad ];
 }
 
