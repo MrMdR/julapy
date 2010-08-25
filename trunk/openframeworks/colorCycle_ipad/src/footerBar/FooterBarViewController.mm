@@ -96,6 +96,10 @@
 	{
 		[ self hide ];
 	}
+
+	NSLog( @"touchesBegan" );
+	
+	[ self hideTimerInit ];
 	
 	[ super touchesBegan:touches withEvent:event ];
 }
@@ -132,6 +136,8 @@
 	
 	[ alertView show ];
 	[ alertView release ];
+	
+	[ self hideTimerKill ];
 }
 
 -(void)colorButtonHandler
@@ -142,16 +148,22 @@
 -(void)addButtonHandler
 {
 	_addSelected = YES;
+	
+	[ self hideTimerInit ];
 }
 
 -(void)removeButtonHandler
 {
 	_removeSelected = YES;
+	
+	[ self hideTimerInit ];
 }
 
 -(void)shuffleButtonHandler
 {
 	_shuffleSelected = YES;
+	
+	[ self hideTimerInit ];
 }
 
 -(void)pirateButtonHandler
@@ -168,6 +180,8 @@
 	
 	[ alertView show ];
 	[ alertView release ];
+	
+	[ self hideTimerKill ];
 }
 
 -(void)emailButtonHandler
@@ -178,11 +192,13 @@
 	[ controller setMessageBody:@"hey, email is working in OpenFrameworks on the iPhone!" isHTML:NO ];
 	[ self presentModalViewController:controller animated:YES ];
 	[ controller release ];
+	
+	[ self hideTimerKill ];
 }
 
 -(void)infoButtonHandler
 {
-	//
+	[ self hideTimerInit ];
 }
 
 -(void)forward:(id)sender
@@ -195,7 +211,7 @@
 		self.config = [ [ [ FooterBarConfigViewController alloc ] init ] autorelease ];
 		_config.delegate = self;
 		_config.contentSizeForViewInPopover = size;
-		//		_config.view.clipsToBounds = YES;
+//		_config.view.clipsToBounds = YES;
 		
 		self.configPopover = [ UIPopoverController alloc ];
 		[ self.configPopover initWithContentViewController:_config ];
@@ -203,7 +219,7 @@
 	}
 	
 	[ self.configPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES ];
-	//	[ self.configPopover presentPopoverFromRect:CGRectMake( 0, 0, 100, 100) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:true ];
+//	[ self.configPopover presentPopoverFromRect:CGRectMake( 0, 0, 100, 100) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:true ];
 }
 
 //////////////////////////////////////////////////////
@@ -214,6 +230,13 @@
 {
 	[self becomeFirstResponder];
 	[self dismissModalViewControllerAnimated:YES];
+	
+	[ self hideTimerInit ];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	[ self hideTimerInit ];
 }
 
 //////////////////////////////////////////////////////
@@ -240,7 +263,7 @@
 	{
 		_colorSelected = NO;
 		
-//		[ self hide ];
+		[ self hide ];
 		
 		return YES;
 	}
@@ -298,7 +321,7 @@
 	[ self.view setAlpha: 1.0 ];
 	[ UIView commitAnimations ];
 	
-//	[ self hideTimerInit ];
+	[ self hideTimerInit ];
 }
 
 - (void) hide

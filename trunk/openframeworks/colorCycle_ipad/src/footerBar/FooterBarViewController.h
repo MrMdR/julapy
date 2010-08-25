@@ -19,7 +19,8 @@
 @interface FooterBarViewController : UIViewController 
 	<
 		FooterBarConfigViewDelegate,
-		MFMailComposeViewControllerDelegate
+		MFMailComposeViewControllerDelegate,
+		UIAlertViewDelegate
 	>
 {
 	id<FooterBarViewDelegate>	_delegate;

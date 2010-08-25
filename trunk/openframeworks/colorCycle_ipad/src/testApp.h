@@ -31,6 +31,9 @@ public:
 	ColorCycle		cc;
 	FooterBar*		footer;
 	
+	ofTouchEventArgs	lastTouch;
+	bool				bTouchDown;
+	int					touchCount;
 };
 
 

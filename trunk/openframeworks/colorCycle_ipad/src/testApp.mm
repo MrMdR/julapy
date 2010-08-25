@@ -7,10 +7,12 @@ void testApp::setup()
 	ofxAccelerometer.setup();
 	ofxiPhoneAlerts.addListener(this);
 	
-	iPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
+	ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
 	
 	ofSetFrameRate( frameRate = 60 );
 //	ofSetVerticalSync( true );
+	
+	lastTouch.id = -1;
 	
 	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
 	cc.setup();
@@ -24,6 +26,9 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
+	if( bTouchDown )
+		++touchCount;
+	
 	if( footer->isShuffleSelected() )
 		cc.shuffle();
 	
@@ -70,6 +75,16 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch)
 {
+	if( lastTouch.id != touch.id )
+	{
+		lastTouch.id	= touch.id;
+		lastTouch.x		= touch.x;
+		lastTouch.y		= touch.y;
+		
+		bTouchDown		= true;
+		touchCount		= 0;
+	}
+	
 	cc.down( touch.x, touch.y, touch.id );
 }
 
@@ -82,6 +97,24 @@ void testApp::touchMoved(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs &touch)
 {
+	if( lastTouch.id == touch.id )
+	{
+		lastTouch.id = -1;
+		
+		cout << "touchCount " << touchCount << endl;
+		
+		if( touchCount > 10 )
+		{
+			float d = ofDist( lastTouch.x, lastTouch.y, touch.x, touch.y );
+			
+			if( d < 20 )
+			{
+				if( footer != NULL )
+					footer->toggleShow();
+			}
+		}
+	}
+	
 	cc.up( touch.x, touch.y, touch.id );
 }
 
