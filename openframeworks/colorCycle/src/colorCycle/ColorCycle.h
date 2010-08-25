@@ -45,7 +45,9 @@ public:
 	void drawColorPickers		();
 	void drawTriangles			();
 	
-	void resetJoints	();
+	void addCircle		();
+	void removeCircle	();
+	void shuffle		();
 	
 	void down			( int x, int y, int id = -1 );
 	void drag			( int x, int y, int id = -1 );
@@ -58,6 +60,8 @@ public:
 	ofxColorPicker	colorPicker0;
 	ofxColorPicker	colorPicker1;
 	float			colorScale;
+	ofxEaseValue	rndColorAngle0;
+	ofxEaseValue	rndColorAngle1;
 	ofColor			upperColor;
 	ofColor			lowerColor;
 	ofColor			white;

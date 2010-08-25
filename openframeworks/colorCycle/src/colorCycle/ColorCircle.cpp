@@ -37,7 +37,7 @@ ColorCircle :: ColorCircle ()
 
 ColorCircle :: ~ColorCircle ()
 {
-
+	//
 }
 
 void ColorCircle :: setScreen ( ofxScreen screen )
