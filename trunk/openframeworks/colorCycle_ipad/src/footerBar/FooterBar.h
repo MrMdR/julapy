@@ -60,6 +60,28 @@ public:
 		[ controller toggleShow ];
 	};
 	
+	//----------------------------------------
+	
+	bool isShuffleSelected ()
+	{
+		return [ controller isShuffleSelected ];
+	}
+	
+	bool isColorSelected ()
+	{
+		return [ controller isColorSelected ];
+	}
+
+	bool isAddSelected ()
+	{
+		return [ controller isAddSelected ];
+	}
+
+	bool isRemoveSelected ()
+	{
+		return [ controller isRemoveSelected ];
+	}
+	
 private:
 	
 	void update ( ofEventArgs &e )
