@@ -345,8 +345,8 @@ void ColorCycle :: shuffle ()
 		physics.resetJoints();
 	}
 	
-	rndColorAngle0.target = ofRandom( -0.2, 0.2 );
-	rndColorAngle1.target = ofRandom( -0.2, 0.2 );
+	rndColorAngle0.target += ofRandom( -0.2, 0.2 );
+	rndColorAngle1.target += ofRandom( -0.2, 0.2 );
 }
 
 ///////////////////////////////////////////////////////
