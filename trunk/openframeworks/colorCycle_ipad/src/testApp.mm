@@ -12,7 +12,7 @@ void testApp::setup()
 	ofSetFrameRate( frameRate = 60 );
 //	ofSetVerticalSync( true );
 	
-	lastTouch.id = -1;
+	lastTouchId = -1;
 	
 	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
 	cc.setup();
@@ -36,14 +36,13 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
-	if( bTouchDown )
-		++touchCount;
+	checkLastTouch();
 	
 	if( footer->isShuffleSelected() )
 		cc.shuffle();
 	
 	if( footer->isColorSelected() )
-		cc.down( 0, 0, 0 );
+		cc.colorSelectMode();
 	
 	if( footer->isAddSelected() )
 		cc.addCircle();
@@ -58,13 +57,11 @@ void testApp::update()
 	gx = ofxAccelerometer.getForce().y;
 	gx *= 2;									// increase the reaction to tilt.
 	gx = MIN( 1.0, MAX( -1.0, gx ) );			// between -1 and 1.
-	gx *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
 	
 	float gy;
 	gy = ofxAccelerometer.getForce().x;
 	gy *= 2;									// increase the reaction to tilt.
 	gy = MIN( 1.0, MAX( -1.0, gy ) );			// between -1 and 1.
-	gy *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
 	
 	cc.setGravity( gx, gy );
 	
@@ -78,10 +75,26 @@ void testApp::draw()
 	
 	drawSplashScreen();
 	
+	if( upsideDown )
+	{
+		int cx = (int)( ofGetScreenWidth()  * 0.5 );
+		int cy = (int)( ofGetScreenHeight() * 0.5 );
+		
+		glPushMatrix();
+		glTranslatef( cx, cy, 0 );
+		glRotatef( 180, 0, 0, 1 );
+		glTranslatef( -cx, -cy, 0 );
+	}
+	
 	infoScreen.draw();
 	
 	ofSetColor( 0, 0, 0 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetScreenWidth() - 30, 20 );
+	
+	if( upsideDown )
+	{
+		glPopMatrix();
+	}
 }
 
 void testApp :: drawSplashScreen ()
@@ -127,14 +140,14 @@ void testApp::touchDown(ofTouchEventArgs &touch)
 {
 	infoScreen.hide();
 	
-	if( lastTouch.id != touch.id )
+	if( lastTouchId != touch.id )
 	{
-		lastTouch.id	= touch.id;
-		lastTouch.x		= touch.x;
-		lastTouch.y		= touch.y;
-		
-		bTouchDown		= true;
-		touchCount		= 0;
+		lastTouchId			= touch.id;
+		lastTouch.x			= touch.x;
+		lastTouch.y			= touch.y;
+		lastTouchMoved.x	= touch.x;
+		lastTouchMoved.y	= touch.y;
+		lastTouchCount		= 0;
 	}
 	
 	cc.down( touch.x, touch.y, touch.id );
@@ -143,31 +156,48 @@ void testApp::touchDown(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void testApp::touchMoved(ofTouchEventArgs &touch)
 {
+	if( lastTouchId == touch.id )
+	{
+		lastTouchMoved.x	= touch.x;
+		lastTouchMoved.y	= touch.y;
+	}
+	
 	cc.drag( touch.x, touch.y, touch.id );
 }
 
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs &touch)
 {
-	if( lastTouch.id == touch.id )
+	if( lastTouchId == touch.id )
 	{
-		lastTouch.id = -1;
-		
-		cout << "touchCount " << touchCount << endl;
-		
-		if( touchCount > 10 )
-		{
-			float d = ofDist( lastTouch.x, lastTouch.y, touch.x, touch.y );
-			
-			if( d < 20 )
-			{
-				if( footer != NULL )
-					footer->toggleShow();
-			}
-		}
+		lastTouchId = -1;
 	}
 	
 	cc.up( touch.x, touch.y, touch.id );
+}
+
+void testApp :: checkLastTouch ()
+{
+	if( footer == NULL )
+		return;
+	
+	if( lastTouchId == -1 )
+		return;
+	
+	if( ++lastTouchCount > 30 )
+	{
+		lastTouchId = -1;
+		
+		float d = ofDist( lastTouch.x, lastTouch.y, lastTouchMoved.x, lastTouchMoved.y );
+		
+		if( d < 20 )
+		{
+			if( !footer->isShowing() )
+			{
+				footer->show();
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -178,8 +208,9 @@ void testApp::touchDoubleTap(ofTouchEventArgs &touch)
 }
 
 //--------------------------------------------------------------
-void testApp::lostFocus(){
-
+void testApp::lostFocus()
+{
+	//
 }
 
 //--------------------------------------------------------------
@@ -193,7 +224,12 @@ void testApp::gotMemoryWarning(){
 }
 
 //--------------------------------------------------------------
-void testApp::deviceOrientationChanged(int newOrientation){
-
+void testApp::deviceOrientationChanged(int newOrientation)
+{
+	if( newOrientation == 3 )
+		upsideDown = true;
+	
+	if( newOrientation == 4 )
+		upsideDown = false;
 }
 

@@ -277,6 +277,11 @@
 // CHECKERS
 //////////////////////////////////////////////////////
 
+-(BOOL) isShowing
+{
+	return _showing;
+}
+
 -(BOOL) isShuffleSelected
 {
 	if( _shuffleSelected )
