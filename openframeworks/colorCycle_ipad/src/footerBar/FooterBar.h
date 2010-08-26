@@ -61,6 +61,11 @@ public:
 	};
 	
 	//----------------------------------------
+
+	bool isShowing ()
+	{
+		return [ controller isShowing ];
+	}
 	
 	bool isShuffleSelected ()
 	{

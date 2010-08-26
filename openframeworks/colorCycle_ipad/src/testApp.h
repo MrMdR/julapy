@@ -23,6 +23,8 @@ public:
 	void touchMoved(ofTouchEventArgs &touch);
 	void touchUp(ofTouchEventArgs &touch);
 	void touchDoubleTap(ofTouchEventArgs &touch);
+	
+	void checkLastTouch ();
 
 	void lostFocus();
 	void gotFocus();
@@ -37,9 +39,12 @@ public:
 	ofImage*		splashScreen;
 	InfoScreen		infoScreen;
 	
-	ofTouchEventArgs	lastTouch;
-	bool				bTouchDown;
-	int					touchCount;
+	ofPoint			lastTouch;
+	ofPoint			lastTouchMoved;
+	int				lastTouchId;
+	int				lastTouchCount;
+	
+	bool			upsideDown;
 };
 
 

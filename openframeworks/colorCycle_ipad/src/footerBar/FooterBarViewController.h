@@ -59,6 +59,7 @@
 - (IBAction) infoButtonHandler;
 - (IBAction) forward:(id)sender;
 
+- (BOOL) isShowing;
 - (BOOL) isShuffleSelected;
 - (BOOL) isColorSelected;
 - (BOOL) isAddSelected;
