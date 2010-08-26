@@ -10,8 +10,38 @@ void testApp :: setup()
 	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 
+	//-- sounds.
+	
+	loadSounds( "sounds/background",	spBackground );
+	loadSounds( "sounds/mesh_drag",		spMeshDrag );
+	loadSounds( "sounds/point_add",		spPointAdd );
+	loadSounds( "sounds/point_remove",	spPointRemove );
+	loadSounds( "sounds/point_collide",	spPointCollide );
+	loadSounds( "sounds/point_shuffle",	spPointShuffle );
+	
 	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
+	cc.spBackground		= spBackground;
+	cc.spMeshDrag		= spMeshDrag;
+	cc.spPointAdd		= spPointAdd;
+	cc.spPointRemove	= spPointRemove;
+	cc.spPointCollide	= spPointCollide;
+	cc.spPointShuffle	= spPointShuffle;
 	cc.setup();
+	cc.bColorSelectModeOnBgClick = true;
+}
+
+void testApp :: loadSounds( string dirPath, vector<ofSoundPlayer*>& soundVector )
+{
+	int t = 0;
+    t = DIR.listDir( dirPath );
+    for( int i=0; i<t; i++ )
+	{
+		ofSoundPlayer* sp;
+		sp = new ofSoundPlayer();
+		sp->loadSound( DIR.getPath(i) );
+		
+		soundVector.push_back( sp );
+    }
 }
 
 //////////////////////////////////////////////
@@ -41,14 +71,19 @@ void testApp :: draw()
 
 void testApp :: keyPressed( int key )
 {
-	if( key == ' ' )
+	if( key == 's' )
 	{
-//		cc.togglePanel();
+		cc.shuffle();
 	}
 	
-	if( key == 'r' )
+	if( key == '=' )
 	{
-		cc.resetJoints();
+		cc.addCircle();
+	}
+	
+	if( key == '-' )
+	{
+		cc.removeCircle();
 	}
 }
 

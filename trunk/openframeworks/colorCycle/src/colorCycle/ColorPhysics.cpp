@@ -160,16 +160,20 @@ void ColorPhysics :: addCircle ()
 	circles.push_back( circle );
 }
 
-void ColorPhysics :: addSingleCircle ()
+bool ColorPhysics :: addSingleCircle ()
 {
 	if( circles.size() <= 30 )
 	{
 		addCircle();
 		createJointsForCircle( circles.back() );
+		
+		return true;
 	}
+	
+	return false;
 }
 
-void ColorPhysics :: removeCircle ()
+bool ColorPhysics :: removeCircle ()
 {
 	if( circles.size() > 5 )
 	{
@@ -198,7 +202,11 @@ void ColorPhysics :: removeCircle ()
 		}
 		
 		createJoints();
+		
+		return true;
 	}
+	
+	return false;
 }
 
 float ColorPhysics :: areaToRadius ( float area )

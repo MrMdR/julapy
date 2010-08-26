@@ -3,6 +3,7 @@
 
 
 #include "ofMain.h"
+#include "ofxDirList.h"
 #include "ColorCycle.h"
 
 class testApp : public ofBaseApp{
@@ -12,6 +13,8 @@ public:
 	void setup();
 	void update();
 	void draw();
+	
+	void loadSounds	( string dirPath, vector<ofSoundPlayer*>& soundVector );
 	
 	void keyPressed  (int key);
 	void keyReleased(int key);
@@ -24,6 +27,14 @@ public:
 	int				frameRate;
 	
 	ColorCycle		cc;
+	
+	ofxDirList				DIR;
+	vector<ofSoundPlayer*>	spBackground;
+	vector<ofSoundPlayer*>	spMeshDrag;
+	vector<ofSoundPlayer*>	spPointAdd;
+	vector<ofSoundPlayer*>	spPointRemove;
+	vector<ofSoundPlayer*>	spPointCollide;
+	vector<ofSoundPlayer*>	spPointShuffle;
 	
 };
 

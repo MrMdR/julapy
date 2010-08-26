@@ -32,8 +32,8 @@ public:
 	void  createBounds		();
 	void  createCircles		();
 	void  addCircle			();
-	void  addSingleCircle	();
-	void  removeCircle		();
+	bool  addSingleCircle	();
+	bool  removeCircle		();
 	float areaToRadius		( float area );
 	bool  checkHit			( float x, float y );
 	
