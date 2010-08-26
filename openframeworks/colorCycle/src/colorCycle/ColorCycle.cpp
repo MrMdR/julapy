@@ -69,6 +69,9 @@ void ColorCycle :: setup ()
 	
 	colorScale = 1.0;
 	
+	rndColorAngle0.ease	= 0.05;
+	rndColorAngle1.ease	= 0.05;
+	
 	bColorSelectMode		= false;
 	bColorSelectTimeout		= false;
 	colorSelectTimeout		= 0;
@@ -345,8 +348,11 @@ void ColorCycle :: shuffle ()
 		physics.resetJoints();
 	}
 	
-	rndColorAngle0.target += ofRandom( -0.2, 0.2 );
-	rndColorAngle1.target += ofRandom( -0.2, 0.2 );
+//	rndColorAngle0.target += ofRandom( -0.2, 0.2 );
+//	rndColorAngle1.target += ofRandom( -0.2, 0.2 );
+	
+	rndColorAngle0.target += ofRandom( 0, 0.2 );
+	rndColorAngle1.target += ofRandom( 0, 0.2 );
 }
 
 ///////////////////////////////////////////////////////
