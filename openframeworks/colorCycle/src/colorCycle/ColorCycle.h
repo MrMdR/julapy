@@ -45,9 +45,10 @@ public:
 	void drawColorPickers		();
 	void drawTriangles			();
 	
-	void addCircle		();
-	void removeCircle	();
-	void shuffle		();
+	void addCircle			();
+	void removeCircle		();
+	void shuffle			();
+	void colorSelectMode	();
 	
 	void down			( int x, int y, int id = -1 );
 	void drag			( int x, int y, int id = -1 );

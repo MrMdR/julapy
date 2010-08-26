@@ -355,6 +355,22 @@ void ColorCycle :: shuffle ()
 	rndColorAngle1.target += ofRandom( 0, 0.2 );
 }
 
+void ColorCycle :: colorSelectMode ()
+{
+	bColorSelectMode = true;
+	
+	inputLastID	= -2;
+	bInputDown	= true;
+	
+	inputPos1.x = inputPos2.x = 0;
+	inputPos1.y = inputPos2.y = 0;
+	
+	panel.show();
+	
+	physics.hideCircles();
+	triColorScale.target = 0.2;
+}
+
 ///////////////////////////////////////////////////////
 //	INPUT.
 ///////////////////////////////////////////////////////
@@ -382,18 +398,18 @@ void ColorCycle :: down ( int x, int y, int id )
 		}
 		else									// touch on background.
 		{
-			bColorSelectMode = true;
-			
-			inputLastID	= id;
-			bInputDown	= true;
-			
-			inputPos1.x = inputPos2.x = x;
-			inputPos1.y = inputPos2.y = y;
-			
-			panel.show();
-			
-			physics.hideCircles();
-			triColorScale.target = 0.2;
+//			bColorSelectMode = true;
+//			
+//			inputLastID	= id;
+//			bInputDown	= true;
+//			
+//			inputPos1.x = inputPos2.x = x;
+//			inputPos1.y = inputPos2.y = y;
+//			
+//			panel.show();
+//			
+//			physics.hideCircles();
+//			triColorScale.target = 0.2;
 		}
 	}
 	
