@@ -42,6 +42,7 @@
 	BOOL							_colorSelected;
 	BOOL							_addSelected;
 	BOOL							_removeSelected;
+	BOOL							_infoSelected;
 }
 
 @property (nonatomic, assign) id<FooterBarViewDelegate>			delegate;
@@ -62,6 +63,7 @@
 - (BOOL) isColorSelected;
 - (BOOL) isAddSelected;
 - (BOOL) isRemoveSelected;
+- (BOOL) isInfoSelected;
 
 - (void) show;
 - (void) hide;

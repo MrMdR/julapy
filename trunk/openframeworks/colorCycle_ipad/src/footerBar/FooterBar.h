@@ -82,6 +82,11 @@ public:
 		return [ controller isRemoveSelected ];
 	}
 	
+	bool isInfoSelected ()
+	{
+		return [ controller isInfoSelected ];
+	}
+	
 private:
 	
 	void update ( ofEventArgs &e )

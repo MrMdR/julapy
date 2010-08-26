@@ -7,6 +7,7 @@
 #include "ColorCycle.h"
 #include "ofxColorPicker.h"
 #include "FooterBar.h"
+#include "InfoScreen.h"
 
 class testApp : public ofxiPhoneApp {
 	
@@ -15,6 +16,8 @@ public:
 	void update();
 	void draw();
 	void exit();
+	
+	void drawSplashScreen	();
 	
 	void touchDown(ofTouchEventArgs &touch);
 	void touchMoved(ofTouchEventArgs &touch);
@@ -30,6 +33,9 @@ public:
 	
 	ColorCycle		cc;
 	FooterBar*		footer;
+	
+	ofImage*		splashScreen;
+	InfoScreen		infoScreen;
 	
 	ofTouchEventArgs	lastTouch;
 	bool				bTouchDown;
