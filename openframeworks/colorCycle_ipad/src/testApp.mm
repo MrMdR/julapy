@@ -21,6 +21,16 @@ void testApp::setup()
 	footer = new FooterBar();
 	if( footer != NULL )
 		footer->setup();
+	
+	//-- splash screen fade out.
+	
+	splashScreen = new ofImage();
+	splashScreen->loadImage( "Default.png" );
+	drawSplashScreen();
+	
+	//--
+	
+	infoScreen.setup();
 }
 
 //--------------------------------------------------------------
@@ -40,6 +50,9 @@ void testApp::update()
 	
 	if( footer->isRemoveSelected() )
 		cc.removeCircle();
+	
+	if( footer->isInfoSelected() )
+		infoScreen.show();
 	
 	float gx;
 	gx = ofxAccelerometer.getForce().y;
@@ -63,8 +76,45 @@ void testApp::draw()
 {
 	cc.draw();
 	
+	drawSplashScreen();
+	
+	infoScreen.draw();
+	
 	ofSetColor( 0, 0, 0 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetScreenWidth() - 30, 20 );
+}
+
+void testApp :: drawSplashScreen ()
+{
+	if( splashScreen == NULL )
+		return;
+	
+	int t = 30;
+	
+	if( ofGetFrameNum() > t )
+	{
+		splashScreen->clear();
+		delete splashScreen;
+		splashScreen = NULL;
+		return;
+	}
+	
+	float a = 1 - Quad :: easeOut( ofGetFrameNum(), 0, 1.0, t );
+	
+	int cx = (int)( ofGetScreenWidth()  * 0.5 );
+	int cy = (int)( ofGetScreenHeight() * 0.5 );
+
+	ofEnableAlphaBlending();
+	ofSetColor( 255, 255, 255, a * 255 );
+	
+	glPushMatrix();
+	glTranslatef( cx, cy, 0 );
+	glRotatef( 90, 0, 0, 1 );
+	glTranslatef( -cy, -cx, 0 );
+	splashScreen->draw( 0, 0 );
+	glPopMatrix();
+	
+	ofDisableAlphaBlending();
 }
 
 //--------------------------------------------------------------
@@ -75,6 +125,8 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch)
 {
+	infoScreen.hide();
+	
 	if( lastTouch.id != touch.id )
 	{
 		lastTouch.id	= touch.id;

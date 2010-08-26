@@ -27,6 +27,10 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
+	[ super viewDidLoad ];
+	
+	//-----
+	
 	[ self.view setAlpha: 0.0 ];
 	
 	_showing			= NO;
@@ -34,6 +38,7 @@
 	_colorSelected		= NO;
 	_addSelected		= NO;
 	_removeSelected		= NO;
+	_infoSelected		= NO;
 	
 	if( [ MFMailComposeViewController canSendMail ] )
 	{
@@ -44,15 +49,37 @@
 		_emailButton.enabled = NO;
 	}
 	
-//	_infoButton.buttonType = UIButtonTypeInfoLight;		// only way seems to instanciate the button programatically.
+	//-----
 	
-    [ super viewDidLoad ];
+    if ([[UIDevice currentDevice].systemVersion floatValue] < 2.1)
+    {
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+		
+        if (orientation == UIInterfaceOrientationLandscapeRight)
+        { 
+            CGAffineTransform transform = self.view.transform;
+			
+            CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+            CGRect bounds = CGRectMake(0, 0, statusBarFrame.size.height, statusBarFrame.origin.x);
+            CGPoint center = CGPointMake(bounds.size.height / 2.0, bounds.size.width / 2.0);
+            self.view.center = center;
+			
+            transform = CGAffineTransformRotate(transform, (M_PI / 2.0));
+            self.view.transform = transform;
+        }
+    }
 }
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
-    return YES;
+	// Overriden to allow any orientation.
+	
+	if( interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation == UIInterfaceOrientationLandscapeRight )
+	{
+		return YES;
+	}
+	
+	return NO;
 }
 
 
@@ -198,7 +225,9 @@
 
 -(void)infoButtonHandler
 {
-	[ self hideTimerInit ];
+	_infoSelected = YES;
+	
+	[ self hide ];
 }
 
 -(void)forward:(id)sender
@@ -232,6 +261,11 @@
 	[self dismissModalViewControllerAnimated:YES];
 	
 	[ self hideTimerInit ];
+}
+
+- (void)didPresentAlertView:(UIAlertView *)alertView
+{
+//	[ [ UIApplication sharedApplication ] setStatusBarOrientation:UIInterfaceOrientationLandscapeLeft animated:NO ];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -292,6 +326,20 @@
 	if( _removeSelected )
 	{
 		_removeSelected = NO;
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
+-(BOOL) isInfoSelected
+{
+	if( _infoSelected )
+	{
+		_infoSelected = NO;
 		
 		return YES;
 	}
