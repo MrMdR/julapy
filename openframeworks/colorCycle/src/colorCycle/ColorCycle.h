@@ -73,8 +73,9 @@ public:
 	ColorRect		rect;
 	
 	ColorPhysics	physics;
-	
+
 	bool			bColorSelectMode;
+	bool			bColorSelectModeOnBgClick;
 	bool			bColorSelectTimeout;
 	int				colorSelectTimeout;
 	
@@ -87,4 +88,15 @@ public:
 	ofxDelaunay				delaunay;
 	vector<ColorTriangle*>	triangles;
 	ofxEaseValue			triColorScale;
+	
+#ifdef TARGET_OF_IPHONE
+	// sound vector containers.
+#else
+	vector<ofSoundPlayer*>	spBackground;
+	vector<ofSoundPlayer*>	spMeshDrag;
+	vector<ofSoundPlayer*>	spPointAdd;
+	vector<ofSoundPlayer*>	spPointRemove;
+	vector<ofSoundPlayer*>	spPointCollide;
+	vector<ofSoundPlayer*>	spPointShuffle;
+#endif
 };

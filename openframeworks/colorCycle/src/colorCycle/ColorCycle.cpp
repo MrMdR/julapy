@@ -72,9 +72,10 @@ void ColorCycle :: setup ()
 	rndColorAngle0.ease	= 0.05;
 	rndColorAngle1.ease	= 0.05;
 	
-	bColorSelectMode		= false;
-	bColorSelectTimeout		= false;
-	colorSelectTimeout		= 0;
+	bColorSelectMode			= false;
+	bColorSelectModeOnBgClick	= false;
+	bColorSelectTimeout			= false;
+	colorSelectTimeout			= 0;
 	
 	bInputDown				= false;
 	inputLastID				= -2;
@@ -85,6 +86,10 @@ void ColorCycle :: setup ()
 	
 	physics.setScreen( screen );
 	physics.setup();
+	
+	int r = ofRandom( 0, spBackground.size() - 1 );
+	spBackground[ r ]->setLoop( true );
+	spBackground[ r ]->play();
 }
 
 ///////////////////////////////////////////////////////
@@ -333,12 +338,26 @@ void ColorCycle :: drawTriangles ()
 
 void ColorCycle :: addCircle ()
 {
-	physics.addSingleCircle();
+	bool success;
+	success = physics.addSingleCircle();
+	
+	if( success )
+	{
+		int i = ofRandom( 0, spPointAdd.size() - 1 );
+		spPointAdd[ i ]->play();
+	}
 }
 
 void ColorCycle :: removeCircle ()
 {
-	physics.removeCircle();
+	bool success;
+	success = physics.removeCircle();
+	
+	if( success )
+	{
+		int i = ofRandom( 0, spPointRemove.size() - 1 );
+		spPointRemove[ i ]->play();
+	}
 }
 
 void ColorCycle :: shuffle ()
@@ -351,8 +370,11 @@ void ColorCycle :: shuffle ()
 //	rndColorAngle0.target += ofRandom( -0.2, 0.2 );
 //	rndColorAngle1.target += ofRandom( -0.2, 0.2 );
 	
-	rndColorAngle0.target += ofRandom( 0, 0.2 );
-	rndColorAngle1.target += ofRandom( 0, 0.2 );
+	rndColorAngle0.target += ofRandom( 0.05, 0.3 );
+	rndColorAngle1.target -= ofRandom( 0.05, 0.3 );
+	
+	int i = ofRandom( 0, spPointShuffle.size() - 1 );
+	spPointShuffle[ i ]->play();
 }
 
 void ColorCycle :: colorSelectMode ()
@@ -398,18 +420,21 @@ void ColorCycle :: down ( int x, int y, int id )
 		}
 		else									// touch on background.
 		{
-//			bColorSelectMode = true;
-//			
-//			inputLastID	= id;
-//			bInputDown	= true;
-//			
-//			inputPos1.x = inputPos2.x = x;
-//			inputPos1.y = inputPos2.y = y;
-//			
-//			panel.show();
-//			
-//			physics.hideCircles();
-//			triColorScale.target = 0.2;
+			if( bColorSelectModeOnBgClick )
+			{
+				bColorSelectMode = true;
+				
+				inputLastID	= id;
+				bInputDown	= true;
+				
+				inputPos1.x = inputPos2.x = x;
+				inputPos1.y = inputPos2.y = y;
+				
+				panel.show();
+				
+				physics.hideCircles();
+				triColorScale.target = 0.2;
+			}
 		}
 	}
 	
