@@ -19,6 +19,10 @@
 #include "ColorTriangle.h"
 #include "ColorPanel.h"
 
+#ifdef TARGET_OF_IPHONE
+#include "ofxALSoundPlayer.h"
+#endif
+
 class ColorCycle
 {
 
@@ -90,13 +94,18 @@ public:
 	ofxEaseValue			triColorScale;
 	
 #ifdef TARGET_OF_IPHONE
-	// sound vector containers.
+	vector<ofxALSoundPlayer*>	spBackground;
+	vector<ofxALSoundPlayer*>	spMeshDrag;
+	vector<ofxALSoundPlayer*>	spPointAdd;
+	vector<ofxALSoundPlayer*>	spPointRemove;
+	vector<ofxALSoundPlayer*>	spPointCollide;
+	vector<ofxALSoundPlayer*>	spPointShuffle;
 #else
-	vector<ofSoundPlayer*>	spBackground;
-	vector<ofSoundPlayer*>	spMeshDrag;
-	vector<ofSoundPlayer*>	spPointAdd;
-	vector<ofSoundPlayer*>	spPointRemove;
-	vector<ofSoundPlayer*>	spPointCollide;
-	vector<ofSoundPlayer*>	spPointShuffle;
+	vector<ofSoundPlayer*>		spBackground;
+	vector<ofSoundPlayer*>		spMeshDrag;
+	vector<ofSoundPlayer*>		spPointAdd;
+	vector<ofSoundPlayer*>		spPointRemove;
+	vector<ofSoundPlayer*>		spPointCollide;
+	vector<ofSoundPlayer*>		spPointShuffle;
 #endif
 };

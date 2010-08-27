@@ -87,9 +87,16 @@ void ColorCycle :: setup ()
 	physics.setScreen( screen );
 	physics.setup();
 	
-	int r = ofRandom( 0, spBackground.size() - 1 );
-	spBackground[ r ]->setLoop( true );
-	spBackground[ r ]->play();
+	if( spBackground.size() > 0 )
+	{
+		int r = ofRandom( 0, spBackground.size() - 1 );
+#ifdef TARGET_OF_IPHONE		
+//		spBackground[ r ]->setLoop( true );		// where is loop?
+#else
+		spBackground[ r ]->setLoop( true );
+#endif
+		spBackground[ r ]->play();
+	}
 }
 
 ///////////////////////////////////////////////////////
@@ -343,8 +350,11 @@ void ColorCycle :: addCircle ()
 	
 	if( success )
 	{
-		int i = ofRandom( 0, spPointAdd.size() - 1 );
-		spPointAdd[ i ]->play();
+		if( spPointAdd.size() > 0 )
+		{
+			int i = ofRandom( 0, spPointAdd.size() - 1 );
+			spPointAdd[ i ]->play();
+		}
 	}
 }
 
@@ -355,8 +365,11 @@ void ColorCycle :: removeCircle ()
 	
 	if( success )
 	{
-		int i = ofRandom( 0, spPointRemove.size() - 1 );
-		spPointRemove[ i ]->play();
+		if( spPointRemove.size() > 0 )
+		{
+			int i = ofRandom( 0, spPointRemove.size() - 1 );
+			spPointRemove[ i ]->play();
+		}
 	}
 }
 
@@ -372,9 +385,12 @@ void ColorCycle :: shuffle ()
 	
 	rndColorAngle0.target += ofRandom( 0.05, 0.3 );
 	rndColorAngle1.target -= ofRandom( 0.05, 0.3 );
-	
-	int i = ofRandom( 0, spPointShuffle.size() - 1 );
-	spPointShuffle[ i ]->play();
+
+	if( spPointShuffle.size() > 0 )
+	{
+		int i = ofRandom( 0, spPointShuffle.size() - 1 );
+		spPointShuffle[ i ]->play();
+	}
 }
 
 void ColorCycle :: colorSelectMode ()
