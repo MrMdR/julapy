@@ -8,6 +8,7 @@
 #include "ofxColorPicker.h"
 #include "FooterBar.h"
 #include "InfoScreen.h"
+#include "ofxALSoundPlayer.h"
 
 class testApp : public ofxiPhoneApp {
 	
