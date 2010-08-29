@@ -39,6 +39,7 @@
 	_addSelected		= NO;
 	_removeSelected		= NO;
 	_infoSelected		= NO;
+	_hideSelected		= NO;
 	
 	if( [ MFMailComposeViewController canSendMail ] )
 	{
@@ -121,6 +122,9 @@
 	
 	if( touchAny.view == self.view )
 	{
+		_hideSelected	= YES;
+		_hidePoint		= [ touchAny locationInView: self.view ];
+		
 		[ self hide ];
 	}
 
@@ -352,6 +356,25 @@
 	{
 		return NO;
 	}
+}
+
+-(BOOL) isHideSelected
+{
+	if( _hideSelected )
+	{
+		_hideSelected = NO;
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
+-(CGPoint) getHidePoint
+{
+	return _hidePoint;
 }
 
 //////////////////////////////////////////////////////
