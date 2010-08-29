@@ -13,8 +13,13 @@
 #include "ofxScreen.h"
 #include "ofxBox2d.h"
 #include "ColorCircle.h"
+#include "ColorConstants.h"
 
-class ColorPhysics
+#ifdef TARGET_OF_IPHONE
+#include "ofxALSoundPlayer.h"
+#endif
+
+class ColorPhysics : public b2ContactListener
 {
 
 public:
@@ -22,6 +27,9 @@ public:
 	ColorPhysics();
 	~ColorPhysics();
 
+	void Add	( const b2ContactPoint* point );
+	void Remove	( const b2ContactPoint* point );
+	
 	void setScreen	( ofxScreen screen );
 	void setGravity	( float gx, float gy );
 	
@@ -54,5 +62,11 @@ public:
 	ofPoint						gravity;
 	
 	float						circleRadius;
+	
+#ifdef TARGET_OF_IPHONE
+	vector<ofxALSoundPlayer*>	spPointCollide;
+#else
+	vector<ofSoundPlayer*>		spPointCollide;
+#endif
 	
 };

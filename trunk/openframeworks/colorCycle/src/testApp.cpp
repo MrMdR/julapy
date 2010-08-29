@@ -12,25 +12,26 @@ void testApp :: setup()
 
 	//-- sounds.
 	
-	loadSounds( "sounds/background",	spBackground );
+	loadSounds( "sounds/background",	spBackground, true );
 	loadSounds( "sounds/mesh_drag",		spMeshDrag );
 	loadSounds( "sounds/point_add",		spPointAdd );
+	loadNumOfSounds( "sounds/point_collide", spPointCollide );
 	loadSounds( "sounds/point_remove",	spPointRemove );
-	loadSounds( "sounds/point_collide",	spPointCollide );
 	loadSounds( "sounds/point_shuffle",	spPointShuffle );
-	
-	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
+
 	cc.spBackground		= spBackground;
 	cc.spMeshDrag		= spMeshDrag;
 	cc.spPointAdd		= spPointAdd;
 	cc.spPointRemove	= spPointRemove;
 	cc.spPointCollide	= spPointCollide;
 	cc.spPointShuffle	= spPointShuffle;
+	
+	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
 	cc.setup();
 	cc.bColorSelectModeOnBgClick = true;
 }
 
-void testApp :: loadSounds( string dirPath, vector<ofSoundPlayer*>& soundVector )
+void testApp :: loadSounds( string dirPath, vector<ofSoundPlayer*>& soundVector, bool loop )
 {
 	int t = 0;
     t = DIR.listDir( dirPath );
@@ -39,6 +40,25 @@ void testApp :: loadSounds( string dirPath, vector<ofSoundPlayer*>& soundVector 
 		ofSoundPlayer* sp;
 		sp = new ofSoundPlayer();
 		sp->loadSound( DIR.getPath(i) );
+		sp->setLoop( loop );
+		sp->setMultiPlay( true );
+		
+		soundVector.push_back( sp );
+    }
+}
+
+void testApp :: loadNumOfSounds ( string dirPath, vector<ofSoundPlayer*>& soundVector, bool loop, int numOfSounds )
+{
+	int t = 0;
+    t = DIR.listDir( dirPath );
+    for( int i=0; i<numOfSounds; i++ )
+	{
+		int j = ofRandom( 0, t - 1 );
+		
+		ofSoundPlayer* sp;
+		sp = new ofSoundPlayer();
+		sp->loadSound( DIR.getPath( j ) );
+		sp->setLoop( loop );
 		
 		soundVector.push_back( sp );
     }

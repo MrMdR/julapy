@@ -21,6 +21,51 @@ ColorPhysics :: ~ColorPhysics ()
 
 }
 
+///////////////////////////////////////////////////////
+//	CONTACT LISTENER METHODS.
+///////////////////////////////////////////////////////
+
+void ColorPhysics :: Add( const b2ContactPoint* point )
+{
+	for( int i=0; i<circles.size(); i++ )
+	{
+		ColorCircle& circle = *circles[ i ];
+		
+		for( b2Shape* s=circle.body->GetShapeList(); s; s=s->GetNext() )
+		{
+			if( point->shape1 == s || point->shape2 == s )
+			{
+				float vel;								// weight colour change by velocity.
+				vel = point->velocity.Length();
+				
+				float vol;
+				vol = vel / 60;
+				vol = ofClamp( vol, 0, 1 );
+				
+				//-- play sound.
+				
+				if( spPointCollide.size() > 0 )
+				{
+					int j = MIN( i, spPointCollide.size() - 1 );
+					spPointCollide[ j ]->setVolume( vol );
+					spPointCollide[ j ]->play();
+					
+					break;		// breaking here so the same sound doesn't play twice.
+				}
+			}
+		}
+	}
+}
+
+void ColorPhysics :: Remove(const b2ContactPoint* point)
+{
+	//
+}
+
+///////////////////////////////////////////////////////
+//	SETTERS.
+///////////////////////////////////////////////////////
+
 void ColorPhysics :: setScreen ( ofxScreen screen )
 {
 	this->screen = screen;
@@ -51,7 +96,7 @@ void ColorPhysics :: setup ()
 	box2d->setGravity( 0, 0 );
 	box2d->setFPS( 30.0 );
 //	box2d->registerGrabbing();
-//	box2d->getWorld()->SetContactListener( &contactListener );
+	box2d->getWorld()->SetContactListener( this );		// register contact class.
 	
 	circleRadius = areaToRadius( 0.001 );
 	
@@ -162,7 +207,7 @@ void ColorPhysics :: addCircle ()
 
 bool ColorPhysics :: addSingleCircle ()
 {
-	if( circles.size() <= 30 )
+	if( circles.size() <= CIRCLES_MAX )
 	{
 		addCircle();
 		createJointsForCircle( circles.back() );
@@ -175,7 +220,7 @@ bool ColorPhysics :: addSingleCircle ()
 
 bool ColorPhysics :: removeCircle ()
 {
-	if( circles.size() > 5 )
+	if( circles.size() > CIRCLES_MIN )
 	{
 		int i;
 		
