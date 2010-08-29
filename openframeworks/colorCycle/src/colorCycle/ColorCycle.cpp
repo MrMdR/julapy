@@ -62,10 +62,9 @@ void ColorCycle :: setup ()
 	
 	colorPicker0.enable();
 	colorPicker1.enable();
-	
-	panel.colorPicker0 = &colorPicker0;
-	panel.colorPicker1 = &colorPicker1;
+
 	panel.setScreen( screen );
+	panel.setColorPickers( &colorPicker0, &colorPicker1 );
 	
 	colorScale = 1.0;
 	
@@ -86,17 +85,9 @@ void ColorCycle :: setup ()
 	
 	physics.setScreen( screen );
 	physics.setup();
+	physics.spPointCollide = spPointCollide;
 	
-	if( spBackground.size() > 0 )
-	{
-		int r = ofRandom( 0, spBackground.size() - 1 );
-#ifdef TARGET_OF_IPHONE		
-//		spBackground[ r ]->setLoop( true );		// where is loop?
-#else
-		spBackground[ r ]->setLoop( true );
-#endif
-		spBackground[ r ]->play();
-	}
+	playRandomSound( spBackground );
 }
 
 ///////////////////////////////////////////////////////
@@ -350,11 +341,7 @@ void ColorCycle :: addCircle ()
 	
 	if( success )
 	{
-		if( spPointAdd.size() > 0 )
-		{
-			int i = ofRandom( 0, spPointAdd.size() - 1 );
-			spPointAdd[ i ]->play();
-		}
+		playRandomSound( spPointAdd );
 	}
 }
 
@@ -365,11 +352,7 @@ void ColorCycle :: removeCircle ()
 	
 	if( success )
 	{
-		if( spPointRemove.size() > 0 )
-		{
-			int i = ofRandom( 0, spPointRemove.size() - 1 );
-			spPointRemove[ i ]->play();
-		}
+		playRandomSound( spPointRemove );
 	}
 }
 
@@ -386,11 +369,7 @@ void ColorCycle :: shuffle ()
 	rndColorAngle0.target += ofRandom( 0.05, 0.3 );
 	rndColorAngle1.target -= ofRandom( 0.05, 0.3 );
 
-	if( spPointShuffle.size() > 0 )
-	{
-		int i = ofRandom( 0, spPointShuffle.size() - 1 );
-		spPointShuffle[ i ]->play();
-	}
+	playRandomSound( spPointShuffle );
 }
 
 void ColorCycle :: colorSelectMode ()
@@ -408,6 +387,30 @@ void ColorCycle :: colorSelectMode ()
 	physics.hideCircles();
 	triColorScale.target = 0.2;
 }
+
+///////////////////////////////////////////////////////
+//	SOUNDS.
+///////////////////////////////////////////////////////
+
+#ifdef TARGET_OF_IPHONE
+void ColorCycle :: playRandomSound	( vector<ofxALSoundPlayer*>& sounds )
+{
+	if( sounds.size() == 0 )
+		return;
+	
+	int i = ofRandom( 0, sounds.size() - 1 );
+	sounds[ i ]->play();
+}
+#else
+void ColorCycle :: playRandomSound	( vector<ofSoundPlayer*>& sounds )
+{
+	if( sounds.size() == 0 )
+		return;
+	
+	int i = ofRandom( 0, sounds.size() - 1 );
+	sounds[ i ]->play();
+}
+#endif
 
 ///////////////////////////////////////////////////////
 //	INPUT.

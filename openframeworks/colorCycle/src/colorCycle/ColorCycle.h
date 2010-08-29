@@ -54,6 +54,12 @@ public:
 	void shuffle			();
 	void colorSelectMode	();
 	
+#ifdef TARGET_OF_IPHONE
+	void playRandomSound	( vector<ofxALSoundPlayer*>& sounds );
+#else
+	void playRandomSound	( vector<ofSoundPlayer*>& sounds );
+#endif
+	
 	void down			( int x, int y, int id = -1 );
 	void drag			( int x, int y, int id = -1 );
 	void up				( int x, int y, int id = -1 );

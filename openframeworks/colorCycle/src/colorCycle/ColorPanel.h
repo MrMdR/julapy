@@ -57,6 +57,16 @@ public:
 		this->screen = screen;
 	};
 	
+	void setColorPickers ( ofxColorPicker* cp0, ofxColorPicker* cp1 )
+	{
+		colorPicker0 = cp0;
+		colorPicker1 = cp1;
+		
+		float x = -0.2	* screen.screenWidth;
+		colorPicker0->setPos( x, 0 );
+		colorPicker1->setPos( x, 0 );
+	}
+	
 	void show ()
 	{
 		if( !bShowing )
