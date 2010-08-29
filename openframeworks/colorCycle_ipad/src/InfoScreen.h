@@ -19,7 +19,7 @@ public:
 	InfoScreen()
 	{
 		bShow = false;
-	}
+	};
 	
 	//---------------------------
 	
@@ -31,22 +31,22 @@ public:
 	void setup ()
 	{
 		image.loadImage( "info_screen_0.png" );
-	}
+	};
 	
 	void show ()
 	{
 		bShow = true;
-	}
+	};
 	
 	void hide ()
 	{
 		bShow = false;
-	}
+	};
 	
 	void toggle ()
 	{
 		bShow = !bShow;
-	}
+	};
 	
 	void draw ()
 	{
@@ -58,20 +58,20 @@ public:
 		
 		ofSetColor( 255, 255, 255, 255 );
 		image.draw( x, y );
-	}
+	};
 	
 	void launchJulapySite ()
 	{
 		launchSite( "http://julapy.com/blog" );
-	}
+	};
 	
 	void launchEliSite()
 	{
 		launchSite( "http://gentleforce.angrypixel.org/" );
-	}
+	};
 	
 	void launchSite ( string url )
 	{
 		[ [ UIApplication sharedApplication ] openURL:[NSURL URLWithString: [[[[NSString alloc] initWithCString: url.c_str()]stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding] autorelease] ]];
-	}
+	};
 };

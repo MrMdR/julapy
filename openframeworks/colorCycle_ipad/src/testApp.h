@@ -9,6 +9,7 @@
 #include "FooterBar.h"
 #include "InfoScreen.h"
 #include "ofxALSoundPlayer.h"
+#include "ColorConstants.h"
 
 class testApp : public ofxiPhoneApp {
 	
@@ -18,6 +19,9 @@ public:
 	void draw();
 	void exit();
 	
+	void initSounds			();
+	void createSounds		( const vector<string>& fileNames, vector<ofxALSoundPlayer*>& sounds, bool loop = false );
+	void createNumOfSounds	( const vector<string>& fileNames, vector<ofxALSoundPlayer*>& sounds, bool loop = false, int numOfSounds = CIRCLES_MAX );
 	void drawSplashScreen	();
 	
 	void touchDown(ofTouchEventArgs &touch);
@@ -35,10 +39,10 @@ public:
 	int				frameRate;
 	
 	ColorCycle		cc;
-	FooterBar*		footer;
-	
-	ofImage*		splashScreen;
+	FooterBar		footer;
+
 	InfoScreen		infoScreen;
+	ofImage*		splashScreen;
 	
 	ofPoint			lastTouch;
 	ofPoint			lastTouchMoved;
@@ -46,6 +50,13 @@ public:
 	int				lastTouchCount;
 	
 	bool			upsideDown;
+	
+	vector<ofxALSoundPlayer*>	spBackground;
+	vector<ofxALSoundPlayer*>	spMeshDrag;
+	vector<ofxALSoundPlayer*>	spPointAdd;
+	vector<ofxALSoundPlayer*>	spPointRemove;
+	vector<ofxALSoundPlayer*>	spPointCollide;
+	vector<ofxALSoundPlayer*>	spPointShuffle;
 };
 
 

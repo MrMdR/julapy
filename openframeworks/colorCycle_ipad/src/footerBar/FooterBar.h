@@ -92,6 +92,21 @@ public:
 		return [ controller isInfoSelected ];
 	}
 	
+	bool isHideSelected ()
+	{
+		return [ controller isHideSelected ];
+	}
+	
+	ofPoint getHidePoint ()
+	{
+		CGPoint hidePoint = [ controller getHidePoint ];
+		
+		ofPoint p;
+		p.x = hidePoint.x;
+		p.y = hidePoint.y;
+		return p;
+	}
+	
 private:
 	
 	void update ( ofEventArgs &e )
