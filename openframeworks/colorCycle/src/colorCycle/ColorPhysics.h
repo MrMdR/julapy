@@ -14,6 +14,7 @@
 #include "ofxBox2d.h"
 #include "ColorCircle.h"
 #include "ColorConstants.h"
+#include "ColorSound.h"
 
 #ifdef TARGET_OF_IPHONE
 #include "ofxALSoundPlayer.h"
@@ -32,6 +33,7 @@ public:
 	
 	void setScreen	( ofxScreen screen );
 	void setGravity	( float gx, float gy );
+	void setSounds	( ColorSound* sounds );
 	
 	void setup	();
 	void update	();
@@ -53,7 +55,8 @@ public:
 	void  destroyJoints			();
 	void  resetJoints			();
 	
-	ofxScreen				screen;
+	ofxScreen					screen;
+	ColorSound*					sounds;
 	
 	ofxBox2d*					box2d;
 	b2Body*						ground;
@@ -62,11 +65,4 @@ public:
 	ofPoint						gravity;
 	
 	float						circleRadius;
-	
-#ifdef TARGET_OF_IPHONE
-	vector<ofxALSoundPlayer*>	spPointCollide;
-#else
-	vector<ofSoundPlayer*>		spPointCollide;
-#endif
-	
 };

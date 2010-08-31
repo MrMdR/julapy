@@ -40,6 +40,7 @@ public:
 	ofPoint		posNorm;
 	ofPoint		posOffset;
 	ofPoint		posColor;
+	float		collision;
 	
 	bool		bSelected;
 };

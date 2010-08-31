@@ -9,20 +9,29 @@
 
 #pragma once
 
+//#define USE_PHYSICS
+//#define USE_COLOR_CIRCLE
+
 #include "ofMain.h"
 #include "ofxScreen.h"
 #include "ofxColorPicker.h"
 #include "ofxDelaunay.h"
 #include "ofxEaseValue.h"
+
 #include "ColorRect.h"
-#include "ColorPhysics.h"
 #include "ColorTriangle.h"
 #include "ColorPanel.h"
+#include "ColorConstants.h"
+#include "ColorSound.h"
 
-#ifdef TARGET_OF_IPHONE
-#include "ofxALSoundPlayer.h"
+#ifdef USE_PHYSICS
+#include "ColorPhysics.h"
 #endif
 
+#ifdef USE_COLOR_CIRCLE
+#include "ColorCircle.h"
+#endif
+ 
 class ColorCycle
 {
 
@@ -33,6 +42,7 @@ public:
 	
 	void setScreenSize	( int w, int h );
 	void setFrameRate	( int fr );
+	void setSounds		( ColorSound* sounds );
 	
 	void setGravity		( float gx, float gy );
 	
@@ -46,6 +56,10 @@ public:
 	bool checkTriangleHit		( float x, float y, int id );
 	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
 	
+#ifdef USE_COLOR_CIRCLE	
+	ColorCircle* getCircleAtPoint ( ofPoint p1 );
+#endif
+	
 	void drawColorPickers		();
 	void drawTriangles			();
 	
@@ -53,12 +67,6 @@ public:
 	void removeCircle		();
 	void shuffle			();
 	void colorSelectMode	();
-	
-#ifdef TARGET_OF_IPHONE
-	void playRandomSound	( vector<ofxALSoundPlayer*>& sounds );
-#else
-	void playRandomSound	( vector<ofSoundPlayer*>& sounds );
-#endif
 	
 	void down			( int x, int y, int id = -1 );
 	void drag			( int x, int y, int id = -1 );
@@ -82,7 +90,9 @@ public:
 	
 	ColorRect		rect;
 	
+#ifdef USE_PHYSICS
 	ColorPhysics	physics;
+#endif
 
 	bool			bColorSelectMode;
 	bool			bColorSelectModeOnBgClick;
@@ -99,19 +109,5 @@ public:
 	vector<ColorTriangle*>	triangles;
 	ofxEaseValue			triColorScale;
 	
-#ifdef TARGET_OF_IPHONE
-	vector<ofxALSoundPlayer*>	spBackground;
-	vector<ofxALSoundPlayer*>	spMeshDrag;
-	vector<ofxALSoundPlayer*>	spPointAdd;
-	vector<ofxALSoundPlayer*>	spPointRemove;
-	vector<ofxALSoundPlayer*>	spPointCollide;
-	vector<ofxALSoundPlayer*>	spPointShuffle;
-#else
-	vector<ofSoundPlayer*>		spBackground;
-	vector<ofSoundPlayer*>		spMeshDrag;
-	vector<ofSoundPlayer*>		spPointAdd;
-	vector<ofSoundPlayer*>		spPointRemove;
-	vector<ofSoundPlayer*>		spPointCollide;
-	vector<ofSoundPlayer*>		spPointShuffle;
-#endif
+	ColorSound*			sounds;
 };

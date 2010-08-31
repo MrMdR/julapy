@@ -2,8 +2,8 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-#include "ofxDirList.h"
 #include "ColorCycle.h"
+#include "ColorSound.h"
 #include "ColorConstants.h"
  
 class testApp : public ofBaseApp{
@@ -28,15 +28,7 @@ public:
 	int				frameRate;
 	
 	ColorCycle		cc;
-	
-	ofxDirList				DIR;
-	vector<ofSoundPlayer*>	spBackground;
-	vector<ofSoundPlayer*>	spMeshDrag;
-	vector<ofSoundPlayer*>	spPointAdd;
-	vector<ofSoundPlayer*>	spPointRemove;
-	vector<ofSoundPlayer*>	spPointCollide;
-	vector<ofSoundPlayer*>	spPointShuffle;
-	
+	ColorSound		cs;
 };
 
 #endif
