@@ -13,9 +13,9 @@ void testApp :: setup()
 	cs.setup();
 	
 	cc.setSounds( &cs );
+	cc.setBgClick( true );
 	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
 	cc.setup();
-	cc.bColorSelectModeOnBgClick = true;
 }
 
 //////////////////////////////////////////////

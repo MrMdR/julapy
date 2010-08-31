@@ -22,7 +22,25 @@ ColorCycle :: ColorCycle ()
 	black.g = 0;
 	black.b = 0;
 	
-	sounds = NULL;
+	physics	= NULL;
+	sounds	= NULL;
+	
+	colorScale = 1.0;
+	
+	rndColorAngle0.ease	= 0.05;
+	rndColorAngle1.ease	= 0.05;
+	
+	bColorSelectMode			= false;
+	bColorSelectModeOnBgClick	= false;
+	bColorSelectTimeout			= false;
+	colorSelectTimeout			= 0;
+	
+	bInputDown				= false;
+	inputLastID				= -2;
+	
+	triColorScale.value		= 1.0;
+	triColorScale.target	= 1.0;
+	triColorScale.ease		= 0.2;
 }
 
 ColorCycle :: ~ColorCycle ()
@@ -42,14 +60,18 @@ void ColorCycle :: setFrameRate	( int fr )
 
 void ColorCycle :: setGravity ( float gx, float gy )
 {
-#ifdef USE_PHYSICS
-	physics.setGravity( gx, gy );
-#endif
+	if( physics != NULL )
+		physics->setGravity( gx, gy );
 }
 
 void ColorCycle :: setSounds ( ColorSound* sounds )
 {
 	this->sounds = sounds;
+}
+
+void ColorCycle :: setBgClick ( bool b )
+{
+	bColorSelectModeOnBgClick = b;
 }
 
 ///////////////////////////////////////////////////////
@@ -75,28 +97,14 @@ void ColorCycle :: setup ()
 	panel.setScreen( screen );
 	panel.setColorPickers( &colorPicker0, &colorPicker1 );
 	
-	colorScale = 1.0;
-	
-	rndColorAngle0.ease	= 0.05;
-	rndColorAngle1.ease	= 0.05;
-	
-	bColorSelectMode			= false;
-	bColorSelectModeOnBgClick	= false;
-	bColorSelectTimeout			= false;
-	colorSelectTimeout			= 0;
-	
-	bInputDown				= false;
-	inputLastID				= -2;
-	
-	triColorScale.value		= 1.0;
-	triColorScale.target	= 1.0;
-	triColorScale.ease		= 0.2;
-	
-#ifdef USE_PHYSICS
-	physics.setSounds( sounds );
-	physics.setScreen( screen );
-	physics.setup();
-#endif
+	physics = NULL;
+	physics = new ColorPhysics();
+	if( physics != NULL )
+	{
+		physics->setSounds( sounds );
+		physics->setScreen( screen );
+		physics->setup();
+	}
 	
 	if( sounds != NULL )
 		sounds->playRandomBackgroundSound();
@@ -176,40 +184,33 @@ void ColorCycle :: update ()
 
 void ColorCycle :: updatePhysics ()
 {
-#ifdef USE_PHYSICS
+	if( physics == NULL )
+		return;
 	
-	physics.update();
+	physics->update();
 	
-	for( int i=0; i<physics.circles.size(); i++ )
+	for( int i=0; i<physics->circlesSize(); i++ )
 	{
 		ofColor c;
-		c = interpolateColor( upperColor, lowerColor, physics.circles[ i ]->posColor.y );
-		physics.circles[ i ]->setColor( c );
+		ofPoint p;
+		p = physics->getCircleColorPointAt( i );
+		c = interpolateColor( upperColor, lowerColor, p.y );
+		physics->setCircleColor( i, c );
 	}
-	
-#endif
 }
 
 void ColorCycle :: updateDelaunay ()
 {
 	delaunay.reset();
 	
-#ifdef USE_PHYSICS
+	if( physics == NULL )
+		return;
 	
-	for( int i=0; i<physics.circles.size(); i++ )
+	for( int i=0; i<physics->circlesSize(); i++ )
 	{
-		ofPoint& pos = physics.circles[ i ]->pos;
-		delaunay.addPoint( pos.x, pos.y, pos.z );
+		ofPoint p = physics->getCirclePointAt( i );
+		delaunay.addPoint( p.x, p.y, p.z );
 	}
-	
-#else
-	
-	for( int i=0; i<CIRCLES_MAX; i++ )
-	{
-		delaunay.addPoint( ofRandom( 0, ofGetScreenWidth() ), ofRandom( 0, ofGetScreenHeight() ), 0 );
-	}
-	
-#endif
 	
 	delaunay.triangulate();
 }
@@ -303,8 +304,6 @@ void ColorCycle :: updateTriangles ()
 
 bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
 {
-#ifdef USE_PHYSICS
-	
 	ofPoint p;
 	p.set( x, y, 0 );
 	
@@ -318,25 +317,12 @@ bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
 			ofPoint p;
 			p = triangle->getNearestTrianglePoint( x, y );
 
-			ColorCircle* circle;
-			for( int j=0; j<physics.circles.size(); j++ )
-			{
-				circle = physics.circles[ j ];
-				
-				if( circle->pos.x == p.x && circle->pos.y == p.y )
-				{
-					circle->bSelected = true;
-					break;
-				}
-			}
-			
-			physics.box2d->grabShapeDown2( x, y, id, circle->body );
+			if( physics != NULL )
+				physics->circleDownAtPoint( p.x, p.y, id );
 			
 			return true;
 		}
 	}
-	
-#endif
 	
 	return false;
 }
@@ -354,11 +340,9 @@ ofColor ColorCycle :: interpolateColor ( const ofColor& c1, const ofColor& c2, f
 #ifdef USE_COLOR_CIRCLE
 ColorCircle* ColorCycle :: getCircleAtPoint ( ofPoint p1 )
 {
-#ifdef USE_PHYSICS
-	
-	for( int i=0; i<physics.circles.size(); i++ )
+	for( int i=0; i<physics->circles.size(); i++ )
 	{
-		ColorCircle* circle = physics.circles[ i ];
+		ColorCircle* circle = physics->circles[ i ];
 		const ofPoint& p2	= circle->pos;
 		
 		if( p1.x == p2.x && p1.y == p2.y )
@@ -366,8 +350,6 @@ ColorCircle* ColorCycle :: getCircleAtPoint ( ofPoint p1 )
 			return circle;
 		}
 	}
-	
-#endif
 	
 	return NULL;
 }
@@ -382,9 +364,8 @@ void ColorCycle :: draw ()
 	
 	drawTriangles();
 	
-#ifdef USE_PHYSICS	
-	physics.draw();
-#endif
+	if( physics != NULL )
+		physics->draw();
 	
 	panel.draw();
 }
@@ -410,9 +391,10 @@ void ColorCycle :: addCircle ()
 {
 	bool success = false;
 	
-#ifdef USE_PHYSICS
-	success = physics.addSingleCircle();
-#endif
+	if( physics != NULL )
+	{
+		success = physics->addSingleCircle();
+	}
 	
 	if( success )
 	{
@@ -428,9 +410,10 @@ void ColorCycle :: removeCircle ()
 {
 	bool success = false;
 	
-#ifdef USE_PHYSICS
-	success = physics.removeCircle();
-#endif
+	if( physics != NULL )
+	{
+		success = physics->removeCircle();
+	}
 	
 	if( success )
 	{
@@ -444,14 +427,11 @@ void ColorCycle :: removeCircle ()
 
 void ColorCycle :: shuffle ()
 {
-#ifdef USE_PHYSICS
-	
 	if( !bColorSelectMode )
 	{
-		physics.resetJoints();
+		if( physics != NULL )
+			physics->resetJoints();
 	}
-	
-#endif
 	
 //	rndColorAngle0.target += ofRandom( -0.2, 0.2 );
 //	rndColorAngle1.target += ofRandom( -0.2, 0.2 );
@@ -477,10 +457,6 @@ void ColorCycle :: colorSelectMode ()
 	inputPos1.y = inputPos2.y = 0;
 	
 	panel.show();
-	
-#ifdef USE_PHYSICS
-	physics.hideCircles();
-#endif	
 	
 	triColorScale.target = 0.2;
 }
@@ -523,11 +499,7 @@ void ColorCycle :: down ( int x, int y, int id )
 				inputPos1.y = inputPos2.y = y;
 				
 				panel.show();
-				
-#ifdef USE_PHYSICS				
-				physics.hideCircles();
-#endif
-				
+
 				triColorScale.target = 0.2;
 			}
 		}
@@ -536,7 +508,7 @@ void ColorCycle :: down ( int x, int y, int id )
 	colorPicker0.touchDown( x, y, id );
 	colorPicker1.touchDown( x, y, id );
 	
-//	physics.checkHit( x, y )	// don't forget this, could be handy later.
+//	physics->checkHit( x, y )	// don't forget this, could be handy later.
 }
 
 void ColorCycle :: drag ( int x, int y, int id )
@@ -554,9 +526,8 @@ void ColorCycle :: drag ( int x, int y, int id )
 	}
 	else
 	{
-#ifdef USE_PHYSICS
-		physics.box2d->grabShapeDragged2( x, y, id );
-#endif
+		if( physics != NULL )
+			physics->circleDragAtPoint( x, y, id );
 	}
 	
 	colorPicker0.touchMoved( x, y, id );
@@ -580,9 +551,8 @@ void ColorCycle :: up ( int x, int y, int id )
 	colorPicker0.touchUp( x, y, id );
 	colorPicker1.touchUp( x, y, id );
 	
-#ifdef USE_PHYSICS
-	physics.box2d->grabShapeUp2( x, y, id );
-#endif
+	if( physics != NULL )
+		physics->circleUpAtPoint( x, y, id );
 }
 
 void ColorCycle :: inputCheck ()
@@ -595,10 +565,6 @@ void ColorCycle :: inputCheck ()
 			bColorSelectMode	= false;
 			
 			panel.hide();
-			
-#ifdef USE_PHYSICS
-			physics.showCircles();
-#endif			
 			
 			triColorScale.target = 1.0;
 		}

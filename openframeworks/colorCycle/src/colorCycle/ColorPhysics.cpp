@@ -292,14 +292,78 @@ bool ColorPhysics :: checkHit ( float x, float y )
 	return false;
 }
 
-void ColorPhysics :: showCircles ()
+///////////////////////////////////////////////////////
+//	CIRCLE PROPERTY ACCESSORS.
+///////////////////////////////////////////////////////
+
+int ColorPhysics :: circlesSize ()
 {
-	
+	return circles.size();
 }
 
-void ColorPhysics :: hideCircles ()
+ofPoint ColorPhysics :: getCirclePointAt ( int i )
 {
+	ofPoint p;
 	
+	if( i >= 0 && i < circles.size() )
+	{
+		p = circles[ i ]->pos;
+	}
+	
+	return p;
+}
+
+ofPoint ColorPhysics :: getCircleColorPointAt ( int i )
+{
+	ofPoint p;
+	
+	if( i >= 0 && i < circles.size() )
+	{
+		p = circles[ i ]->posColor;
+	}
+	
+	return p;
+}
+
+void ColorPhysics :: setCircleColor ( int i, const ofColor& c )
+{
+	if( i >= 0 && i < circles.size() )
+	{
+		circles[ i ]->setColor( c );
+	}
+}
+
+void ColorPhysics :: circleDownAtPoint ( int x, int y, int id )
+{
+	ColorCircle* circle = NULL;
+	
+	for( int i=0; i<circles.size(); i++ )
+	{
+		int cx = circles[ i ]->pos.x;
+		int cy = circles[ i ]->pos.y;
+		
+		if( cx == x && cy == y )
+		{
+			circle = circles[ i ];
+			circle->bSelected = true;
+			break;
+		}
+	}
+	
+	if( circle != NULL )
+	{
+		box2d->grabShapeDown2( x, y, id, circle->body );
+	}
+}
+
+void ColorPhysics :: circleDragAtPoint ( int x, int y, int id )
+{
+	box2d->grabShapeDragged2( x, y, id );
+}
+
+void ColorPhysics :: circleUpAtPoint ( int x, int y, int id )
+{
+	box2d->grabShapeUp( x, x, id );
 }
 
 ///////////////////////////////////////////////////////
