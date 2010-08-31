@@ -47,8 +47,13 @@ public:
 	float areaToRadius		( float area );
 	bool  checkHit			( float x, float y );
 	
-	void  showCircles	();
-	void  hideCircles	();
+	int   circlesSize				();
+	ofPoint getCirclePointAt		( int i );
+	ofPoint getCircleColorPointAt	( int i );
+	void  setCircleColor			( int i, const ofColor& c );
+	void  circleDownAtPoint			( int x, int y, int id );
+	void  circleDragAtPoint			( int x, int y, int id );
+	void  circleUpAtPoint			( int x, int y, int id );
 	
 	void  createJoints			();
 	void  createJointsForCircle	( ColorCircle* circle );

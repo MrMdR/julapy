@@ -9,8 +9,7 @@
 
 #pragma once
 
-//#define USE_PHYSICS
-//#define USE_COLOR_CIRCLE
+#define USE_COLOR_CIRCLE
 
 #include "ofMain.h"
 #include "ofxScreen.h"
@@ -18,15 +17,13 @@
 #include "ofxDelaunay.h"
 #include "ofxEaseValue.h"
 
+#include "ColorPhysics.h"
 #include "ColorRect.h"
 #include "ColorTriangle.h"
 #include "ColorPanel.h"
 #include "ColorConstants.h"
 #include "ColorSound.h"
 
-#ifdef USE_PHYSICS
-#include "ColorPhysics.h"
-#endif
 
 #ifdef USE_COLOR_CIRCLE
 #include "ColorCircle.h"
@@ -43,6 +40,7 @@ public:
 	void setScreenSize	( int w, int h );
 	void setFrameRate	( int fr );
 	void setSounds		( ColorSound* sounds );
+	void setBgClick		( bool b );
 	
 	void setGravity		( float gx, float gy );
 	
@@ -90,9 +88,7 @@ public:
 	
 	ColorRect		rect;
 	
-#ifdef USE_PHYSICS
-	ColorPhysics	physics;
-#endif
+	ColorPhysics*	physics;
 
 	bool			bColorSelectMode;
 	bool			bColorSelectModeOnBgClick;
