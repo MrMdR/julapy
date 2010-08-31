@@ -38,20 +38,19 @@ void ColorPhysics :: Add( const b2ContactPoint* point )
 				float vel;								// weight colour change by velocity.
 				vel = point->velocity.Length();
 				
+				if( vel > 5 )
+				{
+					circle.collision = 1.0;
+//					circle.collision = vel / 30;
+//					circle.collision = ofClamp( circle.collision, 0, 1 );
+				}
+				
 				float vol;
-				vol = vel / 60;
+				vol = vel / 100;
 				vol = ofClamp( vol, 0, 1 );
 				
-				//-- play sound.
-				
-				if( spPointCollide.size() > 0 )
-				{
-					int j = MIN( i, spPointCollide.size() - 1 );
-					spPointCollide[ j ]->setVolume( vol );
-					spPointCollide[ j ]->play();
-					
-					break;		// breaking here so the same sound doesn't play twice.
-				}
+//				sounds->playRandomPointCollisionSound( vol );
+				sounds->playPointCollisionSoundAtIndex( i, vol );
 			}
 		}
 	}
@@ -83,6 +82,11 @@ void ColorPhysics :: setGravity	( float gx, float gy )
 	{
 		box2d->setGravity( gravity.x, gravity.y );
 	}
+}
+
+void ColorPhysics :: setSounds ( ColorSound* sounds )
+{
+	this->sounds = sounds;
 }
 
 ///////////////////////////////////////////////////////

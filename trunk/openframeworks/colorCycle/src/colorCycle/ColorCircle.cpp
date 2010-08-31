@@ -32,6 +32,8 @@ ColorCircle :: ColorCircle ()
 	posOffset.x = 0;
 	posOffset.y = 0;
 	
+	collision = 0;
+	
 	bSelected = false;
 }
 
@@ -71,6 +73,8 @@ void ColorCircle :: update ()
 	
 	posColor.x = px;
 	posColor.y = py;
+	
+	collision *= 0.96;
 }
 
 void ColorCircle :: draw ()

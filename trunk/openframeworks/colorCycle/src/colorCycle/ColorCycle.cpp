@@ -21,6 +21,8 @@ ColorCycle :: ColorCycle ()
 	black.r = 0;
 	black.g = 0;
 	black.b = 0;
+	
+	sounds = NULL;
 }
 
 ColorCycle :: ~ColorCycle ()
@@ -40,7 +42,14 @@ void ColorCycle :: setFrameRate	( int fr )
 
 void ColorCycle :: setGravity ( float gx, float gy )
 {
+#ifdef USE_PHYSICS
 	physics.setGravity( gx, gy );
+#endif
+}
+
+void ColorCycle :: setSounds ( ColorSound* sounds )
+{
+	this->sounds = sounds;
 }
 
 ///////////////////////////////////////////////////////
@@ -83,11 +92,14 @@ void ColorCycle :: setup ()
 	triColorScale.target	= 1.0;
 	triColorScale.ease		= 0.2;
 	
+#ifdef USE_PHYSICS
+	physics.setSounds( sounds );
 	physics.setScreen( screen );
 	physics.setup();
-	physics.spPointCollide = spPointCollide;
+#endif
 	
-	playRandomSound( spBackground );
+	if( sounds != NULL )
+		sounds->playRandomBackgroundSound();
 }
 
 ///////////////////////////////////////////////////////
@@ -164,6 +176,8 @@ void ColorCycle :: update ()
 
 void ColorCycle :: updatePhysics ()
 {
+#ifdef USE_PHYSICS
+	
 	physics.update();
 	
 	for( int i=0; i<physics.circles.size(); i++ )
@@ -172,11 +186,15 @@ void ColorCycle :: updatePhysics ()
 		c = interpolateColor( upperColor, lowerColor, physics.circles[ i ]->posColor.y );
 		physics.circles[ i ]->setColor( c );
 	}
+	
+#endif
 }
 
 void ColorCycle :: updateDelaunay ()
 {
 	delaunay.reset();
+	
+#ifdef USE_PHYSICS
 	
 	for( int i=0; i<physics.circles.size(); i++ )
 	{
@@ -184,11 +202,22 @@ void ColorCycle :: updateDelaunay ()
 		delaunay.addPoint( pos.x, pos.y, pos.z );
 	}
 	
+#else
+	
+	for( int i=0; i<CIRCLES_MAX; i++ )
+	{
+		delaunay.addPoint( ofRandom( 0, ofGetScreenWidth() ), ofRandom( 0, ofGetScreenHeight() ), 0 );
+	}
+	
+#endif
+	
 	delaunay.triangulate();
 }
 
 void ColorCycle :: updateTriangles ()
 {
+#ifdef USE_COLOR_CIRCLE	
+	
 	triColorScale.update();
 	
 	//--
@@ -217,6 +246,17 @@ void ColorCycle :: updateTriangles ()
 			
 			triangle->indexs[ j ] = delTri.pointIndex[ j ];
 			
+			//-- collisions.
+			
+			ColorCircle* circle;
+			circle = getCircleAtPoint( delTri.points[ j ] );
+			float collisionScale = 0;
+			if( circle != NULL )
+			{
+				collisionScale = circle->collision;
+				collisionScale = ofClamp( collisionScale, 0.25, 0.75 );
+			}
+			
 			//-- work out triangle colour.
 			
 			ofxVec2f p1, p2, p3;
@@ -233,8 +273,10 @@ void ColorCycle :: updateTriangles ()
 			p2 += p3;
 			p2.normalize();
 			p2 *= triColorScale.value;
+//			p2 *= collisionScale;
 			
-			p1 += p2 * ( screen.screenMin * 0.25 );
+//			p1 += p2 * ( screen.screenMin * 0.25 );
+			p1 += p2 * ( screen.screenMin * collisionScale );
 			
 			float px, py;
 			px = p1.x / (float)screen.screenWidth;
@@ -245,6 +287,7 @@ void ColorCycle :: updateTriangles ()
 			
 			ofColor c;
 			c = interpolateColor( upperColor, lowerColor, py );
+//			c = interpolateColor( c, black, collisionScale );
 			
 			triangle->colors[ j ] = c;
 		}
@@ -254,10 +297,14 @@ void ColorCycle :: updateTriangles ()
 		triangle->init();
 		triangles.push_back( triangle );
 	}
+	
+#endif
 }
 
 bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
 {
+#ifdef USE_PHYSICS
+	
 	ofPoint p;
 	p.set( x, y, 0 );
 	
@@ -289,6 +336,8 @@ bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
 		}
 	}
 	
+#endif
+	
 	return false;
 }
 
@@ -302,6 +351,27 @@ ofColor ColorCycle :: interpolateColor ( const ofColor& c1, const ofColor& c2, f
 	return c;
 }
 
+#ifdef USE_COLOR_CIRCLE
+ColorCircle* ColorCycle :: getCircleAtPoint ( ofPoint p1 )
+{
+#ifdef USE_PHYSICS
+	
+	for( int i=0; i<physics.circles.size(); i++ )
+	{
+		ColorCircle* circle = physics.circles[ i ];
+		const ofPoint& p2	= circle->pos;
+		
+		if( p1.x == p2.x && p1.y == p2.y )
+		{
+			return circle;
+		}
+	}
+	
+#endif
+	
+	return NULL;
+}
+#endif
 ///////////////////////////////////////////////////////
 //	DRAW.
 ///////////////////////////////////////////////////////
@@ -312,7 +382,9 @@ void ColorCycle :: draw ()
 	
 	drawTriangles();
 	
+#ifdef USE_PHYSICS	
 	physics.draw();
+#endif
 	
 	panel.draw();
 }
@@ -336,32 +408,50 @@ void ColorCycle :: drawTriangles ()
 
 void ColorCycle :: addCircle ()
 {
-	bool success;
+	bool success = false;
+	
+#ifdef USE_PHYSICS
 	success = physics.addSingleCircle();
+#endif
 	
 	if( success )
 	{
-		playRandomSound( spPointAdd );
+		if( sounds != NULL )
+		{
+			sounds->playRandomPointAddSound();
+			sounds->startCollisionSoundTimeout();
+		}
 	}
 }
 
 void ColorCycle :: removeCircle ()
 {
-	bool success;
+	bool success = false;
+	
+#ifdef USE_PHYSICS
 	success = physics.removeCircle();
+#endif
 	
 	if( success )
 	{
-		playRandomSound( spPointRemove );
+		if( sounds != NULL )
+		{
+			sounds->playRandomPointRemoveSound();
+			sounds->startCollisionSoundTimeout();
+		}
 	}
 }
 
 void ColorCycle :: shuffle ()
 {
+#ifdef USE_PHYSICS
+	
 	if( !bColorSelectMode )
 	{
 		physics.resetJoints();
 	}
+	
+#endif
 	
 //	rndColorAngle0.target += ofRandom( -0.2, 0.2 );
 //	rndColorAngle1.target += ofRandom( -0.2, 0.2 );
@@ -369,7 +459,11 @@ void ColorCycle :: shuffle ()
 	rndColorAngle0.target += ofRandom( 0.05, 0.3 );
 	rndColorAngle1.target -= ofRandom( 0.05, 0.3 );
 
-	playRandomSound( spPointShuffle );
+	if( sounds != NULL )
+	{
+		sounds->playRandomPointShuffleSound();
+		sounds->startCollisionSoundTimeout();
+	}
 }
 
 void ColorCycle :: colorSelectMode ()
@@ -384,33 +478,12 @@ void ColorCycle :: colorSelectMode ()
 	
 	panel.show();
 	
+#ifdef USE_PHYSICS
 	physics.hideCircles();
+#endif	
+	
 	triColorScale.target = 0.2;
 }
-
-///////////////////////////////////////////////////////
-//	SOUNDS.
-///////////////////////////////////////////////////////
-
-#ifdef TARGET_OF_IPHONE
-void ColorCycle :: playRandomSound	( vector<ofxALSoundPlayer*>& sounds )
-{
-	if( sounds.size() == 0 )
-		return;
-	
-	int i = ofRandom( 0, sounds.size() - 1 );
-	sounds[ i ]->play();
-}
-#else
-void ColorCycle :: playRandomSound	( vector<ofSoundPlayer*>& sounds )
-{
-	if( sounds.size() == 0 )
-		return;
-	
-	int i = ofRandom( 0, sounds.size() - 1 );
-	sounds[ i ]->play();
-}
-#endif
 
 ///////////////////////////////////////////////////////
 //	INPUT.
@@ -451,7 +524,10 @@ void ColorCycle :: down ( int x, int y, int id )
 				
 				panel.show();
 				
+#ifdef USE_PHYSICS				
 				physics.hideCircles();
+#endif
+				
 				triColorScale.target = 0.2;
 			}
 		}
@@ -478,7 +554,9 @@ void ColorCycle :: drag ( int x, int y, int id )
 	}
 	else
 	{
+#ifdef USE_PHYSICS
 		physics.box2d->grabShapeDragged2( x, y, id );
+#endif
 	}
 	
 	colorPicker0.touchMoved( x, y, id );
@@ -502,7 +580,9 @@ void ColorCycle :: up ( int x, int y, int id )
 	colorPicker0.touchUp( x, y, id );
 	colorPicker1.touchUp( x, y, id );
 	
+#ifdef USE_PHYSICS
 	physics.box2d->grabShapeUp2( x, y, id );
+#endif
 }
 
 void ColorCycle :: inputCheck ()
@@ -516,7 +596,10 @@ void ColorCycle :: inputCheck ()
 			
 			panel.hide();
 			
+#ifdef USE_PHYSICS
 			physics.showCircles();
+#endif			
+			
 			triColorScale.target = 1.0;
 		}
 	}
