@@ -6,119 +6,51 @@ void testApp::setup()
 	ofRegisterTouchEvents(this);
 	ofxAccelerometer.setup();
 	ofxiPhoneAlerts.addListener(this);
+	ofBackground( 127, 127, 127 );
 	
 	ofxiPhoneSetOrientation( OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT );
 	
 	ofSetFrameRate( frameRate = 60 );
 //	ofSetVerticalSync( true );
 	
-	initSounds();	// has to be before ColorCycle setup is called.
-	
-	//--
-	
 	lastTouchId = -1;
 	
-	//--
-	
-	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
-	cc.setup();
-	
-	//--
-	
-	footer.setup();
-	
-	//-- splash screen fade out.
-	
-	splashScreen = new ofImage();
-	splashScreen->loadImage( "Default.png" );
-	drawSplashScreen();
-	
-	//--
-	
-	infoScreen.setup();
-}
-
-void testApp :: initSounds ()
-{
-	vector<string> soundNames;
-	soundNames.push_back( "sounds/background/background_1.caf" );
-	soundNames.push_back( "sounds/background/background_2.caf" );
-	soundNames.push_back( "sounds/background/background_3.caf" );
-	createSounds( soundNames, spBackground, true );
-	
-	soundNames.clear();
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_1.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_2.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_3.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_4.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_5.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_6.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_7.caf" );
-	soundNames.push_back( "sounds/mesh_drag/mesh_drag_8.caf" );
-	createSounds( soundNames, spMeshDrag );
-	
-	soundNames.clear();
-	soundNames.push_back( "sounds/point_add/point_add_1.caf" );
-	createSounds( soundNames, spPointAdd );
-	
-	soundNames.clear();
-	soundNames.push_back( "sounds/point_collide/point_collide_1.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_2.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_3.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_4.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_5.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_6.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_7.caf" );
-	soundNames.push_back( "sounds/point_collide/point_collide_8.caf" );
-	createNumOfSounds( soundNames, spPointCollide );
-	
-	soundNames.clear();
-	soundNames.push_back( "sounds/point_remove/point_remove_1.caf" );
-	createSounds( soundNames, spPointRemove );
-	
-	soundNames.clear();
-	soundNames.push_back( "sounds/point_shuffle/point_shuffle.caf" );
-	createSounds( soundNames, spPointShuffle );
-	
-	cc.spBackground		= spBackground;
-	cc.spMeshDrag		= spMeshDrag;
-	cc.spPointAdd		= spPointAdd;
-	cc.spPointCollide	= spPointCollide;
-	cc.spPointRemove	= spPointRemove;
-	cc.spPointShuffle	= spPointShuffle;
-}
-
-void testApp :: createSounds ( const vector<string>& fileNames, vector<ofxALSoundPlayer*>& sounds, bool loop )
-{
-	for( int i=0; i<fileNames.size(); i++ )
+	splashScreen = NULL;
+	splashScreen = new SplashScreen();		// comment out to remove.
+	if( splashScreen != NULL )
 	{
-		ofxALSoundPlayer* sp	= new ofxALSoundPlayer();
-		string fileName			= fileNames[ i ];
-		
-		if( loop )
-			sp->loadLoopingSound( fileName );
-		else 
-			sp->loadSound( fileName );
-		
-		sounds.push_back( sp );
+		splashScreen->setup();
+		splashScreen->draw();
 	}
-}
 
-void testApp :: createNumOfSounds ( const vector<string>& fileNames, vector<ofxALSoundPlayer*>& sounds, bool loop, int numOfSounds )
-{
-	for( int i=0; i<numOfSounds; i++ )
+	footer = NULL;
+	footer = new FooterBar();				// comment out to remove.
+	if( footer != NULL )
 	{
-		int j = ofRandom( 0, fileNames.size() - 1 );
-		
-		ofxALSoundPlayer* sp	= new ofxALSoundPlayer();
-		string fileName			= fileNames[ j ];
-		
-		if( loop )
-			sp->loadLoopingSound( fileName );
-		else 
-			sp->loadSound( fileName );
-		
-		sounds.push_back( sp );
+		footer->setup();
+	}
+	
+	infoScreen = NULL;
+	infoScreen = new InfoScreen();			// comment out to remove.
+	if( infoScreen != NULL )
+	{
+		infoScreen->setup();
+	}
+	
+	sounds = NULL;
+	sounds = new ColorSound();				// comment out to remove.
+	if( sounds != NULL )
+	{
+		sounds->setup();
+	}
+	
+	cc = NULL;
+	cc = new ColorCycle();					// comment out to remove.
+	if( cc != NULL )
+	{
+		cc->setSounds( sounds );
+		cc->setScreenSize( ofGetWidth(), ofGetHeight() );
+		cc->setup();
 	}
 }
 
@@ -127,25 +59,72 @@ void testApp::update()
 {
 	checkLastTouch();
 	
-	if( footer.isShuffleSelected() )
-		cc.shuffle();
-	
-	if( footer.isColorSelected() )
-		cc.colorSelectMode();
-	
-	if( footer.isAddSelected() )
-		cc.addCircle();
-	
-	if( footer.isRemoveSelected() )
-		cc.removeCircle();
-	
-	if( footer.isInfoSelected() )
-		infoScreen.show();
-	
-	if( footer.isHideSelected() )				// doesn't work, touch needs to pass through EAGLView to work.
+	if( footer != NULL )
 	{
-		ofPoint p = footer.getHidePoint();
-		cc.down( p.x, p.y, 0 );
+		if( footer->isShuffleSelected() )
+		{
+			if( cc != NULL )
+			{
+				cc->shuffle();
+			}
+		}
+	}
+	
+	if( footer != NULL )
+	{
+		if( footer->isColorSelected() )
+		{
+			if( cc != NULL )
+			{
+				cc->colorSelectMode();
+			}
+		}
+	}
+
+	if( footer != NULL )
+	{
+		if( footer->isAddSelected() )
+		{
+			if( cc != NULL )
+			{
+				cc->addCircle();
+			}
+		}
+	}
+	
+	if( footer != NULL )
+	{
+		if( footer->isRemoveSelected() )
+		{
+			if( cc != NULL )
+			{
+				cc->removeCircle();
+			}
+		}
+	}
+	
+	if( footer != NULL )
+	{
+		if( footer->isInfoSelected() )
+		{
+			if( infoScreen != NULL )
+			{
+				infoScreen->show();
+			}
+		}
+	}
+	
+	if( footer != NULL )
+	{
+		if( footer->isHideSelected() )				// doesn't work, touch needs to pass through EAGLView to work.
+		{
+			ofPoint p = footer->getHidePoint();
+			
+			if( cc != NULL )
+			{
+				cc->down( p.x, p.y, 0 );
+			}
+		}
 	}
 	
 	float gx;
@@ -157,18 +136,22 @@ void testApp::update()
 	gy = ofxAccelerometer.getForce().x;
 	gy *= 2;									// increase the reaction to tilt.
 	gy = MIN( 1.0, MAX( -1.0, gy ) );			// between -1 and 1.
-	
-	cc.setGravity( gx, gy );
-	
-	cc.update();
+
+	if( cc != NULL )
+	{
+		cc->setGravity( gx, gy );
+		cc->update();
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
-	cc.draw();
+	if( cc != NULL )
+		cc->draw();
 	
-	drawSplashScreen();
+	if( splashScreen != NULL )
+		splashScreen->draw();
 	
 	if( upsideDown )
 	{
@@ -181,7 +164,8 @@ void testApp::draw()
 		glTranslatef( -cx, -cy, 0 );
 	}
 	
-	infoScreen.draw();
+	if( infoScreen != NULL )
+		infoScreen->draw();
 	
 	ofSetColor( 0, 0, 0 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetScreenWidth() - 30, 20 );
@@ -192,40 +176,6 @@ void testApp::draw()
 	}
 }
 
-void testApp :: drawSplashScreen ()
-{
-	if( splashScreen == NULL )
-		return;
-	
-	int i = ofGetFrameNum();
-	int t = 30;
-	
-	if( i > t )
-	{
-		splashScreen->clear();
-		delete splashScreen;
-		splashScreen = NULL;
-		return;
-	}
-	
-	float a = 1 - Quad :: easeOut( i, 0, 1.0, t );
-	
-	int cx = (int)( ofGetScreenWidth()  * 0.5 );
-	int cy = (int)( ofGetScreenHeight() * 0.5 );
-
-	ofEnableAlphaBlending();
-	ofSetColor( 255, 255, 255, a * 255 );
-	
-	glPushMatrix();
-	glTranslatef( cx, cy, 0 );
-	glRotatef( 90, 0, 0, 1 );
-	glTranslatef( -cy, -cx, 0 );
-	splashScreen->draw( 0, 0 );
-	glPopMatrix();
-	
-	ofDisableAlphaBlending();
-}
-
 //--------------------------------------------------------------
 void testApp::exit(){
 
@@ -234,7 +184,8 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch)
 {
-	infoScreen.hide();
+	if( infoScreen )
+		infoScreen->hide();
 	
 	if( lastTouchId != touch.id )
 	{
@@ -246,7 +197,8 @@ void testApp::touchDown(ofTouchEventArgs &touch)
 		lastTouchCount		= 0;
 	}
 	
-	cc.down( touch.x, touch.y, touch.id );
+	if( cc != NULL )
+		cc->down( touch.x, touch.y, touch.id );
 }
 
 //--------------------------------------------------------------
@@ -258,7 +210,8 @@ void testApp::touchMoved(ofTouchEventArgs &touch)
 		lastTouchMoved.y	= touch.y;
 	}
 	
-	cc.drag( touch.x, touch.y, touch.id );
+	if( cc != NULL )
+		cc->drag( touch.x, touch.y, touch.id );
 }
 
 //--------------------------------------------------------------
@@ -269,7 +222,8 @@ void testApp::touchUp(ofTouchEventArgs &touch)
 		lastTouchId = -1;
 	}
 	
-	cc.up( touch.x, touch.y, touch.id );
+	if( cc != NULL )
+		cc->up( touch.x, touch.y, touch.id );
 }
 
 void testApp :: checkLastTouch ()
@@ -285,9 +239,12 @@ void testApp :: checkLastTouch ()
 		
 		if( d < 20 )
 		{
-			if( !footer.isShowing() )
+			if( footer != NULL )
 			{
-				footer.show();
+				if( !footer->isShowing() )
+				{
+					footer->show();
+				}
 			}
 		}
 	}
@@ -296,7 +253,8 @@ void testApp :: checkLastTouch ()
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch)
 {
-	footer.toggleShow();
+	if( footer != NULL )
+		footer->toggleShow();
 }
 
 //--------------------------------------------------------------

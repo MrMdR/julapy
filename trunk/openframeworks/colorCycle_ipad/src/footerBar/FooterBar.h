@@ -17,15 +17,8 @@ class FooterBar
 
 public:
 	
-	FooterBar()
-	{
-		ofAddListener( ofEvents.update, this, &FooterBar :: update );
-	};
-	
-	~FooterBar()
-	{
-		//
-	};
+	 FooterBar()	{};
+	~FooterBar()	{};
 	
 	//----------------------------------------
 	
@@ -43,6 +36,8 @@ public:
 		UIWindow* window = ofxiPhoneGetUIWindow();
 		[ window addSubview: controller.view ];
 		[ controller.view release ];
+		
+		ofAddListener( ofEvents.update, this, &FooterBar :: update );
 	};
 	
 	void show ()
