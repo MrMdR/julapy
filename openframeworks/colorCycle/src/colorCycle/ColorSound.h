@@ -315,10 +315,10 @@ public:
 	//	TIMEOUTS.
 	//////////////////////////////////////////
 	
-	void startCollisionSoundTimeout ()
+	void startCollisionSoundTimeout ( float timeoutInSeconds = 0.3 )
 	{
 		collisionSoundTimeout		= ofGetElapsedTimef();
-		collisionSoundTimeoutLimit	= collisionSoundTimeout + 0.3;
+		collisionSoundTimeoutLimit	= collisionSoundTimeout + timeoutInSeconds;
 		bCollisionSoundTimeout		= true;
 	}
 	
