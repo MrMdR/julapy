@@ -107,7 +107,10 @@ void ColorCycle :: setup ()
 	}
 	
 	if( sounds != NULL )
+	{
 		sounds->playRandomBackgroundSound();
+		sounds->startCollisionSoundTimeout( 1.0 );
+	}
 }
 
 ///////////////////////////////////////////////////////
