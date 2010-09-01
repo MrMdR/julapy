@@ -18,7 +18,7 @@ public:
 	
 	SplashScreen()
 	{
-		startFrame	= 30;
+		startFrame	= 60;
 		totalFrames	= 30;
 		bComplete	= false;
 	};

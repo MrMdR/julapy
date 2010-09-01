@@ -9,6 +9,7 @@
 #include "FooterBar.h"
 #include "SplashScreen.h"
 #include "InfoScreen.h"
+#include "PopupScreen.h"
 
 class testApp : public ofxiPhoneApp 
 {
@@ -38,6 +39,7 @@ public:
 	FooterBar*		footer;
 	SplashScreen*	splashScreen;
 	InfoScreen*		infoScreen;
+	PopupScreen*	popupScreen;
 	
 	ofPoint			lastTouch;
 	ofPoint			lastTouchMoved;
