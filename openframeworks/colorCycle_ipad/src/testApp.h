@@ -5,24 +5,19 @@
 #include "ofxiPhoneExtras.h"
 
 #include "ColorCycle.h"
-#include "ofxColorPicker.h"
+#include "ColorSound.h"
 #include "FooterBar.h"
+#include "SplashScreen.h"
 #include "InfoScreen.h"
-#include "ofxALSoundPlayer.h"
-#include "ColorConstants.h"
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiPhoneApp 
+{
 	
 public:
 	void setup();
 	void update();
 	void draw();
 	void exit();
-	
-	void initSounds			();
-	void createSounds		( const vector<string>& fileNames, vector<ofxALSoundPlayer*>& sounds, bool loop = false );
-	void createNumOfSounds	( const vector<string>& fileNames, vector<ofxALSoundPlayer*>& sounds, bool loop = false, int numOfSounds = CIRCLES_MAX );
-	void drawSplashScreen	();
 	
 	void touchDown(ofTouchEventArgs &touch);
 	void touchMoved(ofTouchEventArgs &touch);
@@ -38,11 +33,11 @@ public:
 
 	int				frameRate;
 	
-	ColorCycle		cc;
-	FooterBar		footer;
-
-	InfoScreen		infoScreen;
-	ofImage*		splashScreen;
+	ColorCycle*		cc;
+	ColorSound*		sounds;
+	FooterBar*		footer;
+	SplashScreen*	splashScreen;
+	InfoScreen*		infoScreen;
 	
 	ofPoint			lastTouch;
 	ofPoint			lastTouchMoved;
@@ -50,13 +45,6 @@ public:
 	int				lastTouchCount;
 	
 	bool			upsideDown;
-	
-	vector<ofxALSoundPlayer*>	spBackground;
-	vector<ofxALSoundPlayer*>	spMeshDrag;
-	vector<ofxALSoundPlayer*>	spPointAdd;
-	vector<ofxALSoundPlayer*>	spPointRemove;
-	vector<ofxALSoundPlayer*>	spPointCollide;
-	vector<ofxALSoundPlayer*>	spPointShuffle;
 };
 
 
