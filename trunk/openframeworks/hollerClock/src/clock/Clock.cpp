@@ -101,7 +101,7 @@ void Clock :: setup ()
 	createCircles();
 	createLines();
 	createInfoScreen();
-	createLabels();
+//	createLabels();
 //	creatFreeCircles();
 }
 
@@ -273,15 +273,15 @@ void Clock :: createCircles ()
 	float area	= 0.015;		// biggest area as start.
 	float dec	= 0.5;		// decrease in area for the next batch of circles.
 	
-	createCircle( hrsOne, digits[ 0 ].valueMax, areaToRadius( area ),			0xa65eb3, 0.10 );		// 0x6b007e
-	createCircle( hrsTwo, digits[ 1 ].valueMax, areaToRadius( area *= dec ),	0xf17a81, 0.23 );		// 0xf51d2a
-	createCircle( minOne, digits[ 2 ].valueMax, areaToRadius( area *= dec ),	0xf169c0, 0.44 );		// 0xf6009d
-	createCircle( minTwo, digits[ 3 ].valueMax, areaToRadius( area *= dec ),	0xa94f62, 0.57 );		// 0x8c162f
-	createCircle( secOne, digits[ 4 ].valueMax, areaToRadius( area *= dec ),	0xdca6fb, 0.76 );		// 0xc96dfd
-	createCircle( secTwo, digits[ 5 ].valueMax, areaToRadius( area *= dec ),	0xf8a7c0, 0.88 );		// 0xf7719a
+	createCircle( hrsOne, digits[ 0 ].valueMax, 0, areaToRadius( area ),			0xa65eb3, 0.10 );		// 0x6b007e
+	createCircle( hrsTwo, digits[ 1 ].valueMax, 1, areaToRadius( area *= dec ),	0xf17a81, 0.23 );		// 0xf51d2a
+	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	0xf169c0, 0.44 );		// 0xf6009d
+	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	0xa94f62, 0.57 );		// 0x8c162f
+	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	0xdca6fb, 0.76 );		// 0xc96dfd
+	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	0xf8a7c0, 0.88 );		// 0xf7719a
 }
 
-void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color, float lx )
+void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, int texIndex, float radius, int color, float lx )
 {
 	int t = numOfCircle;
 	
@@ -310,7 +310,7 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		
 		circle->lineUpPoint.set( lineX, lineY );
 		circle->setSize( screenWidth, screenHeight );
-		circle->setTexture( &texCells[ 0 ] );
+		circle->setTexture( &texCells[ MIN( texIndex, texCellsNum - 1 ) ] );
 		circle->setTextureAnim( texCellAnim );
 		circle->setForceScale( screenScale );
 		circle->setDigitIndex( i );
@@ -1122,7 +1122,7 @@ void Clock :: draw ()
 	drawTime();
 	drawLines();
 
-	drawFreeCircles();
+//	drawFreeCircles();
 	
 	ofSetColor( 95, 63, 34, 30 );
 	drawConvexBlob( convexBlobOuter );
@@ -1141,7 +1141,7 @@ void Clock :: draw ()
 		drawCircleNumbers();
 	}
 	
-	drawLabels();
+//	drawLabels();
 	
 	if( softBody != NULL )
 		softBody->draw();
@@ -1496,7 +1496,7 @@ void Clock :: touchUp ( ofTouchEventArgs &touch )
 	}
 	else
 	{
-		checkLabelPress( touch.x, touch.y );
+//		checkLabelPress( touch.x, touch.y );
 	}
 }
 
@@ -1529,7 +1529,7 @@ void Clock :: mouseReleased( ofMouseEventArgs &e )
 	}
 	else
 	{
-		checkLabelPress( e.x, e.y );
+//		checkLabelPress( e.x, e.y );
 	}
 }
 

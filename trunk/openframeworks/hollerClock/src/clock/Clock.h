@@ -72,7 +72,7 @@ public :
 	
 	void  createBounds		();
 	void  createCircles		();
-	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, float radius, int color = 0xFFFFFF, float lineX = 0 );
+	void  createCircle		( vector<ClockCircle*> &circlesVec, int numOfCircle, int texIndex, float radius, int color = 0xFFFFFF, float lineX = 0 );
 	float areaToRadius		( float area );
 	void  createSoftBody	();
 	void  createLines		();
