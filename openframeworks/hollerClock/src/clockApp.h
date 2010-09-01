@@ -8,6 +8,7 @@
 #include "ofxSimpleGuiToo.h"
 #include "ofxVideoSaver.h"
 #include "ofxFlash.h"
+#include "ofxDirList.h"
 
 #include "ofxBox2d.h"
 #include "Clock.h"
@@ -70,6 +71,8 @@ public:
 	ofTexture				texMembrane;
 	ofTexture*				texDigits;
 	int						texDigitsNum;
+	
+	ofxDirList				DIR;
 	
 };
 

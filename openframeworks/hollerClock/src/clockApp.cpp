@@ -44,8 +44,8 @@ void clockApp :: setup()
 	texFsSize.height	= standardRect.height * 1.0;
 	
 	image.loadImage( "image/background_1280x720.png" );
-	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
-	texBg.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGBA );
+	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGB );
+	texBg.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGB );
 	image.clear();
 
 	image.loadImage( "image/info_1280x720.png" );
@@ -58,10 +58,27 @@ void clockApp :: setup()
 	texMembrane.loadData( image.getPixels(), image.width, image.height, GL_RGBA );
 	image.clear();
 	
+	//-- cell textures.
+	
 	vector<string> cellNames;
-	cellNames.push_back( "image/cell01_256x256.png" );
-	cellNames.push_back( "image/cell02_256x256.png" );
-	cellNames.push_back( "image/cell03_256x256.png" );
+	
+	if( DIR.listDir( "image/cell_texture_0" ) > 0 )
+		cellNames.push_back( "image/cell_texture_0/" + DIR.getName( 0 ) );
+
+	if( DIR.listDir( "image/cell_texture_1" ) > 0 )
+		cellNames.push_back( "image/cell_texture_1/" + DIR.getName( 0 ) );
+
+	if( DIR.listDir( "image/cell_texture_2" ) > 0 )
+		cellNames.push_back( "image/cell_texture_2/" + DIR.getName( 0 ) );
+	
+	if( DIR.listDir( "image/cell_texture_3" ) > 0 )
+		cellNames.push_back( "image/cell_texture_3/" + DIR.getName( 0 ) );
+	
+	if( DIR.listDir( "image/cell_texture_4" ) > 0 )
+		cellNames.push_back( "image/cell_texture_4/" + DIR.getName( 0 ) );
+	
+	if( DIR.listDir( "image/cell_texture_5" ) > 0 )
+		cellNames.push_back( "image/cell_texture_5/" + DIR.getName( 0 ) );
 	
 	texCellsNum = cellNames.size();
 	texCells	= new ofTexture[ texCellsNum ];
@@ -73,6 +90,10 @@ void clockApp :: setup()
 		texCells[ i ].loadData( image.getPixels(), image.width, image.height, GL_RGBA );
 		image.clear();
 	}
+	
+	cellNames.clear();
+	
+	//-- line textures.
 	
 	vector<string> lineNames;
 	lineNames.push_back( "image/line01.png" );
@@ -113,7 +134,7 @@ void clockApp :: setup()
 		image.clear();
 	}
 	
-	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Black_Organism_02_", 5, "png", 62 );
+//	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Black_Organism_02_", 5, "png", 62 );
 	
 	//-- screen grabber.
 	
@@ -248,6 +269,11 @@ void clockApp :: keyPressed(int key)
 		{
 			gui.hide();
 		}
+	}
+	
+	if( key == ' ' )
+	{
+		clock.toggleClockMode();
 	}
 }
 
