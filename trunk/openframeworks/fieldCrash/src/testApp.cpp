@@ -33,9 +33,9 @@ void testApp::setup()
 
 void testApp :: initNoise ()
 {
-	noiseVel.x = 1.0;
-	noiseVel.y = 1.0;
-	noiseVel.z = 1.0;
+	noiseVel.x = 0.0;
+	noiseVel.y = 0.0;
+	noiseVel.z = 0.0;
 	
 	noiseScl.x = 0.01;
 	noiseScl.y = 0.01;
@@ -71,7 +71,8 @@ void testApp :: initOpenCv ()
 
 void testApp :: initContours ()
 {
-	//
+	contourSmooth	= 1.0;
+	contourSimplify	= 5.5f;
 }
 
 void testApp :: initGui ()
@@ -103,8 +104,12 @@ void testApp :: initGui ()
 	}
 	gui.addSlider( "noiseBandIndex  ",	noiseBandIndex, 0, noiseBandsTotal - 1 );
 	
+	gui.addPage( "contour" );
+	gui.addSlider( "contourSmooth  ",	contourSmooth,		0, 1.0 );
+	gui.addSlider( "contourSimplify  ",	contourSimplify,	0, 50.0 );
+	
 	gui.show();
-	gui.setPage( 2 );
+	gui.setPage( 3 );
 
 	gui.loadFromXML();
 }
@@ -275,6 +280,17 @@ void testApp :: copyAndScaleBlobs ()
 		
 		contourBlobsScaled.push_back( ofxCvBlob() );
 		ofxCvBlob& blobCopy = contourBlobsScaled.back();
+
+		for( int j=0; j<blob.pts.size(); j++ )
+		{
+			ofPoint& p1 = blob.pts[ j ];
+			
+			blobCopy.pts.push_back( ofPoint() );
+			ofPoint& p2 = blobCopy.pts.back();
+			
+			p2.x = p1.x * scale + xoff;
+			p2.y = p1.y * scale + yoff;
+		}
 		
 		blobCopy.area					= blob.area;
 		blobCopy.boundingRect.x			= blob.boundingRect.x * scale + xoff;
@@ -287,16 +303,10 @@ void testApp :: copyAndScaleBlobs ()
 		blobCopy.length					= blob.length;
 		blobCopy.nPts					= blob.nPts;
 		
-		for( int j=0; j<blob.pts.size(); j++ )
-		{
-			ofPoint& p1 = blob.pts[ j ];
-			
-			blobCopy.pts.push_back( ofPoint() );
-			ofPoint& p2 = blobCopy.pts.back();
-			
-			p2.x = p1.x * scale + xoff;
-			p2.y = p1.y * scale + yoff;
-		}
+		contourUtil.smooth( blobCopy.pts,	contourSmooth );
+		contourUtil.simplify( blobCopy.pts, contourSimplify );
+		
+		blobCopy.nPts					= blobCopy.pts.size();
 	}
 }
 
@@ -399,6 +409,7 @@ void testApp :: drawContoursLarge ()
 	ofSetColor( 0xFFFFFF );
 //	drawContourLines( contourBlobsScaled );
 	drawContourCurveLines( contourBlobsScaled );
+	drawContourPoints( contourBlobsScaled );
 }
 
 void testApp :: drawContourBoundingBoxes ( vector<ofxCvBlob>& blobs )
@@ -415,11 +426,29 @@ void testApp :: drawContourBoundingBoxes ( vector<ofxCvBlob>& blobs )
 	}
 }
 
+void testApp :: drawContourPoints ( vector<ofxCvBlob>& blobs )
+{
+	ofFill();
+	ofSetColor( 0xFF0000 );
+	
+	for( int i=0; i<blobs.size(); i++ )
+	{
+		int t = blobs[ i ].pts.size();
+		
+		for( int j=0; j<t+1; j++ )		// extra points to close each polygon
+		{
+			int k = j % t;
+			
+			ofCircle( blobs[ i ].pts[ k ].x, blobs[ i ].pts[ k ].y, 1 );
+		}
+	}
+}
+
 void testApp :: drawContourLines ( vector<ofxCvBlob>& blobs )
 {
 	for( int i=0; i<blobs.size(); i++ )
 	{
-		int t = blobs[ i ].nPts;
+		int t = blobs[ i ].pts.size();
 		
 		ofBeginShape();
 		for( int j=0; j<t+1; j++ )		// extra points to close each polygon
@@ -436,7 +465,7 @@ void testApp :: drawContourCurveLines ( vector<ofxCvBlob>& blobs )
 {
 	for( int i=0; i<blobs.size(); i++ )
 	{
-		int t = blobs[ i ].nPts;
+		int t = blobs[ i ].pts.size();
 		
 		ofBeginShape();
 		for( int j=0; j<t+3; j++ )		// extra points to close each polygon

@@ -8,6 +8,7 @@
 #include "ofxOpenCv.h"
 #include "ofxSimpleGuiToo.h"
 #include "ofxResizeUtil.h"
+#include "ofxContourUtil.h"
 
 class testApp : public ofBaseApp
 {
@@ -38,6 +39,7 @@ public:
 	void drawContoursSmall			();
 	void drawContoursLarge			();
 	void drawContourBoundingBoxes	( vector<ofxCvBlob>& blobs );
+	void drawContourPoints			( vector<ofxCvBlob>& blobs );
 	void drawContourLines			( vector<ofxCvBlob>& blobs );
 	void drawContourCurveLines		( vector<ofxCvBlob>& blobs );
 	
@@ -74,8 +76,10 @@ public:
 	float					noiseSclMaster;
 	
 	ofxCvContourFinder		contourFinder;
+	ofxContourUtil			contourUtil;
 	vector<ofxCvBlob>		contourBlobsScaled;
-
+	float					contourSmooth;
+	float					contourSimplify;
 };
 
 #endif

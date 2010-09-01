@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B23ECF4611A0D0AA004CDE97 /* ofxContourUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23ECF4511A0D0AA004CDE97 /* ofxContourUtil.cpp */; };
 		B2F3BCF3119CC6E1004A88FC /* openCV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2F3BCE1119CC6E1004A88FC /* openCV.a */; };
 		B2F3BCF4119CC6E1004A88FC /* ofxCvColorImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F3BCE4119CC6E1004A88FC /* ofxCvColorImage.cpp */; };
 		B2F3BCF5119CC6E1004A88FC /* ofxCvContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F3BCE7119CC6E1004A88FC /* ofxCvContourFinder.cpp */; };
@@ -119,6 +120,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B23ECF4011A0D08C004CDE97 /* convexHull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convexHull.h; path = ../../../addons/ofxContourUtil/libs/convexHull.h; sourceTree = SOURCE_ROOT; };
+		B23ECF4111A0D08C004CDE97 /* polylineSimplify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polylineSimplify.h; path = ../../../addons/ofxContourUtil/libs/polylineSimplify.h; sourceTree = SOURCE_ROOT; };
+		B23ECF4411A0D0AA004CDE97 /* ofxContourUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxContourUtil.h; sourceTree = "<group>"; };
+		B23ECF4511A0D0AA004CDE97 /* ofxContourUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxContourUtil.cpp; sourceTree = "<group>"; };
 		B2F3BCCF119CC6E1004A88FC /* cv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cv.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/cv.h; sourceTree = SOURCE_ROOT; };
 		B2F3BCD0119CC6E1004A88FC /* cv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/cv.hpp; sourceTree = SOURCE_ROOT; };
 		B2F3BCD1119CC6E1004A88FC /* cvaux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cvaux.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/cvaux.h; sourceTree = SOURCE_ROOT; };
@@ -310,6 +315,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B23ECF3E11A0D08C004CDE97 /* ofxContourUtil */ = {
+			isa = PBXGroup;
+			children = (
+				B23ECF3F11A0D08C004CDE97 /* libs */,
+				B23ECF4211A0D08C004CDE97 /* src */,
+			);
+			name = ofxContourUtil;
+			path = ../../../addons/ofxContourUtil;
+			sourceTree = SOURCE_ROOT;
+		};
+		B23ECF3F11A0D08C004CDE97 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				B23ECF4011A0D08C004CDE97 /* convexHull.h */,
+				B23ECF4111A0D08C004CDE97 /* polylineSimplify.h */,
+			);
+			name = libs;
+			path = ../../../addons/ofxContourUtil/libs;
+			sourceTree = SOURCE_ROOT;
+		};
+		B23ECF4211A0D08C004CDE97 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B23ECF4411A0D0AA004CDE97 /* ofxContourUtil.h */,
+				B23ECF4511A0D0AA004CDE97 /* ofxContourUtil.cpp */,
+			);
+			name = src;
+			path = ../../../addons/ofxContourUtil/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		B2F3BCC3119CC516004A88FC /* addons */ = {
 			isa = PBXGroup;
 			children = (
@@ -320,6 +355,7 @@
 				B2F3BE90119CDD65004A88FC /* ofxSimpleGuiToo_rev204 */,
 				B2F3BD5A119CC96F004A88FC /* ofxXmlSettings */,
 				B2F3BF9B119D1B7D004A88FC /* ofxJulapyUtils */,
+				B23ECF3E11A0D08C004CDE97 /* ofxContourUtil */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1004,6 +1040,7 @@
 				B2F3BFB5119D1B7D004A88FC /* ofxTrigger.cpp in Sources */,
 				B2F3BFB6119D1B7D004A88FC /* ofxTrigLUT.cpp in Sources */,
 				B2F3BFB7119D1B7D004A88FC /* ofxVideoSaver.cpp in Sources */,
+				B23ECF4611A0D0AA004CDE97 /* ofxContourUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
