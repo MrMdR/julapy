@@ -9,6 +9,7 @@
 
 #include "ofxBox2d.h"
 #include "Clock.h"
+#include "FooterBar.h"
 
 #define DEVICE_IPAD		0
 #define DEVICE_IPHONE	1
@@ -67,6 +68,8 @@ public:
 	float					rotTimeTotal;
 	bool					bFlipLeft;
 	bool					bFlipRight;
+	
+	FooterBar*				footer;
 };
 
 
