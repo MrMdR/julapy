@@ -55,8 +55,8 @@ void clockApp :: setup()
 	{
 		image.loadImage( "image/background_1024x768.png" );
 	}
-	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGBA );
-	texBg.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGBA );
+	texBg.allocate( texFsSize.width, texFsSize.height, GL_RGB );
+	texBg.loadData( image.getPixels(), texFsSize.width, texFsSize.height, GL_RGB );
 	image.clear();
 	
 	if( deviceType == DEVICE_IPHONE )
@@ -131,7 +131,13 @@ void clockApp :: setup()
 		image.clear();
 	}
 	
-	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Test_Organism_", 5, "png", 200 );
+//	texCellAnim.addFrameSequence( ofToDataPath( "image/cell_anim_01/"), "Test_Organism_", 5, "png", 200 );
+
+	//--
+	
+	footer = NULL;
+	footer = new FooterBar();
+	footer->setup();
 	
 	//--
 	
@@ -333,7 +339,11 @@ void clockApp::touchUp(ofTouchEventArgs &touch){
 
 void clockApp::touchDoubleTap( ofTouchEventArgs &touch )
 {
-	clock.toggleClockMode();
+	if( footer != NULL )
+	{
+		footer->toggleShow();
+	}
+//	clock.toggleClockMode();
 }
 
 void clockApp::lostFocus(){
