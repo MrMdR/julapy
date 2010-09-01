@@ -50,7 +50,14 @@ public:
 	ofxColorPicker* colorPicker0;
 	ofxColorPicker* colorPicker1;
 	
+	ofImage		hint;
+	
 	//-----------------------------
+	
+	void setup ()
+	{
+		hint.loadImage( "images/popup_colors.png" );
+	}
 	
 	void setScreen	( ofxScreen screen )
 	{
@@ -125,6 +132,9 @@ public:
 		int w = screen.screenHeight * 0.228;
 		int h = w * 2;
 		int y = x2;
+		
+		ofSetColor( 255, 255, 255, 255 * tweenVal );
+		hint.draw( (int)( ( x + w ) * 1.1 ), y );
 		
 		colorPicker0->draw( x, y, w, h );
 		

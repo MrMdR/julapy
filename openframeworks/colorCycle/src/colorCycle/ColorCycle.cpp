@@ -13,6 +13,7 @@ ColorCycle :: ColorCycle ()
 {
 	setScreenSize( ofGetWidth(), ofGetHeight() );
 	setFrameRate( ofGetFrameRate() );
+	setUpsideDown( false );
 	
 	white.r = 255;
 	white.g = 255;
@@ -34,6 +35,7 @@ ColorCycle :: ColorCycle ()
 	bColorSelectModeOnBgClick	= false;
 	bColorSelectTimeout			= false;
 	colorSelectTimeout			= 0;
+	colorSelectTimeoutMax		= 2000;
 	
 	bInputDown				= false;
 	inputLastID				= -2;
@@ -74,6 +76,11 @@ void ColorCycle :: setBgClick ( bool b )
 	bColorSelectModeOnBgClick = b;
 }
 
+void ColorCycle :: setUpsideDown ( bool b )
+{
+	upsideDown = b;
+}
+
 ///////////////////////////////////////////////////////
 //	SETUP.
 ///////////////////////////////////////////////////////
@@ -96,6 +103,7 @@ void ColorCycle :: setup ()
 
 	panel.setScreen( screen );
 	panel.setColorPickers( &colorPicker0, &colorPicker1 );
+	panel.setup();
 	
 	physics = NULL;
 	physics = new ColorPhysics();
@@ -369,7 +377,10 @@ void ColorCycle :: draw ()
 	
 	if( physics != NULL )
 		physics->draw();
-	
+}
+
+void ColorCycle :: drawColorPanel ()
+{
 	panel.draw();
 }
 
@@ -444,12 +455,14 @@ void ColorCycle :: shuffle ()
 
 	if( sounds != NULL )
 	{
+		sounds->playNextBackgroundSound();
+		
 		sounds->playRandomPointShuffleSound();
 		sounds->startCollisionSoundTimeout();
 	}
 }
 
-void ColorCycle :: colorSelectMode ()
+void ColorCycle :: startColorSelectMode ()
 {
 	bColorSelectMode = true;
 	
@@ -462,6 +475,16 @@ void ColorCycle :: colorSelectMode ()
 	panel.show();
 	
 	triColorScale.target = 0.2;
+}
+
+void ColorCycle :: stopColorSelectMode ()
+{
+	bColorSelectTimeout	= false;
+	bColorSelectMode	= false;
+	
+	panel.hide();
+	
+	triColorScale.target = 1.0;
 }
 
 ///////////////////////////////////////////////////////
@@ -508,8 +531,20 @@ void ColorCycle :: down ( int x, int y, int id )
 		}
 	}
 	
-	colorPicker0.touchDown( x, y, id );
-	colorPicker1.touchDown( x, y, id );
+	int cx, cy;
+	if( upsideDown )
+	{
+		cx = screen.screenWidth  - x;
+		cy = screen.screenHeight - y;
+	}
+	else
+	{
+		cx = x;
+		cy = y;
+	}
+		
+	colorPicker0.touchDown( cx, cy, id );
+	colorPicker1.touchDown( cx, cy, id );
 	
 //	physics->checkHit( x, y )	// don't forget this, could be handy later.
 }
@@ -533,8 +568,20 @@ void ColorCycle :: drag ( int x, int y, int id )
 			physics->circleDragAtPoint( x, y, id );
 	}
 	
-	colorPicker0.touchMoved( x, y, id );
-	colorPicker1.touchMoved( x, y, id );
+	int cx, cy;
+	if( upsideDown )
+	{
+		cx = screen.screenWidth  - x;
+		cy = screen.screenHeight - y;
+	}
+	else
+	{
+		cx = x;
+		cy = y;
+	}
+	
+	colorPicker0.touchMoved( cx, cy, id );
+	colorPicker1.touchMoved( cx, cy, id );
 }
 
 void ColorCycle :: up ( int x, int y, int id )
@@ -547,12 +594,24 @@ void ColorCycle :: up ( int x, int y, int id )
 			bInputDown	= false;
 		}
 		
-		colorSelectTimeout	= ofGetElapsedTimeMillis() + 1000;
+		colorSelectTimeout	= ofGetElapsedTimeMillis() + colorSelectTimeoutMax;
 		bColorSelectTimeout	= true;
 	}
 	
-	colorPicker0.touchUp( x, y, id );
-	colorPicker1.touchUp( x, y, id );
+	int cx, cy;
+	if( upsideDown )
+	{
+		cx = screen.screenWidth  - x;
+		cy = screen.screenHeight - y;
+	}
+	else
+	{
+		cx = x;
+		cy = y;
+	}
+	
+	colorPicker0.touchUp( cx, cy, id );
+	colorPicker1.touchUp( cx, cy, id );
 	
 	if( physics != NULL )
 		physics->circleUpAtPoint( x, y, id );
@@ -564,12 +623,7 @@ void ColorCycle :: inputCheck ()
 	{
 		if( ofGetElapsedTimeMillis() > colorSelectTimeout )
 		{
-			bColorSelectTimeout	= false;
-			bColorSelectMode	= false;
-			
-			panel.hide();
-			
-			triColorScale.target = 1.0;
+			stopColorSelectMode();
 		}
 	}
 }

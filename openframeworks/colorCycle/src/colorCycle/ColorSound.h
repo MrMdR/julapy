@@ -47,6 +47,8 @@ public:
 	float						collisionSoundTimeout;
 	float						collisionSoundTimeoutLimit;
 	bool						bCollisionSoundTimeout;
+	
+	int							backgroundSoundIndex;
 
 	//--------------------------------
 	
@@ -56,43 +58,30 @@ public:
 #ifdef TARGET_OF_IPHONE
 		
 		vector<string> soundNames;
-		soundNames.push_back( "sounds/background/background_1.caf" );
-		soundNames.push_back( "sounds/background/background_2.caf" );
-		soundNames.push_back( "sounds/background/background_3.caf" );
+		soundNames.push_back( "sounds/background/BackgroundLoop1.caf" );
+		soundNames.push_back( "sounds/background/BackgroundLoop2.caf" );
+		soundNames.push_back( "sounds/background/BackgroundLoop3.caf" );
+		soundNames.push_back( "sounds/background/BackgroundLoop4.caf" );
+		soundNames.push_back( "sounds/background/BackgroundLoop5.caf" );
+		soundNames.push_back( "sounds/background/BackgroundLoop6.caf" );
 		loadSounds( soundNames, spBackground, true );
 		
 		soundNames.clear();
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_1.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_2.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_3.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_4.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_5.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_6.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_7.caf" );
-		soundNames.push_back( "sounds/mesh_drag/mesh_drag_8.caf" );
-		loadSounds( soundNames, spMeshDrag );
-		
-		soundNames.clear();
-		soundNames.push_back( "sounds/point_add/point_add_1.caf" );
+		soundNames.push_back( "sounds/point_add/PountAdd2.caf" );
 		loadSounds( soundNames, spPointAdd );
 		
 		soundNames.clear();
-		soundNames.push_back( "sounds/point_collide/point_collide_1.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_2.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_3.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_4.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_5.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_6.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_7.caf" );
-		soundNames.push_back( "sounds/point_collide/point_collide_8.caf" );
+		soundNames.push_back( "sounds/point_collide/PointAdd1.caf" );
+		soundNames.push_back( "sounds/point_collide/PointRemove2.caf" );
 		loadSounds( soundNames, spPointCollide );
 		
 		soundNames.clear();
-		soundNames.push_back( "sounds/point_remove/point_remove_1.caf" );
+		soundNames.push_back( "sounds/point_remove/PointRemove1.caf" );
 		loadSounds( soundNames, spPointRemove );
 		
 		soundNames.clear();
-		soundNames.push_back( "sounds/point_shuffle/point_shuffle.caf" );
+		soundNames.push_back( "sounds/point_shuffle/PointShuffle1.caf" );
+		soundNames.push_back( "sounds/point_shuffle/PointShuffle3.caf" );
 		loadSounds( soundNames, spPointShuffle );
 		
 #else
@@ -109,6 +98,8 @@ public:
 		collisionSoundTimeout		= 0;
 		collisionSoundTimeoutLimit	= 0;
 		bCollisionSoundTimeout		= false;
+		
+		backgroundSoundIndex		= -1;
 		
 		ofAddListener( ofEvents.update, this, &ColorSound :: update	);
 	}
@@ -154,14 +145,16 @@ public:
 		}
 	}
 	
-	void playRandomSound ( vector<ofxALSoundPlayer*>& sounds, float volume = 1.0 )
+	int playRandomSound ( vector<ofxALSoundPlayer*>& sounds, float volume = 1.0 )
 	{
 		if( sounds.size() == 0 )
-			return;
+			return -1;
 		
 		int i = ofRandom( 0, sounds.size() );
 		sounds[ i ]->setVolume( volume );
 		sounds[ i ]->play();
+		
+		return i;
 	}
 	
 	void playSoundAtIndex ( vector<ofxALSoundPlayer*>& sounds, int index, float volume = 1.0 )
@@ -214,14 +207,16 @@ public:
 		}
 	}
 	
-	void playRandomSound ( vector<ofSoundPlayer*>& sounds, float volume = 1.0 )
+	int playRandomSound ( vector<ofSoundPlayer*>& sounds, float volume = 1.0 )
 	{
 		if( sounds.size() == 0 )
-			return;
+			return -1;
 		
 		int i = ofRandom( 0, sounds.size() );
 		sounds[ i ]->setVolume( volume );
 		sounds[ i ]->play();
+		
+		return i;
 	}
 	
 	void playSoundAtIndex ( vector<ofSoundPlayer*>& sounds, int index, float volume = 1.0 )
@@ -236,6 +231,32 @@ public:
 	}
 	
 #endif
+
+	//////////////////////////////////////////
+	//	NEXT.
+	//////////////////////////////////////////
+	
+	void playNextBackgroundSound ()
+	{
+		stopBackgroundSound();
+		
+		if( ++backgroundSoundIndex > spBackground.size() - 1 )
+			backgroundSoundIndex = 0;
+		
+		playBackgroundSoundAtIndex( backgroundSoundIndex );
+	}
+	
+	//////////////////////////////////////////
+	//	STOP.
+	//////////////////////////////////////////
+	
+	void stopBackgroundSound ()
+	{
+		if( backgroundSoundIndex != -1 )
+		{
+			spBackground[ backgroundSoundIndex ]->stop();
+		}
+	}
 	
 	//////////////////////////////////////////
 	//	RANDOM.
@@ -243,7 +264,7 @@ public:
 	
 	void playRandomBackgroundSound ( float volume = 1.0 )
 	{
-		playRandomSound( spBackground, volume );
+		backgroundSoundIndex = playRandomSound( spBackground, volume );
 	}
 	
 	void playRandomMeshDragSound ( float volume = 1.0 )
