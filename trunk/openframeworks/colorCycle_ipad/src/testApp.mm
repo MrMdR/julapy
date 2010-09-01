@@ -37,6 +37,13 @@ void testApp::setup()
 		infoScreen->setup();
 	}
 	
+	popupScreen = NULL;
+	popupScreen = new PopupScreen();
+	if( popupScreen != NULL )
+	{
+		popupScreen->setup();
+	}
+	
 	sounds = NULL;
 	sounds = new ColorSound();				// comment out to remove.
 	if( sounds != NULL )
@@ -76,7 +83,7 @@ void testApp::update()
 		{
 			if( cc != NULL )
 			{
-				cc->colorSelectMode();
+				cc->startColorSelectMode();
 			}
 		}
 	}
@@ -127,6 +134,17 @@ void testApp::update()
 		}
 	}
 	
+	if( footer != NULL )
+	{
+		if( footer->isPhotoSaved() )
+		{
+			if( popupScreen != NULL )
+			{
+				popupScreen->show();
+			}
+		}
+	}
+	
 	float gx;
 	gx = ofxAccelerometer.getForce().y;
 	gx *= 2;									// increase the reaction to tilt.
@@ -164,8 +182,14 @@ void testApp::draw()
 		glTranslatef( -cx, -cy, 0 );
 	}
 	
+	if( cc != NULL )
+		cc->drawColorPanel();
+	
 	if( infoScreen != NULL )
 		infoScreen->draw();
+	
+	if( popupScreen != NULL )
+		popupScreen->draw();
 	
 	ofSetColor( 0, 0, 0 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetScreenWidth() - 30, 20 );
@@ -244,6 +268,9 @@ void testApp :: checkLastTouch ()
 				if( !footer->isShowing() )
 				{
 					footer->show();
+					
+					if( cc != NULL )
+						cc->stopColorSelectMode();
 				}
 			}
 		}
@@ -253,8 +280,16 @@ void testApp :: checkLastTouch ()
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch)
 {
-	if( footer != NULL )
-		footer->toggleShow();
+	if( footer == NULL )
+		return;
+		
+	footer->toggleShow();
+	
+	if( footer->isShowing() )
+	{
+		if( cc != NULL )
+			cc->stopColorSelectMode();
+	}
 }
 
 //--------------------------------------------------------------
@@ -281,5 +316,8 @@ void testApp::deviceOrientationChanged(int newOrientation)
 	
 	if( newOrientation == 4 )
 		upsideDown = false;
+	
+	if( cc != NULL )
+		cc->setUpsideDown( upsideDown );
 }
 

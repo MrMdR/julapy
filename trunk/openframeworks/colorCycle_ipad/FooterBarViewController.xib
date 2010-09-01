@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="7"/>
+			<integer value="16"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -132,20 +132,6 @@
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 								<reference key="IBUIToolbar" ref="850174294"/>
 							</object>
-							<object class="IBUIBarButtonItem" id="887766029">
-								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<float key="IBUIWidth">10</float>
-								<reference key="IBUIToolbar" ref="850174294"/>
-								<int key="IBUISystemItemIdentifier">6</int>
-							</object>
-							<object class="IBUIBarButtonItem" id="258312784">
-								<object class="NSCustomResource" key="IBUIImage">
-									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">icon_jollyroger_2.png</string>
-								</object>
-								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<reference key="IBUIToolbar" ref="850174294"/>
-							</object>
 							<object class="IBUIBarButtonItem" id="638831788">
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 								<reference key="IBUIToolbar" ref="850174294"/>
@@ -258,14 +244,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
-						<string key="label">pirateButtonHandler</string>
-						<reference key="source" ref="258312784"/>
-						<reference key="destination" ref="841351856"/>
-					</object>
-					<int key="connectionID">77</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">emailButtonHandler</string>
 						<reference key="source" ref="608468722"/>
 						<reference key="destination" ref="841351856"/>
@@ -311,14 +289,6 @@
 						<reference key="destination" ref="55967235"/>
 					</object>
 					<int key="connectionID">83</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">_pirateButton</string>
-						<reference key="source" ref="841351856"/>
-						<reference key="destination" ref="258312784"/>
-					</object>
-					<int key="connectionID">84</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -385,17 +355,10 @@
 							<reference ref="189319940"/>
 							<reference ref="34433594"/>
 							<reference ref="72130293"/>
-							<reference ref="258312784"/>
-							<reference ref="887766029"/>
 							<reference ref="1048377035"/>
 							<reference ref="600055098"/>
 						</object>
 						<reference key="parent" ref="69725619"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">17</int>
-						<reference key="object" ref="258312784"/>
-						<reference key="parent" ref="850174294"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">18</int>
@@ -468,11 +431,6 @@
 						<reference key="parent" ref="850174294"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">69</int>
-						<reference key="object" ref="887766029"/>
-						<reference key="parent" ref="850174294"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">70</int>
 						<reference key="object" ref="1048377035"/>
 						<reference key="parent" ref="850174294"/>
@@ -491,7 +449,6 @@
 					<string>-1.CustomClassName</string>
 					<string>-2.CustomClassName</string>
 					<string>16.IBPluginDependency</string>
-					<string>17.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
 					<string>21.IBPluginDependency</string>
 					<string>25.IBPluginDependency</string>
@@ -506,7 +463,6 @@
 					<string>66.IBPluginDependency</string>
 					<string>67.IBPluginDependency</string>
 					<string>68.IBPluginDependency</string>
-					<string>69.IBPluginDependency</string>
 					<string>7.IBEditorWindowLastContentRect</string>
 					<string>7.IBPluginDependency</string>
 					<string>70.IBPluginDependency</string>
@@ -516,8 +472,6 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>FooterBarViewController</string>
 					<string>UIResponder</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -1142,7 +1096,6 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>icon_color_2.png</string>
 				<string>icon_info_2.png</string>
-				<string>icon_jollyroger_2.png</string>
 				<string>icon_mail_2.png</string>
 				<string>icon_minus.png</string>
 				<string>icon_plus_2.png</string>
@@ -1153,7 +1106,6 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{24, 24}</string>
 				<string>{30, 30}</string>
-				<string>{32, 32}</string>
 				<string>{24, 24}</string>
 				<string>{20, 20}</string>
 				<string>{20, 20}</string>

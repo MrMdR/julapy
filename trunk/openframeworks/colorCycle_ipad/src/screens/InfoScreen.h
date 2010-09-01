@@ -30,7 +30,7 @@ public:
 	
 	void setup ()
 	{
-		image.loadImage( "info_screen_0.png" );
+		image.loadImage( "images/popup_info.png" );
 	}
 	
 	void draw ()

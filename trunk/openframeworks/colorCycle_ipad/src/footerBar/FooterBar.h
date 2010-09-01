@@ -102,6 +102,11 @@ public:
 		return p;
 	}
 	
+	bool isPhotoSaved ()
+	{
+		return [ controller isPhotoSaved ];
+	}
+	
 private:
 	
 	void update ( ofEventArgs &e )

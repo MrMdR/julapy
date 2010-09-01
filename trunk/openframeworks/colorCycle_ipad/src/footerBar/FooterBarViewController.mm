@@ -40,6 +40,7 @@
 	_removeSelected		= NO;
 	_infoSelected		= NO;
 	_hideSelected		= NO;
+	_photSaved			= NO;
 	
 	if( [ MFMailComposeViewController canSendMail ] )
 	{
@@ -155,20 +156,22 @@
 
 	[ self hide ];
 	
-	UIAlertView* alertView = 
-	[ 
-		[ UIAlertView alloc] 
-		initWithTitle		: @"" 
-		message				: @"Composition Saved!"
-		delegate			: self 
-		cancelButtonTitle	: @"OK" 
-		otherButtonTitles	: nil
-	];
-	
-	[ alertView show ];
-	[ alertView release ];
+//	UIAlertView* alertView = 
+//	[ 
+//		[ UIAlertView alloc] 
+//		initWithTitle		: @"" 
+//		message				: @"Composition Saved!"
+//		delegate			: self 
+//		cancelButtonTitle	: @"OK" 
+//		otherButtonTitles	: nil
+//	];
+//	
+//	[ alertView show ];
+//	[ alertView release ];
 	
 	[ self hideTimerKill ];
+	
+	_photSaved = true;
 }
 
 -(void)colorButtonHandler
@@ -219,8 +222,8 @@
 {
 	MFMailComposeViewController *controller = [ [ MFMailComposeViewController alloc ] init ];
 	controller.mailComposeDelegate = self;
-	[ controller setSubject:@"FooterBar Example" ];
-	[ controller setMessageBody:@"hey, email is working in OpenFrameworks on the iPhone!" isHTML:NO ];
+	[ controller setSubject:@"horizons" ];
+	[ controller setMessageBody:@"hi, check out horizons!" isHTML:NO ];
 	[ self presentModalViewController:controller animated:YES ];
 	[ controller release ];
 	
@@ -375,6 +378,20 @@
 -(CGPoint) getHidePoint
 {
 	return _hidePoint;
+}
+
+-(BOOL) isPhotoSaved
+{
+	if( _photSaved )
+	{
+		_photSaved = NO;
+		
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
 }
 
 //////////////////////////////////////////////////////

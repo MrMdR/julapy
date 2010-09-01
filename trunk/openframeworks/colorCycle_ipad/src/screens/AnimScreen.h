@@ -39,6 +39,18 @@ public:
 	
 	//---------------------------------
 	
+	virtual void toggle ()
+	{
+		if( bShow )
+		{
+			hide();
+		}
+		else
+		{
+			show();
+		}
+	}
+	
 	virtual void show ()
 	{
 		if( bShow )
@@ -62,19 +74,12 @@ public:
 		endTime		= startTime + animTime;
 	}
 	
-	virtual void toggle ()
+	virtual void update ( ofEventArgs &e )
 	{
-		if( bShow )
-		{
-			hide();
-		}
-		else
-		{
-			show();
-		}
+		update();
 	}
 	
-	virtual void update ( ofEventArgs &e )
+	virtual void update ()
 	{
 		if( !bAnimating )
 			return;

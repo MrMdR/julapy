@@ -45,6 +45,7 @@
 	BOOL							_infoSelected;
 	BOOL							_hideSelected;
 	CGPoint							_hidePoint;
+	BOOL							_photSaved;
 }
 
 @property (nonatomic, assign) id<FooterBarViewDelegate>			delegate;
@@ -69,6 +70,7 @@
 - (BOOL) isInfoSelected;
 - (BOOL) isHideSelected;
 - (CGPoint) getHidePoint;
+- (BOOL) isPhotoSaved;
 
 - (void) show;
 - (void) hide;
