@@ -41,6 +41,7 @@ public:
 	void setFrameRate	( int fr );
 	void setSounds		( ColorSound* sounds );
 	void setBgClick		( bool b );
+	void setUpsideDown	( bool b );
 	
 	void setGravity		( float gx, float gy );
 	
@@ -59,12 +60,14 @@ public:
 #endif
 	
 	void drawColorPickers		();
+	void drawColorPanel			();
 	void drawTriangles			();
 	
-	void addCircle			();
-	void removeCircle		();
-	void shuffle			();
-	void colorSelectMode	();
+	void addCircle				();
+	void removeCircle			();
+	void shuffle				();
+	void startColorSelectMode	();
+	void stopColorSelectMode	();
 	
 	void down			( int x, int y, int id = -1 );
 	void drag			( int x, int y, int id = -1 );
@@ -94,6 +97,7 @@ public:
 	bool			bColorSelectModeOnBgClick;
 	bool			bColorSelectTimeout;
 	int				colorSelectTimeout;
+	int				colorSelectTimeoutMax;
 	
 	ofPoint			inputPos1;
 	ofPoint			inputPos2;
@@ -106,4 +110,6 @@ public:
 	ofxEaseValue			triColorScale;
 	
 	ColorSound*			sounds;
+	
+	bool			upsideDown;
 };
