@@ -75,14 +75,14 @@ public:
 	}
 	
 	//------------------------------------------------ 
-	void* getData() {
-		if(body) {
-			body->GetUserData();
-		}
-		else {
-			ofLog(OF_LOG_NOTICE, "- must have a valid body -");
-		}
-	}
+//	void* getData() {
+//		if(body) {
+//			body->GetUserData();
+//		}
+//		else {
+//			ofLog(OF_LOG_NOTICE, "- must have a valid body -");
+//		}
+//	}
 	
 	//------------------------------------------------ 
 	virtual void setFilterData(b2FilterData data) {

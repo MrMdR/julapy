@@ -23,6 +23,7 @@ ColorCycle :: ColorCycle ()
 	black.g = 0;
 	black.b = 0;
 	
+	box2d	= NULL;
 	physics	= NULL;
 	sounds	= NULL;
 	
@@ -48,6 +49,11 @@ ColorCycle :: ColorCycle ()
 ColorCycle :: ~ColorCycle ()
 {
 	//
+}
+
+void ColorCycle :: setBox2d ( ofxBox2d* box2d )
+{
+	this->box2d = box2d;
 }
 
 void ColorCycle :: setScreenSize ( int w, int h )
@@ -109,6 +115,7 @@ void ColorCycle :: setup ()
 	physics = new ColorPhysics();
 	if( physics != NULL )
 	{
+		physics->setBox2d( box2d );
 		physics->setSounds( sounds );
 		physics->setScreen( screen );
 		physics->setup();
@@ -217,6 +224,9 @@ void ColorCycle :: updateDelaunay ()
 	if( physics == NULL )
 		return;
 	
+	if( physics->circlesSize() < 1 )
+		return;
+	
 	for( int i=0; i<physics->circlesSize(); i++ )
 	{
 		ofPoint p = physics->getCirclePointAt( i );
@@ -228,8 +238,6 @@ void ColorCycle :: updateDelaunay ()
 
 void ColorCycle :: updateTriangles ()
 {
-#ifdef USE_COLOR_CIRCLE	
-	
 	triColorScale.update();
 	
 	//--
@@ -260,14 +268,12 @@ void ColorCycle :: updateTriangles ()
 			
 			//-- collisions.
 			
-			ColorCircle* circle;
-			circle = getCircleAtPoint( delTri.points[ j ] );
 			float collisionScale = 0;
-			if( circle != NULL )
+			if( physics != NULL )
 			{
-				collisionScale = circle->collision;
-				collisionScale = ofClamp( collisionScale, 0.25, 0.75 );
+				collisionScale = physics->getCollisionAtPoint( delTri.points[ j ] );
 			}
+			collisionScale = ofClamp( collisionScale, 0.25, 0.75 );
 			
 			//-- work out triangle colour.
 			
@@ -309,8 +315,6 @@ void ColorCycle :: updateTriangles ()
 		triangle->init();
 		triangles.push_back( triangle );
 	}
-	
-#endif
 }
 
 bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
@@ -348,23 +352,6 @@ ofColor ColorCycle :: interpolateColor ( const ofColor& c1, const ofColor& c2, f
 	return c;
 }
 
-#ifdef USE_COLOR_CIRCLE
-ColorCircle* ColorCycle :: getCircleAtPoint ( ofPoint p1 )
-{
-	for( int i=0; i<physics->circles.size(); i++ )
-	{
-		ColorCircle* circle = physics->circles[ i ];
-		const ofPoint& p2	= circle->pos;
-		
-		if( p1.x == p2.x && p1.y == p2.y )
-		{
-			return circle;
-		}
-	}
-	
-	return NULL;
-}
-#endif
 ///////////////////////////////////////////////////////
 //	DRAW.
 ///////////////////////////////////////////////////////

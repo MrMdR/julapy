@@ -65,6 +65,11 @@ void ColorPhysics :: Remove(const b2ContactPoint* point)
 //	SETTERS.
 ///////////////////////////////////////////////////////
 
+void ColorPhysics :: setBox2d ( ofxBox2d* box2d )
+{
+	this->box2d = box2d;
+}
+
 void ColorPhysics :: setScreen ( ofxScreen screen )
 {
 	this->screen = screen;
@@ -95,8 +100,7 @@ void ColorPhysics :: setSounds ( ColorSound* sounds )
 
 void ColorPhysics :: setup ()
 {
-	box2d = new ofxBox2d();
-	box2d->init();
+	box2d->setIterations( 20, 10 );
 	box2d->setGravity( 0, 0 );
 	box2d->setFPS( 30.0 );
 //	box2d->registerGrabbing();
@@ -166,10 +170,7 @@ void ColorPhysics :: createBounds ()
 void ColorPhysics :: createCircles ()
 {
 	int numOfCircle;
-	numOfCircle = 25;
-#ifdef TARGET_OF_IPHONE
-	numOfCircle = 25;
-#endif
+	numOfCircle = 10;
 	
 	int t = numOfCircle;
 	for( int i=0; i<t; i++ )
@@ -313,6 +314,22 @@ ofPoint ColorPhysics :: getCirclePointAt ( int i )
 	return p;
 }
 
+ColorCircle* ColorPhysics :: getCircleAtPoint ( const ofPoint& p1 )
+{
+	for( int i=0; i<circles.size(); i++ )
+	{
+		ColorCircle* circle = circles[ i ];
+		const ofPoint& p2	= circle->pos;
+		
+		if( p1.x == p2.x && p1.y == p2.y )
+		{
+			return circle;
+		}
+	}
+	
+	return NULL;
+}
+
 ofPoint ColorPhysics :: getCircleColorPointAt ( int i )
 {
 	ofPoint p;
@@ -364,6 +381,19 @@ void ColorPhysics :: circleDragAtPoint ( int x, int y, int id )
 void ColorPhysics :: circleUpAtPoint ( int x, int y, int id )
 {
 	box2d->grabShapeUp( x, x, id );
+}
+
+float ColorPhysics :: getCollisionAtPoint ( const ofPoint& p )
+{
+	ColorCircle* circle = NULL;
+	circle = getCircleAtPoint( p );
+	
+	if( circle != NULL )
+	{
+		return circle->collision;
+	}
+	
+	return 0;
 }
 
 ///////////////////////////////////////////////////////

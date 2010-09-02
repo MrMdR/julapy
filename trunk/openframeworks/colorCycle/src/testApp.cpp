@@ -10,8 +10,11 @@ void testApp :: setup()
 	ofSetVerticalSync( true );
 	ofSetCircleResolution( 100 );
 
+	box2d.init();
+	
 	cs.setup();
 	
+	cc.setBox2d( &box2d );
 	cc.setSounds( &cs );
 	cc.setBgClick( true );
 	cc.setScreenSize( ofGetWidth(), ofGetHeight() );
