@@ -34,6 +34,7 @@ public:
 	
 	int  addPoint		( const ofPoint& point );
 	int  addPoint		( float x, float y, float z );
+	int  addPoints		( const vector<ofPoint>& pts );
 	
 	int  triangulate	();
 	void reset			();
