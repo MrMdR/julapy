@@ -15,6 +15,8 @@ void testApp::setup()
 	
 	lastTouchId = -1;
 	
+	box2d.init();
+	
 	splashScreen = NULL;
 	splashScreen = new SplashScreen();		// comment out to remove.
 	if( splashScreen != NULL )
@@ -55,6 +57,7 @@ void testApp::setup()
 	cc = new ColorCycle();					// comment out to remove.
 	if( cc != NULL )
 	{
+		cc->setBox2d( &box2d );
 		cc->setSounds( sounds );
 		cc->setScreenSize( ofGetWidth(), ofGetHeight() );
 		cc->setup();
@@ -201,8 +204,14 @@ void testApp::draw()
 }
 
 //--------------------------------------------------------------
-void testApp::exit(){
-
+void testApp::exit()
+{
+	delete popupScreen;
+	delete infoScreen;
+	delete splashScreen;
+	delete footer;
+	delete sounds;
+	delete cc;
 }
 
 //--------------------------------------------------------------
