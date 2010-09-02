@@ -227,14 +227,14 @@ void ofxBox2d :: grabShapeDown2 (float x, float y, int id, b2Body* body )
 	{
 		if( mouseJoint != NULL )			// mouse joint already registered.
 		{
-			grabShapeUp( x, y, id );		// destroy the mouse joint before replacing it.
+			grabShapeUp2( x, y, id );		// destroy the mouse joint before replacing it.
 		}
 	}
 	else if( id >= 0 && id < OF_MAX_TOUCH_JOINTS )
 	{
 		if( touchJoints[ id ] != NULL )		// touch joint already registered.
 		{
-			grabShapeUp( x, y, id );		// destroy the touch joint before replacing it.
+			grabShapeUp2( x, y, id );		// destroy the touch joint before replacing it.
 		}
 	}
 	else 

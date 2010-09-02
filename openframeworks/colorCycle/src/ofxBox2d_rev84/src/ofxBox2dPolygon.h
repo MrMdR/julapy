@@ -24,7 +24,10 @@ public:
 	}
 	
 	//------------------------------------------------
-	ofPoint getPosition() {
+	ofPoint getPosition() 
+	{
+		ofPoint p;
+		return p;
 	}
 	
 	//------------------------------------------------
@@ -193,7 +196,7 @@ public:
 		
 		// Compute the polygon centroid.
 		b2Vec2 m_centroid = computeCentroid(vertexArray, count);//ComputeCentroid(vertexArray, vertexCount);
-		b2Vec2 v_coreVertices[b2_maxPolygonVertices];
+//		b2Vec2 v_coreVertices[b2_maxPolygonVertices];
 		
 		for(int i=0; i<count; i++) {
 			

@@ -31,6 +31,7 @@ public:
 	void Add	( const b2ContactPoint* point );
 	void Remove	( const b2ContactPoint* point );
 	
+	void setBox2d	( ofxBox2d* box2d );
 	void setScreen	( ofxScreen screen );
 	void setGravity	( float gx, float gy );
 	void setSounds	( ColorSound* sounds );
@@ -49,11 +50,13 @@ public:
 	
 	int   circlesSize				();
 	ofPoint getCirclePointAt		( int i );
+	ColorCircle* getCircleAtPoint	( const ofPoint& p );
 	ofPoint getCircleColorPointAt	( int i );
 	void  setCircleColor			( int i, const ofColor& c );
 	void  circleDownAtPoint			( int x, int y, int id );
 	void  circleDragAtPoint			( int x, int y, int id );
 	void  circleUpAtPoint			( int x, int y, int id );
+	float getCollisionAtPoint		( const ofPoint& p );
 	
 	void  createJoints			();
 	void  createJointsForCircle	( ColorCircle* circle );

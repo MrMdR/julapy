@@ -9,9 +9,8 @@
 
 #pragma once
 
-#define USE_COLOR_CIRCLE
-
 #include "ofMain.h"
+#include "ofxBox2d.h"
 #include "ofxScreen.h"
 #include "ofxColorPicker.h"
 #include "ofxDelaunay.h"
@@ -23,11 +22,6 @@
 #include "ColorPanel.h"
 #include "ColorConstants.h"
 #include "ColorSound.h"
-
-
-#ifdef USE_COLOR_CIRCLE
-#include "ColorCircle.h"
-#endif
  
 class ColorCycle
 {
@@ -37,6 +31,7 @@ public:
 	 ColorCycle();
 	~ColorCycle();
 	
+	void setBox2d		( ofxBox2d* box2d );
 	void setScreenSize	( int w, int h );
 	void setFrameRate	( int fr );
 	void setSounds		( ColorSound* sounds );
@@ -55,10 +50,6 @@ public:
 	bool checkTriangleHit		( float x, float y, int id );
 	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
 	
-#ifdef USE_COLOR_CIRCLE	
-	ColorCircle* getCircleAtPoint ( ofPoint p1 );
-#endif
-	
 	void drawColorPickers		();
 	void drawColorPanel			();
 	void drawTriangles			();
@@ -76,6 +67,8 @@ public:
 	
 	ofxScreen		screen;
 	int				frameRate;
+	
+	ofxBox2d*		box2d;
 	
 	ofxColorPicker	colorPicker0;
 	ofxColorPicker	colorPicker1;

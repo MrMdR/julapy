@@ -5,6 +5,7 @@
 #include "ColorCycle.h"
 #include "ColorSound.h"
 #include "ColorConstants.h"
+#include "ofxBox2d.h"
  
 class testApp : public ofBaseApp{
 
@@ -13,9 +14,6 @@ public:
 	void setup();
 	void update();
 	void draw();
-	
-	void loadSounds			( string dirPath, vector<ofSoundPlayer*>& soundVector, bool loop = false );
-	void loadNumOfSounds	( string dirPath, vector<ofSoundPlayer*>& soundVector, bool loop = false, int numOfSounds = CIRCLES_MAX );
 	
 	void keyPressed  (int key);
 	void keyReleased(int key);
@@ -27,6 +25,7 @@ public:
 
 	int				frameRate;
 	
+	ofxBox2d		box2d;
 	ColorCycle		cc;
 	ColorSound		cs;
 };

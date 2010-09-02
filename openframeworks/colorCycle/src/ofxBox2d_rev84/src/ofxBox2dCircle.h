@@ -55,6 +55,7 @@ public:
 			b2CircleShape *data = (b2CircleShape*)shape;
 			return data->GetRadius() * OFX_BOX2D_SCALE;
 		}
+		return 0;
 	}
 	
 	
@@ -138,7 +139,7 @@ public:
 		
 		glPopMatrix();
 		
-		float angle			= getRotation();
+//		float angle			= getRotation();
 		const b2XForm& xf	= body->GetXForm();
 		b2Vec2	center		= body->GetPosition();
 		b2Vec2	axis		= xf.R.col1;
