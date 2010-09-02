@@ -23,7 +23,7 @@ ofxDelaunay :: ~ofxDelaunay()
 
 int ofxDelaunay :: addPoint( const ofPoint& point )
 {
-	addPoint( point.x, point.y, point.z );
+	return addPoint( point.x, point.y, point.z );
 }
 
 int ofxDelaunay :: addPoint( float x, float y, float z )
@@ -32,6 +32,19 @@ int ofxDelaunay :: addPoint( float x, float y, float z )
 	points.back().x = x;
 	points.back().y = y;
 	points.back().z = z;
+	
+	return points.size();
+}
+
+int ofxDelaunay :: addPoints ( const vector<ofPoint>& pts )
+{
+	for( int i; i<points.size(); i++ )
+	{
+		points.push_back( XYZ() );
+		points.back().x = pts[ i ].x;
+		points.back().y = pts[ i ].y;
+		points.back().z = pts[ i ].z;
+	}
 	
 	return points.size();
 }
