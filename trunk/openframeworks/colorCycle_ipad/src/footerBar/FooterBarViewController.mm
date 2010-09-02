@@ -150,7 +150,7 @@
 // METHODS
 //////////////////////////////////////////////////////
 
--(void)snapButtonHandler
+-(IBAction)snapButtonHandler
 {
 	ofxiPhoneScreenGrab( 0 );
 
@@ -174,33 +174,33 @@
 	_photSaved = true;
 }
 
--(void)colorButtonHandler
+-(IBAction)colorButtonHandler
 {
 	_colorSelected = YES;
 }
 
--(void)addButtonHandler
+-(IBAction)addButtonHandler
 {
 	_addSelected = YES;
 	
 	[ self hideTimerInit ];
 }
 
--(void)removeButtonHandler
+-(IBAction)removeButtonHandler
 {
 	_removeSelected = YES;
 	
 	[ self hideTimerInit ];
 }
 
--(void)shuffleButtonHandler
+-(IBAction)shuffleButtonHandler
 {
 	_shuffleSelected = YES;
 	
 	[ self hideTimerInit ];
 }
 
--(void)pirateButtonHandler
+-(IBAction)pirateButtonHandler
 {
 	UIAlertView* alertView = 
 	[ 
@@ -218,7 +218,7 @@
 	[ self hideTimerKill ];
 }
 
--(void)emailButtonHandler
+-(IBAction)emailButtonHandler
 {
 	MFMailComposeViewController *controller = [ [ MFMailComposeViewController alloc ] init ];
 	controller.mailComposeDelegate = self;
@@ -230,14 +230,16 @@
 	[ self hideTimerKill ];
 }
 
--(void)infoButtonHandler
+-(IBAction)infoButtonHandler
 {
 	_infoSelected = YES;
+	
+//	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://phobos.apple.com/au/album/powwow-nine-sacred-spaces/id367193275"]];
 	
 	[ self hide ];
 }
 
--(void)forward:(id)sender
+-(IBAction)forward:(id)sender
 {
 	if( _config == nil )
 	{

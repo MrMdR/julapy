@@ -33,6 +33,17 @@ public:
 		image.loadImage( "images/popup_info.png" );
 	}
 	
+	void show ()
+	{
+		if( bShow )
+			return;
+		
+//		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=367193275" );		// album link.
+		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=367193276" );		// artist link.
+		
+		AnimScreen :: show();
+	}
+	
 	void draw ()
 	{
 		if( !bVisible )

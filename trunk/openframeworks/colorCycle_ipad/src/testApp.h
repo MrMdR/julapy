@@ -4,6 +4,7 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
+#include "ofxBox2d.h"
 #include "ColorCycle.h"
 #include "ColorSound.h"
 #include "FooterBar.h"
@@ -34,6 +35,7 @@ public:
 
 	int				frameRate;
 	
+	ofxBox2d		box2d;
 	ColorCycle*		cc;
 	ColorSound*		sounds;
 	FooterBar*		footer;
