@@ -11,7 +11,8 @@
 
 ColorPhysics :: ColorPhysics ()
 {
-	box2d = NULL;
+	box2d	= NULL;
+	sounds	= NULL;
 	
 	setGravity( 0, 0 );
 }
@@ -29,9 +30,9 @@ void ColorPhysics :: Add( const b2ContactPoint* point )
 {
 	for( int i=0; i<circles.size(); i++ )
 	{
-		ColorCircle& circle = *circles[ i ];
+		ColorCircle* circle = circles[ i ];
 		
-		for( b2Shape* s=circle.body->GetShapeList(); s; s=s->GetNext() )
+		for( b2Shape* s=circle->body->GetShapeList(); s; s=s->GetNext() )
 		{
 			if( point->shape1 == s || point->shape2 == s )
 			{
@@ -40,7 +41,7 @@ void ColorPhysics :: Add( const b2ContactPoint* point )
 				
 				if( vel > 5 )
 				{
-					circle.collision = 1.0;
+					circle->collision = 1.0;
 //					circle.collision = vel / 30;
 //					circle.collision = ofClamp( circle.collision, 0, 1 );
 				}
@@ -50,7 +51,8 @@ void ColorPhysics :: Add( const b2ContactPoint* point )
 				vol = ofClamp( vol, 0, 1 );
 				
 //				sounds->playRandomPointCollisionSound( vol );
-				sounds->playPointCollisionSoundAtIndex( i, vol );
+				if( sounds != NULL )
+					sounds->playPointCollisionSoundAtIndex( i, vol );
 			}
 		}
 	}
@@ -103,7 +105,6 @@ void ColorPhysics :: setup ()
 	box2d->setIterations( 20, 10 );
 	box2d->setGravity( 0, 0 );
 	box2d->setFPS( 30.0 );
-//	box2d->registerGrabbing();
 	box2d->getWorld()->SetContactListener( this );		// register contact class.
 	
 	circleRadius = areaToRadius( 0.001 );
@@ -115,6 +116,12 @@ void ColorPhysics :: setup ()
 
 void ColorPhysics :: createBounds ()
 {
+	if( true )
+	{
+		box2d->createBounds();
+		return;
+	}
+	
 	b2BodyDef bd;
 	bd.position.Set( 0, 0 );
 	ground = box2d->ground = box2d->world->CreateBody( &bd );
@@ -175,14 +182,18 @@ void ColorPhysics :: createCircles ()
 	int t = numOfCircle;
 	for( int i=0; i<t; i++ )
 	{
-		addCircle();
+		addCircleAtRandomPoint();
 	}
 }
 
-void ColorPhysics :: addCircle ()
+void ColorPhysics :: addCircleAtRandomPoint ()
 {
-	ColorCircle* circle;
-	circle = new ColorCircle();
+	addCircle( ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ) );
+}
+
+void ColorPhysics :: addCircle ( float x, float y )
+{
+	ColorCircle* circle = new ColorCircle();
 	
 	//-- define line up point.
 	
@@ -200,21 +211,26 @@ void ColorPhysics :: addCircle ()
 	
 	circle->enableGravity( bEnableGravity );
 	circle->setPhysics( mass, bounce, friction );
-	circle->setup( box2d->getWorld(), ofRandom( 0, screen.screenWidth ), ofRandom( 0, screen.screenHeight ), circleRadius, false );
+	circle->setup( box2d->getWorld(), x, y, circleRadius, false );
 	circle->setRotationFriction( 1.0 );
 	circle->setDamping( 1.0 );
-	circle->body->AllowSleeping( false );
+//	circle->body->AllowSleeping( false );
+	
+	circle->update();
 	
 	//-- add to vectors.
 	
 	circles.push_back( circle );
+	circle = NULL;
+	
+	cout << "circles " << circles.size() << endl;
 }
 
 bool ColorPhysics :: addSingleCircle ()
 {
-	if( circles.size() <= CIRCLES_MAX )
+	if( circles.size() < CIRCLES_MAX )
 	{
-		addCircle();
+		addCircleAtRandomPoint();
 		createJointsForCircle( circles.back() );
 		
 		return true;
@@ -247,8 +263,12 @@ bool ColorPhysics :: removeCircle ()
 
 		if( i > 0 )
 		{
-			circles[ i ]->destroyShape();
+			ColorCircle* circle;
+			circle = circles[ i ];
 			circles.erase( circles.begin() + i );
+			
+			delete circle;
+			circle = NULL;
 		}
 		
 		createJoints();
@@ -272,9 +292,11 @@ bool ColorPhysics :: checkHit ( float x, float y )
 {
 	b2Vec2 p( x / OFX_BOX2D_SCALE, y / OFX_BOX2D_SCALE );
 	
+	ColorCircle* circle;
+	
 	for( int i=0; i<circles.size(); i++ )
 	{
-		ColorCircle* circle = circles[ i ];
+		circle = circles[ i ];
 		
 		for( b2Shape* s=circle->body->GetShapeList(); s; s=s->GetNext() )
 		{
@@ -285,10 +307,14 @@ bool ColorPhysics :: checkHit ( float x, float y )
 			
 			if( inside )
 			{
+				circle = NULL;
+				
 				return true;
 			}
 		}
 	}
+	
+	circle = NULL;
 	
 	return false;
 }
@@ -369,13 +395,15 @@ void ColorPhysics :: circleDownAtPoint ( int x, int y, int id )
 	
 	if( circle != NULL )
 	{
-		box2d->grabShapeDown2( x, y, id, circle->body );
+		box2d->grabShapeDown( x, y, id, circle->body );
 	}
+	
+	circle = NULL;
 }
 
 void ColorPhysics :: circleDragAtPoint ( int x, int y, int id )
 {
-	box2d->grabShapeDragged2( x, y, id );
+	box2d->grabShapeDragged( x, y, id );
 }
 
 void ColorPhysics :: circleUpAtPoint ( int x, int y, int id )
@@ -385,13 +413,20 @@ void ColorPhysics :: circleUpAtPoint ( int x, int y, int id )
 
 float ColorPhysics :: getCollisionAtPoint ( const ofPoint& p )
 {
-	ColorCircle* circle = NULL;
+	ColorCircle* circle;
 	circle = getCircleAtPoint( p );
 	
 	if( circle != NULL )
 	{
-		return circle->collision;
+		float collision;
+		collision = circle->collision;
+		
+		circle = NULL;
+		
+		return collision;
 	}
+	
+	circle = NULL;
 	
 	return 0;
 }
@@ -410,10 +445,10 @@ void ColorPhysics :: createJoints ()
 
 void ColorPhysics :: createJointsForCircle	( ColorCircle* circle )
 {
-	int r = (int)ofRandom( 0, circles.size () - 1 );
+	int r = (int)ofRandom( 0, circles.size () );
 	
-	ColorCircle& c1 = *circle;
-	ColorCircle& c2 = *circles[ r ];
+	ColorCircle* c1 = circle;
+	ColorCircle* c2 = circles[ r ];
 	
 	b2DistanceJointDef jd;
 	b2Vec2 p1, p2, d;
@@ -421,8 +456,8 @@ void ColorPhysics :: createJointsForCircle	( ColorCircle* circle )
 	jd.frequencyHz  = 10.0;
 	jd.dampingRatio = 0.05;
 	
-	jd.body1 = c1.body;
-	jd.body2 = c2.body;
+	jd.body1 = c1->body;
+	jd.body2 = c2->body;
 	
 	jd.localAnchor1.Set( 0, 0 );
 	jd.localAnchor2.Set( 0, 0 );
@@ -441,6 +476,9 @@ void ColorPhysics :: createJointsForCircle	( ColorCircle* circle )
 	joint = (b2DistanceJoint*)box2d->getWorld()->CreateJoint( &jd );
 	
 	joints.push_back( joint );
+	
+	c1 = NULL;
+	c2 = NULL;
 }
 
 void ColorPhysics :: destroyJoints ()
@@ -468,9 +506,7 @@ void ColorPhysics :: update ()
 {
 	for( int i=0; i<circles.size(); i++ )
 	{
-		ColorCircle& circle = *circles[ i ];
-		
-		circle.update();
+		circles[ i ]->update();
 	}
 	
 	box2d->update();
@@ -484,8 +520,6 @@ void ColorPhysics :: draw ()
 {
 	for( int i=0; i<circles.size(); i++ )
 	{
-		ColorCircle& circle = *circles[ i ];
-		
-		circle.draw();
+		circles[ i ]->draw();
 	}
 }

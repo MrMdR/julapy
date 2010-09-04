@@ -10,7 +10,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxBox2d.h"
+#include "ofxBox2dCircle.h"
 #include "ofxVec2f.h"
 #include "ofxScreen.h"
 
@@ -19,8 +19,7 @@ class ColorCircle : public ofxBox2dCircle
 	
 public:
 	
-	 ColorCircle();
-	~ColorCircle();
+	ColorCircle();
 	
 	void setScreen	( ofxScreen screen );
 	void setColor	( const ofColor& color );
