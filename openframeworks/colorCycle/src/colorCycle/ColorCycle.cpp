@@ -196,8 +196,8 @@ void ColorCycle :: update ()
 	panel.update();
 	
 	updatePhysics();
-	fakeDelaunay();
-//	updateDelaunay();
+//	fakeDelaunay();
+	updateDelaunay();
 	updateTriangles();
 	
 	inputCheck();

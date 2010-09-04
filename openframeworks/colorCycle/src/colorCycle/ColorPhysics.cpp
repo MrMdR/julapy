@@ -116,7 +116,7 @@ void ColorPhysics :: setup ()
 
 void ColorPhysics :: createBounds ()
 {
-	if( true )
+	if( false )
 	{
 		box2d->createBounds();
 		return;
@@ -177,7 +177,7 @@ void ColorPhysics :: createBounds ()
 void ColorPhysics :: createCircles ()
 {
 	int numOfCircle;
-	numOfCircle = 10;
+	numOfCircle = 15;
 	
 	int t = numOfCircle;
 	for( int i=0; i<t; i++ )
@@ -214,7 +214,7 @@ void ColorPhysics :: addCircle ( float x, float y )
 	circle->setup( box2d->getWorld(), x, y, circleRadius, false );
 	circle->setRotationFriction( 1.0 );
 	circle->setDamping( 1.0 );
-//	circle->body->AllowSleeping( false );
+	circle->body->AllowSleeping( false );
 	
 	circle->update();
 	

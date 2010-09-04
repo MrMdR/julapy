@@ -104,8 +104,8 @@ void ColorCircle :: drawStroke ()
 		ofEnableSmoothing();
 	
 	ofNoFill();
-//	ofSetColor( color.r, color.g, color.b );
-	ofSetColor( 255, 255, 255 );
+	ofSetColor( color.r, color.g, color.b );
+//	ofSetColor( 255, 255, 255 );
 	ofCircle( pos.x, pos.y, getRadius() );
 
 	if( bSmooth )
