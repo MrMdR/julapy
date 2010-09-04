@@ -29,6 +29,7 @@ int ofxDelaunay :: addPoint( const ofPoint& point )
 int ofxDelaunay :: addPoint( float x, float y, float z )
 {
 	points.push_back( XYZ() );
+	points.back().i = points.size() - 1;
 	points.back().x = x;
 	points.back().y = y;
 	points.back().z = z;
@@ -75,9 +76,9 @@ int ofxDelaunay :: triangulate()
 		p2 = trianglesOut[ i ].p2;
 		p3 = trianglesOut[ i ].p3;
 		
-		triangle.pointIndex[ 0 ] = p1;
-		triangle.pointIndex[ 1 ] = p2;
-		triangle.pointIndex[ 2 ] = p3;
+		triangle.pointIndex[ 0 ] = points[ p1 ].i;
+		triangle.pointIndex[ 1 ] = points[ p2 ].i;
+		triangle.pointIndex[ 2 ] = points[ p3 ].i;
 		
 		triangle.points[ 0 ].set( points[ p1 ].x, points[ p1 ].y, points[ p1 ].z );
 		triangle.points[ 1 ].set( points[ p2 ].x, points[ p2 ].y, points[ p2 ].z );
