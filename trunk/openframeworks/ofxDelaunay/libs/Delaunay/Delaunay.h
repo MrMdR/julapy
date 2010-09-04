@@ -28,7 +28,6 @@ struct IEDGE{
 };
 
 struct XYZ{
-  int i;
   double x, y, z;
 };
 
