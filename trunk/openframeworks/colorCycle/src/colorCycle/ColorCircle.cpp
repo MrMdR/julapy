@@ -37,11 +37,6 @@ ColorCircle :: ColorCircle ()
 	bSelected = false;
 }
 
-ColorCircle :: ~ColorCircle ()
-{
-	//
-}
-
 void ColorCircle :: setScreen ( ofxScreen screen )
 {
 	this->screen = screen;
@@ -109,7 +104,8 @@ void ColorCircle :: drawStroke ()
 		ofEnableSmoothing();
 	
 	ofNoFill();
-	ofSetColor( color.r, color.g, color.b );
+//	ofSetColor( color.r, color.g, color.b );
+	ofSetColor( 255, 255, 255 );
 	ofCircle( pos.x, pos.y, getRadius() );
 
 	if( bSmooth )

@@ -17,7 +17,6 @@ class ColorTriangle
 public:
 	
 	 ColorTriangle();
-	~ColorTriangle();
 	
 	void init		();
 	

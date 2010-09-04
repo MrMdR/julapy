@@ -46,6 +46,7 @@ public:
 	
 	void updatePhysics			();
 	void updateDelaunay			();
+	void fakeDelaunay			();
 	void updateTriangles		();
 	bool checkTriangleHit		( float x, float y, int id );
 	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
@@ -100,6 +101,7 @@ public:
 	
 	ofxDelaunay				delaunay;
 	vector<ColorTriangle*>	triangles;
+	int						trianglesFound;
 	ofxEaseValue			triColorScale;
 	
 	ColorSound*			sounds;

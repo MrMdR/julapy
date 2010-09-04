@@ -11,12 +11,27 @@
 
 ColorTriangle :: ColorTriangle ()
 {
-
-}
-
-ColorTriangle :: ~ColorTriangle ()
-{
-
+	for( int i=0; i<3; i++ )
+	{
+		gl_points[ i * 2 + 0 ] = 0;
+		gl_points[ i * 2 + 1 ] = 0;
+		
+		gl_colors[ i * 4 + 0 ] = 0;
+		gl_colors[ i * 4 + 1 ] = 0;
+		gl_colors[ i * 4 + 2 ] = 0;
+		gl_colors[ i * 4 + 3 ] = 0;
+		
+		points[ i ].x	= 0;
+		points[ i ].y	= 0;
+		points[ i ].z	= 0;
+		
+		colors[ i ].r	= 0;
+		colors[ i ].g	= 0;
+		colors[ i ].b	= 0;
+		colors[ i ].a	= 0;
+		
+		indexs[ i ]		= 0;
+	}
 }
 
 void ColorTriangle :: init ()

@@ -44,6 +44,8 @@ ColorCycle :: ColorCycle ()
 	triColorScale.value		= 1.0;
 	triColorScale.target	= 1.0;
 	triColorScale.ease		= 0.2;
+	
+	trianglesFound			= 0;
 }
 
 ColorCycle :: ~ColorCycle ()
@@ -106,7 +108,7 @@ void ColorCycle :: setup ()
 	
 	colorPicker0.enable();
 	colorPicker1.enable();
-
+	
 	panel.setScreen( screen );
 	panel.setColorPickers( &colorPicker0, &colorPicker1 );
 	panel.setup();
@@ -194,7 +196,8 @@ void ColorCycle :: update ()
 	panel.update();
 	
 	updatePhysics();
-	updateDelaunay();
+	fakeDelaunay();
+//	updateDelaunay();
 	updateTriangles();
 	
 	inputCheck();
@@ -220,6 +223,7 @@ void ColorCycle :: updatePhysics ()
 void ColorCycle :: updateDelaunay ()
 {
 	delaunay.reset();
+	trianglesFound = 0;
 	
 	if( physics == NULL )
 		return;
@@ -233,27 +237,65 @@ void ColorCycle :: updateDelaunay ()
 		delaunay.addPoint( p.x, p.y, p.z );
 	}
 	
-	delaunay.triangulate();
+	trianglesFound = delaunay.triangulate();
+}
+
+void ColorCycle :: fakeDelaunay ()
+{
+	delaunay.triangles.clear();
+	
+	trianglesFound = ofRandom( 10, 30 );
+	for( int i=0; i<trianglesFound; i++ )
+	{
+		delaunay.triangles.push_back( ofxDelaunayTriangle() );
+		ofxDelaunayTriangle& triangle = delaunay.triangles.back();
+		
+		int p1, p2, p3;
+		p1 = ofRandom( 0, physics->circlesSize() );
+		p2 = ofRandom( 0, physics->circlesSize() );
+		p3 = ofRandom( 0, physics->circlesSize() );
+		
+		triangle.pointIndex[ 0 ] = p1;
+		triangle.pointIndex[ 1 ] = p2;
+		triangle.pointIndex[ 2 ] = p3;
+		
+		ofPoint pp1 = physics->getCirclePointAt( p1 );
+		ofPoint pp2 = physics->getCirclePointAt( p2 );
+		ofPoint pp3 = physics->getCirclePointAt( p3 );
+		
+		triangle.points[ 0 ].set( pp1.x, pp1.y, pp1.z );
+		triangle.points[ 1 ].set( pp2.x, pp2.y, pp2.z );
+		triangle.points[ 2 ].set( pp3.x, pp3.y, pp3.z );
+	}
 }
 
 void ColorCycle :: updateTriangles ()
 {
-	triColorScale.update();
-	
-	//--
-	
-	for( int i=0; i<triangles.size(); i++ )
+	while( triangles.size() > 0 )
 	{
-		delete triangles[ i ];
+		ColorTriangle* triangle;
+		triangle = triangles[ 0 ];
+		
+		triangles.erase( triangles.begin() );
+		
+		delete triangle;
+		triangle = NULL;
 	}
 	triangles.clear();
 	
 	//--
 	
-	for( int i=0; i<delaunay.triangles.size(); i++ )
+	triColorScale.update();
+	
+	//--
+	
+	ofxVec2f p1, p2, p3;
+	
+	for( int i=0; i<trianglesFound; i++ )
 	{
-		const ofxDelaunayTriangle& delTri = delaunay.triangles[ i ];
-		
+		ofxDelaunayTriangle* delTri;
+		delTri = &delaunay.triangles[ i ];
+
 		ColorTriangle* triangle;
 		triangle = new ColorTriangle();
 		
@@ -261,26 +303,25 @@ void ColorCycle :: updateTriangles ()
 		{
 			//-- copy triangle points.
 			
-			triangle->points[ j ].x = delTri.points[ j ].x;
-			triangle->points[ j ].y = delTri.points[ j ].y;
+			triangle->points[ j ].x = delTri->points[ j ].x;
+			triangle->points[ j ].y = delTri->points[ j ].y;
 			
-			triangle->indexs[ j ] = delTri.pointIndex[ j ];
+			triangle->indexs[ j ]	= delTri->pointIndex[ j ];
 			
 			//-- collisions.
 			
 			float collisionScale = 0;
 			if( physics != NULL )
 			{
-				collisionScale = physics->getCollisionAtPoint( delTri.points[ j ] );
+				collisionScale = physics->getCollisionAtPoint( delTri->points[ j ] );
 			}
 			collisionScale = ofClamp( collisionScale, 0.25, 0.75 );
 			
 			//-- work out triangle colour.
 			
-			ofxVec2f p1, p2, p3;
-			p1.set( delTri.points[ ( j + 0 ) % 3 ] );
-			p2.set( delTri.points[ ( j + 1 ) % 3 ] );
-			p3.set( delTri.points[ ( j + 2 ) % 3 ] );
+			p1.set( delTri->points[ ( j + 0 ) % 3 ] );
+			p2.set( delTri->points[ ( j + 1 ) % 3 ] );
+			p3.set( delTri->points[ ( j + 2 ) % 3 ] );
 			
 			p2 -= p1;
 			p2.normalize();
@@ -314,6 +355,9 @@ void ColorCycle :: updateTriangles ()
 
 		triangle->init();
 		triangles.push_back( triangle );
+		
+		delTri		= NULL;
+		triangle	= NULL;
 	}
 }
 
@@ -322,9 +366,12 @@ bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
 	ofPoint p;
 	p.set( x, y, 0 );
 	
+	ColorTriangle* triangle;
+	
 	for( int i=0; i<triangles.size(); i++ )
 	{
-		ColorTriangle* triangle = triangles[ i ];
+		triangle = triangles[ i ];
+		
 		bool hit = triangle->isPointInsideTriangle( p );
 		
 		if( hit )
@@ -335,9 +382,13 @@ bool ColorCycle :: checkTriangleHit ( float x, float y, int id )
 			if( physics != NULL )
 				physics->circleDownAtPoint( p.x, p.y, id );
 			
+			triangle = NULL;
+			
 			return true;
 		}
 	}
+	
+	triangle = NULL;
 	
 	return false;
 }
@@ -378,10 +429,14 @@ void ColorCycle :: drawTriangles ()
 		triangles[ i ]->drawFill();
 	}
 	
+#ifndef TARGET_OF_IPHONE
+	
 	for( int i=0; i<triangles.size(); i++ )
 	{
 		triangles[ i ]->drawStroke();
 	}
+	
+#endif
 }
 
 ///////////////////////////////////////////////////////

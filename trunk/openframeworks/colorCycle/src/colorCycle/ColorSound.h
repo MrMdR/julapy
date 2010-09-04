@@ -124,6 +124,8 @@ public:
 				sp->loadSound( fileName );
 			
 			sounds.push_back( sp );
+			
+			sp = NULL;
 		}
 	}
 	
@@ -142,6 +144,8 @@ public:
 				sp->loadSound( fileName );
 			
 			sounds.push_back( sp );
+			
+			sp = NULL;
 		}
 	}
 	
@@ -187,6 +191,8 @@ public:
 			sp->setMultiPlay( true );
 			
 			soundVector.push_back( sp );
+			
+			sp = NULL;
 		}
 	}
 	
@@ -204,6 +210,8 @@ public:
 			sp->setLoop( loop );
 			
 			soundVector.push_back( sp );
+			
+			sp = NULL;
 		}
 	}
 	

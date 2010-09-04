@@ -16,16 +16,12 @@
 #include "ColorConstants.h"
 #include "ColorSound.h"
 
-#ifdef TARGET_OF_IPHONE
-#include "ofxALSoundPlayer.h"
-#endif
-
 class ColorPhysics : public b2ContactListener
 {
 
 public:
 	
-	ColorPhysics();
+	 ColorPhysics();
 	~ColorPhysics();
 
 	void Add	( const b2ContactPoint* point );
@@ -40,13 +36,14 @@ public:
 	void update	();
 	void draw	();
 	
-	void  createBounds		();
-	void  createCircles		();
-	void  addCircle			();
-	bool  addSingleCircle	();
-	bool  removeCircle		();
-	float areaToRadius		( float area );
-	bool  checkHit			( float x, float y );
+	void  createBounds				();
+	void  createCircles				();
+	void  addCircleAtRandomPoint	();
+	void  addCircle					( float x, float y );
+	bool  addSingleCircle			();
+	bool  removeCircle				();
+	float areaToRadius				( float area );
+	bool  checkHit					( float x, float y );
 	
 	int   circlesSize				();
 	ofPoint getCirclePointAt		( int i );
