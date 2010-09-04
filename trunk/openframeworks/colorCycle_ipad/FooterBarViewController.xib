@@ -137,13 +137,11 @@
 								<reference key="IBUIToolbar" ref="850174294"/>
 								<int key="IBUISystemItemIdentifier">5</int>
 							</object>
-							<object class="IBUIBarButtonItem" id="608468722">
-								<object class="NSCustomResource" key="IBUIImage">
-									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">icon_mail_2.png</string>
-								</object>
+							<object class="IBUIBarButtonItem" id="804498940">
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+								<float key="IBUIWidth">60</float>
 								<reference key="IBUIToolbar" ref="850174294"/>
+								<int key="IBUISystemItemIdentifier">6</int>
 							</object>
 							<object class="IBUIBarButtonItem" id="89312400">
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -244,14 +242,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
-						<string key="label">emailButtonHandler</string>
-						<reference key="source" ref="608468722"/>
-						<reference key="destination" ref="841351856"/>
-					</object>
-					<int key="connectionID">78</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">infoButtonHandler</string>
 						<reference key="source" ref="1048377035"/>
 						<reference key="destination" ref="841351856"/>
@@ -265,14 +255,6 @@
 						<reference key="destination" ref="1048377035"/>
 					</object>
 					<int key="connectionID">80</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">_emailButton</string>
-						<reference key="source" ref="841351856"/>
-						<reference key="destination" ref="608468722"/>
-					</object>
-					<int key="connectionID">81</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -346,7 +328,6 @@
 							<reference ref="55967235"/>
 							<reference ref="303398813"/>
 							<reference ref="326977327"/>
-							<reference ref="608468722"/>
 							<reference ref="284365441"/>
 							<reference ref="768400647"/>
 							<reference ref="304663632"/>
@@ -357,6 +338,7 @@
 							<reference ref="72130293"/>
 							<reference ref="1048377035"/>
 							<reference ref="600055098"/>
+							<reference ref="804498940"/>
 						</object>
 						<reference key="parent" ref="69725619"/>
 					</object>
@@ -368,11 +350,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">21</int>
 						<reference key="object" ref="638831788"/>
-						<reference key="parent" ref="850174294"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">25</int>
-						<reference key="object" ref="608468722"/>
 						<reference key="parent" ref="850174294"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -440,6 +417,11 @@
 						<reference key="object" ref="600055098"/>
 						<reference key="parent" ref="850174294"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">88</int>
+						<reference key="object" ref="804498940"/>
+						<reference key="parent" ref="850174294"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -451,7 +433,6 @@
 					<string>16.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
 					<string>21.IBPluginDependency</string>
-					<string>25.IBPluginDependency</string>
 					<string>48.IBPluginDependency</string>
 					<string>49.IBPluginDependency</string>
 					<string>53.IBPluginDependency</string>
@@ -467,6 +448,7 @@
 					<string>7.IBPluginDependency</string>
 					<string>70.IBPluginDependency</string>
 					<string>71.IBPluginDependency</string>
+					<string>88.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -486,8 +468,8 @@
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>{{118, 88}, {1024, 768}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>{{353, 88}, {1024, 768}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -509,7 +491,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">87</int>
+			<int key="maxID">88</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1096,7 +1078,6 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>icon_color_2.png</string>
 				<string>icon_info_2.png</string>
-				<string>icon_mail_2.png</string>
 				<string>icon_minus.png</string>
 				<string>icon_plus_2.png</string>
 				<string>icon_shuffle_2.png</string>
@@ -1106,7 +1087,6 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{24, 24}</string>
 				<string>{30, 30}</string>
-				<string>{24, 24}</string>
 				<string>{20, 20}</string>
 				<string>{20, 20}</string>
 				<string>{27, 27}</string>

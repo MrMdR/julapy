@@ -29,13 +29,31 @@ public:
 	
 	//---------------------------
 	
-	ofImage image;
+	ofImage			image;
+	ofRectangle		imageRect;
+	ofRectangle		julapyRect;
+	ofRectangle		eliRect;
 	
 	//---------------------------
 	
 	void setup ()
 	{
 		image.loadImage( "images/popup_info.png" );
+		
+		imageRect.x			= (int)( ( ofGetWidth()  - image.width  ) * 0.5 );
+		imageRect.y			= (int)( ( ofGetHeight() - image.height ) * 0.5 );
+		imageRect.width		= image.width;
+		imageRect.height	= image.height;
+		
+		julapyRect.x		= (int)( imageRect.x + 10 );
+		julapyRect.y		= (int)( imageRect.y + 100 );
+		julapyRect.width	= (int)( imageRect.width * 0.5 );
+		julapyRect.height	= (int)( imageRect.height * 0.05 );
+		
+		eliRect.x			= (int)( imageRect.x + 10 );
+		eliRect.y			= (int)( imageRect.y + 250 );
+		eliRect.width		= (int)( imageRect.width * 0.5 );
+		eliRect.height		= (int)( imageRect.height * 0.05 );
 	}
 	
 	void show ()
@@ -43,10 +61,45 @@ public:
 		if( bShow )
 			return;
 		
-//		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=367193275" );		// album link.
-//		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=367193276" );		// artist link.
-		
 		AnimScreen :: show();
+	}
+	
+	void hide ()
+	{
+		AnimScreen :: hide();
+	}
+	
+	void mouseDown ( int x, int y )
+	{
+		if( bShow )
+		{
+			if( !hitTest( x, y, imageRect ) )
+			{
+				hide();
+			}
+			
+			if( hitTest( x, y, julapyRect ) )
+			{
+				launchSite( "http://julapy.com/blog" );
+			}
+			
+			if( hitTest( x, y, eliRect ) )
+			{
+//				launchSite( "http://gentleforce.angrypixel.org/" );
+//				launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=367193275" );		// album link.
+				launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=367193276" );		// artist link.
+			}
+		}
+	}
+	
+	bool hitTest ( int x, int y, const ofRectangle& rect )
+	{
+		bool b1 = x >= rect.x;
+		bool b2 = x <  rect.x + rect.width;
+		bool b3 = y >= rect.y;
+		bool b4 = y <  rect.y + rect.height;
+		
+		return ( b1 && b2 && b3 && b4 );
 	}
 	
 	void draw ()
@@ -54,23 +107,17 @@ public:
 		if( !bVisible )
 			return;
 		
-		int x = (int)( ( ofGetWidth()  - image.width  ) * 0.5 );
-		int y = (int)( ( ofGetHeight() - image.height ) * 0.5 );
-		
 		ofEnableAlphaBlending();
+		
 		ofSetColor( 255, 255, 255, alpha );
-		image.draw( x, y );
+		image.draw( imageRect.x, imageRect.y );
+		
+		ofFill();
+		ofSetColor( 255, 0, 0, 50 );
+		ofRect( julapyRect.x, julapyRect.y, julapyRect.width, julapyRect.height );
+		ofRect( eliRect.x, eliRect.y, eliRect.width, eliRect.height );
+		
 		ofDisableAlphaBlending();
-	}
-	
-	void launchJulapySite ()
-	{
-		launchSite( "http://julapy.com/blog" );
-	}
-	
-	void launchEliSite()
-	{
-		launchSite( "http://gentleforce.angrypixel.org/" );
 	}
 	
 	void launchSite ( string url )
