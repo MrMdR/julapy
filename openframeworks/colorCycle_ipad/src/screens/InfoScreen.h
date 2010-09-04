@@ -22,6 +22,11 @@ public:
 		//
 	}
 	
+	~InfoScreen ()
+	{
+		image.clear();
+	}
+	
 	//---------------------------
 	
 	ofImage image;
@@ -39,7 +44,7 @@ public:
 			return;
 		
 //		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=367193275" );		// album link.
-		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=367193276" );		// artist link.
+//		launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=367193276" );		// artist link.
 		
 		AnimScreen :: show();
 	}

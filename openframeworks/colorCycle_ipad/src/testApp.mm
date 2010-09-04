@@ -15,8 +15,6 @@ void testApp::setup()
 	
 	lastTouchId = -1;
 	
-	box2d.init();
-	
 	splashScreen = NULL;
 	splashScreen = new SplashScreen();		// comment out to remove.
 	if( splashScreen != NULL )
@@ -24,7 +22,10 @@ void testApp::setup()
 		splashScreen->setup();
 		splashScreen->draw();
 	}
+}
 
+void testApp :: init ()
+{
 	footer = NULL;
 	footer = new FooterBar();				// comment out to remove.
 	if( footer != NULL )
@@ -53,6 +54,8 @@ void testApp::setup()
 		sounds->setup();
 	}
 	
+	box2d.init();
+	
 	cc = NULL;
 	cc = new ColorCycle();					// comment out to remove.
 	if( cc != NULL )
@@ -67,6 +70,11 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
+	int t = 2;
+	int f = ofGetFrameNum();
+	if( f < t )		return;
+	if( f == t )	init();
+		
 	checkLastTouch();
 	
 	if( footer != NULL )
@@ -313,8 +321,9 @@ void testApp::gotFocus(){
 }
 
 //--------------------------------------------------------------
-void testApp::gotMemoryWarning(){
-
+void testApp::gotMemoryWarning()
+{
+	cout << "memory warning" << endl;
 }
 
 //--------------------------------------------------------------

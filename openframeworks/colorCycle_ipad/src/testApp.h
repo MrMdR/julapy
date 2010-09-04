@@ -21,6 +21,8 @@ public:
 	void draw();
 	void exit();
 	
+	void init();
+	
 	void touchDown(ofTouchEventArgs &touch);
 	void touchMoved(ofTouchEventArgs &touch);
 	void touchUp(ofTouchEventArgs &touch);

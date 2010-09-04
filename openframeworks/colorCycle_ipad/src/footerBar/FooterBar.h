@@ -35,9 +35,9 @@ public:
 		
 		UIWindow* window = ofxiPhoneGetUIWindow();
 		[ window addSubview: controller.view ];
-		[ controller.view release ];
+//		[ controller.view release ];
 		
-		ofAddListener( ofEvents.update, this, &FooterBar :: update );
+//		ofAddListener( ofEvents.update, this, &FooterBar :: update );
 	};
 	
 	void show ()

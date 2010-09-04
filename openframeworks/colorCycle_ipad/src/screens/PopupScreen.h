@@ -23,6 +23,11 @@ public:
 		bTimeout	= false;
 	}
 	
+	~PopupScreen()
+	{
+		image.clear();
+	}
+	
 	//---------------------------
 	
 	ofImage image;
