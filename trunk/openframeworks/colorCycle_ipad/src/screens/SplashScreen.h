@@ -21,7 +21,12 @@ public:
 		startFrame	= 60;
 		totalFrames	= 30;
 		bComplete	= false;
-	};
+	}
+	
+	~SplashScreen ()
+	{
+		image.clear();
+	}
 	
 	//-------------------------------
 	
@@ -76,7 +81,6 @@ public:
 		if( p == 1.0 )
 		{
 			bComplete = true;
-			image.clear();
 		}
 	};
 };

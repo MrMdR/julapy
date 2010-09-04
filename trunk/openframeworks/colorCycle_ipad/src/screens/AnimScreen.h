@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Quad.h"
+
 class AnimScreen
 {
 
