@@ -18,6 +18,10 @@
 #include "ofMain.h"
 #include "Delaunay.h"
 
+
+#define DEFAULT_MAX_POINTS 500
+
+
 struct ofxDelaunayTriangle
 {
 	ofPoint		points[ 3 ];
@@ -32,19 +36,24 @@ public:
 	 ofxDelaunay();
 	~ofxDelaunay();
 	
+	void setMaxPoints	( int maxPoints = DEFAULT_MAX_POINTS );
+	void reset			();
+	
 	int  addPoint		( const ofPoint& point );
 	int  addPoint		( float x, float y, float z );
-	int  addPoints		( const vector<ofPoint>& pts );
 	
 	int  triangulate	();
-	void reset			();
 	void draw			();
 	
 	vector<ofxDelaunayTriangle>		triangles;
 	
 private:
 	
-	vector<XYZ>			points;
+	int					maxPoints;
+	ITRIANGLE*			v;
+	XYZ*				p;
+	int					nv;
+	int					ntri;
 	
 };
 

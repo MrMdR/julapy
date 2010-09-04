@@ -203,7 +203,7 @@ void testApp::draw()
 		popupScreen->draw();
 	
 	ofSetColor( 0, 0, 0 );
-	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetScreenWidth() - 30, 20 );
+//	ofDrawBitmapString( ofToString( ofGetFrameRate(),  0 ), ofGetScreenWidth() - 30, 20 );
 	
 	if( upsideDown )
 	{
@@ -226,7 +226,7 @@ void testApp::exit()
 void testApp::touchDown(ofTouchEventArgs &touch)
 {
 	if( infoScreen )
-		infoScreen->hide();
+		infoScreen->mouseDown( touch.x, touch.y );
 	
 	if( lastTouchId != touch.id )
 	{
@@ -297,6 +297,9 @@ void testApp :: checkLastTouch ()
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch)
 {
+	if( infoScreen )
+		infoScreen->hide();
+	
 	if( footer == NULL )
 		return;
 		
