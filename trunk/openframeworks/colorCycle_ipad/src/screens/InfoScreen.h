@@ -33,6 +33,8 @@ public:
 	ofRectangle		imageRect;
 	ofRectangle		julapyRect;
 	ofRectangle		eliRect;
+	ofRectangle		itunesRect;
+	ofRectangle		openfRect;
 	
 	//---------------------------
 	
@@ -45,15 +47,25 @@ public:
 		imageRect.width		= image.width;
 		imageRect.height	= image.height;
 		
-		julapyRect.x		= (int)( imageRect.x + 10 );
-		julapyRect.y		= (int)( imageRect.y + 100 );
-		julapyRect.width	= (int)( imageRect.width * 0.5 );
-		julapyRect.height	= (int)( imageRect.height * 0.05 );
+		julapyRect.x		= (int)( imageRect.x + 151 );
+		julapyRect.y		= (int)( imageRect.y + 45 );
+		julapyRect.width	= (int)( 159 );
+		julapyRect.height	= (int)( 20 );
 		
-		eliRect.x			= (int)( imageRect.x + 10 );
-		eliRect.y			= (int)( imageRect.y + 250 );
-		eliRect.width		= (int)( imageRect.width * 0.5 );
-		eliRect.height		= (int)( imageRect.height * 0.05 );
+		eliRect.x			= (int)( imageRect.x + 181 );
+		eliRect.y			= (int)( imageRect.y + 25 );
+		eliRect.width		= (int)( 151 );
+		eliRect.height		= (int)( 20 );
+		
+		itunesRect.x		= (int)( imageRect.x + 119 );
+		itunesRect.y		= (int)( imageRect.y + 226 );
+		itunesRect.width	= (int)( 69 );
+		itunesRect.height	= (int)( 69 );
+
+		openfRect.x			= (int)( imageRect.x + 266 );
+		openfRect.y			= (int)( imageRect.y + 281 );
+		openfRect.width		= (int)( 107 );
+		openfRect.height	= (int)( 21 );
 	}
 	
 	void show ()
@@ -85,9 +97,18 @@ public:
 			
 			if( hitTest( x, y, eliRect ) )
 			{
-//				launchSite( "http://gentleforce.angrypixel.org/" );
+				launchSite( "http://gentleforce.angrypixel.org/" );
+			}
+			
+			if( hitTest( x, y, itunesRect ) )
+			{
 //				launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=367193275" );		// album link.
 				launchSite( "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=367193276" );		// artist link.
+			}
+			
+			if( hitTest( x, y, openfRect ) )
+			{
+				launchSite( "http://www.openframeworks.cc/" );
 			}
 		}
 	}
@@ -114,8 +135,8 @@ public:
 		
 		ofFill();
 		ofSetColor( 255, 0, 0, 50 );
-		ofRect( julapyRect.x, julapyRect.y, julapyRect.width, julapyRect.height );
-		ofRect( eliRect.x, eliRect.y, eliRect.width, eliRect.height );
+//		ofRect( julapyRect.x, julapyRect.y, julapyRect.width, julapyRect.height );
+//		ofRect( eliRect.x, eliRect.y, eliRect.width, eliRect.height );
 		
 		ofDisableAlphaBlending();
 	}
