@@ -46,6 +46,7 @@ ColorCycle :: ColorCycle ()
 	triColorScale.ease		= 0.2;
 	
 	trianglesFound			= 0;
+	delaunay.setMaxPoints( 50 );
 }
 
 ColorCycle :: ~ColorCycle ()
