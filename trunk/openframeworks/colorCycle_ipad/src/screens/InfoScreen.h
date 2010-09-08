@@ -85,10 +85,10 @@ public:
 	{
 		if( bShow )
 		{
-			if( !hitTest( x, y, imageRect ) )
-			{
-				hide();
-			}
+//			if( !hitTest( x, y, imageRect ) )
+//			{
+//				hide();
+//			}
 			
 			if( hitTest( x, y, julapyRect ) )
 			{
@@ -110,6 +110,8 @@ public:
 			{
 				launchSite( "http://www.openframeworks.cc/" );
 			}
+			
+			hide();
 		}
 	}
 	

@@ -39,7 +39,15 @@ public:
 	
 	void setup ()
 	{
-		image.loadImage( "Default.png" );
+		if( ofGetWidth() == 480 && ofGetHeight() == 320 )
+		{
+			image.loadImage( "Default_iphone.png" );
+		}
+		else if( ofGetWidth() == 1024 && ofGetHeight() == 768 )
+		{
+			image.loadImage( "Default_ipad.png" );
+		}
+		
 	};
 
 	void draw ()
