@@ -8,8 +8,12 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
+	<key>CFBundleTypeIconFiles</key>
+	<array>
+		<string>Icon.png</string>
+		<string>Icon-72.png</string>
+		<string>Icon@2x.png</string>
+	</array>
 	<key>CFBundleIdentifier</key>
 	<string>com.julapy.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -32,5 +36,9 @@
 	<true/>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>UILaunchImageFile~ipad</key>
+	<string>Default_ipad.png</string>
+	<key>UILaunchImageFile~iphone</key>
+	<string>Default_iphone.png</string>
 </dict>
 </plist>
