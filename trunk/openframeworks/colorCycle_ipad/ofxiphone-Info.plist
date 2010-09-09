@@ -8,7 +8,9 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleTypeIconFiles</key>
+	<key>Icon File</key>
+	<string></string>
+	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon.png</string>
 		<string>Icon-72.png</string>
