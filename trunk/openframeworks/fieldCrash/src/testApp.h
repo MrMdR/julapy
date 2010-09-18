@@ -29,8 +29,9 @@ public:
 	
 	void updateNoiseImage		();
 	void updateOpenCv			();
-	int  updateContours			();
-	void copyAndScaleBlobs		();
+	void updateBlobs			();
+	int  updateContours			( ofxCvGrayscaleImage& image );
+	void copyBlob				( ofxCvBlob& blob, ofxCvBlob& blobCopy, float xoff = 0, float yoff = 0, float scale = 1.0 );
 	
 	void drawBorder					( const ofRectangle& rect );
 	void drawNoiseImage				();
@@ -77,6 +78,7 @@ public:
 	
 	ofxCvContourFinder		contourFinder;
 	ofxContourUtil			contourUtil;
+	vector<ofxCvBlob>		contourBlobs;
 	vector<ofxCvBlob>		contourBlobsScaled;
 	float					contourSmooth;
 	float					contourSimplify;
