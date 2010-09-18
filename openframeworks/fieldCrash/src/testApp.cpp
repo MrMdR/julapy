@@ -3,18 +3,38 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-	ofSetFrameRate( 25 );
+	ofSetFrameRate( 60 );
 	ofSetVerticalSync( true );
 	
-	bDebug		= true;
-	bSmoothing	= false;
-	bPause		= false;
+	bDebug			= true;
+	bSmoothing		= false;
+	bPause			= false;
+	bDrawPoints		= true;
+	bDrawLines		= false;
+	bDrawCurves		= false;
+	bDrawSimplified	= true;
+	bDrawColor		= true;
 	
 	screenRect.width	= ofGetWidth();
 	screenRect.height	= ofGetHeight();
-	
-	noiseRect.width		= 320;
-	noiseRect.height	= 240;
+
+	switch ( 1 )
+	{
+		case 1 :
+			noiseRect.width		= 160;
+			noiseRect.height	= 120;
+		break;
+
+		case 2 :
+			noiseRect.width		= 320;
+			noiseRect.height	= 240;
+		break;
+			
+		case 3 :
+			noiseRect.width		= 640;
+			noiseRect.height	= 480;
+		break;
+	}
 	
 	debugRect.width		= 160;
 	debugRect.height	= 120;
@@ -29,17 +49,18 @@ void testApp::setup()
 	initOpenCv();
 	initContours();
 	initGui();
+	initColor();
 }
 
 void testApp :: initNoise ()
 {
-	noiseVel.x = 0.0;
+	noiseVel.x = 0.1;
 	noiseVel.y = 0.0;
 	noiseVel.z = 0.0;
 	
-	noiseScl.x = 0.01;
-	noiseScl.y = 0.01;
-	noiseScl.z = 0.01;
+	noiseScl.x = 0.03;
+	noiseScl.y = 0.03;
+	noiseScl.z = 0.03;
 	
 	noiseSclMaster = 0.5;
 	
@@ -53,7 +74,6 @@ void testApp :: initOpenCv ()
 	
 	noiseBands			= new ofxCvGrayscaleImage[ noiseBandsTotal ];
 	noiseBandCutoffs	= new float[ noiseBandsTotal ];
-	noiseBandSize		= new float[ noiseBandsTotal ];
 	
 	for( int i=0; i<noiseBandsTotal; i++ )
 	{
@@ -62,8 +82,6 @@ void testApp :: initOpenCv ()
 		
 		float& noiseBandCutoff = noiseBandCutoffs[ i ];
 		noiseBandCutoff = 0.1 + ( i / (float)( noiseBandsTotal - 1 ) ) * 0.8;
-		
-		noiseBandSize[ i ] = 0.01;
 	}
 	
 	noiseBandSum.allocate( noiseRect.width, noiseRect.height );
@@ -71,8 +89,9 @@ void testApp :: initOpenCv ()
 
 void testApp :: initContours ()
 {
-	contourSmooth	= 0.0;
-	contourSimplify	= 0.0;
+	contourSmoothScale			= 0.0;
+	contourSimplifyScale		= 0.0;
+	contourSimplifyTolerance	= 0.0;
 }
 
 void testApp :: initGui ()
@@ -83,18 +102,23 @@ void testApp :: initGui ()
 	
 	gui.addToggle( "bDebug  ",			bDebug );
 	gui.addToggle( "bSmoothing  ",		bSmoothing );
+	gui.addToggle( "bDrawPoints  ",		bDrawPoints );
+	gui.addToggle( "bDrawLines  ",		bDrawLines );
+	gui.addToggle( "bDrawCurves  ",		bDrawCurves );
+	gui.addToggle( "bDrawSimplified  ",	bDrawSimplified );
+	gui.addToggle( "bDrawColor  ",		bDrawColor );
 	
 	gui.addPage( "noise" );
 	
-	gui.addSlider( "noiseVel.x  ",		noiseVel.x, -1.0, 1.0 );
-	gui.addSlider( "noiseVel.y  ",		noiseVel.y, -1.0, 1.0 );
-	gui.addSlider( "noiseVel.z  ",		noiseVel.z, -1.0, 1.0 );
+	gui.addSlider( "noiseVel.x  ",		noiseVel.x, -1.0, 1.0, true );
+	gui.addSlider( "noiseVel.y  ",		noiseVel.y, -1.0, 1.0, true );
+	gui.addSlider( "noiseVel.z  ",		noiseVel.z, -1.0, 1.0, true );
 
-	gui.addSlider( "noiseScl.x  ",		noiseScl.x, 0, 1.0 );
-	gui.addSlider( "noiseScl.y  ",		noiseScl.y, 0, 1.0 );
-	gui.addSlider( "noiseScl.z  ",		noiseScl.z, 0, 1.0 );
+	gui.addSlider( "noiseScl.x  ",		noiseScl.x, 0, 1.0, true );
+	gui.addSlider( "noiseScl.y  ",		noiseScl.y, 0, 1.0, true );
+	gui.addSlider( "noiseScl.z  ",		noiseScl.z, 0, 1.0, true );
 	
-	gui.addSlider( "noiseSclMaster  ",	noiseSclMaster, 0, 1.0 );
+	gui.addSlider( "noiseSclMaster  ",	noiseSclMaster, 0, 1.0, true );
 	
 	gui.addPage( "bands" );
 	gui.addTitle( "bands index", 22 );
@@ -103,17 +127,35 @@ void testApp :: initGui ()
 	{
 		gui.addTitle( "band " + ofToString( i, 0 ), 22 );
 		gui.addSlider( "band " + ofToString( i, 0 ) + " cutoff  ",	noiseBandCutoffs[ i ],	0, 1.0 );
-		gui.addSlider( "band " + ofToString( i, 0 ) + " size  ",	noiseBandSize[ i ],		0, 0.1 );
 	}
 	
 	gui.addPage( "contour" );
-	gui.addSlider( "contourSmooth  ",	contourSmooth,		0, 1.0 );
-	gui.addSlider( "contourSimplify  ",	contourSimplify,	0, 50.0 );
+	gui.addSlider( "contourSmoothScale ",		contourSmoothScale,			0, 1.0 );
+	gui.addSlider( "contourSimplifyScale ",		contourSimplifyScale,		0, 50.0 );
+	gui.addSlider( "contourSimplifyTolerance ",	contourSimplifyTolerance,	0, 0.1 );
 	
 	gui.show();
-	gui.setPage( 3 );
+	gui.setPage( 4 );
 
-	gui.loadFromXML();
+//	gui.loadFromXML();
+}
+
+void testApp :: initColor ()
+{
+	colorPicker0.setColorRadius( 1.0 );
+	colorPicker1.setColorRadius( 1.0 );
+	
+	colorPicker0.setColorAngle( 3 / 6.0 );
+	colorPicker1.setColorAngle( 5 / 6.0 );
+	
+	colorPicker0.enable();
+	colorPicker1.enable();
+	
+	colorPicker0.setSize( 300, 100, 150, 300 );
+	colorPicker1.setSize( 480, 100, 150, 300 );
+	
+	colorPicker0.addListeners();
+	colorPicker1.addListeners();
 }
 
 //--------------------------------------------------------------
@@ -127,6 +169,7 @@ void testApp::update()
 	updateNoiseImage();
 	updateOpenCv();
 	updateBlobs();
+	updateColor();
 }
 
 ofPoint testApp :: getNoiseAtPoint( const ofPoint& point )
@@ -192,12 +235,12 @@ void testApp :: updateOpenCv ()
 		int bandCutoff;
 		bandCutoff	= noiseBandCutoffs[ i ] * 255;
 		
-		int bandSize;
-		bandSize	= noiseBandSize[ i ] * 255;
-		
 		ofxCvGrayscaleImage& noiseBand = noiseBands[ i ];
 		noiseBand		= noiseImage;
 		noiseBand.threshold( bandCutoff, false );
+		
+		if( !bDebug )
+			continue;
 		
 		int t = noiseRect.width * noiseRect.height;
 		unsigned char* pixels0 = noiseBand.getPixels();
@@ -215,19 +258,9 @@ void testApp :: updateBlobs ()
 {
 	//-- remove old blobs.
 
-	for( int i=0; i<contourBlobs.size(); i++ )
-	{
-		ofxCvBlob& blob = contourBlobs[ i ];
-		blob.pts.clear();
-	}
 	contourBlobs.clear();
-	
-	for( int i=0; i<contourBlobsScaled.size(); i++ )
-	{
-		ofxCvBlob& blob = contourBlobsScaled[ i ];
-		blob.pts.clear();
-	}
 	contourBlobsScaled.clear();
+	contourBlobsSimplified.clear();
 	
 	//-- copy blobs and scale.
 	
@@ -250,15 +283,46 @@ void testApp :: updateBlobs ()
 		if( numOfBlobs == 0 )
 			continue;
 		
+		ofColor c0 = colorPicker0.getColor();
+		ofColor c1 = colorPicker1.getColor();
+		ofColor c2 = interpolateColor( c0, c1, noiseBandCutoffs[ i ] );
+		
 		for( int j=0; j<numOfBlobs; j++ )
 		{
 			ofxCvBlob& blob = contourFinder.blobs[ j ];
 			
-			contourBlobs.push_back( ofxCvBlob() );
-			contourBlobsScaled.push_back( ofxCvBlob() );
+			contourBlobs.push_back( Blob() );
+			contourBlobsScaled.push_back( Blob() );
+			contourBlobsSimplified.push_back( Blob() );
 			
 			copyBlob( blob, contourBlobs.back() );
 			copyBlob( blob, contourBlobsScaled.back(), xoff, yoff, scale );
+			copyBlob( blob, contourBlobsSimplified.back(), xoff, yoff, scale );
+			
+			contourBlobs.back().color			= c2;
+			contourBlobsScaled.back().color		= c2;
+			contourBlobsSimplified.back().color	= c2;
+
+			if( contourSmoothScale > 0 )
+			{
+				contourUtil.smooth( contourBlobsSimplified.back().pts, contourSmoothScale, 1.0 );
+			}
+
+			if( contourSimplifyScale > 0 )
+			{
+				contourUtil.simplify( contourBlobsSimplified.back().pts, contourSimplifyScale );
+			}
+			
+			if( contourSimplifyTolerance > 0 )
+			{
+				float tolerance = contourSimplifyTolerance;
+				tolerance *= ( 1 / (float)contourBlobsSimplified.back().pts.size() );
+				tolerance *= 100;
+				
+				vector<ofPoint> ptsOut;
+				contourSimplify.simplify( contourBlobsSimplified.back().pts, ptsOut, tolerance );
+				contourBlobsSimplified.back().pts = ptsOut;
+			}
 		}
 	}
 }
@@ -313,21 +377,86 @@ void testApp :: copyBlob ( ofxCvBlob& blob, ofxCvBlob& blobCopy, float xoff, flo
 	blobCopy.length					= blob.length;
 	blobCopy.nPts					= blob.nPts;
 	
-	contourUtil.smooth( blobCopy.pts,	contourSmooth );
-	contourUtil.simplify( blobCopy.pts, contourSimplify );
+	blobCopy.nPts = blobCopy.pts.size();
+}
+
+void testApp :: updateColor ()
+{
+	if( bDebug )
+	{
+		colorPicker0.show();
+		colorPicker1.show();
+	}
+	else 
+	{
+		colorPicker0.hide();
+		colorPicker1.hide();
+	}
+
+	float angle;
+	angle = 0.001;
+
+	colorPicker0.setColorAngle( colorPicker0.getColorAngle() + angle );
+	colorPicker1.setColorAngle( colorPicker1.getColorAngle() + angle );
+}
+
+ofColor testApp :: interpolateColor ( const ofColor& c1, const ofColor& c2, float p )
+{
+	ofColor c;
+	c.r = ( c2.r - c1.r ) * p + c1.r;
+	c.g = ( c2.g - c1.g ) * p + c1.g;
+	c.b = ( c2.b - c1.b ) * p + c1.b;
 	
-	blobCopy.nPts					= blobCopy.pts.size();
+	return c;
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
+	//-- background.
+	
 	ofFill();
 	ofSetColor( 0x000000 );
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
-	drawContoursLarge();
-
+	//-- large.
+	
+	if( bDrawLines )
+	{
+		ofNoFill();
+		ofSetColor( 0xFFFFFF );
+		drawContourLines( contourBlobsScaled );
+	}
+	
+	if( bDrawSimplified )
+	{
+		ofNoFill();
+		ofSetColor( 0xFFFFFF );
+		drawContourLines( contourBlobsSimplified );
+	}
+	
+	if( bDrawCurves )
+	{
+		ofNoFill();
+		ofSetColor( 0xFFFFFF );
+		drawContourCurveLines( contourBlobsScaled );
+	}
+	
+	if( bDrawPoints )
+	{
+		ofFill();
+		ofSetColor( 0xFF0000 );
+		drawContourPoints( contourBlobsScaled );
+	}
+	
+	if( bDrawColor )
+	{
+		ofFill();
+		drawContourLines( contourBlobsSimplified, true );
+	}
+	
+	//-- debug.
+	
 	if( !bDebug )
 		return;
 	
@@ -408,20 +537,7 @@ void testApp :: drawContoursSmall ()
 	drawContourLines( contourBlobs );
 }
 
-void testApp :: drawContoursLarge ()
-{
-//	ofNoFill();
-//	ofSetColor( 0xDD00CC );
-//	drawContourBoundingBoxes( contourBlobsScaled );
-	
-	ofNoFill();
-	ofSetColor( 0xFFFFFF );
-//	drawContourLines( contourBlobsScaled );
-	drawContourCurveLines( contourBlobsScaled );
-	drawContourPoints( contourBlobsScaled );
-}
-
-void testApp :: drawContourBoundingBoxes ( vector<ofxCvBlob>& blobs )
+void testApp :: drawContourBoundingBoxes ( vector<Blob>& blobs )
 {
 	for( int i=0; i<blobs.size(); i++ )
 	{
@@ -435,11 +551,8 @@ void testApp :: drawContourBoundingBoxes ( vector<ofxCvBlob>& blobs )
 	}
 }
 
-void testApp :: drawContourPoints ( vector<ofxCvBlob>& blobs )
+void testApp :: drawContourPoints ( vector<Blob>& blobs )
 {
-	ofFill();
-	ofSetColor( 0xFF0000 );
-	
 	for( int i=0; i<blobs.size(); i++ )
 	{
 		int t = blobs[ i ].pts.size();
@@ -447,16 +560,23 @@ void testApp :: drawContourPoints ( vector<ofxCvBlob>& blobs )
 		for( int j=0; j<t+1; j++ )		// extra points to close each polygon
 		{
 			int k = j % t;
+			int r = 1;
 			
-			ofCircle( blobs[ i ].pts[ k ].x, blobs[ i ].pts[ k ].y, 1 );
+			ofRect( blobs[ i ].pts[ k ].x - r, blobs[ i ].pts[ k ].y - r, r * 2, r * 2 );
 		}
 	}
 }
 
-void testApp :: drawContourLines ( vector<ofxCvBlob>& blobs )
+void testApp :: drawContourLines ( vector<Blob>& blobs, bool useBlobColor )
 {
 	for( int i=0; i<blobs.size(); i++ )
 	{
+		if( useBlobColor )
+		{
+			ofColor& c = blobs[ i ].color;
+			ofSetColor( c.r, c.g, c.b );
+		}
+		
 		int t = blobs[ i ].pts.size();
 		
 		ofBeginShape();
@@ -470,10 +590,16 @@ void testApp :: drawContourLines ( vector<ofxCvBlob>& blobs )
 	}
 }
 
-void testApp :: drawContourCurveLines ( vector<ofxCvBlob>& blobs )
+void testApp :: drawContourCurveLines ( vector<Blob>& blobs, bool useBlobColor )
 {
 	for( int i=0; i<blobs.size(); i++ )
 	{
+		if( useBlobColor )
+		{
+			ofColor& c = blobs[ i ].color;
+			ofSetColor( c.r, c.g, c.b );
+		}
+		
 		int t = blobs[ i ].pts.size();
 		
 		ofBeginShape();

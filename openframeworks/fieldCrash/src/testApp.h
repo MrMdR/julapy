@@ -9,6 +9,14 @@
 #include "ofxSimpleGuiToo.h"
 #include "ofxResizeUtil.h"
 #include "ofxContourUtil.h"
+#include "ofxCvContourSimplify.h"
+#include "ofxColorPicker.h"
+
+class Blob : public ofxCvBlob
+{
+public:
+	ofColor	color;
+};
 
 class testApp : public ofBaseApp
 {
@@ -23,6 +31,7 @@ public:
 	void initOpenCv		();
 	void initContours	();
 	void initGui		();
+	void initColor		();
 	
 	ofPoint getNoiseAtPoint		( const ofPoint& point );
 	float	getNoiseAtPoint		( float x, float y );
@@ -32,6 +41,8 @@ public:
 	void updateBlobs			();
 	int  updateContours			( ofxCvGrayscaleImage& image );
 	void copyBlob				( ofxCvBlob& blob, ofxCvBlob& blobCopy, float xoff = 0, float yoff = 0, float scale = 1.0 );
+	void updateColor			();
+	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
 	
 	void drawBorder					( const ofRectangle& rect );
 	void drawNoiseImage				();
@@ -39,10 +50,10 @@ public:
 	void drawNoiseBandSum			();
 	void drawContoursSmall			();
 	void drawContoursLarge			();
-	void drawContourBoundingBoxes	( vector<ofxCvBlob>& blobs );
-	void drawContourPoints			( vector<ofxCvBlob>& blobs );
-	void drawContourLines			( vector<ofxCvBlob>& blobs );
-	void drawContourCurveLines		( vector<ofxCvBlob>& blobs );
+	void drawContourBoundingBoxes	( vector<Blob>& blobs );
+	void drawContourPoints			( vector<Blob>& blobs );
+	void drawContourLines			( vector<Blob>& blobs, bool useBlobColor = false );
+	void drawContourCurveLines		( vector<Blob>& blobs, bool useBlobColor = false );
 	
 	void keyPressed		( int key );
 	void keyReleased	( int key );
@@ -55,6 +66,11 @@ public:
 	bool					bDebug;
 	bool					bSmoothing;
 	bool					bPause;
+	bool					bDrawPoints;
+	bool					bDrawLines;
+	bool					bDrawCurves;
+	bool					bDrawSimplified;
+	bool					bDrawColor;
 
 	ofRectangle				screenRect;
 	ofRectangle				noiseRect;
@@ -66,7 +82,6 @@ public:
 	ofxCvGrayscaleImage		noiseBandSum;
 	ofxCvGrayscaleImage*	noiseBands;
 	float*					noiseBandCutoffs;
-	float*					noiseBandSize;
 	int						noiseBandsTotal;
 	int						noiseBandIndex;
 	
@@ -78,10 +93,16 @@ public:
 	
 	ofxCvContourFinder		contourFinder;
 	ofxContourUtil			contourUtil;
-	vector<ofxCvBlob>		contourBlobs;
-	vector<ofxCvBlob>		contourBlobsScaled;
-	float					contourSmooth;
-	float					contourSimplify;
+	ofxCvContourSimplify	contourSimplify;
+	vector<Blob>			contourBlobs;
+	vector<Blob>			contourBlobsScaled;
+	vector<Blob>			contourBlobsSimplified;
+	float					contourSmoothScale;
+	float					contourSimplifyScale;
+	float					contourSimplifyTolerance;
+	
+	ofxColorPicker			colorPicker0;
+	ofxColorPicker			colorPicker1;
 };
 
 #endif
