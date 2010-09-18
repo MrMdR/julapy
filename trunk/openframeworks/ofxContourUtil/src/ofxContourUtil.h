@@ -23,10 +23,10 @@ public :
 	//-- smooth.
 	
 	template <typename T>
-	void smooth		( vector<T>& contourIn, float smoothPct );
+	void smooth		( vector<T>& contourIn, float smoothPct, float smoothWrap = 0 );
 	
 	template <typename T>
-	void smooth		( vector<T>& contourIn, vector<T>& contourOut, float smoothPct );
+	void smooth		( vector<T>& contourIn, vector<T>& contourOut, float smoothPct, float smoothWrap = 0 );
 	
 	//-- simplify.
 	
@@ -50,17 +50,17 @@ public :
 //////////////////////////////////////////
 
 template <typename T>
-void ofxContourUtil :: smooth ( vector<T>& contourIn, float smoothPct )
+void ofxContourUtil :: smooth ( vector<T>& contourIn, float smoothPct, float smoothWrap )
 {
 	vector<T> contourOut;
 	
-	smooth( contourIn, contourOut, smoothPct );
+	smooth( contourIn, contourOut, smoothPct, smoothWrap );
 	
 	contourIn = contourOut;								// copies vector content over.
 }
 
 template <typename T>
-void ofxContourUtil :: smooth ( vector<T>& contourIn, vector<T>& contourOut, float smoothPct )
+void ofxContourUtil :: smooth ( vector<T>& contourIn, vector<T>& contourOut, float smoothPct, float smoothWrap )
 {
 	contourOut.clear();
 	contourOut.assign( contourIn.size(), T() );
@@ -74,11 +74,18 @@ void ofxContourUtil :: smooth ( vector<T>& contourIn, vector<T>& contourOut, flo
 	{
 		contourOut[ i ] = contourIn[ i ];
 	}
+
+	smoothWrap = MAX( smoothWrap, 0.0 );	// make sure its not less then zero.
 	
-	for( int i=1; i<contourOut.size(); i++ )			// we start at 1 as we take a small pct of the prev value
+	int t = contourOut.size();		// total.
+	int w = t + t * smoothWrap;		// wrap.
+	for( int i=1; i<w; i++ )
 	{
-		contourOut[ i ].x = contourOut[ i ].x * smoothPct + contourOut[ i - 1 ].x * invPct;
-		contourOut[ i ].y = contourOut[ i ].y * smoothPct + contourOut[ i - 1 ].y * invPct;
+		int j = ( i - 0 ) % t;		// current position.
+		int k = ( i - 1 ) % t;		// previous position.
+		
+		contourOut[ j ].x = contourOut[ j ].x * smoothPct + contourOut[ k ].x * invPct;
+		contourOut[ j ].y = contourOut[ j ].y * smoothPct + contourOut[ k ].y * invPct;
 	}
 }
 
