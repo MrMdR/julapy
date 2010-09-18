@@ -71,8 +71,8 @@ void testApp :: initOpenCv ()
 
 void testApp :: initContours ()
 {
-	contourSmooth	= 1.0;
-	contourSimplify	= 5.5f;
+	contourSmooth	= 0.0;
+	contourSimplify	= 0.0;
 }
 
 void testApp :: initGui ()
@@ -97,12 +97,14 @@ void testApp :: initGui ()
 	gui.addSlider( "noiseSclMaster  ",	noiseSclMaster, 0, 1.0 );
 	
 	gui.addPage( "bands" );
+	gui.addTitle( "bands index", 22 );
+	gui.addSlider( "noiseBandIndex  ",	noiseBandIndex, 0, noiseBandsTotal - 1 );
 	for( int i=0; i<noiseBandsTotal; i++ )
 	{
+		gui.addTitle( "band " + ofToString( i, 0 ), 22 );
 		gui.addSlider( "band " + ofToString( i, 0 ) + " cutoff  ",	noiseBandCutoffs[ i ],	0, 1.0 );
 		gui.addSlider( "band " + ofToString( i, 0 ) + " size  ",	noiseBandSize[ i ],		0, 0.1 );
 	}
-	gui.addSlider( "noiseBandIndex  ",	noiseBandIndex, 0, noiseBandsTotal - 1 );
 	
 	gui.addPage( "contour" );
 	gui.addSlider( "contourSmooth  ",	contourSmooth,		0, 1.0 );
@@ -124,14 +126,7 @@ void testApp::update()
 	
 	updateNoiseImage();
 	updateOpenCv();
-
-	int blobs;
-	blobs = updateContours();
-	
-	if( blobs > 0 )
-	{
-		copyAndScaleBlobs();
-	}
+	updateBlobs();
 }
 
 ofPoint testApp :: getNoiseAtPoint( const ofPoint& point )
@@ -192,67 +187,40 @@ void testApp :: updateOpenCv ()
 {
 	noiseBandSum.set( 0 );
 	
-	ofxCvGrayscaleImage noiseBandTop;
-	ofxCvGrayscaleImage noiseBandBtm;
-	
-	noiseBandTop.allocate( noiseRect.width, noiseRect.height );
-	noiseBandBtm.allocate( noiseRect.width, noiseRect.height );
-	
 	for( int i=0; i<noiseBandsTotal; i++ )
 	{
 		int bandCutoff;
-		bandCutoff = noiseBandCutoffs[ i ] * 255;
+		bandCutoff	= noiseBandCutoffs[ i ] * 255;
 		
 		int bandSize;
-		bandSize = noiseBandSize[ i ] * 255;
-		
-		noiseBandTop = noiseImage;
-		noiseBandBtm = noiseImage;
-		
-		noiseBandTop.threshold( bandCutoff + bandSize, true );
-		noiseBandBtm.threshold( bandCutoff - bandSize, true );
-		
-		noiseBandTop -= noiseBandBtm;
+		bandSize	= noiseBandSize[ i ] * 255;
 		
 		ofxCvGrayscaleImage& noiseBand = noiseBands[ i ];
-		noiseBand = noiseBandTop;
-
-		noiseBandSum += noiseBand;
+		noiseBand		= noiseImage;
+		noiseBand.threshold( bandCutoff, false );
+		
+		int t = noiseRect.width * noiseRect.height;
+		unsigned char* pixels0 = noiseBand.getPixels();
+		unsigned char* pixels1 = noiseBandSum.getPixels();
+		
+		for( int j=0; j<t; j++ )
+		{
+			if( pixels0[ j ] == 255 )
+				pixels1[ j ] = bandCutoff;
+		}
 	}
-	
-	noiseBandTop.clear();
-	noiseBandBtm.clear();
 }
 
-int testApp :: updateContours ()
-{
-	int maxArea;
-	maxArea = noiseRect.width * noiseRect.height;
-	
-	float cfMinArea;
-	cfMinArea = 0.001;
-	
-	int maxContoursToFind;
-	maxContoursToFind = 20;
-	
-	int runningBlobs;
-	
-	runningBlobs = contourFinder.findContours
-	(
-		noiseBandSum,					// image to be used.
-		(int)( maxArea * cfMinArea ),	// min area.
-		maxArea,						// max area.
-		maxContoursToFind,				// max number of contours to find.
-		true,							// find holes.
-		false							// use approximation.
-	);
-	
-	return runningBlobs;
-}
-
-void testApp :: copyAndScaleBlobs ()
+void testApp :: updateBlobs ()
 {
 	//-- remove old blobs.
+
+	for( int i=0; i<contourBlobs.size(); i++ )
+	{
+		ofxCvBlob& blob = contourBlobs[ i ];
+		blob.pts.clear();
+	}
+	contourBlobs.clear();
 	
 	for( int i=0; i<contourBlobsScaled.size(); i++ )
 	{
@@ -271,43 +239,84 @@ void testApp :: copyAndScaleBlobs ()
 	
 	float yoff;
 	yoff = largeRect.y;
-	
-	vector<ofxCvBlob>& blobs = contourFinder.blobs;
-	
-	for( int i=0; i<blobs.size(); i++ )
-	{
-		ofxCvBlob& blob = blobs[ i ];
-		
-		contourBlobsScaled.push_back( ofxCvBlob() );
-		ofxCvBlob& blobCopy = contourBlobsScaled.back();
 
-		for( int j=0; j<blob.pts.size(); j++ )
+	for( int i=0; i<noiseBandsTotal; i++ )
+	{
+		ofxCvGrayscaleImage& image = noiseBands[ i ];
+		
+		int numOfBlobs;
+		numOfBlobs = updateContours( image );
+		
+		if( numOfBlobs == 0 )
+			continue;
+		
+		for( int j=0; j<numOfBlobs; j++ )
 		{
-			ofPoint& p1 = blob.pts[ j ];
+			ofxCvBlob& blob = contourFinder.blobs[ j ];
 			
-			blobCopy.pts.push_back( ofPoint() );
-			ofPoint& p2 = blobCopy.pts.back();
+			contourBlobs.push_back( ofxCvBlob() );
+			contourBlobsScaled.push_back( ofxCvBlob() );
 			
-			p2.x = p1.x * scale + xoff;
-			p2.y = p1.y * scale + yoff;
+			copyBlob( blob, contourBlobs.back() );
+			copyBlob( blob, contourBlobsScaled.back(), xoff, yoff, scale );
 		}
-		
-		blobCopy.area					= blob.area;
-		blobCopy.boundingRect.x			= blob.boundingRect.x * scale + xoff;
-		blobCopy.boundingRect.y			= blob.boundingRect.y * scale + yoff;
-		blobCopy.boundingRect.width		= blob.boundingRect.width  * scale + xoff;
-		blobCopy.boundingRect.height	= blob.boundingRect.height * scale + yoff;
-		blobCopy.centroid.x				= blob.centroid.x * scale + xoff;
-		blobCopy.centroid.y				= blob.centroid.y * scale + yoff;
-		blobCopy.hole					= blob.hole;
-		blobCopy.length					= blob.length;
-		blobCopy.nPts					= blob.nPts;
-		
-		contourUtil.smooth( blobCopy.pts,	contourSmooth );
-		contourUtil.simplify( blobCopy.pts, contourSimplify );
-		
-		blobCopy.nPts					= blobCopy.pts.size();
 	}
+}
+
+int testApp :: updateContours ( ofxCvGrayscaleImage& image )
+{
+	int maxArea;
+	maxArea = noiseRect.width * noiseRect.height;
+	
+	float cfMinArea;
+	cfMinArea = 0.001;
+	
+	int maxContoursToFind;
+	maxContoursToFind = 20;
+	
+	int runningBlobs;
+	
+	runningBlobs = contourFinder.findContours
+	(
+		image,							// image to be used.
+		(int)( maxArea * cfMinArea ),	// min area.
+		maxArea,						// max area.
+		maxContoursToFind,				// max number of contours to find.
+		true,							// find holes.
+		false							// use approximation.
+	);
+	
+	return runningBlobs;
+}
+
+void testApp :: copyBlob ( ofxCvBlob& blob, ofxCvBlob& blobCopy, float xoff, float yoff, float scale )
+{
+	for( int k=0; k<blob.pts.size(); k++ )
+	{
+		ofPoint& p1 = blob.pts[ k ];
+		
+		blobCopy.pts.push_back( ofPoint() );
+		ofPoint& p2 = blobCopy.pts.back();
+		
+		p2.x = p1.x * scale + xoff;
+		p2.y = p1.y * scale + yoff;
+	}
+	
+	blobCopy.area					= blob.area;
+	blobCopy.boundingRect.x			= blob.boundingRect.x * scale + xoff;
+	blobCopy.boundingRect.y			= blob.boundingRect.y * scale + yoff;
+	blobCopy.boundingRect.width		= blob.boundingRect.width  * scale + xoff;
+	blobCopy.boundingRect.height	= blob.boundingRect.height * scale + yoff;
+	blobCopy.centroid.x				= blob.centroid.x * scale + xoff;
+	blobCopy.centroid.y				= blob.centroid.y * scale + yoff;
+	blobCopy.hole					= blob.hole;
+	blobCopy.length					= blob.length;
+	blobCopy.nPts					= blob.nPts;
+	
+	contourUtil.smooth( blobCopy.pts,	contourSmooth );
+	contourUtil.simplify( blobCopy.pts, contourSimplify );
+	
+	blobCopy.nPts					= blobCopy.pts.size();
 }
 
 //--------------------------------------------------------------
@@ -392,11 +401,11 @@ void testApp :: drawContoursSmall ()
 	
 	ofNoFill();
 	ofSetColor( 0xDD00CC );
-	drawContourBoundingBoxes( contourFinder.blobs );
+	drawContourBoundingBoxes( contourBlobs );
 	
 	ofNoFill();
 	ofSetColor( 0x00FFFF );
-	drawContourLines( contourFinder.blobs );
+	drawContourLines( contourBlobs );
 }
 
 void testApp :: drawContoursLarge ()
