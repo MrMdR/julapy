@@ -6,14 +6,15 @@ void testApp::setup()
 	ofSetFrameRate( 60 );
 	ofSetVerticalSync( true );
 	
-	bDebug			= true;
+	bDebug			= false;
 	bSmoothing		= false;
 	bPause			= false;
-	bDrawPoints		= true;
+	bDrawPoints		= false;
 	bDrawLines		= false;
 	bDrawCurves		= false;
-	bDrawSimplified	= true;
+	bDrawSimplified	= false;
 	bDrawColor		= true;
+	bRotateColor	= true;
 	
 	screenRect.width	= ofGetWidth();
 	screenRect.height	= ofGetHeight();
@@ -39,11 +40,19 @@ void testApp::setup()
 	debugRect.width		= 160;
 	debugRect.height	= 120;
 	
+	float largeRectExtra;
+	largeRectExtra		= 0.04;			// the extra is to cover the whole screen. set to 0 to see what happens without it.
+	
 	largeRect			= ofxResizeUtil :: cropToSize( noiseRect, screenRect );
-	largeRect.x			= (int)largeRect.x;
-	largeRect.y			= (int)largeRect.y;
-	largeRect.width		= (int)largeRect.width;
-	largeRect.height	= (int)largeRect.height;
+	largeRect.x			-= largeRect.width  * largeRectExtra * 0.5;
+	largeRect.y			-= largeRect.height * largeRectExtra * 0.5;
+	largeRect.width		*= 1 + largeRectExtra;
+	largeRect.height	*= 1 + largeRectExtra;
+	
+	screenGrabUtil.setup( "movie/frame" );
+	screenGrabUtil.setPause( true );
+	
+	tileSaver.init( 10, 0, true );
 	
 	initNoise();
 	initOpenCv();
@@ -54,15 +63,20 @@ void testApp::setup()
 
 void testApp :: initNoise ()
 {
+	noiseLoc.x = 100;
+	
 	noiseVel.x = 0.1;
 	noiseVel.y = 0.0;
-	noiseVel.z = 0.0;
+	noiseVel.z = 0.05;
 	
 	noiseScl.x = 0.03;
 	noiseScl.y = 0.03;
 	noiseScl.z = 0.03;
 	
-	noiseSclMaster = 0.5;
+//	noise.noiseDetail( 2 );
+//	noise.noiseSeed( ofRandom( 0, 1 ) );
+	
+	noiseSclMaster = 0.05;
 	
 	noiseImage.allocate( noiseRect.width, noiseRect.height );
 }
@@ -89,7 +103,7 @@ void testApp :: initOpenCv ()
 
 void testApp :: initContours ()
 {
-	contourSmoothScale			= 0.0;
+	contourSmoothScale			= 0.5;
 	contourSimplifyScale		= 0.0;
 	contourSimplifyTolerance	= 0.0;
 }
@@ -110,15 +124,15 @@ void testApp :: initGui ()
 	
 	gui.addPage( "noise" );
 	
-	gui.addSlider( "noiseVel.x  ",		noiseVel.x, -1.0, 1.0, true );
-	gui.addSlider( "noiseVel.y  ",		noiseVel.y, -1.0, 1.0, true );
-	gui.addSlider( "noiseVel.z  ",		noiseVel.z, -1.0, 1.0, true );
+	gui.addSlider( "noiseVel.x  ",		noiseVel.x, -1.0, 1.0, false );
+	gui.addSlider( "noiseVel.y  ",		noiseVel.y, -1.0, 1.0, false );
+	gui.addSlider( "noiseVel.z  ",		noiseVel.z, -1.0, 1.0, false );
 
-	gui.addSlider( "noiseScl.x  ",		noiseScl.x, 0, 1.0, true );
-	gui.addSlider( "noiseScl.y  ",		noiseScl.y, 0, 1.0, true );
-	gui.addSlider( "noiseScl.z  ",		noiseScl.z, 0, 1.0, true );
+	gui.addSlider( "noiseScl.x  ",		noiseScl.x, 0, 1.0, false );
+	gui.addSlider( "noiseScl.y  ",		noiseScl.y, 0, 1.0, false );
+	gui.addSlider( "noiseScl.z  ",		noiseScl.z, 0, 1.0, false );
 	
-	gui.addSlider( "noiseSclMaster  ",	noiseSclMaster, 0, 1.0, true );
+	gui.addSlider( "noiseSclMaster  ",	noiseSclMaster, 0, 1.0, false );
 	
 	gui.addPage( "bands" );
 	gui.addTitle( "bands index", 22 );
@@ -142,7 +156,7 @@ void testApp :: initGui ()
 
 void testApp :: initColor ()
 {
-	colorPicker0.setColorRadius( 1.0 );
+	colorPicker0.setColorRadius( 0.65 );
 	colorPicker1.setColorRadius( 1.0 );
 	
 	colorPicker0.setColorAngle( 3 / 6.0 );
@@ -162,6 +176,9 @@ void testApp :: initColor ()
 void testApp::update()
 {
 	if( bPause )
+		return;
+	
+	if( tileSaver.bGoTiling )
 		return;
 	
 	noiseLoc += noiseVel;
@@ -203,6 +220,8 @@ float testApp :: getNoiseAtPoint( float x, float y )
 
 void testApp :: updateNoiseImage ()
 {
+	noiseSclMaster += 0.0001;
+	
 	unsigned char * pixels;
 	pixels = new unsigned char[ (int)( noiseRect.width * noiseRect.height ) ];
 
@@ -394,7 +413,7 @@ void testApp :: updateColor ()
 	}
 
 	float angle;
-	angle = 0.001;
+	angle = ( bRotateColor ) ? 0.00025 : 0;
 
 	colorPicker0.setColorAngle( colorPicker0.getColorAngle() + angle );
 	colorPicker1.setColorAngle( colorPicker1.getColorAngle() + angle );
@@ -413,6 +432,8 @@ ofColor testApp :: interpolateColor ( const ofColor& c1, const ofColor& c2, floa
 //--------------------------------------------------------------
 void testApp::draw()
 {
+	tileSaver.begin();
+	
 	//-- background.
 	
 	ofFill();
@@ -420,6 +441,17 @@ void testApp::draw()
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
 	//-- large.
+	
+	if( bDrawColor )
+	{
+		ofColor c0 = colorPicker0.getColor();
+		
+		ofFill();
+		ofSetColor( c0.r, c0.g, c0.b );
+		ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+		
+		drawContourLines( contourBlobsSimplified, true );
+	}
 	
 	if( bDrawLines )
 	{
@@ -449,11 +481,10 @@ void testApp::draw()
 		drawContourPoints( contourBlobsScaled );
 	}
 	
-	if( bDrawColor )
-	{
-		ofFill();
-		drawContourLines( contourBlobsSimplified, true );
-	}
+	tileSaver.end();
+	
+	if( screenGrabUtil.isRecording() )
+		screenGrabUtil.save();
 	
 	//-- debug.
 	
@@ -630,6 +661,19 @@ void testApp::keyPressed(int key)
 		}
 	}
 	
+	if( key == 's' )
+	{
+		char str[255];
+		sprintf( str, "image_%02d%02d%02d_%02d%02d%02d.png", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds() );
+		
+		tileSaver.finish( str, false );
+	}
+	
+	if( key == 'm' )
+	{
+		screenGrabUtil.togglePause();
+	}
+	
 	if( key == 'd' )
 	{
 		bDebug = !bDebug;
@@ -638,6 +682,11 @@ void testApp::keyPressed(int key)
 	if( key == 'p' )
 	{
 		bPause = !bPause;
+	}
+	
+	if( key == ' ' )
+	{
+		bRotateColor = !bRotateColor;
 	}
 }
 

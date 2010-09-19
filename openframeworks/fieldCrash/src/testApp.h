@@ -11,6 +11,8 @@
 #include "ofxContourUtil.h"
 #include "ofxCvContourSimplify.h"
 #include "ofxColorPicker.h"
+#include "ofxScreenGrabUtil.h"
+#include "ofxTileSaver.h"
 
 class Blob : public ofxCvBlob
 {
@@ -71,6 +73,7 @@ public:
 	bool					bDrawCurves;
 	bool					bDrawSimplified;
 	bool					bDrawColor;
+	bool					bRotateColor;
 
 	ofRectangle				screenRect;
 	ofRectangle				noiseRect;
@@ -103,6 +106,9 @@ public:
 	
 	ofxColorPicker			colorPicker0;
 	ofxColorPicker			colorPicker1;
+	
+	ofxScreenGrabUtil		screenGrabUtil;
+	ofxTileSaver			tileSaver;
 };
 
 #endif
