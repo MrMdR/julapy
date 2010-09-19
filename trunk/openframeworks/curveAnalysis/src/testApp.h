@@ -3,8 +3,9 @@
 
 
 #include "ofMain.h"
-#include "ofxContourUtil.h"
 #include "ofxOpenCv.h"
+#include "ofxContourUtil.h"
+#include "ofxCvContourSimplify.h"
  
 class testApp : public ofBaseApp
 {
@@ -13,8 +14,6 @@ public:
 	void setup	();
 	void update	();
 	void draw	();
-	
-	void simplifyDP_openCV	( const vector<ofPoint>& contourIn, vector<ofPoint>& contourOut, float tolerance = 0.004 );
 	
 	void drawCurve			( const vector<ofPoint>& points );
 	void drawFittedCurve	( const vector<ofPoint>& points );
@@ -27,7 +26,8 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 
-	ofxContourUtil		cu;
+	ofxContourUtil			cu;
+	ofxCvContourSimplify	cs;
 	
 	vector<ofPoint>		curve;
 	vector<ofPoint>		curveSmooth;
