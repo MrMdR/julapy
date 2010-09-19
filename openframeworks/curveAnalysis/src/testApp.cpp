@@ -18,83 +18,6 @@ void testApp::setup()
 	scale3	= 0;
 }
 
-
-//-- douglas pecker approximation using openCV
-
-void testApp :: simplifyDP_openCV ( const vector<ofPoint>& contourIn, vector<ofPoint>& contourOut, float tolerance )		
-{
-	//-- copy points.
-	
-	int numOfPoints;
-	numOfPoints = contourIn.size();
-//	numOfPoints += ( contourIn.size() > 0 ) ? 1 : 0;
-	
-	CvPoint* cvpoints;
-	cvpoints = new CvPoint[ numOfPoints ];
-	
-	for( int i=0; i<numOfPoints; i++)
-	{
-		int j = i % numOfPoints;
-		
-		cvpoints[ i ].x = contourIn[ j ].x;
-		cvpoints[ i ].y = contourIn[ j ].y;
-	}
-	
-	//-- create contour.
-	
-	CvContour	contour;
-	CvSeqBlock	contour_block;
-	
-	cvMakeSeqHeaderForArray
-	(
-		CV_SEQ_POLYLINE,			// CV_SEQ_POLYLINE, CV_SEQ_POLYGON, CV_SEQ_CONTOUR, CV_SEQ_SIMPLE_POLYGON
-		sizeof(CvContour),
-		sizeof(CvPoint),
-		cvpoints,
-		numOfPoints,
-		(CvSeq*)&contour,
-		&contour_block
-	);
-	
-	printf( "length = %f \n", cvArcLength( &contour ) );
-	
-	//-- simplify contour.
-	
-	CvMemStorage* storage;
-	storage = cvCreateMemStorage( 1000 );
-	
-	CvSeq *result = 0;
-	result = cvApproxPoly
-	(
-		&contour,
-		sizeof( CvContour ),
-		storage,
-		CV_POLY_APPROX_DP,
-//		cvContourPerimeter( &contour ) * 0.004,
-		cvContourPerimeter( &contour ) * tolerance,
-		0
-	);
-	
-	//-- contour out points.
-	
-	contourOut.clear();
-	for( int j=0; j<result->total; j++ )
-	{
-		CvPoint * pt = (CvPoint*)cvGetSeqElem( result, j );
-		
-		contourOut.push_back( ofPoint() );
-		contourOut.back().x = (float)pt->x;
-		contourOut.back().y = (float)pt->y;
-	}
-	
-	//-- clean up.
-	
-	if( storage != NULL )
-		cvReleaseMemStorage( &storage );
-	
-	delete[] cvpoints;
-}
-
 ///////////////////////////////////////////
 //	UPDATE.
 ///////////////////////////////////////////
@@ -111,7 +34,7 @@ void testApp::update()
 	cu.smooth( curve, curveSmooth, scale1 );
 	cu.simplify( curve, curveSimplify, scale2 );
 //	cu.simplify( curveSmooth, curveSimplify, simplifyValue );
-	simplifyDP_openCV( curve, curveCvSimplify, scale3 );
+	cs.simplify( curve, curveCvSimplify, scale3 );
 }
 
 ///////////////////////////////////////////
