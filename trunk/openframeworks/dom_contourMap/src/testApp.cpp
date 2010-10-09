@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-	ofSetFrameRate( 60 );
+	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	
 	bDebug			= true;
@@ -18,87 +18,73 @@ void testApp::setup()
 	
 	screenRect.width	= ofGetWidth();
 	screenRect.height	= ofGetHeight();
-
-	switch ( 1 )
-	{
-		case 1 :
-			noiseRect.width		= 160;
-			noiseRect.height	= 120;
-		break;
-
-		case 2 :
-			noiseRect.width		= 320;
-			noiseRect.height	= 240;
-		break;
-			
-		case 3 :
-			noiseRect.width		= 640;
-			noiseRect.height	= 480;
-		break;
-	}
 	
-	debugRect.width		= 160;
-	debugRect.height	= 120;
+	sourceRect.width	= 886;
+	sourceRect.height	= 691;
 	
+	float smallRectScale;
+	smallRectScale = 0.25;
+	
+	smallRect.width		= sourceRect.width  * smallRectScale;
+	smallRect.height	= sourceRect.height * smallRectScale;
+
 	float largeRectExtra;
 	largeRectExtra		= 0.04;			// the extra is to cover the whole screen. set to 0 to see what happens without it.
+//	largeRectExtra		= 0;
 	
-	largeRect			= ofxResizeUtil :: cropToSize( noiseRect, screenRect );
+	largeRect			= ofxResizeUtil :: cropToSize( smallRect, screenRect );
 	largeRect.x			-= largeRect.width  * largeRectExtra * 0.5;
 	largeRect.y			-= largeRect.height * largeRectExtra * 0.5;
 	largeRect.width		*= 1 + largeRectExtra;
 	largeRect.height	*= 1 + largeRectExtra;
+	
+	debugRect.height	= 150;			// default height.
+	debugRect.width		= (int)( ( debugRect.height / sourceRect.height ) * sourceRect.width );
 	
 	screenGrabUtil.setup( "movie/frame" );
 	screenGrabUtil.setPause( true );
 	
 	tileSaver.init( 10, 0, true );
 	
-	initNoise();
+	initBomAnim();
+	initAusMap();
 	initOpenCv();
 	initContours();
 	initGui();
 	initColor();
 }
 
-void testApp :: initNoise ()
+void testApp :: initBomAnim ()
 {
-	noiseLoc.x = 100;
+	bomAnim.loadAnimationImages( "temperature_images" );
 	
-	noiseVel.x = 0.1;
-	noiseVel.y = 0.0;
-	noiseVel.z = 0.05;
-	
-	noiseScl.x = 0.03;
-	noiseScl.y = 0.03;
-	noiseScl.z = 0.03;
-	
-//	noise.noiseDetail( 2 );
-//	noise.noiseSeed( ofRandom( 0, 1 ) );
-	
-	noiseSclMaster = 0.5;
-	
-	noiseImage.allocate( noiseRect.width, noiseRect.height );
+	bomImage.allocate( smallRect.width, smallRect.height );
+}
+
+void testApp :: initAusMap ()
+{
+	ausStroke.loadImage( "aus/aus_886x691_stroke.png" );
+	ausMask.loadImage( "aus/aus_886x691_mask.png" );
 }
 
 void testApp :: initOpenCv ()
 {
-	noiseBandsTotal = 10;
-	noiseBandIndex	= 0;
+	bandsTotal = 10;
+	bandIndex	= 0;
 	
-	noiseBands			= new ofxCvGrayscaleImage[ noiseBandsTotal ];
-	noiseBandCutoffs	= new float[ noiseBandsTotal ];
+	bands		= new ofxCvGrayscaleImage[ bandsTotal ];
+	bandCutoffs	= new float[ bandsTotal ];
 	
-	for( int i=0; i<noiseBandsTotal; i++ )
+	for( int i=0; i<bandsTotal; i++ )
 	{
-		ofxCvGrayscaleImage& noiseBand = noiseBands[ i ];
-		noiseBand.allocate( noiseRect.width, noiseRect.height );
+		ofxCvGrayscaleImage& band = bands[ i ];
+		band.allocate( smallRect.width, smallRect.height );
 		
-		float& noiseBandCutoff = noiseBandCutoffs[ i ];
-		noiseBandCutoff = 0.1 + ( i / (float)( noiseBandsTotal - 1 ) ) * 0.8;
+		float& bandCutoff = bandCutoffs[ i ];
+		bandCutoff = 0.1 + ( i / (float)( bandsTotal - 1 ) ) * 0.8;
 	}
 	
-	noiseBandSum.allocate( noiseRect.width, noiseRect.height );
+	bandSum.allocate( smallRect.width, smallRect.height );
 }
 
 void testApp :: initContours ()
@@ -122,25 +108,13 @@ void testApp :: initGui ()
 	gui.addToggle( "bDrawSimplified  ",	bDrawSimplified );
 	gui.addToggle( "bDrawColor  ",		bDrawColor );
 	
-	gui.addPage( "noise" );
-	
-	gui.addSlider( "noiseVel.x  ",		noiseVel.x, -1.0, 1.0, false );
-	gui.addSlider( "noiseVel.y  ",		noiseVel.y, -1.0, 1.0, false );
-	gui.addSlider( "noiseVel.z  ",		noiseVel.z, -1.0, 1.0, false );
-
-	gui.addSlider( "noiseScl.x  ",		noiseScl.x, 0, 1.0, false );
-	gui.addSlider( "noiseScl.y  ",		noiseScl.y, 0, 1.0, false );
-	gui.addSlider( "noiseScl.z  ",		noiseScl.z, 0, 1.0, false );
-	
-	gui.addSlider( "noiseSclMaster  ",	noiseSclMaster, 0, 1.0, false );
-	
 	gui.addPage( "bands" );
 	gui.addTitle( "bands index", 22 );
-	gui.addSlider( "noiseBandIndex  ",	noiseBandIndex, 0, noiseBandsTotal - 1 );
-	for( int i=0; i<noiseBandsTotal; i++ )
+	gui.addSlider( "bandIndex  ",	bandIndex, 0, bandsTotal - 1 );
+	for( int i=0; i<bandsTotal; i++ )
 	{
 		gui.addTitle( "band " + ofToString( i, 0 ), 22 );
-		gui.addSlider( "band " + ofToString( i, 0 ) + " cutoff  ",	noiseBandCutoffs[ i ],	0, 1.0 );
+		gui.addSlider( "band " + ofToString( i, 0 ) + " cutoff  ",	bandCutoffs[ i ],	0, 1.0 );
 	}
 	
 	gui.addPage( "contour" );
@@ -181,89 +155,42 @@ void testApp::update()
 	if( tileSaver.bGoTiling )
 		return;
 	
-	noiseLoc += noiseVel;
-	
-	updateNoiseImage();
+	updateBomAnim();
 	updateOpenCv();
 	updateBlobs();
 	updateColor();
 }
 
-ofPoint testApp :: getNoiseAtPoint( const ofPoint& point )
+void testApp :: updateBomAnim ()
 {
-	float p = getNoiseAtPoint( point.x, point.y );
+	if( ofGetFrameNum() % 10 == 0 )
+		bomAnim.nextFrame();
 	
-	ofxVec2f v = ofxVec2f( 0, 1 );
-	v.rotate( p * 720 );
+	ofxCvGrayscaleImage* image;
+	image = bomAnim.getBomImage();
 	
-	return ofPoint( v.x, v.y );
-}
-
-float testApp :: getNoiseAtPoint( float x, float y )
-{
-	float p = noise.noiseuf
-	(
-		( x + noiseLoc.x ) * noiseScl.x * noiseSclMaster,
-		( y + noiseLoc.y ) * noiseScl.y * noiseSclMaster,
-		noiseLoc.z * noiseScl.z
-	);
-	
-	float m;
-	m = 2;
-	
-	p *= m;
-	p -= ( m - 1 ) * 0.5;
-	p = MAX( MIN( p, 1.0 ), 0.0 );
-	
-	return p;
-}
-
-void testApp :: updateNoiseImage ()
-{
-//	noiseSclMaster += 0.0001;
-	
-	unsigned char * pixels;
-	pixels = new unsigned char[ (int)( noiseRect.width * noiseRect.height ) ];
-
-	for( int y=0; y<noiseRect.height; y++ )
-	{
-		for( int x=0; x<noiseRect.width; x++ )
-		{
-			int p;
-			p = ( y * noiseRect.width ) + x;
-			
-			float n;
-			n = getNoiseAtPoint( x, y );
-			n *= 255;
-			
-			pixels[ p ] = (int)n;
-		}
-	}
-	
-	noiseImage.setFromPixels( pixels, noiseRect.width, noiseRect.height );
-	
-	delete [] pixels;
+	bomImage.scaleIntoMe( *image );
 }
 
 void testApp :: updateOpenCv ()
 {
-	noiseBandSum.set( 0 );
+	bandSum.set( 0 );
 	
-	for( int i=0; i<noiseBandsTotal; i++ )
+	for( int i=0; i<bandsTotal; i++ )
 	{
 		int bandCutoff;
-		bandCutoff	= noiseBandCutoffs[ i ] * 255;
+		bandCutoff	= bandCutoffs[ i ] * 255;
 		
-		ofxCvGrayscaleImage& noiseBand = noiseBands[ i ];
-		noiseBand		= noiseImage;
-		noiseBand.threshold( bandCutoff, false );
+		ofxCvGrayscaleImage& band = bands[ i ];
+		band		= bomImage;
+		band.threshold( bandCutoff, false );
 		
 		if( !bDebug )
 			continue;
 		
-		int t = noiseRect.width * noiseRect.height;
-		unsigned char* pixels0 = noiseBand.getPixels();
-		unsigned char* pixels1 = noiseBandSum.getPixels();
+		int t = smallRect.width * smallRect.height;
+		unsigned char* pixels0 = band.getPixels();
+		unsigned char* pixels1 = bandSum.getPixels();
 		
 		for( int j=0; j<t; j++ )
 		{
@@ -284,7 +211,7 @@ void testApp :: updateBlobs ()
 	//-- copy blobs and scale.
 	
 	float scale;
-	scale = largeRect.width / (float)noiseRect.width;
+	scale = largeRect.width / (float)smallRect.width;
 	
 	float xoff;
 	xoff = largeRect.x;
@@ -292,9 +219,9 @@ void testApp :: updateBlobs ()
 	float yoff;
 	yoff = largeRect.y;
 
-	for( int i=0; i<noiseBandsTotal; i++ )
+	for( int i=0; i<bandsTotal; i++ )
 	{
-		ofxCvGrayscaleImage& image = noiseBands[ i ];
+		ofxCvGrayscaleImage& image = bands[ i ];
 		
 		int numOfBlobs;
 		numOfBlobs = updateContours( image );
@@ -304,7 +231,7 @@ void testApp :: updateBlobs ()
 		
 		ofColor c0 = colorPicker0.getColor();
 		ofColor c1 = colorPicker1.getColor();
-		ofColor c2 = interpolateColor( c0, c1, noiseBandCutoffs[ i ] );
+		ofColor c2 = interpolateColor( c0, c1, bandCutoffs[ i ] );
 		
 		for( int j=0; j<numOfBlobs; j++ )
 		{
@@ -349,7 +276,7 @@ void testApp :: updateBlobs ()
 int testApp :: updateContours ( ofxCvGrayscaleImage& image )
 {
 	int maxArea;
-	maxArea = noiseRect.width * noiseRect.height;
+	maxArea = smallRect.width * smallRect.height;
 	
 	float cfMinArea;
 	cfMinArea = 0.001;
@@ -429,7 +356,10 @@ ofColor testApp :: interpolateColor ( const ofColor& c1, const ofColor& c2, floa
 	return c;
 }
 
-//--------------------------------------------------------------
+///////////////////////////////////////////////////
+//	DRAW.
+///////////////////////////////////////////////////
+
 void testApp::draw()
 {
 	tileSaver.begin();
@@ -439,6 +369,8 @@ void testApp::draw()
 	ofFill();
 	ofSetColor( 0x000000 );
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+	
+	drawBomAnim();
 	
 	//-- large.
 	
@@ -498,17 +430,17 @@ void testApp::draw()
 	glTranslatef( ofGetWidth() - debugRect.width - pad, pad, 0 );
 	
 	drawBorder( debugRect );
-	drawNoiseImage();
+	drawBomImage();
 	
 	glTranslatef( 0, debugRect.height + pad, 0 );
 	
 	drawBorder( debugRect );
-	drawNoiseBand();
+	drawBand();
 
 	glTranslatef( 0, debugRect.height + pad, 0 );
 	
 	drawBorder( debugRect );
-	drawNoiseBandSum();
+	drawBandSum();
 
 	glTranslatef( 0, debugRect.height + pad, 0 );
 	
@@ -529,29 +461,43 @@ void testApp :: drawBorder ( const ofRectangle& rect )
 	ofRect( -b, -b, rect.width + b * 2, rect.height + b * 2 );
 }
 
-void testApp :: drawNoiseImage ()
+void testApp :: drawBomAnim ()
 {
 	ofSetColor( 0xFFFFFF );
-	noiseImage.draw( 0, 0, debugRect.width, debugRect.height );
+	
+	float s;
+	s = largeRect.width / sourceRect.width;
+	
+	glPushMatrix();
+	glTranslatef( largeRect.x, largeRect.y, 0 );
+	glScalef( s, s, 0 );
+	bomAnim.draw( 0, 0 );
+	glPopMatrix();
 }
 
-void testApp :: drawNoiseBand ()
+void testApp :: drawBomImage ()
 {
 	ofSetColor( 0xFFFFFF );
-	ofxCvGrayscaleImage& noiseBand = noiseBands[ noiseBandIndex ];
-	noiseBand.draw( 0, 0, debugRect.width, debugRect.height );
+	bomImage.draw( 0, 0, debugRect.width, debugRect.height );
 }
 
-void testApp :: drawNoiseBandSum ()
+void testApp :: drawBand ()
 {
 	ofSetColor( 0xFFFFFF );
-	noiseBandSum.draw( 0, 0, debugRect.width, debugRect.height );
+	ofxCvGrayscaleImage& band = bands[ bandIndex ];
+	band.draw( 0, 0, debugRect.width, debugRect.height );
+}
+
+void testApp :: drawBandSum ()
+{
+	ofSetColor( 0xFFFFFF );
+	bandSum.draw( 0, 0, debugRect.width, debugRect.height );
 }
 
 void testApp :: drawContoursSmall ()
 {
 	float scale;
-	scale = debugRect.width / (float)noiseRect.width;
+	scale = debugRect.width / (float)smallRect.width;
 	
 	ofFill();
 	ofSetColor( 0x000000 );

@@ -14,6 +14,8 @@
 #include "ofxScreenGrabUtil.h"
 #include "ofxTileSaver.h"
 
+#include "BomAnimation.h"
+
 class Blob : public ofxCvBlob
 {
 public:
@@ -29,16 +31,14 @@ public:
 	void update	();
 	void draw	();
 
-	void initNoise		();
+	void initBomAnim	();
+	void initAusMap		();
 	void initOpenCv		();
 	void initContours	();
 	void initGui		();
 	void initColor		();
 	
-	ofPoint getNoiseAtPoint		( const ofPoint& point );
-	float	getNoiseAtPoint		( float x, float y );
-	
-	void updateNoiseImage		();
+	void updateBomAnim			();
 	void updateOpenCv			();
 	void updateBlobs			();
 	int  updateContours			( ofxCvGrayscaleImage& image );
@@ -47,9 +47,10 @@ public:
 	ofColor interpolateColor	( const ofColor& c1, const ofColor& c2, float p );
 	
 	void drawBorder					( const ofRectangle& rect );
-	void drawNoiseImage				();
-	void drawNoiseBand				();
-	void drawNoiseBandSum			();
+	void drawBomAnim				();
+	void drawBomImage				();
+	void drawBand					();
+	void drawBandSum				();
 	void drawContoursSmall			();
 	void drawContoursLarge			();
 	void drawContourBoundingBoxes	( vector<Blob>& blobs );
@@ -76,23 +77,22 @@ public:
 	bool					bRotateColor;
 
 	ofRectangle				screenRect;
-	ofRectangle				noiseRect;
-	ofRectangle				debugRect;
+	ofRectangle				sourceRect;
 	ofRectangle				largeRect;
+	ofRectangle				smallRect;
+	ofRectangle				debugRect;
 	
-	ofxCvGrayscaleImage		noiseImage;
+	BomAnimation			bomAnim;
+	ofxCvGrayscaleImage		bomImage;
 	
-	ofxCvGrayscaleImage		noiseBandSum;
-	ofxCvGrayscaleImage*	noiseBands;
-	float*					noiseBandCutoffs;
-	int						noiseBandsTotal;
-	int						noiseBandIndex;
+	ofImage					ausStroke;
+	ofImage					ausMask;
 	
-	ofxPerlin				noise;
-	ofxVec3f				noiseLoc;
-	ofxVec3f				noiseVel;
-	ofxVec3f				noiseScl;
-	float					noiseSclMaster;
+	ofxCvGrayscaleImage		bandSum;
+	ofxCvGrayscaleImage*	bands;
+	float*					bandCutoffs;
+	int						bandsTotal;
+	int						bandIndex;
 	
 	ofxCvContourFinder		contourFinder;
 	ofxContourUtil			contourUtil;
