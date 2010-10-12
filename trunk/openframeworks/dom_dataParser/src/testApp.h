@@ -5,6 +5,7 @@
 #include "ofMain.h"
 #include "ofxDirList.h"
 #include "ofxBomParser.h"
+#include "ofxBomParser_v2.h"
 #include "ofxCvGrayscaleImage.h"
 
 class testApp : public ofBaseApp
@@ -24,7 +25,8 @@ public:
 	void windowResized	( int w, int h );
 
 	ofxDirList				DIR;
-	ofxBomParser			parser;
+//	ofxBomParser			parser;
+	ofxBomParser_v2			parser;
 	ofxCvGrayscaleImage		image0;
 	ofImage					image1;
 };

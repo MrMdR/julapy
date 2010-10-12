@@ -15,7 +15,7 @@ void testApp::setup()
 		fileName = DIR.getName( i );
 
 		parser.clear();
-		parser.loadData( "bom_data/" + fileName );
+		parser.loadData( "bom_data/" + fileName, -800, 800 );
 		parser.createPixelsFromData();
 		
 		int w = parser.width;
@@ -23,7 +23,7 @@ void testApp::setup()
 		
 		image0.allocate( w, h );
 		image0.setFromPixels( parser.pixels, w, h );
-		image0.mirror( true, false );
+//		image0.mirror( true, false );
 		
 		image1.allocate( w, h, OF_IMAGE_GRAYSCALE );
 		image1.setFromPixels( image0.getPixels(), w, h, OF_IMAGE_GRAYSCALE );
