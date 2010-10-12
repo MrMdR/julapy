@@ -11,7 +11,7 @@
 
 AudioFileSpectrum :: AudioFileSpectrum()
 {
-	//
+	audio = NULL;
 }
 
 AudioFileSpectrum :: ~AudioFileSpectrum()
@@ -42,15 +42,18 @@ void AudioFileSpectrum :: init ()
 {
 	AudioAbstract :: init();
 	
-	float audioLengthInvFreq = audio->length / (float)audio->internalFreq;
-	audioTotalFrames = floor( audioLengthInvFreq * ofGetFrameRate() );
+	if( audio != NULL )
+	{
+		float audioLengthInvFreq = audio->length / (float)audio->internalFreq;
+		audioTotalFrames = floor( audioLengthInvFreq * ofGetFrameRate() );
+	}
 	
 	setFrameRateSync( false );
 }
 
 void AudioFileSpectrum :: update ()
 {
-	if( frameRateSync )
+	if( audio != NULL && frameRateSync )
 	{
 		float position;
 		position = ( ofGetFrameNum() - frameStart ) / (float)audioTotalFrames;

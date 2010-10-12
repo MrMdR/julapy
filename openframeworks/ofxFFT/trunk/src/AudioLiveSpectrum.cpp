@@ -30,7 +30,7 @@ void AudioLiveSpectrum :: init ()
 		this,					// ofBaseApp * OFSA
 		44100,					// sampleRate
 		getNoOfBands(),			// bufferSize
-		4						// nBuffers
+		1						// nBuffers
 	);
 }
 
@@ -38,6 +38,9 @@ void AudioLiveSpectrum :: audioReceived( float *data, int bufferSize, int nChann
 {
 	for( int i=0; i<getNoOfBands(); i++)
 	{
-		specData[ i ] = data[ i * 2 ];		// samples are "interleaved", so left channel data is every second one.
+		int j = i;
+//		j *= 0.1;
+		
+		specData[ i ] = data[ j * 2 ];		// samples are "interleaved", so left channel data is every second one.
 	}
 }
