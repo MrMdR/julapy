@@ -33,13 +33,13 @@ public :
 	void getHaarItemRectEased	( ofRectangle& haarRect );
 	void clearHaarItems			();
 	
-	ofxCvHaarFinder	*haarFinder;
+	ofxCvHaarFinder					*haarFinder;
+	vector<ofxCvHaarTrackerItem>	haarItems;
 	
 protected :	
 	
 	void init ();
 	
-	vector<ofxCvHaarTrackerItem>		haarItems;
 	int									haarItemIndex;
 	int									haarItemIteratorIndex;
 	
