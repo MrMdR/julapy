@@ -75,11 +75,11 @@ void ofxCvHaarTracker :: findHaarObjects( ofxCvGrayscaleImage &image )
 		
 		if( !isMatch )
 		{
-			ofxCvHaarTrackerItem haarItem = ofxCvHaarTrackerItem();
+			haarItems.push_back( ofxCvHaarTrackerItem() );
+			ofxCvHaarTrackerItem& haarItem = haarItems.back();
+			
 			haarItem.set( haarRect );
 			haarItem.setID( haarItemIDCounter );
-			
-			haarItems.push_back( haarItem );
 		}
 		
 		++haarItemIDCounter;
