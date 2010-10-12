@@ -13,13 +13,16 @@
 #include "ofxColorPicker.h"
 #include "ofxScreenGrabUtil.h"
 #include "ofxTileSaver.h"
+#include "ofxFlash.h"
 
 #include "BomAnimation.h"
+#include "Slider.h"
 
 class Blob : public ofxCvBlob
 {
 public:
 	ofColor	color;
+	int		layer;
 };
 
 class testApp : public ofBaseApp
@@ -31,6 +34,7 @@ public:
 	void update	();
 	void draw	();
 
+	void initUI			();
 	void initBomAnim	();
 	void initAusMap		();
 	void initOpenCv		();
@@ -49,6 +53,9 @@ public:
 	void drawBorder					( const ofRectangle& rect );
 	void drawBomAnim				();
 	void drawBomImage				();
+	void drawAusStroke				();
+	void drawAusMask				();
+	void drawUI						();
 	void drawBand					();
 	void drawBandSum				();
 	void drawContoursSmall			();
@@ -106,6 +113,9 @@ public:
 	
 	ofxColorPicker			colorPicker0;
 	ofxColorPicker			colorPicker1;
+	
+	ofxStage				stage;
+	Slider					slider;
 	
 	ofxScreenGrabUtil		screenGrabUtil;
 	ofxTileSaver			tileSaver;
