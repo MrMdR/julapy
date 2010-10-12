@@ -169,8 +169,6 @@ void AudioAbstract :: updateAudioData ( AudioData &audioData, float *dataNew )
 
 void AudioAbstract :: mirrorAudioData ( AudioData &audioData )
 {
-	audioData.peakAverage = 0;
-	
 	int audioDataSizeHalf;
 	audioDataSizeHalf = (int)( audioData.size * 0.5 );
 	
@@ -183,8 +181,6 @@ void AudioAbstract :: mirrorAudioData ( AudioData &audioData )
 		audioData.dataPeak[ j - i ]	= audioData.dataPeak[ i ];
 		audioData.dataCut[ j - i ]	= audioData.dataCut[ i ];
 	}
-	
-	audioData.peakAverage /= audioDataSizeHalf;
 }
 
 void AudioAbstract :: resetAudioData ( AudioData &audioData )

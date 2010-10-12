@@ -23,6 +23,7 @@ public :
 	
 	void  init				( string fileName );
 	void  init				( ofSoundPlayer *audio );
+	void  init				();
 	
 	void  update			( );
 	
@@ -32,12 +33,9 @@ public :
 	
 private :
 	
-	void init				();
-	
 	int						audioTotalFrames;
 	bool					frameRateSync;
 	int						frameStart;
-	
 	
 };
 
