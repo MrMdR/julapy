@@ -13,8 +13,8 @@ void testApp::setup()
 	bDrawLines		= false;
 	bDrawCurves		= false;
 	bDrawSimplified	= true;
-	bDrawColor		= false;
-	bRotateColor	= true;
+	bDrawColor		= true;
+	bRotateColor	= false;
 	
 	screenRect.width	= ofGetWidth();
 	screenRect.height	= ofGetHeight();
@@ -30,9 +30,10 @@ void testApp::setup()
 
 	float largeRectExtra;
 	largeRectExtra		= 0.04;			// the extra is to cover the whole screen. set to 0 to see what happens without it.
-//	largeRectExtra		= 0;
+	largeRectExtra		= 0;
 	
-	largeRect			= ofxResizeUtil :: cropToSize( smallRect, screenRect );
+//	largeRect			= ofxResizeUtil :: cropToSize( smallRect, screenRect );
+	largeRect			= ofxResizeUtil :: fitToSize( smallRect, screenRect );
 	largeRect.x			-= largeRect.width  * largeRectExtra * 0.5;
 	largeRect.y			-= largeRect.height * largeRectExtra * 0.5;
 	largeRect.width		*= 1 + largeRectExtra;
@@ -46,6 +47,7 @@ void testApp::setup()
 	
 	tileSaver.init( 10, 0, true );
 	
+	initUI();
 	initBomAnim();
 	initAusMap();
 	initOpenCv();
@@ -54,9 +56,17 @@ void testApp::setup()
 	initColor();
 }
 
+void testApp :: initUI ()
+{
+	slider.setup();
+	
+	stage.addChild( &slider );
+}
+
 void testApp :: initBomAnim ()
 {
 	bomAnim.loadAnimationImages( "temperature_images" );
+//	bomAnim.loadAnimationImages( "rainfall_images" );
 	
 	bomImage.allocate( smallRect.width, smallRect.height );
 }
@@ -64,7 +74,7 @@ void testApp :: initBomAnim ()
 void testApp :: initAusMap ()
 {
 	ausStroke.loadImage( "aus/aus_886x691_stroke.png" );
-	ausMask.loadImage( "aus/aus_886x691_mask.png" );
+	ausMask.loadImage( "aus/aus_886x691_mask_2.png" );
 }
 
 void testApp :: initOpenCv ()
@@ -163,8 +173,10 @@ void testApp::update()
 
 void testApp :: updateBomAnim ()
 {
-	if( ofGetFrameNum() % 10 == 0 )
-		bomAnim.nextFrame();
+//	if( ofGetFrameNum() % 10 == 0 )
+//		bomAnim.nextFrame();
+	
+	bomAnim.setProgress( slider.getPosition() );
 	
 	ofxCvGrayscaleImage* image;
 	image = bomAnim.getBomImage();
@@ -248,7 +260,11 @@ void testApp :: updateBlobs ()
 			contourBlobs.back().color			= c2;
 			contourBlobsScaled.back().color		= c2;
 			contourBlobsSimplified.back().color	= c2;
-
+			
+			contourBlobs.back().layer			= i;
+			contourBlobsScaled.back().layer		= i;
+			contourBlobsSimplified.back().layer	= i;
+			
 			if( contourSmoothScale > 0 )
 			{
 				contourUtil.smooth( contourBlobsSimplified.back().pts, contourSmoothScale, 1.0 );
@@ -370,7 +386,8 @@ void testApp::draw()
 	ofSetColor( 0x000000 );
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
-	drawBomAnim();
+//	drawBomAnim();
+//	drawAusMask();
 	
 	//-- large.
 	
@@ -380,7 +397,7 @@ void testApp::draw()
 		
 		ofFill();
 		ofSetColor( c0.r, c0.g, c0.b );
-		ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+		ofRect( largeRect.x, largeRect.y, largeRect.width, largeRect.height );
 		
 		drawContourLines( contourBlobsSimplified, true );
 	}
@@ -412,6 +429,11 @@ void testApp::draw()
 		ofSetColor( 0xFF0000 );
 		drawContourPoints( contourBlobsScaled );
 	}
+	
+	drawAusStroke();
+	drawUI();
+	
+	//-- recod.
 	
 	tileSaver.end();
 	
@@ -481,6 +503,41 @@ void testApp :: drawBomImage ()
 	bomImage.draw( 0, 0, debugRect.width, debugRect.height );
 }
 
+void testApp :: drawAusStroke ()
+{
+	ofEnableAlphaBlending();
+	
+	ofSetColor( 0x000000 );
+	
+	float s;
+	s = largeRect.width / ausStroke.width;
+	
+	glPushMatrix();
+	glTranslatef( largeRect.x, largeRect.y, 0 );
+	glScalef( s, s, 0 );
+	ausStroke.draw( 0, 0 );
+	glPopMatrix();
+	
+	ofDisableAlphaBlending();
+}
+
+void testApp :: drawAusMask ()
+{
+	float s;
+	s = largeRect.width / ausMask.width;
+	
+	glPushMatrix();
+	glTranslatef( largeRect.x, largeRect.y, 0 );
+	glScalef( s, s, 0 );
+	ausMask.draw( 0, 0 );
+	glPopMatrix();
+}
+
+void testApp :: drawUI ()
+{
+	//
+}
+
 void testApp :: drawBand ()
 {
 	ofSetColor( 0xFFFFFF );
@@ -546,6 +603,8 @@ void testApp :: drawContourPoints ( vector<Blob>& blobs )
 
 void testApp :: drawContourLines ( vector<Blob>& blobs, bool useBlobColor )
 {
+	int layer = -1;
+	
 	for( int i=0; i<blobs.size(); i++ )
 	{
 		if( useBlobColor )
@@ -556,14 +615,35 @@ void testApp :: drawContourLines ( vector<Blob>& blobs, bool useBlobColor )
 		
 		int t = blobs[ i ].pts.size();
 		
-		ofBeginShape();
-		for( int j=0; j<t+1; j++ )		// extra points to close each polygon
+		if( layer != blobs[ i ].layer )				// new layer - start new shape.
+		{
+			layer = blobs[ i ].layer;
+			
+			ofBeginShape();
+		}
+		
+		for( int j=0; j<t+1; j++ )					// extra points to close each polygon
 		{
 			int k = j % t;
 			
 			ofVertex( blobs[ i ].pts[ k ].x, blobs[ i ].pts[ k ].y );
 		}
-		ofEndShape();
+		
+		if( i < blobs.size() - 1 )
+		{
+			if( layer != blobs[ i + 1 ].layer )		// next layer is new.
+			{
+				ofEndShape();
+			}
+			else
+			{
+				ofNextContour( true );				// same layer - do next contour.
+			}
+		}
+		else										// last blob - end shape.
+		{
+			ofEndShape();
+		}
 	}
 }
 
