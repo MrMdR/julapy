@@ -12,6 +12,8 @@
 
 #include "ofMain.h"
 
+#define SPEACH_BUBBLE_RESOLUTION  100
+
 class SpeachBubble
 {
 
@@ -22,19 +24,29 @@ public :
 	
 	void init			( string str, ofTrueTypeFont* font );
 	void setPosition	( ofPoint& p );
-	void setSize		( ofRectangle& r );
+	void setTarget		( ofPoint& p );
+	void setVolume		( float v );
+	void setVolumeData	( float *v );
 	void playIn			();
 	void playOut		();
 	void update			();
 	
+	ofRectangle getRect	();
+	
 	void drawBubble		();
+	void drawPoint		();
 	void drawText		();
 	
 	string			bubbleStr;
-	ofPoint			pos;
+	ofPoint			position;
+	ofPoint			target;
 	ofRectangle		rect;
-	ofRectangle		rectPad;
+	ofRectangle		rectText;
 	float			scale;
+	float			volume;
+	float			volumePush;
+	float			*volumeData;
+	int				volumeDir;
 	ofTrueTypeFont	*font;
 	
 	bool			bPlayingIn;
