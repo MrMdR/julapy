@@ -100,6 +100,11 @@ public:
 	//	GETTERS.
 	////////////////////////////////////////////////////
 	
+	void setPosition ( float p )
+	{
+		position = positionNew = ofClamp( p, 0, 1 );
+	}
+	
 	float getPosition ()
 	{
 		return position;

@@ -59,22 +59,31 @@ void testApp::setup()
 void testApp :: initUI ()
 {
 	slider.setup();
+	playBtn.setup();
+	tempRainBtn.setup();
 	
 	stage.addChild( &slider );
+	stage.addChild( &playBtn );
+	stage.addChild( &tempRainBtn );
 }
 
 void testApp :: initBomAnim ()
 {
-	bomAnim.loadAnimationImages( "temperature_images" );
-//	bomAnim.loadAnimationImages( "rainfall_images" );
+	bomTempAnim.loadAnimationImages( "temperature_images" );
+	bomRainAnim.loadAnimationImages( "rainfall_images" );
+	bomAnim = &bomTempAnim;
 	
 	bomImage.allocate( smallRect.width, smallRect.height );
+	
+	bomAnimProgress = 0;
+	bomAninSpeed	= 0.005;
 }
 
 void testApp :: initAusMap ()
 {
 	ausStroke.loadImage( "aus/aus_886x691_stroke.png" );
 	ausMask.loadImage( "aus/aus_886x691_mask_2.png" );
+	ausCover.loadImage( "aus/aus_886x691_cover.png" );
 }
 
 void testApp :: initOpenCv ()
@@ -140,11 +149,18 @@ void testApp :: initGui ()
 
 void testApp :: initColor ()
 {
-	colorPicker0.setColorRadius( 0.65 );
-	colorPicker1.setColorRadius( 1.0 );
-	
-	colorPicker0.setColorAngle( 3 / 6.0 );
-	colorPicker1.setColorAngle( 5 / 6.0 );
+//	colorPicker0.setColorRadius( 0.65 );
+//	colorPicker1.setColorRadius( 1.0 );
+//	
+//	colorPicker0.setColorAngle( 3 / 6.0 );
+//	colorPicker1.setColorAngle( 5 / 6.0 );
+
+	colorPicker0.setColorRadius( 0 );
+	colorPicker1.setColorRadius( 0 );
+	colorPicker0.setColorAngle( 0 );
+	colorPicker1.setColorAngle( 0 );
+	colorPicker0.setColorScale( 0 );
+	colorPicker1.setColorScale( 1 );
 	
 	colorPicker0.enable();
 	colorPicker1.enable();
@@ -173,13 +189,39 @@ void testApp::update()
 
 void testApp :: updateBomAnim ()
 {
-//	if( ofGetFrameNum() % 10 == 0 )
-//		bomAnim.nextFrame();
+	//-- progress.
 	
-	bomAnim.setProgress( slider.getPosition() );
+	if( playBtn.isPlaying() )
+	{
+		bomAnimProgress += bomAninSpeed;
+		
+		if( bomAnimProgress > 1.0 )
+			bomAnimProgress = 0;
+		
+		slider.setPosition( bomAnimProgress );
+	}
+	else
+	{
+		bomAnimProgress = slider.getPosition();
+	}
+	
+	//-- select bom anim.
+	
+	if( tempRainBtn.isTemp() )
+	{
+		bomAnim = &bomTempAnim;
+	}
+	else
+	{
+		bomAnim = &bomRainAnim;
+	}
+	
+	//-- progress.
+	
+	bomAnim->setProgress( bomAnimProgress );
 	
 	ofxCvGrayscaleImage* image;
-	image = bomAnim.getBomImage();
+	image = bomAnim->getBomImage();
 	
 	bomImage.scaleIntoMe( *image );
 }
@@ -387,7 +429,6 @@ void testApp::draw()
 	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 	
 //	drawBomAnim();
-//	drawAusMask();
 	
 	//-- large.
 	
@@ -429,8 +470,13 @@ void testApp::draw()
 		ofSetColor( 0xFF0000 );
 		drawContourPoints( contourBlobsScaled );
 	}
+
+	ofSetColor( 0x000000 );
+	drawMapImage( ausStroke, true );
+
+	ofSetColor( 0x333333 );
+	drawMapImage( ausCover, true );
 	
-	drawAusStroke();
 	drawUI();
 	
 	//-- recod.
@@ -440,10 +486,19 @@ void testApp::draw()
 	if( screenGrabUtil.isRecording() )
 		screenGrabUtil.save();
 	
+	ofSetColor( 0xFFFFFF );
+	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ) + " fps" , 5, 15 );
+	
 	//-- debug.
 	
 	if( !bDebug )
 		return;
+	
+	ofEnableAlphaBlending();
+	ofFill();
+	ofSetColor( 0, 0, 0, 100 );
+	ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
+	ofDisableAlphaBlending();
 	
 	int pad;
 	pad = 10;
@@ -493,7 +548,7 @@ void testApp :: drawBomAnim ()
 	glPushMatrix();
 	glTranslatef( largeRect.x, largeRect.y, 0 );
 	glScalef( s, s, 0 );
-	bomAnim.draw( 0, 0 );
+	bomAnim->draw( 0, 0 );
 	glPopMatrix();
 }
 
@@ -503,34 +558,22 @@ void testApp :: drawBomImage ()
 	bomImage.draw( 0, 0, debugRect.width, debugRect.height );
 }
 
-void testApp :: drawAusStroke ()
+void testApp :: drawMapImage ( ofImage& image, bool bUseAlpha )
 {
-	ofEnableAlphaBlending();
-	
-	ofSetColor( 0x000000 );
+	if( bUseAlpha )
+		ofEnableAlphaBlending();
 	
 	float s;
-	s = largeRect.width / ausStroke.width;
+	s = largeRect.width / image.width;
 	
 	glPushMatrix();
 	glTranslatef( largeRect.x, largeRect.y, 0 );
 	glScalef( s, s, 0 );
-	ausStroke.draw( 0, 0 );
+	image.draw( 0, 0 );
 	glPopMatrix();
 	
-	ofDisableAlphaBlending();
-}
-
-void testApp :: drawAusMask ()
-{
-	float s;
-	s = largeRect.width / ausMask.width;
-	
-	glPushMatrix();
-	glTranslatef( largeRect.x, largeRect.y, 0 );
-	glScalef( s, s, 0 );
-	ausMask.draw( 0, 0 );
-	glPopMatrix();
+	if( bUseAlpha )
+		ofDisableAlphaBlending();
 }
 
 void testApp :: drawUI ()

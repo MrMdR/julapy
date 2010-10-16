@@ -17,6 +17,8 @@
 
 #include "BomAnimation.h"
 #include "Slider.h"
+#include "PlayBtn.h"
+#include "TempRainBtn.h"
 
 class Blob : public ofxCvBlob
 {
@@ -53,8 +55,7 @@ public:
 	void drawBorder					( const ofRectangle& rect );
 	void drawBomAnim				();
 	void drawBomImage				();
-	void drawAusStroke				();
-	void drawAusMask				();
+	void drawMapImage				( ofImage& image, bool bUseAlpha );
 	void drawUI						();
 	void drawBand					();
 	void drawBandSum				();
@@ -89,11 +90,16 @@ public:
 	ofRectangle				smallRect;
 	ofRectangle				debugRect;
 	
-	BomAnimation			bomAnim;
+	BomAnimation			bomTempAnim;
+	BomAnimation			bomRainAnim;
+	BomAnimation*			bomAnim;
 	ofxCvGrayscaleImage		bomImage;
+	float					bomAnimProgress;
+	float					bomAninSpeed;
 	
 	ofImage					ausStroke;
 	ofImage					ausMask;
+	ofImage					ausCover;
 	
 	ofxCvGrayscaleImage		bandSum;
 	ofxCvGrayscaleImage*	bands;
@@ -116,6 +122,8 @@ public:
 	
 	ofxStage				stage;
 	Slider					slider;
+	PlayBtn					playBtn;
+	TempRainBtn				tempRainBtn;
 	
 	ofxScreenGrabUtil		screenGrabUtil;
 	ofxTileSaver			tileSaver;
