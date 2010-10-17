@@ -25,15 +25,15 @@ public:
 	
 	int				btnId;
 	ofEvent<int>	btnPressEvent;
-	ofImage			image;
+	ofImage*		image;
 	
 	//==================================================
 	
 	void setup ()
 	{
-		image.loadImage( "close_icon.png" );
+		image = (ofImage*)ofxAssets :: getInstance()->getAsset( "event.closebtn" );
 		
-		setSize( image.width, image.height );
+		setSize( image->width, image->height );
 	}
 	
 	void draw()
@@ -48,7 +48,7 @@ public:
 		{
 			ofSetColor( 0xFFFFFF );
 		}
-		image.draw( x, y );
+		image->draw( x, y );
 	}
 	
 	void onPress ( int x, int y, int button )

@@ -22,14 +22,14 @@ public:
 	
 	//==================================================
 	
-	ofImage		eventImage;
+	ofImage*		eventImage;
 	
 	//==================================================
 	
 	void setup ()
 	{
-		bg.loadImage( "event_bg_image.png" );
-		eventImage.loadImage( "event_cyclone.png" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "event.bg.image" );
+		eventImage	= (ofImage*)ofxAssets :: getInstance()->getAsset( "event.cyclone" );
 	}
 	
 	void show ()
@@ -55,8 +55,8 @@ public:
 			return;
 		
 		ofSetColor( 0xFFFFFF );
-		bg.draw( x, y );
-		eventImage.draw( x, y );
+		bg->draw( x, y );
+		eventImage->draw( x, y );
 		
 		EventItem :: draw();
 	}

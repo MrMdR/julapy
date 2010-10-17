@@ -22,30 +22,29 @@ public:
 	
 	//==================================================
 	
-	ofVideoPlayer	eventVideo;
+	ofVideoPlayer*	eventVideo;
 	
 	//==================================================
 	
 	void setup ()
 	{
-		bg.loadImage( "event_bg_video.png" );
-		
-		eventVideo.loadMovie( "breaknenter_320x240.mov" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "event.bg.video" );
+		eventVideo	= (ofVideoPlayer*)ofxAssets :: getInstance()->getAsset( "event.movie" );
 	}
 	
 	void show ()
 	{
 		EventItem :: show();
 		
-		eventVideo.setPosition( 0 );
-		eventVideo.play();
+		eventVideo->setPosition( 0 );
+		eventVideo->play();
 	}
 	
 	void hide ()
 	{
 		EventItem :: hide();
 		
-		eventVideo.stop();
+		eventVideo->stop();
 	}
 	
 	void update ()
@@ -59,9 +58,9 @@ public:
 			return;
 		
 		ofSetColor( 0xFFFFFF );
-		bg.draw( x, y );
+		bg->draw( x, y );
 		
-		eventVideo.draw( x, y );
+		eventVideo->draw( x, y );
 		
 		EventItem :: draw();
 	}

@@ -6,6 +6,13 @@
 
 void testApp::setup()
 {
+	ofxAssets :: getInstance()->addImage( "event.bg.image",	"event_bg_image.png" );
+	ofxAssets :: getInstance()->addImage( "event.bg.text",	"event_bg_text.png" );
+	ofxAssets :: getInstance()->addImage( "event.bg.video",	"event_bg_video.png" );
+	ofxAssets :: getInstance()->addImage( "event.closebtn",	"close_icon.png" );
+	ofxAssets :: getInstance()->addImage( "event.cyclone",	"event_cyclone.png" );
+	ofxAssets :: getInstance()->addVideo( "event.movie",	"breaknenter_320x240.mov" );
+	
 	stage.addListeners();
 	
 	eventData.loadFile( "events.xml" );
