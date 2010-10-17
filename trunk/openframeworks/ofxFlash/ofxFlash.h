@@ -12,3 +12,4 @@
 #include "ofxStage.h"
 #include "ofxSprite.h"
 #include "ofxMovieClip.h"
+#include "ofxAssets.h"
