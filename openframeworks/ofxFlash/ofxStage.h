@@ -16,37 +16,27 @@ class ofxStage : public ofxSprite
 {	
 	
 public:
-
-	static ofxStage* stage();
-
-	virtual void setup	();
-	virtual void clear	();
 	
-	virtual void update	();
-	virtual void draw	();
+	 ofxStage();
+	~ofxStage();
+	
+	void addListeners		();
+	void removeListeners	();
+	
+	void update				();
+	void draw				();
+	
+	///////////////////////////////////////////////
+	//
+	//	PRIVATE.
+	//
+	///////////////////////////////////////////////
 	
 private:
+	
+	void update	( ofEventArgs &e );
+	void draw	( ofEventArgs &e );
 
-	///////////////////////////////////////////
-	//	SINGLETON.
-	///////////////////////////////////////////
-	
-	static ofxStage* _instance;
-
-	ofxStage();
-	~ofxStage();
-	ofxStage(const ofxStage &);					// intentionally undefined
-	ofxStage & operator=(const ofxStage &);		// intentionally undefined
-
-	
-	///////////////////////////////////////////
-	//	
-	///////////////////////////////////////////
-	
-	void updateHandler		( ofEventArgs &e );
-	void updateChildren		( vector<ofxSprite*>& children );
-	
-	void drawHandler		( ofEventArgs &e );
-	void drawChildren		( vector<ofxSprite*>& children );
-	
+	void updateChildren	( vector<ofxSprite*>& children );
+	void drawChildren	( vector<ofxSprite*>& children );
 };
