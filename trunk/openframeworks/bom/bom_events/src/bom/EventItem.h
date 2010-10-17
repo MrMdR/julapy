@@ -45,7 +45,7 @@ public:
 	int					itemId;
 	ofRectangle			rect;
 	EventDataItem		data;
-	ofImage				bg;
+	ofImage*			bg;
 	
 	EventItemCloseBtn	closeBtn;
 	ofEvent<int>		closeEvent;

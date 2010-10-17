@@ -28,7 +28,7 @@ public:
 	
 	void setup ()
 	{
-		bg.loadImage( "event_bg_text.png" );
+		bg = (ofImage*)ofxAssets :: getInstance()->getAsset( "event.bg.text" );
 	}
 	
 	void show ()
@@ -54,7 +54,7 @@ public:
 			return;
 		
 		ofSetColor( 0xFFFFFF );
-		bg.draw( x, y );
+		bg->draw( x, y );
 		
 		EventItem :: draw();
 	}
