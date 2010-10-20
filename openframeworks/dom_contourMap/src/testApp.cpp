@@ -65,6 +65,7 @@ void testApp :: initUI ()
 	stage.addChild( &slider );
 	stage.addChild( &playBtn );
 	stage.addChild( &tempRainBtn );
+	stage.addListeners();
 }
 
 void testApp :: initBomAnim ()
@@ -76,7 +77,7 @@ void testApp :: initBomAnim ()
 	bomImage.allocate( smallRect.width, smallRect.height );
 	
 	bomAnimProgress = 0;
-	bomAninSpeed	= 0.005;
+	bomAninSpeed	= 0.001;
 }
 
 void testApp :: initAusMap ()
@@ -219,6 +220,7 @@ void testApp :: updateBomAnim ()
 	//-- progress.
 	
 	bomAnim->setProgress( bomAnimProgress );
+	bomAnim->update();
 	
 	ofxCvGrayscaleImage* image;
 	image = bomAnim->getBomImage();
@@ -728,6 +730,11 @@ void testApp::keyPressed(int key)
 			case '[': gui.prevPage(); break;
 			case ']': gui.nextPage(); break;
 		}
+	}
+	
+	if( key == 'f' )
+	{
+		ofToggleFullscreen();
 	}
 	
 	if( key == 's' )
