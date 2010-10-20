@@ -59,7 +59,7 @@ public:
 	{
 		if( intObj.isMouseDown() )
 		{
-			positionNew = ( intObj.getMouseX() - rect.x ) / rect.width;
+			positionNew = ( intObj.getMouseX() - rect.x ) / (float)rect.width;
 			positionNew = ofClamp( positionNew, 0, 1 );
 		}
 		
