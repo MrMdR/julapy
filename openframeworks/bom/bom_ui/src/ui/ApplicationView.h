@@ -12,7 +12,10 @@
 #include "ofMain.h"
 #include "ofxFlash.h"
 
+#include "Reference.h"
+#include "Timeline.h"
 #include "TimelineTab.h"
+#include "TimelinePlayBtn.h"
 
 class ApplicationView : public ofxStage
 {
@@ -28,13 +31,19 @@ public:
 	
 	//==================================================
 	
-	TimelineTab		timelineTab;
+	Reference			ref;
+	TimelineTab			timelineTab;
+	TimelinePlayBtn		timelinePlayBtn;
+	Timeline			timeline;
 	
 	//==================================================
 	
 	void setup ()
 	{
+//		addChild( &ref );
 		addChild( &timelineTab );
+		addChild( &timelinePlayBtn );
+		addChild( &timeline );
 	}
 	
 };

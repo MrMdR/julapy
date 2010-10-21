@@ -24,7 +24,6 @@ public:
 
 	ofxAssets*			assets;
 	ApplicationView*	appView;
-
 };
 
 #endif
