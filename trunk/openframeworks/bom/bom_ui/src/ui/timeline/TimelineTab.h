@@ -11,10 +11,9 @@
 
 #include "ofMain.h"
 #include "ofxFlash.h"
-#include "TimelineTabBtn.h"
 
-#define TIMELINE_TAB_RAIN	0
-#define TIMELINE_TAB_TEMP	1
+#include "Model.h"
+#include "TimelineTabBtn.h"
 
 class TimelineTab : public ofxSprite
 {
@@ -29,7 +28,8 @@ public:
 	~TimelineTab() {};
 	
 	//==================================================
-	
+
+	ofImage*			bg;
 	ofImage*			tabRain;
 	ofImage*			tabTemp;
 	int					tabType;
@@ -43,25 +43,24 @@ public:
 	
 	void setup ()
 	{
+		bg		= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bg" );
 		tabRain = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain" );
 		tabTemp = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp" );
-		
-		rainBtn.setIcon( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain_icon" ) );
-		tempBtn.setIcon( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp_icon" ) );
 
-		rainBtn.x = 0;
-		rainBtn.y = 578;
-		
-		tempBtn.x = 233;
-		tempBtn.y = 578;
-		
 		rainBtn.setup();
-		tempBtn.setup();
-		
+		rainBtn.setIcon( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain_icon" ) );
+		rainBtn.setBlack( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain_black" ) );
+		rainBtn.setPos( 0, 534 );
+		rainBtn.setSize( 188, 42 );
 		rainBtn.setID( TIMELINE_TAB_RAIN );
-		tempBtn.setID( TIMELINE_TAB_TEMP );
-		
 		rainBtn.show();
+		
+		tempBtn.setup();
+		tempBtn.setIcon( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp_icon" ) );
+		tempBtn.setBlack( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp_black" ) );
+		tempBtn.setPos( 187, 534 );
+		tempBtn.setSize( 232, 42 );
+		tempBtn.setID( TIMELINE_TAB_TEMP );
 		tempBtn.hide();
 		
 		addChild( &rainBtn );
@@ -70,37 +69,19 @@ public:
 		ofAddListener( rainBtn.btnPressEvent, this, &TimelineTab :: btnPressed );
 		ofAddListener( tempBtn.btnPressEvent, this, &TimelineTab :: btnPressed );
 		
-		tabType = TIMELINE_TAB_RAIN;
-	}
-	
-	void setTabType ( int i )
-	{
-		bool bChange;
-		bChange = tabType != i;
+		//-- model.
 		
-		tabType = i;
+		Model* model;
+		model = Model :: getInstance();
 		
-		if( bChange )
-		{
-			ofNotifyEvent( changeEvent, this->tabType, this );
-		}
+		tabType = model->getTabType();
+		
+		ofAddListener( model->tabTypeChangeEvent, this, &TimelineTab :: tadChanged );
 	}
 	
-	int getTabType ()
+	void tadChanged ( int & tabType )
 	{
-		return tabType;
-	}
-	
-	void toggleTabs ()
-	{
-		if( tabType == TIMELINE_TAB_RAIN )
-		{
-			tabType = TIMELINE_TAB_TEMP;
-		}
-		else if( tabType == TIMELINE_TAB_TEMP )
-		{
-			tabType = TIMELINE_TAB_RAIN;
-		}
+		this->tabType = tabType;
 	}
 	
 	void update ()
@@ -119,6 +100,8 @@ public:
 	
 	void draw ()
 	{
+		ofSetColor( 0xFFFFFF );
+		
 		ofEnableAlphaBlending();
 		
 		if( tabType == TIMELINE_TAB_RAIN )
@@ -130,6 +113,8 @@ public:
 			tabTemp->draw( 0, ofGetHeight() - tabTemp->height );
 		}
 		
+		bg->draw( 0, ofGetHeight() - bg->height );
+		
 		ofDisableAlphaBlending();
 	}
 	
@@ -137,6 +122,6 @@ public:
 	
 	void btnPressed ( int & btnId )
 	{
-		setTabType( btnId );
+		Model :: getInstance()->setTabType( btnId );
 	}
 };

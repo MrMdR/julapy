@@ -36,15 +36,27 @@ public:
 	
 	void setup ()
 	{
-		black	= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_black" );
-		
-		btn		= new Btn();
-		btn->setPos( x, y );
-		btn->setSize( 232, 42 );
+		btn = new Btn();
 		
 		ofAddListener( btn->btnOverEvent,	this, &TimelineTabBtn :: btnOver );
 		ofAddListener( btn->btnOutEvent,	this, &TimelineTabBtn :: btnOut );
 		ofAddListener( btn->btnPressEvent,	this, &TimelineTabBtn :: btnPressed );
+	}
+	
+	void setPos ( int x, int y )
+	{
+		this->x = x;
+		this->y = y;
+		
+		btn->setPos( x, y );
+	}
+	
+	void setSize ( int w, int h )
+	{
+		width  = w;
+		height = h;
+		
+		btn->setSize( w, h );
 	}
 	
 	void setID ( int btnId )
@@ -62,6 +74,11 @@ public:
 		this->icon = icon;
 	}
 	
+	void setBlack ( ofImage* black )
+	{
+		this->black = black;
+	}
+	
 	void show ()
 	{
 		visible = true;
@@ -74,6 +91,8 @@ public:
 
 	void draw ()
 	{
+		ofSetColor( 0xFFFFFF );
+		
 		ofEnableAlphaBlending();
 		
 		if( !visible )
