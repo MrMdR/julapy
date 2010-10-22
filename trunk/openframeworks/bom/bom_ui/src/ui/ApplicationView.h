@@ -16,6 +16,10 @@
 #include "Timeline.h"
 #include "TimelineTab.h"
 #include "TimelinePlayBtn.h"
+#include "IntroPanel.h"
+#include "YearPanel.h"
+
+#include "EventPanel.h"
 
 class ApplicationView : public ofxStage
 {
@@ -35,6 +39,10 @@ public:
 	TimelineTab			timelineTab;
 	TimelinePlayBtn		timelinePlayBtn;
 	Timeline			timeline;
+	IntroPanel			introPanel;
+	YearPanel			yearPanel;
+	
+	EventPanel			eventPanel;
 	
 	//==================================================
 	
@@ -44,6 +52,11 @@ public:
 		addChild( &timelineTab );
 		addChild( &timelinePlayBtn );
 		addChild( &timeline );
+		addChild( &introPanel );
+		addChild( &yearPanel );
+		addChild( &eventPanel );
+		
+		eventPanel.setThumbImage( (ofImage*)ofxAssets :: getInstance()->getAsset( "event_thumb_0" ) );
 	}
 	
 };

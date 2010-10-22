@@ -35,6 +35,18 @@ void testApp::setup()
 	assets->addImage( "timeline_bar_marker_rain",	"assets/timeline_bar_marker_rain.png" );
 	assets->addImage( "timeline_bar_marker_temp",	"assets/timeline_bar_marker_temp.png" );
 	
+	assets->addImage( "year_panel",					"assets/year_panel.png" );
+	assets->addImage( "intro_panel",				"assets/intro_panel.png" );
+	
+	assets->addImage( "popup_bg",					"assets/popup_bg.png" );
+	assets->addImage( "popup_icon_rain",			"assets/popup_icon_rain.png" );
+	assets->addImage( "popup_icon_temp",			"assets/popup_icon_temp.png" );
+	assets->addImage( "popup_play",					"assets/popup_play.png" );
+	assets->addImage( "popup_shadow",				"assets/popup_shadow.png" );
+	
+	assets->addImage( "event_thumb_0",				"assets/event_thumbs/event_thumb_0.png" );
+	assets->addImage( "event_thumb_1",				"assets/event_thumbs/event_thumb_1.png" );
+	
 	appView = new ApplicationView();
 	appView->setup();
 }

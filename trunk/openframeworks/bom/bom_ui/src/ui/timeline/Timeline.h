@@ -30,6 +30,8 @@ public:
 	
 	//==================================================
 	
+	Model*			model;
+	
 	ofImage*		bar;
 	ofImage*		scrubber;
 	
@@ -63,9 +65,9 @@ public:
 		scrubberCenter.x = 68;
 		scrubberCenter.y = 46;
 		
-		rect.x		= 194;
+		rect.x		= 166;
 		rect.y		= 625;
-		rect.width	= 795;
+		rect.width	= 852;
 		rect.height	= 45;
 		
 		btn = new Btn();
@@ -97,7 +99,6 @@ public:
 		
 		//-- model.
 		
-		Model* model;
 		model = Model :: getInstance();
 		
 		bTimelinePlay = model->getTimelinePlay();
@@ -127,19 +128,21 @@ public:
 					positionNew = 0;
 				
 				position = positionNew;
+				model->setProgress( position );
 				
 				return;
 			}
 		}
 		
 		position += ( positionNew - position ) * positionEase;
+		model->setProgress( position );
 	}
 	
 	void draw ()
 	{
 		drawBar();
-//		drawRect();
-//		drawPlayhead();
+		drawRect();
+		drawPlayhead();
 		drawMarkers();
 		drawScrubber();
 	}
