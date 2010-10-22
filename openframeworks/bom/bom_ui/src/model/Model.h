@@ -15,6 +15,8 @@
 #define TIMELINE_TAB_TEMP		1
 
 #define TIMELINE_PLAY_SPEED		0.001
+#define YEAR_START				1915
+#define YEAR_END				2005
 
 class Model
 {
@@ -27,6 +29,8 @@ private:
 	{
 		tabType			= TIMELINE_TAB_RAIN;
 		bTimelinePlay	= false;
+		progress		= 0;
+		year			= YEAR_START;
 	};
 	
 	~Model() {};
@@ -35,6 +39,8 @@ private:
 	
 	int		tabType;
 	bool	bTimelinePlay;
+	float	progress;
+	int		year;
 	
 	//==================================================
 	
@@ -54,6 +60,8 @@ public:
 	
 	ofEvent<int>	tabTypeChangeEvent;
 	ofEvent<bool>	timelinePlayChangeEvent;
+	ofEvent<float>	progressChangeEvent;
+	ofEvent<int>	yearChangeEvent;
 	
 	//==================================================
 	
@@ -104,6 +112,47 @@ public:
 	bool getTimelinePlay ()
 	{
 		return bTimelinePlay;
+	}
+	
+	//==================================================
+	
+	void setProgress ( float p )
+	{
+		if( progress == p )
+			return;
+		
+		progress = p;
+		
+		ofNotifyEvent( progressChangeEvent, this->progress, this );
+		
+		//-- update year based on progress.
+		
+		int yr;
+		yr = ( YEAR_END - YEAR_START ) * progress + YEAR_START;
+		
+		setYear( yr );
+	}
+	
+	float getProgress ()
+	{
+		return progress;
+	}
+	
+	//==================================================
+	
+	void setYear ( int year )
+	{
+		if( this->year == year )
+			return;
+		
+		this->year = year;
+		
+		ofNotifyEvent( yearChangeEvent, this->year, this );
+	}
+	
+	int getYear ()
+	{
+		return year;
 	}
 	
 	//==================================================
