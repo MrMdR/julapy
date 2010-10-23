@@ -13,6 +13,7 @@
 #include "ofxFlash.h"
 
 #include "EventDataItem.h"
+#include "Btn.h"
 
 class EventPanel : public ofxSprite
 {
@@ -21,31 +22,44 @@ public:
 	
 	EventPanel()
 	{
-		thumbImage = NULL;
+		thumbImage	= NULL;
+		bg			= NULL;
+		iconRain	= NULL;
+		iconTemp	= NULL;
+		play		= NULL;
+		shadow		= NULL;
 	}
 	
-	~EventPanel() {};
+	~EventPanel()
+	{
+		btn.disableAllEvents();
+		
+		ofRemoveListener( btn.btnPressEvent, this, &EventPanel :: btnPressEventHandler );
+	};
 	
 	//==================================================
 
 	EventDataItem	data;
 	
-	ofImage*	thumbImage;
+	ofImage*		thumbImage;
 	
-	ofImage*	bg;
-	ofImage*	iconRain;
-	ofImage*	iconTemp;
-	ofImage*	play;
-	ofImage*	shadow;
+	ofImage*		bg;
+	ofImage*		iconRain;
+	ofImage*		iconTemp;
+	ofImage*		play;
+	ofImage*		shadow;
 	
-	ofPoint		bgPoint;
-	ofPoint		iconPoint;
-	ofPoint		playPoint;
-	ofPoint		shadowPoint;
-	ofRectangle	whiteBox;
-	ofPoint		titlePoint;
+	ofPoint			bgPoint;
+	ofPoint			iconPoint;
+	ofPoint			playPoint;
+	ofPoint			shadowPoint;
+	ofRectangle		whiteBox;
+	ofPoint			titlePoint;
 	
 	ofTrueTypeFont	title;
+	
+	Btn				btn;
+	ofEvent<int>	eventPanelPressedEvent;
 	
 	//==================================================
 	
@@ -82,6 +96,15 @@ public:
 		whiteBox.height	= 112;
 		
 		title.loadFont( "assets/LIBRARY/fonts/Rockwell.ttf", 9 );
+		
+		btn.setPosAndSize( -91 + x, -186 + y, 177, 182 );
+		
+		ofAddListener( btn.btnPressEvent, this, &EventPanel :: btnPressEventHandler );
+	}
+	
+	void btnPressEventHandler ( int& btnID )
+	{
+		ofNotifyEvent( eventPanelPressedEvent, this->data.id, this );
 	}
 	
 	void update ()
@@ -94,20 +117,24 @@ public:
 		ofSetColor( 0xFFFFFF );
 		ofEnableAlphaBlending();
 		
-		bg->draw( x + bgPoint.x, y + bgPoint.y );
-		iconRain->draw( x + iconPoint.x, y + iconPoint.y );
-		shadow->draw( x + shadowPoint.x, y + shadowPoint.y );
+		if( bg != NULL )
+			bg->draw( x + bgPoint.x, y + bgPoint.y );
+		
+		if( iconRain != NULL )
+			iconRain->draw( x + iconPoint.x, y + iconPoint.y );
+		
+		if( shadow != NULL )
+			shadow->draw( x + shadowPoint.x, y + shadowPoint.y );
 		
 		ofFill();
 		ofSetColor( 0xFFFFFF );
 		ofRect( x + whiteBox.x, y + whiteBox.y, whiteBox.width, whiteBox.height );
 		
 		if( thumbImage != NULL )
-		{
 			thumbImage->draw( x + whiteBox.x, y + whiteBox.y );
-		}
 		
-		play->draw( x + playPoint.x, y + playPoint.y );
+		if( play != NULL )
+			play->draw( x + playPoint.x, y + playPoint.y );
 
 		title.drawString( data.title, x + titlePoint.x, y + titlePoint.y );
 		

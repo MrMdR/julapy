@@ -202,8 +202,8 @@ public:
 	void draw ()
 	{
 		drawBar();
-		drawRect();
-		drawPlayhead();
+//		drawRect();
+//		drawPlayhead();
 		drawMarkers();
 		drawScrubber();
 	}

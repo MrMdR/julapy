@@ -23,7 +23,7 @@
 #include "IntroPanel.h"
 #include "YearPanel.h"
 #include "KeyPanel.h"
-#include "EventPanelManager.h"
+#include "EventManager.h"
 
 class ApplicationView : public ofxStage
 {
@@ -51,7 +51,7 @@ public:
 	IntroPanel*			introPanel;
 	YearPanel*			yearPanel;
 	KeyPanel*			keyPanel;
-	EventPanelManager*	eventPanels;
+	EventManager*		eventManager;
 	
 	//==================================================
 	
@@ -73,7 +73,7 @@ public:
 		addChild( introPanel = new IntroPanel() );
 		addChild( yearPanel = new YearPanel() );
 		addChild( keyPanel = new KeyPanel() );
-		addChild( eventPanels = new EventPanelManager() );
+		addChild( eventManager = new EventManager() );
 	}
 	
 };

@@ -12,7 +12,6 @@ void testApp::setup()
 	string xflPath;
 	xflPath = "assets/LIBRARY/";
 	
-	
 	assets = ofxAssets :: getInstance();
 	
 	assets->addImage( "ref_01",						xflPath + "ref/ref_01.jpg" );
@@ -48,6 +47,11 @@ void testApp::setup()
 	assets->addImage( "popup_icon_temp",			xflPath + "assets/popup_icon_temp.png" );
 	assets->addImage( "popup_play",					xflPath + "assets/popup_play.png" );
 	assets->addImage( "popup_shadow",				xflPath + "assets/popup_shadow.png" );
+	
+	assets->addImage( "event_bg_image",				xflPath + "assets/event_bg_image.png" );
+	assets->addImage( "event_bg_text",				xflPath + "assets/event_bg_text.png" );
+	assets->addImage( "event_bg_video",				xflPath + "assets/event_bg_video.png" );
+	assets->addImage( "event_close_icon",			xflPath + "assets/event_close_icon.png" );
 	
 	assets->addImage( "event_thumb_0",				xflPath + "event_thumbs/event_thumb_0.png" );
 	assets->addImage( "event_thumb_1",				xflPath + "event_thumbs/event_thumb_1.png" );
