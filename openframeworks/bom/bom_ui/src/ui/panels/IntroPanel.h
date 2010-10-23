@@ -12,6 +12,8 @@
 #include "ofMain.h"
 #include "ofxFlash.h"
 
+#include "Model.h"
+
 class IntroPanel : public ofxSprite
 {
 	
@@ -26,7 +28,9 @@ public:
 	
 	//==================================================
 	
-	ofImage* image;
+	Model*				model;
+	
+	ofImage*			image;
 	
 	//==================================================
 	
@@ -34,6 +38,8 @@ public:
 	{
 		x = 1;
 		y = 0;
+		
+		model = Model :: getInstance();
 		
 		image = (ofImage*)ofxAssets :: getInstance()->getAsset( "intro_panel" );
 	}
