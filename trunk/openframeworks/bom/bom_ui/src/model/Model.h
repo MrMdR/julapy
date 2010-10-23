@@ -10,6 +10,8 @@
 #pragma once
 
 #include "ofMain.h"
+#include "EventDataItem.h"
+#include "KeyDataItem.h"
 
 #define TIMELINE_TAB_RAIN		0
 #define TIMELINE_TAB_TEMP		1
@@ -36,11 +38,13 @@ private:
 	~Model() {};
 	
 	//==================================================
-	
-	int		tabType;
-	bool	bTimelinePlay;
-	float	progress;
-	int		year;
+
+	int						tabType;
+	bool					bTimelinePlay;
+	float					progress;
+	int						year;
+	vector<KeyDataItem>		keyRainData;
+	vector<KeyDataItem>		keyTempData;
 	
 	//==================================================
 	
@@ -57,11 +61,66 @@ public:
 	}
 	
 	//==================================================
+
+	vector<EventDataItem>	eventData;
+	ofEvent<int>			timelineMarkerPressedEvent;
+	ofEvent<int>			tabTypeChangeEvent;
+	ofEvent<bool>			timelinePlayChangeEvent;
+	ofEvent<float>			progressChangeEvent;
+	ofEvent<int>			yearChangeEvent;
+
+	//==================================================
 	
-	ofEvent<int>	tabTypeChangeEvent;
-	ofEvent<bool>	timelinePlayChangeEvent;
-	ofEvent<float>	progressChangeEvent;
-	ofEvent<int>	yearChangeEvent;
+	void setKeyRainData ( const vector<KeyDataItem>& data )
+	{
+		keyRainData = data;
+	}
+	
+	vector<KeyDataItem>& getKeyRainData ()
+	{
+		return keyRainData;
+	}
+	
+	void setKeyTempData ( const vector<KeyDataItem>& data )
+	{
+		keyTempData = data;
+	}
+	
+	vector<KeyDataItem>& getKeyTempData ()
+	{
+		return keyTempData;
+	}
+	
+	//==================================================
+	
+	void setEventData ( const vector<EventDataItem>& data )
+	{
+		eventData = data;
+	}
+	
+	vector<EventDataItem>* getEventData ()
+	{
+		return &eventData;
+	}
+	
+	EventDataItem getEventDataItemAt ( int i )
+	{
+		i = ofClamp( i, 0, eventData.size() - 1 );
+		
+		return eventData[ i ];
+	}
+	
+	int getEventDataSize ()
+	{
+		return eventData.size();
+	}
+	
+	//==================================================
+	
+	void setTimelineMarkerPress ( int eventID )
+	{
+		ofNotifyEvent( timelineMarkerPressedEvent, eventID, this );
+	}
 	
 	//==================================================
 	
@@ -153,6 +212,13 @@ public:
 	int getYear ()
 	{
 		return year;
+	}
+	
+	float getYearAsProgress ( int year )
+	{
+		float p = ( year - YEAR_START ) / (float)( YEAR_END - YEAR_START );
+		
+		return p;
 	}
 	
 	//==================================================

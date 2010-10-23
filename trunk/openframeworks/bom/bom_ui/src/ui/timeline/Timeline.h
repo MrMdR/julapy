@@ -13,6 +13,8 @@
 #include "ofxFlash.h"
 
 #include "Model.h"
+#include "EventDataItem.h"
+
 #include "Btn.h"
 #include "TimelineMarker.h"
 
@@ -30,7 +32,8 @@ public:
 	
 	//==================================================
 	
-	Model*			model;
+	Model*					model;
+	vector<EventDataItem>*	data;
 	
 	ofImage*		bar;
 	ofImage*		scrubber;
@@ -42,6 +45,9 @@ public:
 	float			position;
 	float			positionNew;
 	float			positionEase;
+	
+	int				selectedEventID;
+	bool			bMarkerPressed;
 	
 	bool			bTimelinePlay;
 	
@@ -65,6 +71,9 @@ public:
 		scrubberCenter.x = 68;
 		scrubberCenter.y = 46;
 		
+		selectedEventID		= -1;
+		bMarkerPressed		= false;
+		
 		rect.x		= 166;
 		rect.y		= 625;
 		rect.width	= 852;
@@ -78,16 +87,31 @@ public:
 		ofAddListener( btn->btnOutEvent,	this, &Timeline :: btnOut );
 		ofAddListener( btn->btnPressEvent,	this, &Timeline :: btnPressed );
 		
+		//-- model.
+		
+		model = Model :: getInstance();
+		
+		data			= model->getEventData();
+		bTimelinePlay	= model->getTimelinePlay();
+		
+		ofAddListener( model->timelinePlayChangeEvent, this, &Timeline :: timelinePlayChanged );
+		
 		//-- markers.
 		
-		int t = 9;
-		for( int i=0; i<=t; i++ )
+		int t = data->size();
+		for( int i=0; i<t; i++ )
 		{
+			EventDataItem& dataItem = data->at( i );
+			
 			TimelineMarker* marker;
 			marker = new TimelineMarker( i );
+			marker->populate( dataItem );
+			
+			float p;
+			p = model->getYearAsProgress( dataItem.year );
 			
 			int mx, my;
-			mx = rect.x + ( i / (float)t ) * rect.width;
+			mx = rect.x + ( rect.width - 1 ) * p;
 			my = rect.y;
 			
 			marker->setPos( mx, my );
@@ -96,14 +120,6 @@ public:
 			
 			markers.push_back( marker );
 		}
-		
-		//-- model.
-		
-		model = Model :: getInstance();
-		
-		bTimelinePlay = model->getTimelinePlay();
-		
-		ofAddListener( model->timelinePlayChangeEvent, this, &Timeline :: timelinePlayChanged );
 	}
 	
 	void timelinePlayChanged ( bool& bTimelinePlay )
@@ -113,7 +129,20 @@ public:
 	
 	void update ()
 	{
-		if( btn->isMouseDown() )
+		if( bMarkerPressed )
+		{
+			EventDataItem& dataItem = data->at( selectedEventID );
+			positionNew = model->getYearAsProgress( dataItem.year );
+			
+			float dx;
+			dx = ABS( positionNew - position );
+			
+			if( dx < 0.01 )	// scrubber has arrived at marker position.
+			{
+				bMarkerPressed = false;
+			}
+		}
+		else if( btn->isMouseDown() )
 		{
 			positionNew = ( btn->getMouseX() - rect.x ) / (float)rect.width;
 			positionNew = ofClamp( positionNew, 0, 1 );
@@ -130,12 +159,44 @@ public:
 				position = positionNew;
 				model->setProgress( position );
 				
+				checkMarkersAgainstProgress();
+				
 				return;
 			}
 		}
 		
 		position += ( positionNew - position ) * positionEase;
 		model->setProgress( position );
+		
+		if( bMarkerPressed )	// do not check markers against progress if one is selected.
+			return;
+			
+		checkMarkersAgainstProgress();
+	}
+	
+	void checkMarkersAgainstProgress ()
+	{
+		float range = 0.05;
+		bool found	= false;
+		
+		int t = data->size();
+		for( int i=0; i<t; i++ )
+		{
+			EventDataItem& dataItem = data->at( i );
+			float p = model->getYearAsProgress( dataItem.year );
+			
+			if( p > ( position - range * 0.5 ) && p < ( position + range * 0.5 ) )
+			{
+				model->setTimelineMarkerPress( dataItem.id );
+				
+				found = true;
+			}
+		}
+		
+		if( !found )
+		{
+			model->setTimelineMarkerPress( -1 );
+		}
 	}
 	
 	void draw ()
@@ -225,8 +286,18 @@ public:
 	
 	//==================================================
 	
-	void markerPressed ( int & markerId )
+	void markerPressed ( int & eventID )
 	{
-		//
+		if( selectedEventID == eventID )
+			return;
+		
+		selectedEventID = eventID;
+		
+		model->setTimelineMarkerPress( eventID );
+		
+		bMarkerPressed = true;
+		
+		if( model->getTimelinePlay() )				// stop play when a marker is clicked.
+			model->setTimelinePlay( false );
 	}
 };

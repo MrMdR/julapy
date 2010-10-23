@@ -12,6 +12,8 @@
 #include "ofMain.h"
 #include "ofxFlash.h"
 
+#include "EventDataItem.h"
+
 #include "Btn.h"
 
 class TimelineMarker : public ofxSprite
@@ -30,6 +32,8 @@ public:
 	
 	//==================================================
 	
+	EventDataItem	data;
+	
 	ofImage*		markerRain;
 	ofImage*		markerTemp;
 	ofPoint			offset;
@@ -43,6 +47,11 @@ public:
 	
 	//==================================================
 
+	void populate ( EventDataItem& data )
+	{
+		this->data = data;
+	}
+	
 	void setup()
 	{
 		markerRain = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bar_marker_rain" );
@@ -78,7 +87,7 @@ public:
 		this->x = x + offset.x;
 		this->y = y + offset.y;
 		
-		btn->setPos( x, y );
+		btn->setPos( this->x, this->y );
 	}
 	
 	void setID ( int btnId )
@@ -111,7 +120,16 @@ public:
 			markerTemp->draw( x, y );
 		}
 		
+		drawBounds();
+		
 		ofDisableAlphaBlending();
+	}
+	
+	void drawBounds ()
+	{
+		ofNoFill();
+		ofSetColor( 0x00FF00 );
+		ofRect( btn->x, btn->y, btn->width, btn->height );
 	}
 	
 	//==================================================
@@ -128,6 +146,6 @@ public:
 	
 	void btnPressed ( int & btnId )
 	{
-		ofNotifyEvent( markerPressEvent, this->btnId, this );
+		ofNotifyEvent( markerPressEvent, this->data.id, this );
 	}
 };

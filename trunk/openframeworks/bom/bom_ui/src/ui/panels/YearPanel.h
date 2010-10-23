@@ -39,7 +39,7 @@ public:
 		
 		image = (ofImage*)ofxAssets :: getInstance()->getAsset( "year_panel" );
 		
-		rockwell_50.loadFont( "assets/fonts/Rockwell.ttf", 36 );
+		rockwell_50.loadFont( "assets/LIBRARY/fonts/Rockwell.ttf", 36 );
 		
 		//-- model.
 		

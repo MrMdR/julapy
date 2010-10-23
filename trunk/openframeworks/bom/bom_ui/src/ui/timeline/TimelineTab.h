@@ -43,6 +43,9 @@ public:
 	
 	void setup ()
 	{
+		x		= 0;
+		y		= 521;
+		
 		bg		= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bg" );
 		tabRain = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain" );
 		tabTemp = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp" );
@@ -106,11 +109,11 @@ public:
 		
 		if( tabType == TIMELINE_TAB_RAIN )
 		{
-			tabRain->draw( 0, ofGetHeight() - tabRain->height );
+			tabRain->draw( x, y );
 		}
 		else if( tabType == TIMELINE_TAB_TEMP )
 		{
-			tabTemp->draw( 0, ofGetHeight() - tabTemp->height );
+			tabTemp->draw( x, y );
 		}
 		
 		bg->draw( 0, ofGetHeight() - bg->height );
