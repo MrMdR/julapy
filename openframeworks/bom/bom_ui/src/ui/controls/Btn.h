@@ -26,7 +26,10 @@ public:
 		enableMouseEvents();
 	};
 	
-	~Btn() {};
+	~Btn()
+	{
+		disableAllEvents();
+	};
 	
 	//==================================================
 	

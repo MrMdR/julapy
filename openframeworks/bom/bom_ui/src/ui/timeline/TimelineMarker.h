@@ -28,7 +28,10 @@ public:
 		setup();
 	}
 	
-	~TimelineMarker () {};
+	~TimelineMarker() 
+	{
+		//
+	};
 	
 	//==================================================
 	
@@ -38,7 +41,7 @@ public:
 	ofImage*		markerTemp;
 	ofPoint			offset;
 	
-	Btn*			btn;
+	Btn				btn;
 	int				btnId;
 	
 	int				tabType;
@@ -57,15 +60,11 @@ public:
 		markerRain = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bar_marker_rain" );
 		markerTemp = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bar_marker_temp" );
 		
-		btn = new Btn();
-		btn->setSize( 32, 53 );
-		
 		offset.x = -16;
 		offset.y = -9;
 		
-		ofAddListener( btn->btnOverEvent,	this, &TimelineMarker :: btnOver );
-		ofAddListener( btn->btnOutEvent,	this, &TimelineMarker :: btnOut );
-		ofAddListener( btn->btnPressEvent,	this, &TimelineMarker :: btnPressed );
+		btn.setSize( 32, 53 );
+		ofAddListener( btn.btnPressEvent, this, &TimelineMarker :: btnPressed );
 		
 		//-- model.
 		
@@ -87,7 +86,7 @@ public:
 		this->x = x + offset.x;
 		this->y = y + offset.y;
 		
-		btn->setPos( this->x, this->y );
+		btn.setPos( this->x, this->y );
 	}
 	
 	void setID ( int btnId )
@@ -120,7 +119,7 @@ public:
 			markerTemp->draw( x, y );
 		}
 		
-		drawBounds();
+//		drawBounds();
 		
 		ofDisableAlphaBlending();
 	}
@@ -129,20 +128,10 @@ public:
 	{
 		ofNoFill();
 		ofSetColor( 0x00FF00 );
-		ofRect( btn->x, btn->y, btn->width, btn->height );
+		ofRect( btn.x, btn.y, btn.width, btn.height );
 	}
 	
 	//==================================================
-	
-	void btnOver ( int & btnId )
-	{
-		//
-	}
-	
-	void btnOut ( int & btnId )
-	{
-		//
-	}
 	
 	void btnPressed ( int & btnId )
 	{
