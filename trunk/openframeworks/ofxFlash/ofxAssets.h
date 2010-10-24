@@ -141,4 +141,19 @@ public:
 		
 		return NULL;
 	}
+
+	ofBaseImage* getAssetByFileName ( string fileName )
+	{
+		for( int i=0; i<items.size(); i++ )
+		{
+			ofxAssetItem& item = *items[ i ];
+			
+			if( item.assetPath == fileName )
+			{
+				return item.asset;
+			}
+		}
+		
+		return NULL;
+	}
 };
