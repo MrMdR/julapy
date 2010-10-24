@@ -29,6 +29,19 @@ public:
 	void setup ()
 	{
 		bg = (ofImage*)ofxAssets :: getInstance()->getAsset( "event_bg_text" );
+		
+		if( bg != NULL )
+		{
+			rect.width	= bg->width;
+			rect.height	= bg->height;
+			rect.x		= (int)( ( ofGetWidth()  - rect.width  ) * 0.5 );
+			rect.y		= (int)( ( ofGetHeight() - rect.height ) * 0.5 - 70 );
+			
+			x = rect.x;
+			y = rect.y;
+			
+			closeBtn.setPos( x + 416, y + 50 );
+		}
 	}
 	
 	void show ()
@@ -54,11 +67,14 @@ public:
 			return;
 		
 		ofSetColor( 0xFFFFFF );
+		ofEnableAlphaBlending();
 		
 		if( bg != NULL )
 		{
 			bg->draw( x, y );
 		}
+		
+		ofDisableAlphaBlending();
 		
 		EventItem :: draw();
 	}

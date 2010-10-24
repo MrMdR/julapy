@@ -16,6 +16,9 @@
 #include "EventData.h"
 #include "KeyData.h"
 
+#include "Contour.h"
+#include "ContourMap.h"
+
 #include "Reference.h"
 #include "Timeline.h"
 #include "TimelineTab.h"
@@ -44,6 +47,9 @@ public:
 	KeyData				keyRainData;
 	KeyData				keyTempData;
 	
+	Contour*			contour;
+	ContourMap*			contourMap;
+	
 	Reference*			ref;
 	TimelineTab*		timelineTab;
 	TimelinePlayBtn*	timelinePlayBtn;
@@ -66,7 +72,11 @@ public:
 		model->setKeyRainData( keyRainData.items );
 		model->setKeyTempData( keyTempData.items );
 		
-//		addChild( ref = new Reference() );
+		contour = new Contour();
+		
+		addChild( contourMap = new ContourMap( contour ) );
+		
+//		addChild( ref = new Reference() );						// reference image, only temp.
 		addChild( timelineTab = new TimelineTab() );
 		addChild( timelinePlayBtn = new TimelinePlayBtn() );
 		addChild( timeline = new Timeline() );
@@ -76,4 +86,18 @@ public:
 		addChild( eventManager = new EventManager() );
 	}
 	
+	void update ()
+	{
+		ofxStage :: update();
+		
+		contour->update();
+	}
+	
+	void draw ()
+	{
+		ofxStage :: draw();
+		
+		ofSetColor( 0x000000 );
+		ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ) + " fps" , ofGetWidth() - 60, 15 );
+	}
 };
