@@ -27,7 +27,7 @@ public:
 		rect.y = y	= (int)( ( ofGetHeight() - rect.height ) * 0.5 );
 		
 		closeBtn.setup();
-		closeBtn.setPos( rect.x + rect.width - closeBtn.width, rect.y );
+		closeBtn.setPos( rect.x + rect.width - 32, rect.y + 10 );
 		closeBtn.enableMouseEvents();
 		
 		ofAddListener( closeBtn.btnPressEvent, this, &EventItem :: closeBtnPressed );

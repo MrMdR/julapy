@@ -6,7 +6,7 @@
 
 void testApp::setup()
 {
-	ofSetVerticalSync( true );
+//	ofSetVerticalSync( true );
 	ofSetFrameRate( 60 );
 
 	string xflPath;
@@ -17,6 +17,7 @@ void testApp::setup()
 	assets->addImage( "ref_01",						xflPath + "ref/ref_01.jpg" );
 	assets->addImage( "ref_02",						xflPath + "ref/ref_02.jpg" );
 	assets->addImage( "ref_03",						xflPath + "ref/ref_03.jpg" );
+	assets->addImage( "ref_04",						xflPath + "ref/ref_04.png" );
 	
 	assets->addImage( "timeline_bg",				xflPath + "assets/timeline_bg.png" );
 	
@@ -53,8 +54,13 @@ void testApp::setup()
 	assets->addImage( "event_bg_video",				xflPath + "assets/event_bg_video.png" );
 	assets->addImage( "event_close_icon",			xflPath + "assets/event_close_icon.png" );
 	
-	assets->addImage( "event_thumb_0",				xflPath + "event_thumbs/event_thumb_0.png" );
-	assets->addImage( "event_thumb_1",				xflPath + "event_thumbs/event_thumb_1.png" );
+	assets->addImage( "event_thumb_0",				xflPath + "event_thumb/event_thumb_0.png" );
+	assets->addImage( "event_thumb_1",				xflPath + "event_thumb/event_thumb_1.png" );
+	assets->addImage( "image_sample_356x232",		xflPath + "event_image/image_sample_356x232.png" );
+	assets->addVideo( "video_sample_356x232",		xflPath + "event_video/video_sample_356x232.mov" );
+	
+	assets->addImage( "aus_cover_1280x720",			xflPath + "assets/aus_cover_1280x720.png" );
+	assets->addImage( "aus_stroke_757x590",			xflPath + "assets/aus_stroke_757x590.png" );
 	
 	appView = new ApplicationView();
 	appView->setup();
@@ -84,7 +90,10 @@ void testApp::draw()
 
 void testApp::keyPressed(int key)
 {
-
+	if( key == 'f' )
+	{
+		ofToggleFullscreen();
+	}
 }
 
 void testApp::keyReleased(int key)

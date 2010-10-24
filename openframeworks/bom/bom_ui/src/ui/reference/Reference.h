@@ -29,6 +29,7 @@ public:
 	ofImage* ref0;
 	ofImage* ref1;
 	ofImage* ref2;
+	ofImage* ref3;
 	
 	//==================================================
 	
@@ -37,6 +38,7 @@ public:
 		ref0 = (ofImage*)ofxAssets :: getInstance()->getAsset( "ref_01" );
 		ref1 = (ofImage*)ofxAssets :: getInstance()->getAsset( "ref_02" );
 		ref2 = (ofImage*)ofxAssets :: getInstance()->getAsset( "ref_03" );
+		ref3 = (ofImage*)ofxAssets :: getInstance()->getAsset( "ref_04" );
 	}
 	
 	void update ()
@@ -47,6 +49,6 @@ public:
 	void draw ()
 	{
 		ofSetColor( 0xFFFFFF );
-		ref0->draw( 0, 0 );
+		ref3->draw( 0, 0 );
 	}
 };

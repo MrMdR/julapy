@@ -48,7 +48,13 @@ public:
 		{
 			ofSetColor( 0xFFFFFF );
 		}
-		image->draw( x, y );
+		
+		ofEnableAlphaBlending();
+		
+		if( image != NULL )
+			image->draw( x, y );
+		
+		ofDisableAlphaBlending();
 	}
 	
 	void onPress ( int x, int y, int button )

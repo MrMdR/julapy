@@ -109,14 +109,17 @@ public:
 		
 		if( tabType == TIMELINE_TAB_RAIN )
 		{
-			tabRain->draw( x, y );
+			if( tabRain != NULL )
+				tabRain->draw( x, y );
 		}
 		else if( tabType == TIMELINE_TAB_TEMP )
 		{
-			tabTemp->draw( x, y );
+			if( tabTemp != NULL )
+				tabTemp->draw( x, y );
 		}
 		
-		bg->draw( 0, ofGetHeight() - bg->height );
+		if( bg != NULL )
+			bg->draw( x , y + 56 );
 		
 		ofDisableAlphaBlending();
 	}

@@ -151,6 +151,7 @@ public:
 		
 		eventItem->populate( data );
 		eventItem->setup();
+		eventItem->show();
 		
 		ofAddListener( eventItem->closeEvent, this, &EventManager :: eventItemCloseHandler );
 		ofAddListener( ofEvents.mousePressed, this, &EventManager :: mousePressedHandler );
