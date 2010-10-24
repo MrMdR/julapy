@@ -23,8 +23,8 @@ public:
 	void addListeners		();
 	void removeListeners	();
 	
-	void update				();
-	void draw				();
+	virtual void update		();
+	virtual void draw		();
 	
 	///////////////////////////////////////////////
 	//
