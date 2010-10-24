@@ -9,38 +9,12 @@
 
 #include "ofxSprite.h"
 
-///////////////////////////////////////////////
-//	STATIC.
-///////////////////////////////////////////////
-
-ofxSprite* ofxSprite :: stageRef = NULL;
-vector<ofxSprite*> ofxSprite :: sprites;
-
-void ofxSprite :: addSprite ( ofxSprite* sprite )
-{
-	sprites.push_back( sprite );
-}
-
-void ofxSprite :: removeSprite ( ofxSprite* sprite )
-{
-	for( int i=0; i<sprites.size(); i++ )
-	{
-		if( sprites[ i ] == sprite )
-		{
-			sprites.erase( sprites.begin() + i );
-			
-			return;
-		}
-	}
-}
-
-///////////////////////////////////////////////
-//	DE/CONSTRUCTOR.
-///////////////////////////////////////////////
-
 ofxSprite :: ofxSprite ()
 {
-	setup();
+	initDisplayObjectProps();
+	initInteractiveObjectProps();
+	initDisplayObjectContainerProps();
+	initSpriteProps();
 }
 
 ofxSprite :: ~ofxSprite ()
@@ -48,43 +22,9 @@ ofxSprite :: ~ofxSprite ()
 	clear();
 }
 
-///////////////////////////////////////////////
-//	CORE.
-///////////////////////////////////////////////
-
 void ofxSprite :: setup ()
 {
-	initDisplayObjectProps();
-	initInteractiveObjectProps();
-	initDisplayObjectContainerProps();
-	initSpriteProps();
 	
-	addSprite( this );
-}
-
-void ofxSprite :: clear ()
-{
-	if( parent != NULL )
-	{
-		parent->removeChild( this );
-	}
-	
-	mask		= NULL;
-	parent		= NULL;
-//	stage		= NULL;
-	
-	dropTarget	= NULL;
-	hitArea		= NULL;
-	
-	for( int i=0; i<children.size(); i++ )
-	{
-//		children[ i ]->stage	= NULL;
-		children[ i ]->parent	= NULL;
-	}
-	
-	children.clear();
-	
-	removeSprite( this );
 }
 
 void ofxSprite :: update ()
@@ -95,6 +35,11 @@ void ofxSprite :: update ()
 void ofxSprite :: draw ()
 {
 	//
+}
+
+void ofxSprite :: clear ()
+{
+	
 }
 
 ///////////////////////////////////////////////
@@ -110,6 +55,9 @@ void ofxSprite :: initDisplayObjectProps ()
 	x			= 0.0;
 	y			= 0.0;
 	z			= 0.0;
+	globalX		= 0.0;
+	globalY		= 0.0;
+	globalZ		= 0.0;
 	mouseX		= 0.0;
 	mouseY		= 0.0;
 	rotation	= 0.0;
@@ -123,7 +71,7 @@ void ofxSprite :: initDisplayObjectProps ()
 	name		= "sprite";
 	mask		= NULL;
 	parent		= NULL;
-//	stage		= NULL;
+	stage		= NULL;
 }
 
 void ofxSprite :: initInteractiveObjectProps ()
@@ -137,6 +85,7 @@ void ofxSprite :: initInteractiveObjectProps ()
 void ofxSprite :: initDisplayObjectContainerProps ()
 {
 	mouseChildren		= false;
+	numChildren			= 0;
 	tabChildren			= false;
 }
 
@@ -154,7 +103,7 @@ void ofxSprite :: initSpriteProps ()
 
 ofRectangle ofxSprite :: getRect ( ofxSprite* targetCoordinateSpace )
 {
-	return rect;
+	//
 }
 
 ofPoint ofxSprite :: globalToLocal ( const ofPoint& point )
@@ -184,26 +133,7 @@ ofPoint ofxSprite :: local3DToGlobal ( const ofPoint& point )
 
 ofPoint ofxSprite :: localToGlobal ( const ofPoint& point )
 {
-	ofPoint global;
-	global.x = x + point.x;
-	global.y = y + point.y;
-	global.z = z + point.z;
-	
-	localToGlobalRecursive( this->parent, global );
-	
-	return global;
-}
-
-void ofxSprite :: localToGlobalRecursive ( ofxSprite* sprite, ofPoint& point )
-{
-	if( sprite->parent != NULL )
-	{
-		point.x += sprite->x;
-		point.y += sprite->y;
-		point.z += sprite->z;
-		
-		localToGlobalRecursive( sprite->parent, point );
-	}
+	//
 }
 
 ///////////////////////////////////////////////
@@ -213,13 +143,8 @@ void ofxSprite :: localToGlobalRecursive ( ofxSprite* sprite, ofPoint& point )
 ofxSprite* ofxSprite :: addChild ( ofxSprite* child )
 {
 	children.push_back( child );
-//	child->stage	= this->stage;
+	child->stage	= this->stage;
 	child->parent	= this;
-	
-//	if( stage != NULL )
-//		stage->addToStage( child );
-	
-	return child;
 }
 
 ofxSprite* ofxSprite :: addChildAt ( ofxSprite* child, int index )
@@ -228,13 +153,8 @@ ofxSprite* ofxSprite :: addChildAt ( ofxSprite* child, int index )
 		return NULL;
 
 	children.insert( children.begin() + index, child );
-//	child->stage	= this->stage;
+	child->stage	= this->stage;
 	child->parent	= this;
-	
-//	if( stage != NULL )
-//		stage->addToStage( child );
-	
-	return child;
 }
 
 bool ofxSprite :: contains ( ofxSprite* child )
@@ -295,13 +215,10 @@ ofxSprite* ofxSprite :: removeChild ( ofxSprite* child )
 	{
 		if( children[ i ] == child )
 		{
-//			child->stage	= NULL;
+			child->stage	= NULL;
 			child->parent	= NULL;
 			
 			children.erase( children.begin() + i );
-			
-//			if( stage != NULL )
-//				stage->removeFromStage( child );
 			
 			return child;
 		}
@@ -317,13 +234,10 @@ ofxSprite* ofxSprite :: removeChildAt ( int index )
 	
 	ofxSprite* child;
 	child = children[ index ];
-//	child->stage	= NULL;
+	child->stage	= NULL;
 	child->parent	= NULL;
 	
 	children.erase( children.begin() + index );
-	
-//	if( stage != NULL )
-//		stage->removeFromStage( child );
 	
 	return child;
 }
@@ -405,16 +319,6 @@ void ofxSprite :: swapChildrenAt ( int index1, int index2 )
 		children.insert( children.begin() + index2, child1 );
 		children.insert( children.begin() + index1, child2 );
 	}
-}
-
-int ofxSprite :: numChildren ()
-{
-	return children.size();
-}
-
-bool ofxSprite :: hasChildren ()
-{
-	return children.size() > 0;
 }
 
 ///////////////////////////////////////////////
