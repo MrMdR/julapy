@@ -73,6 +73,11 @@ void ofxStage :: updateChildren ( vector<ofxSprite*>& children )
 	{
 		ofxSprite* child;
 		child = children[ i ];
+		
+		child->globalX = child->parent->globalX + child->x;
+		child->globalY = child->parent->globalY + child->y;
+		child->globalZ = child->parent->globalZ + child->z;
+		
 		child->update();
 		
 		if( child->children.size() > 0 )
@@ -95,23 +100,9 @@ void ofxStage :: drawChildren ( vector<ofxSprite*>& children )
 		
 		child->draw();
 
-		bool bTranslate;
-		bTranslate = ( child->x != 0 || child->y != 0 || child->z != 0 );
-		
-		if( bTranslate )
-		{
-			glPushMatrix();
-			glTranslatef( child->x, child->y, child->z );
-		}
-		
 		if( child->children.size() > 0 )
 		{
 			drawChildren( child->children );
-		}
-		
-		if( bTranslate )
-		{
-			glPopMatrix();
 		}
 	}
 }
