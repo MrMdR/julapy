@@ -13,6 +13,7 @@
 
 #define OFX_ASSETS_TYPE_IMAGE	0
 #define OFX_ASSETS_TYPE_VIDEO	1
+#define OFX_ASSETS_TYPE_SOUND	2
 
 ////////////////////////////////////////////////////////
 //	OFX_ASSET_ITEM
@@ -26,7 +27,8 @@ public:
 	string			assetID;
 	string			assetPath;
 	int				assetType;
-	ofBaseImage*	asset;
+	ofBaseImage*	imageAsset;
+	ofSoundPlayer*	soundAsset;
 	
 };
 
@@ -45,6 +47,9 @@ private:
 	~ofxAssets() {};
 	
 	vector<ofxAssetItem*> items;
+	vector<ofxAssetItem*> imageItems;
+	vector<ofxAssetItem*> videoItems;
+	vector<ofxAssetItem*> soundItems;
 	
 public:
 	
@@ -58,7 +63,7 @@ public:
         return _instance;
 	}
 	
-	//==================================================
+	//================================================== GENERAL.
 	
 	void addAsset( string assetID, string assetPath, int assetType )
 	{
@@ -70,7 +75,13 @@ public:
 		{
 			addVideo( assetPath, assetID );
 		}
+		else if( assetType == OFX_ASSETS_TYPE_SOUND )
+		{
+			addSound( assetPath, assetID );
+		}
 	}
+	
+	//================================================== IMAGE.
 	
 	void addImage ( string assetID, string assetPath )
 	{
@@ -79,25 +90,31 @@ public:
 		
 		ofxAssetItem* item;
 		item = new ofxAssetItem();
-		item->assetID	= assetID;
-		item->assetPath	= assetPath;
-		item->assetType	= OFX_ASSETS_TYPE_IMAGE;
-		item->asset		= image;
+		item->assetID		= assetID;
+		item->assetPath		= assetPath;
+		item->assetType		= OFX_ASSETS_TYPE_IMAGE;
+		item->imageAsset	= image;
+		item->soundAsset	= NULL;
 		
 		items.push_back( item );
+		imageItems.push_back( item );
 	}
 	
 	void addImage ( string assetID, ofBaseImage& image )
 	{
 		ofxAssetItem* item;
 		item = new ofxAssetItem();
-		item->assetID	= assetID;
-		item->assetPath	= "";
-		item->assetType	= OFX_ASSETS_TYPE_IMAGE;
-		item->asset		= &image;
+		item->assetID		= assetID;
+		item->assetPath		= "";
+		item->assetType		= OFX_ASSETS_TYPE_IMAGE;
+		item->imageAsset	= &image;
+		item->soundAsset	= NULL;
 		
 		items.push_back( item );
+		imageItems.push_back( item );
 	}
+	
+	//================================================== VIDEO.
 	
 	void addVideo ( string assetID, string assetPath )
 	{
@@ -107,25 +124,98 @@ public:
 		
 		ofxAssetItem* item;
 		item = new ofxAssetItem();
-		item->assetID	= assetID;
-		item->assetPath	= assetPath;
-		item->assetType	= OFX_ASSETS_TYPE_VIDEO;
-		item->asset		= video;
+		item->assetID		= assetID;
+		item->assetPath		= assetPath;
+		item->assetType		= OFX_ASSETS_TYPE_VIDEO;
+		item->imageAsset	= video;
+		item->soundAsset	= NULL;
 		
 		items.push_back( item );
+		videoItems.push_back( item );
 	}
 	
 	void addVideo ( string assetID, ofBaseImage& video )
 	{
 		ofxAssetItem* item;
 		item = new ofxAssetItem();
-		item->assetID	= assetID;
-		item->assetPath	= "";
-		item->assetType	= OFX_ASSETS_TYPE_VIDEO;
-		item->asset		= &video;
+		item->assetID		= assetID;
+		item->assetPath		= "";
+		item->assetType		= OFX_ASSETS_TYPE_VIDEO;
+		item->imageAsset	= &video;
+		item->soundAsset	= NULL;
 		
 		items.push_back( item );
+		videoItems.push_back( item );
 	}
+	
+	//================================================== SOUND.
+	
+	void addSound ( string assetID, string assetPath )
+	{
+		ofSoundPlayer* sound;
+		sound = new ofSoundPlayer();
+		sound->loadSound( assetPath );
+		
+		ofxAssetItem* item;
+		item = new ofxAssetItem();
+		item->assetID		= assetID;
+		item->assetPath		= assetPath;
+		item->assetType		= OFX_ASSETS_TYPE_SOUND;
+		item->imageAsset	= NULL;
+		item->soundAsset	= sound;
+		
+		items.push_back( item );
+		soundItems.push_back( item );
+	}
+	
+	void addSound ( string assetID, ofSoundPlayer& sound )
+	{
+		ofxAssetItem* item;
+		item = new ofxAssetItem();
+		item->assetID		= assetID;
+		item->assetPath		= "";
+		item->assetType		= OFX_ASSETS_TYPE_SOUND;
+		item->imageAsset	= NULL;
+		item->soundAsset	= &sound;
+		
+		items.push_back( item );
+		soundItems.push_back( item );
+	}
+	
+	ofSoundPlayer* getSound ( string assetID )
+	{
+		for( int i=0; i<soundItems.size(); i++ )
+		{
+			ofxAssetItem& item = *soundItems[ i ];
+			
+			if( item.assetID == assetID )
+			{
+				return item.soundAsset;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	ofSoundPlayer* getSoundByFileName ( string fileName )
+	{
+		if( fileName == "" )
+			return NULL;
+		
+		for( int i=0; i<soundItems.size(); i++ )
+		{
+			ofxAssetItem& item = *soundItems[ i ];
+			
+			if( item.assetPath == fileName )
+			{
+				return item.soundAsset;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	//==================================================
 	
 	ofBaseImage* getAsset ( string assetID )
 	{
@@ -135,7 +225,7 @@ public:
 			
 			if( item.assetID == assetID )
 			{
-				return item.asset;
+				return item.imageAsset;
 			}
 		}
 		
@@ -144,13 +234,16 @@ public:
 
 	ofBaseImage* getAssetByFileName ( string fileName )
 	{
+		if( fileName == "" )
+			return NULL;
+		
 		for( int i=0; i<items.size(); i++ )
 		{
 			ofxAssetItem& item = *items[ i ];
 			
 			if( item.assetPath == fileName )
 			{
-				return item.asset;
+				return item.imageAsset;
 			}
 		}
 		
