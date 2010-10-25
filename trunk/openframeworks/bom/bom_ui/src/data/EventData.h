@@ -50,6 +50,7 @@ public:
 			item.thumb	= xml.getValue( "event:thumb",	"",		i );
 			item.image	= xml.getValue( "event:image",	"",		i );
 			item.video	= xml.getValue( "event:video",	"",		i );
+			item.sound	= xml.getValue( "event:sound",	"",		i );
 			item.body	= xml.getValue( "event:body",	"",		i );
 			
 			if( item.image.length() > 0 )

@@ -14,6 +14,7 @@
 
 #include "Model.h"
 #include "TimelineTabBtn.h"
+#include "Btn.h"
 
 class TimelineTab : public ofxSprite
 {
@@ -30,12 +31,16 @@ public:
 	//==================================================
 
 	ofImage*			bg;
+	ofImage*			lineRain;
+	ofImage*			lineTemp;
 	ofImage*			tabRain;
 	ofImage*			tabTemp;
+	ofImage*			futureBtnBm;
 	int					tabType;
 	
 	TimelineTabBtn		rainBtn;
 	TimelineTabBtn		tempBtn;
+	Btn					futureBtn;
 	
 	ofEvent<int>		changeEvent;
 	
@@ -46,9 +51,12 @@ public:
 		x		= 0;
 		y		= 521;
 		
-		bg		= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bg" );
-		tabRain = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain" );
-		tabTemp = (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_bg" );
+		tabRain		= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain" );
+		tabTemp		= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_temp" );
+		lineRain	= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_line_rain" );
+		lineTemp	= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_line_temp" );
+		futureBtnBm	= (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_futureBtn" );
 
 		rainBtn.setup();
 		rainBtn.setIcon( (ofImage*)ofxAssets :: getInstance()->getAsset( "timeline_tab_rain_icon" ) );
@@ -66,11 +74,16 @@ public:
 		tempBtn.setID( TIMELINE_TAB_TEMP );
 		tempBtn.hide();
 		
+		futureBtn.setPos( x + 1224, y + 107 );
+		if( futureBtnBm != NULL )
+			futureBtn.setSize( futureBtnBm->width, futureBtnBm->height );
+		
 		addChild( &rainBtn );
 		addChild( &tempBtn );
 		
-		ofAddListener( rainBtn.btnPressEvent, this, &TimelineTab :: btnPressed );
-		ofAddListener( tempBtn.btnPressEvent, this, &TimelineTab :: btnPressed );
+		ofAddListener( rainBtn.btnPressEvent,	this, &TimelineTab :: btnPressed );
+		ofAddListener( tempBtn.btnPressEvent,	this, &TimelineTab :: btnPressed );
+		ofAddListener( futureBtn.btnPressEvent, this, &TimelineTab :: futureBtnPressed );
 		
 		//-- model.
 		
@@ -109,19 +122,27 @@ public:
 		
 		if( tabType == TIMELINE_TAB_RAIN )
 		{
-			if( tabRain != NULL )
-				tabRain->draw( x, y );
+			drawImage( tabRain, x, y );
+			drawImage( lineRain, x + 145, y + 160 );
 		}
 		else if( tabType == TIMELINE_TAB_TEMP )
 		{
-			if( tabTemp != NULL )
-				tabTemp->draw( x, y );
+			drawImage( tabTemp, x, y );
+			drawImage( lineTemp, x + 145, y + 160 );
 		}
 		
-		if( bg != NULL )
-			bg->draw( x , y + 56 );
+		drawImage( futureBtnBm, x + 1224, y + 107 );
+		drawImage( bg, x + 104, y + 73 );
 		
 		ofDisableAlphaBlending();
+	}
+	
+	void drawImage ( ofImage* image, int x, int y )
+	{
+		if( image == NULL )
+			return;
+		
+		image->draw( x, y );
 	}
 	
 	//==================================================
@@ -129,5 +150,10 @@ public:
 	void btnPressed ( int & btnId )
 	{
 		Model :: getInstance()->setTabType( btnId );
+	}
+	
+	void futureBtnPressed ( int & btnId )
+	{
+		Model :: getInstance()->setFutureBtnPress( btnId );
 	}
 };

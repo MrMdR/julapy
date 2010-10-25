@@ -18,7 +18,7 @@ ContourMap :: ContourMap( Contour* contour )
 
 ContourMap :: ~ContourMap()
 {
-
+	//
 }
 
 ///////////////////////////////////////////
@@ -93,7 +93,7 @@ void ContourMap :: draw ()
 	
 	ofEnableAlphaBlending();
 
-	ofSetColor( 0xAAAAAA );
+	ofSetColor( 0xFFFFFF );
 	ausCover->draw( 0, 0 );
 	
 	ofSetColor( 0xFFFFFF );

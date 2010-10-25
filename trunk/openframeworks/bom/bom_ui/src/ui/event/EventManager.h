@@ -55,7 +55,8 @@ public:
 		
 		model = Model :: getInstance();
 		
-		ofAddListener( model->timelineMarkerPressedEvent, this, &EventManager :: timelineMarkerPressedEventHandler );
+		ofAddListener( model->timelineMarkerPressedEvent,	this, &EventManager :: timelineMarkerPressedEventHandler );
+		ofAddListener( model->futureBtnPressedEvent,		this, &EventManager :: futureBtnPressedEventHandler );
 	}
 	
 	void timelineMarkerPressedEventHandler ( int & eventID )
@@ -104,6 +105,8 @@ public:
 	void eventPanelPressedHandler ( int& eventID )
 	{
 		selectedEventID = eventID;
+		
+		model->setTimelinePlay( false );	// stop the timeline from playing.
 		
 		initCover();
 		initEvent();
@@ -164,6 +167,8 @@ public:
 		if( eventItem == NULL )
 			return;
 		
+		eventItem->hide();
+		
 		removeChild( eventItem );
 		
 		ofRemoveListener( eventItem->closeEvent, this, &EventManager :: eventItemCloseHandler );
@@ -183,6 +188,13 @@ public:
 	{
 		killCover();
 		killEvent();
+	}
+	
+	//==================================================
+	
+	void futureBtnPressedEventHandler ( int& eventID )
+	{
+		cout << eventID << endl;
 	}
 	
 	//==================================================

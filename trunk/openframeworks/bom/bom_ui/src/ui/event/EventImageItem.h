@@ -28,6 +28,8 @@ public:
 	
 	void setup ()
 	{
+		EventItem :: setup();
+		
 		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "event_bg_image" );
 		eventImage	= (ofImage*)ofxAssets :: getInstance()->getAssetByFileName( data.image );
 		
@@ -48,8 +50,6 @@ public:
 	void show ()
 	{
 		EventItem :: show();
-		
-		//
 	}
 	
 	void hide ()

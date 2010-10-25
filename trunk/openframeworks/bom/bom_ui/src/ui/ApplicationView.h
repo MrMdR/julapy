@@ -35,6 +35,8 @@ public:
 	
 	ApplicationView() 
 	{
+		contour = NULL;
+		
 		addListeners();
 	};
 	
@@ -89,8 +91,9 @@ public:
 	void update ()
 	{
 		ofxStage :: update();
-		
-		contour->update();
+	
+		if( contour != NULL )
+			contour->update();
 	}
 	
 	void draw ()

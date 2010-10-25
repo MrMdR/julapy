@@ -20,6 +20,9 @@ void testApp::setup()
 	assets->addImage( "ref_04",						xflPath + "ref/ref_04.png" );
 	
 	assets->addImage( "timeline_bg",				xflPath + "assets/timeline_bg.png" );
+	assets->addImage( "timeline_line_rain",			xflPath + "assets/timeline_line_rain.png" );
+	assets->addImage( "timeline_line_temp",			xflPath + "assets/timeline_line_temp.png" );
+	assets->addImage( "timeline_futureBtn",			xflPath + "assets/timeline_futureBtn.png" );
 	
 	assets->addImage( "timeline_tab_rain",			xflPath + "assets/timeline_tab_rain.png" );
 	assets->addImage( "timeline_tab_rain_icon",		xflPath + "assets/timeline_tab_rain_icon.png" );
@@ -58,6 +61,7 @@ void testApp::setup()
 	assets->addImage( "event_thumb_1",				xflPath + "event_thumb/event_thumb_1.png" );
 	assets->addImage( "image_sample_356x232",		xflPath + "event_image/image_sample_356x232.png" );
 	assets->addVideo( "video_sample_356x232",		xflPath + "event_video/video_sample_356x232.mov" );
+	assets->addSound( "sound_sample",				xflPath + "event_sound/sound_sample.mp3" );
 	
 	assets->addImage( "aus_cover_1280x720",			xflPath + "assets/aus_cover_1280x720.png" );
 	assets->addImage( "aus_stroke_757x590",			xflPath + "assets/aus_stroke_757x590.png" );
