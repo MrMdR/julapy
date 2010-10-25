@@ -28,6 +28,8 @@ public:
 	
 	void setup ()
 	{
+		EventItem :: setup();
+		
 		bg = (ofImage*)ofxAssets :: getInstance()->getAsset( "event_bg_text" );
 		
 		if( bg != NULL )

@@ -28,6 +28,8 @@ public:
 	
 	void setup ()
 	{
+		EventItem :: setup();
+		
 		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "event_bg_video" );
 		eventVideo	= (ofVideoPlayer*)ofxAssets :: getInstance()->getAssetByFileName( data.video );
 		

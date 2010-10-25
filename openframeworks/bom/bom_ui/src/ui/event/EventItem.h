@@ -30,6 +30,8 @@ public:
 		closeBtn.setPos( rect.x + rect.width - 32, rect.y + 10 );
 		closeBtn.enableMouseEvents();
 		
+		sound = NULL;
+		
 		ofAddListener( closeBtn.btnPressEvent, this, &EventItem :: closeBtnPressed );
 	};
 	
@@ -45,6 +47,7 @@ public:
 	ofRectangle			rect;
 	EventDataItem		data;
 	ofImage*			bg;
+	ofSoundPlayer*		sound;
 	
 	EventItemCloseBtn	closeBtn;
 	ofEvent<int>		closeEvent;
@@ -56,11 +59,22 @@ public:
 		this->data = data;
 	}
 	
+	virtual void setup ()
+	{
+		sound = ofxAssets :: getInstance()->getSoundByFileName( data.sound );
+	}
+	
 	virtual void show ()
 	{
 		visible = true;
 		
 		closeBtn.enabled = true;
+		
+		if( sound != NULL )
+		{
+			sound->setPosition( 0 );
+			sound->play();
+		}
 	}
 	
 	virtual void hide ()
@@ -68,11 +82,11 @@ public:
 		visible = false;
 		
 		closeBtn.enabled = false;
-	}
-	
-	virtual void setup ()
-	{
-		//
+		
+		if( sound != NULL )
+		{
+			sound->stop();
+		}
 	}
 	
 	virtual void update ()

@@ -25,6 +25,7 @@ public:
 	string	thumb;
 	string	image;
 	string	video;
+	string	sound;
 	string	body;
 	int		type;
 	

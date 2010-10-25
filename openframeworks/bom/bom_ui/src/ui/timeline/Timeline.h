@@ -41,7 +41,7 @@ public:
 	ofRectangle		rect;
 	ofPoint			scrubberCenter;
 	
-	Btn*			btn;
+	Btn				btn;
 	float			position;
 	float			positionNew;
 	float			positionEase;
@@ -79,13 +79,12 @@ public:
 		rect.width	= 852;
 		rect.height	= 45;
 		
-		btn = new Btn();
-		btn->setPos( rect.x, rect.y );
-		btn->setSize( rect.width, rect.height );
+		btn.setPos( rect.x, rect.y );
+		btn.setSize( rect.width, rect.height );
 		
-		ofAddListener( btn->btnOverEvent,	this, &Timeline :: btnOver );
-		ofAddListener( btn->btnOutEvent,	this, &Timeline :: btnOut );
-		ofAddListener( btn->btnPressEvent,	this, &Timeline :: btnPressed );
+		ofAddListener( btn.btnOverEvent,	this, &Timeline :: btnOver );
+		ofAddListener( btn.btnOutEvent,		this, &Timeline :: btnOut );
+		ofAddListener( btn.btnPressEvent,	this, &Timeline :: btnPressed );
 		
 		//-- model.
 		
@@ -142,9 +141,9 @@ public:
 				bMarkerPressed = false;
 			}
 		}
-		else if( btn->isMouseDown() )
+		else if( btn.isMouseDown() )
 		{
-			positionNew = ( btn->getMouseX() - rect.x ) / (float)rect.width;
+			positionNew = ( btn.getMouseX() - rect.x ) / (float)rect.width;
 			positionNew = ofClamp( positionNew, 0, 1 );
 		}
 		else

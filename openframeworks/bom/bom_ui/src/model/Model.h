@@ -66,6 +66,7 @@ public:
 	ofEvent<int>			timelineMarkerPressedEvent;
 	ofEvent<int>			tabTypeChangeEvent;
 	ofEvent<bool>			timelinePlayChangeEvent;
+	ofEvent<int>			futureBtnPressedEvent;
 	ofEvent<float>			progressChangeEvent;
 	ofEvent<int>			yearChangeEvent;
 
@@ -120,6 +121,13 @@ public:
 	void setTimelineMarkerPress ( int eventID )
 	{
 		ofNotifyEvent( timelineMarkerPressedEvent, eventID, this );
+	}
+	
+	//==================================================
+	
+	void setFutureBtnPress ( int eventID )
+	{
+		ofNotifyEvent( futureBtnPressedEvent, eventID, this );
 	}
 	
 	//==================================================
