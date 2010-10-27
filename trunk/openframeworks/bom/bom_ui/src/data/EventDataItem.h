@@ -23,6 +23,7 @@ public:
 	float	lat;
 	float	lon;
 	string	thumb;
+	string	copy;
 	string	image;
 	string	video;
 	string	sound;

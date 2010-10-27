@@ -12,6 +12,7 @@
 #include "ofMain.h"
 #include "ofxFlash.h"
 
+#include "Model.h"
 #include "EventDataItem.h"
 #include "Btn.h"
 
@@ -39,6 +40,8 @@ public:
 	
 	//==================================================
 
+	Model*			model;
+	
 	EventDataItem	data;
 	
 	ofImage*		thumbImage;
@@ -70,11 +73,16 @@ public:
 	
 	void setup ()
 	{
-//		x = data.lon;
-//		y = data.lat;
-
-		x = (int)ofRandom( ofGetWidth()  * 0.3, ofGetWidth()  * 0.7 );
-		y = (int)ofRandom( ofGetHeight() * 0.1, ofGetHeight() * 0.5 );
+		model = Model :: getInstance();
+		
+		ofPoint latLon;
+		latLon.x = data.lon;
+		latLon.y = ABS( data.lat );		// made values positive for simplicity.	
+		
+		ofPoint p;
+		p = model->convertEarthPointToPixelPoint( latLon );
+		x = (int)p.x;
+		y = (int)p.y;
 		
 		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "popup_bg" );
 		iconRain	= (ofImage*)ofxAssets :: getInstance()->getAsset( "popup_icon_rain" );
@@ -136,6 +144,7 @@ public:
 		if( play != NULL )
 			play->draw( x + playPoint.x, y + playPoint.y );
 
+		ofSetColor( 0xFF0000 );
 		title.drawString( data.title, x + titlePoint.x, y + titlePoint.y );
 		
 		ofFill();

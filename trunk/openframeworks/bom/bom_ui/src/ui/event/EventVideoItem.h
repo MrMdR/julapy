@@ -30,7 +30,7 @@ public:
 	{
 		EventItem :: setup();
 		
-		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "event_bg_video" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAssetByFileName( data.copy );
 		eventVideo	= (ofVideoPlayer*)ofxAssets :: getInstance()->getAssetByFileName( data.video );
 		
 		if( bg != NULL )

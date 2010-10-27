@@ -73,6 +73,21 @@ public:
 		model->setEventData( eventData.items );
 		model->setKeyRainData( keyRainData.items );
 		model->setKeyTempData( keyTempData.items );
+
+		ofRectangle pixelRect;
+		pixelRect.x			= 272;		// dimensions from alex's design.
+		pixelRect.y			= -5;
+		pixelRect.width		= 757;
+		pixelRect.height	= 590;
+
+		ofRectangle earthRect;
+		earthRect.x			= 112;		// dimensions from bom data.
+		earthRect.y			= 9.95;		// this is really a minus value, but im making it positive for simplicity.
+		earthRect.width		= 44.3;
+		earthRect.height	= 34.55;
+		
+		model->setPixelRect( pixelRect );
+		model->setEarthRect( earthRect );
 		
 		contour = new Contour();
 		

@@ -66,10 +66,7 @@ void Contour :: initSize ()
 //	largeRect.width		*= 1 + largeRectExtra;
 //	largeRect.height	*= 1 + largeRectExtra;
 	
-	largeRect.x			= 272;		// dimensions from alex's design.
-	largeRect.y			= -5;
-	largeRect.width		= 757;
-	largeRect.height	= 590;
+	largeRect			= model->getPixelRect();
 	
 	debugRect.height	= 150;			// debug height.
 	debugRect.width		= (int)( ( debugRect.height / sourceRect.height ) * sourceRect.width );	
