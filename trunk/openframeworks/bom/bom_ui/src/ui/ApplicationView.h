@@ -26,6 +26,7 @@
 #include "IntroPanel.h"
 #include "YearPanel.h"
 #include "KeyPanel.h"
+#include "ElNinoBtn.h"
 #include "EventManager.h"
 
 class ApplicationView : public ofxStage
@@ -59,6 +60,7 @@ public:
 	IntroPanel*			introPanel;
 	YearPanel*			yearPanel;
 	KeyPanel*			keyPanel;
+	ElNinoBtn*			elninoBtn;
 	EventManager*		eventManager;
 	
 	//==================================================
@@ -100,6 +102,7 @@ public:
 		addChild( introPanel = new IntroPanel() );
 		addChild( yearPanel = new YearPanel() );
 		addChild( keyPanel = new KeyPanel() );
+		addChild( elninoBtn = new ElNinoBtn() );
 		addChild( eventManager = new EventManager() );
 	}
 	

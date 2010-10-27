@@ -17,6 +17,8 @@
 #include "EventItem.h"
 #include "EventImageItem.h"
 #include "EventVideoItem.h"
+#include "EventElninoItem.h"
+#include "EventFutureItem.h"
 #include "EventTextItem.h"
 #include "EventCover.h"
 
@@ -62,6 +64,7 @@ public:
 		
 		ofAddListener( model->eventProgressChangeEvent	,	this, &EventManager :: eventProgressChangeEventHandler );
 		ofAddListener( model->futureBtnPressedEvent,		this, &EventManager :: futureBtnPressedEventHandler );
+		ofAddListener( model->elninoBtnPressedEvent,		this, &EventManager :: elninoBtnPressedEventHandler );
 	}
 	
 	//==================================================
@@ -69,6 +72,22 @@ public:
 	void eventProgressChangeEventHandler ( float& eventPosition )
 	{
 		checkEventPanels( eventPosition );
+	}
+	
+	//==================================================
+	
+	void futureBtnPressedEventHandler ( int& eventID )
+	{
+		initCover();
+		initFutureEvent();
+	}
+	
+	//==================================================
+	
+	void elninoBtnPressedEventHandler ( int& btnID )
+	{
+		initCover();
+		initElninoEvent();
 	}
 	
 	//==================================================
@@ -163,7 +182,7 @@ public:
 	{
 		killEvent();
 		
-		const EventDataItem& data = model->getEventDataItemAt( selectedEventID );
+		const EventDataItem& data = model->getEventDataItemByEventID( selectedEventID );
 		
 		if( data.type == EVENT_TYPE_IMAGE )
 		{
@@ -179,6 +198,34 @@ public:
 		}
 		
 		eventItem->populate( data );
+		eventItem->setup();
+		eventItem->show();
+		
+		ofAddListener( eventItem->closeEvent, this, &EventManager :: eventItemCloseHandler );
+		ofAddListener( ofEvents.mousePressed, this, &EventManager :: mousePressedHandler );
+		
+		addChild( eventItem );
+	}
+	
+	void initElninoEvent ()
+	{
+		killEvent();
+	
+		eventItem = new EventElninoItem();
+		eventItem->setup();
+		eventItem->show();
+		
+		ofAddListener( eventItem->closeEvent, this, &EventManager :: eventItemCloseHandler );
+		ofAddListener( ofEvents.mousePressed, this, &EventManager :: mousePressedHandler );
+		
+		addChild( eventItem );
+	}
+	
+	void initFutureEvent ()
+	{
+		killEvent();
+		
+		eventItem = new EventFutureItem();
 		eventItem->setup();
 		eventItem->show();
 		
@@ -214,13 +261,6 @@ public:
 	{
 		killCover();
 		killEvent();
-	}
-	
-	//==================================================
-	
-	void futureBtnPressedEventHandler ( int& eventID )
-	{
-		cout << eventID << endl;
 	}
 	
 	//==================================================

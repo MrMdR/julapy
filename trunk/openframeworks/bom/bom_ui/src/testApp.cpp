@@ -14,10 +14,10 @@ void testApp::setup()
 	
 	assets = ofxAssets :: getInstance();
 	
-	assets->addImage( "ref_01",						xflPath + "ref/ref_01.jpg" );
-	assets->addImage( "ref_02",						xflPath + "ref/ref_02.jpg" );
-	assets->addImage( "ref_03",						xflPath + "ref/ref_03.jpg" );
-	assets->addImage( "ref_04",						xflPath + "ref/ref_04.png" );
+//	assets->addImage( "ref_01",						xflPath + "ref/ref_01.jpg" );
+//	assets->addImage( "ref_02",						xflPath + "ref/ref_02.jpg" );
+//	assets->addImage( "ref_03",						xflPath + "ref/ref_03.jpg" );
+//	assets->addImage( "ref_04",						xflPath + "ref/ref_04.png" );
 	
 	assets->addImage( "timeline_bg",				xflPath + "assets/timeline_bg.png" );
 	assets->addImage( "timeline_line_rain",			xflPath + "assets/timeline_line_rain.png" );
@@ -42,6 +42,10 @@ void testApp::setup()
 	assets->addImage( "timeline_bar_marker_rain",	xflPath + "assets/timeline_bar_marker_rain.png" );
 	assets->addImage( "timeline_bar_marker_temp",	xflPath + "assets/timeline_bar_marker_temp.png" );
 	
+	assets->addImage( "map_elnino_icon_up",			xflPath + "assets/map_elnino_icon_up.png" );
+	assets->addImage( "map_elnino_icon_over",		xflPath + "assets/map_elnino_icon_over.png" );
+	assets->addImage( "elnino",						xflPath + "elnino/elnino.png" );
+	
 	assets->addImage( "year_panel",					xflPath + "assets/year_panel.png" );
 	assets->addImage( "intro_panel",				xflPath + "assets/intro_panel.png" );
 	assets->addImage( "key_panel",					xflPath + "assets/key_panel.png" );
@@ -52,13 +56,11 @@ void testApp::setup()
 	assets->addImage( "popup_play",					xflPath + "assets/popup_play.png" );
 	assets->addImage( "popup_shadow",				xflPath + "assets/popup_shadow.png" );
 	
-//	assets->addImage( "event_bg_image",				xflPath + "assets/event_bg_image.png" );
-//	assets->addImage( "event_bg_text",				xflPath + "assets/event_bg_text.png" );
-//	assets->addImage( "event_bg_video",				xflPath + "assets/event_bg_video.png" );
-	assets->addImage( "event_close_icon",			xflPath + "assets/event_close_icon.png" );
-
-	assets->addImage( "event_thumb_0",				xflPath + "event_thumb/event_thumb_0.png" );
-	assets->addImage( "event_thumb_1",				xflPath + "event_thumb/event_thumb_1.png" );
+	assets->addImage( "event_thumb_0",				xflPath + "event_thumb/bushfire.png" );
+	assets->addImage( "event_thumb_1",				xflPath + "event_thumb/cyclone.png" );
+	assets->addImage( "event_thumb_2",				xflPath + "event_thumb/drought.png" );
+	assets->addImage( "event_thumb_3",				xflPath + "event_thumb/flood.png" );
+	assets->addImage( "event_thumb_4",				xflPath + "event_thumb/heatwave.png" );
 	
 	assets->addImage( "2_2_T",						xflPath + "event_copy/2_2_T.png" );
 	assets->addImage( "2_3_T",						xflPath + "event_copy/2_3_T.png" );
@@ -118,6 +120,10 @@ void testApp::setup()
 	assets->addVideo( "video_5_2",					xflPath + "event_video/5.2.mov" );
 	assets->addVideo( "video_5_3",					xflPath + "event_video/5.3.mov" );
 	assets->addVideo( "video_6_2",					xflPath + "event_video/6.2.mov" );
+	
+	assets->addImage( "image_sample_356x232",		xflPath + "event_image/image_sample_356x232.png" );
+	
+	assets->addImage( "event_close_icon",			xflPath + "assets/event_close_icon.png" );
 	
 	assets->addImage( "aus_cover_1280x720",			xflPath + "assets/aus_cover_1280x720.png" );
 	assets->addImage( "aus_stroke_757x590",			xflPath + "assets/aus_stroke_757x590.png" );

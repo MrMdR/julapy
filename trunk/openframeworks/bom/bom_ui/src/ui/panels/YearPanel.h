@@ -35,7 +35,7 @@ public:
 	void setup ()
 	{
 		x = 1;
-		y = 140;
+		y = 127;
 		
 		image = (ofImage*)ofxAssets :: getInstance()->getAsset( "year_panel" );
 		
@@ -70,10 +70,10 @@ public:
 		string yearStr;
 		yearStr = ofToString( year, 0 );
 		
-		rockwell_50.drawString( yearStr.substr( 0, 1 ),  34, 206 );
-		rockwell_50.drawString( yearStr.substr( 1, 1 ),  73, 206 );
-		rockwell_50.drawString( yearStr.substr( 2, 1 ), 112, 206 );
-		rockwell_50.drawString( yearStr.substr( 3, 1 ), 151, 206 );
+		rockwell_50.drawString( yearStr.substr( 0, 1 ), x + 33,  y + 66 );
+		rockwell_50.drawString( yearStr.substr( 1, 1 ), x + 72,  y + 66 );
+		rockwell_50.drawString( yearStr.substr( 2, 1 ), x + 111, y + 66 );
+		rockwell_50.drawString( yearStr.substr( 3, 1 ), x + 150, y + 66 );
 		
 		ofDisableAlphaBlending();
 	}
