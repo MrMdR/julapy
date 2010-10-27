@@ -34,11 +34,14 @@ public:
 	
 	//==================================================
 	
-	Model*			model;
-	int				eventID;
-	int				selectedEventID;
+	Model*					model;
+	vector<EventDataItem>*	data;
+	int						eventID;
+	int						selectedEventID;
 	
-	EventPanel*		eventPanel;
+	EventPanel**	eventPanels;
+	int				eventPanelsTotal;
+	
 	EventItem*		eventItem;
 	EventCover*		eventCover;
 	
@@ -46,60 +49,83 @@ public:
 	
 	void setup ()
 	{
-		eventPanel		= NULL;
 		eventItem		= NULL;
 		eventCover		= NULL;
 		
 		eventID			= -1;
 		selectedEventID	= -1;
 		
-		model = Model :: getInstance();
+		model	= Model :: getInstance();
+		data	= model->getEventData();
+
+		initEventPanels();
 		
-		ofAddListener( model->timelineMarkerPressedEvent,	this, &EventManager :: timelineMarkerPressedEventHandler );
+		ofAddListener( model->eventProgressChangeEvent	,	this, &EventManager :: eventProgressChangeEventHandler );
 		ofAddListener( model->futureBtnPressedEvent,		this, &EventManager :: futureBtnPressedEventHandler );
 	}
 	
-	void timelineMarkerPressedEventHandler ( int & eventID )
+	//==================================================
+	
+	void eventProgressChangeEventHandler ( float& eventPosition )
 	{
-		if( this->eventID == eventID )
-			return;
-		
-		this->eventID = eventID;
-		
-		if( eventID >= 0 )
+		checkEventPanels( eventPosition );
+	}
+	
+	//==================================================
+	
+	void initEventPanels ()
+	{
+		eventPanelsTotal	= data->size();
+		eventPanels			= new EventPanel*[ eventPanelsTotal ];
+		for( int i=0; i<eventPanelsTotal; i++ )
 		{
-			initEventPanel();
-		}
-		else
-		{
-			killEventPanel();
+			eventPanels[ i ] = NULL;
 		}
 	}
 	
-	void initEventPanel ()
+	void checkEventPanels ( float eventPosition )
 	{
-		killEventPanel();
+		float range = 0.05;
 		
-		eventPanel = new EventPanel();
-		eventPanel->populate( model->getEventDataItemAt( eventID ) );
-		eventPanel->setup();
-		
-		ofAddListener( eventPanel->eventPanelPressedEvent, this, &EventManager :: eventPanelPressedHandler );
-		
-		addChild( eventPanel );
-	}
-	
-	void killEventPanel ()
-	{
-		if( eventPanel == NULL )
-			return;
-		
-		removeChild( eventPanel );
-		
-		ofRemoveListener( eventPanel->eventPanelPressedEvent, this, &EventManager :: eventPanelPressedHandler );
-		
-		delete eventPanel;
-		eventPanel = NULL;
+		for( int i=0; i<eventPanelsTotal; i++ )
+		{
+			const EventDataItem& dataItem = data->at( i );
+			float p = model->getYearAsProgress( dataItem.year );
+			
+			if( p > ( eventPosition - range * 0.5 ) && p < ( eventPosition + range * 0.5 ) )
+			{
+				if( eventPanels[ i ] == NULL )		// no event panels.
+				{
+					EventPanel* eventPanel;
+					eventPanel = new EventPanel();
+					eventPanel->populate( dataItem );
+					eventPanel->setup();
+					
+					eventPanels[ i ] = eventPanel;
+					
+					ofAddListener( eventPanel->eventPanelPressedEvent, this, &EventManager :: eventPanelPressedHandler );
+					
+					addChild( eventPanel );
+				}
+			}
+			else
+			{
+				if( eventPanels[ i ] != NULL )		// event panel is present.
+				{
+					EventPanel* eventPanel;
+					eventPanel = eventPanels[ i ];
+					
+					ofRemoveListener( eventPanel->eventPanelPressedEvent, this, &EventManager :: eventPanelPressedHandler );
+					
+					removeChild( eventPanel );
+					
+					delete eventPanel;
+					eventPanel = NULL;
+					
+					eventPanels[ i ] = NULL;
+				}
+			}
+		}
 	}
 	
 	void eventPanelPressedHandler ( int& eventID )

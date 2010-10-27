@@ -32,6 +32,7 @@ private:
 		tabType			= TIMELINE_TAB_RAIN;
 		bTimelinePlay	= false;
 		progress		= 0;
+		eventProgress	= 0;
 		year			= YEAR_START;
 	};
 	
@@ -42,9 +43,12 @@ private:
 	int						tabType;
 	bool					bTimelinePlay;
 	float					progress;
+	float					eventProgress;
 	int						year;
 	vector<KeyDataItem>		keyRainData;
 	vector<KeyDataItem>		keyTempData;
+	ofRectangle				pixelRect;
+	ofRectangle				earthRect;
 	
 	//==================================================
 	
@@ -68,6 +72,7 @@ public:
 	ofEvent<bool>			timelinePlayChangeEvent;
 	ofEvent<int>			futureBtnPressedEvent;
 	ofEvent<float>			progressChangeEvent;
+	ofEvent<float>			eventProgressChangeEvent;
 	ofEvent<int>			yearChangeEvent;
 
 	//==================================================
@@ -96,7 +101,20 @@ public:
 	
 	void setEventData ( const vector<EventDataItem>& data )
 	{
-		eventData = data;
+		for( int i=0; i<data.size(); i++ )
+		{
+			EventDataItem dataItem = data[ i ];
+			
+			if( dataItem.year >= YEAR_START && dataItem.year <= YEAR_END )		// exculde any items beyond the timeline period.
+			{
+				eventData.push_back( dataItem );
+			}
+			else 
+			{
+				cout << "event " << i << " exculded - out of date range = " << dataItem.year << endl;
+			}
+
+		}
 	}
 	
 	vector<EventDataItem>* getEventData ()
@@ -207,6 +225,25 @@ public:
 	
 	//==================================================
 	
+	void setEventProgress ( float p )
+	{
+		p = ( (int)( p * 1000 ) ) / 1000.0;		// round off float to 2 decimal points.
+		
+		if( eventProgress == p )
+			return;
+		
+		eventProgress = p;
+		
+		ofNotifyEvent( eventProgressChangeEvent, eventProgress, this );
+	}
+	
+	float getEventProgress ()
+	{
+		return eventProgress;
+	}
+	
+	//==================================================
+	
 	void setYear ( int year )
 	{
 		if( this->year == year )
@@ -225,6 +262,54 @@ public:
 	float getYearAsProgress ( int year )
 	{
 		float p = ( year - YEAR_START ) / (float)( YEAR_END - YEAR_START );
+		
+		return p;
+	}
+	
+	//==================================================
+	
+	void setPixelRect ( const ofRectangle& rect )
+	{
+		pixelRect = rect;
+	}
+	
+	void setEarthRect ( const ofRectangle& rect )
+	{
+		earthRect = rect;
+	}
+
+	ofRectangle getPixelRect ()
+	{
+		return pixelRect;
+	}
+
+	ofRectangle getEarthRect ()
+	{
+		return earthRect;
+	}
+	
+	ofPoint convertEarthPointToPixelPoint( const ofPoint& earthPoint )
+	{
+		ofPoint p;
+		
+		float px = ( earthPoint.x - earthRect.x ) / (float)earthRect.width;
+		float py = ( earthPoint.y - earthRect.y ) / (float)earthRect.height;
+		
+		p.x = px * pixelRect.width  + pixelRect.x;
+		p.y = py * pixelRect.height + pixelRect.y;
+		
+		return p;
+	}
+	
+	ofPoint convertPixelPointToEarthPoint( const ofPoint& pixelPoint )
+	{
+		ofPoint p;
+
+		float px = ( pixelPoint.x - pixelRect.x ) / (float)pixelRect.width;
+		float py = ( pixelPoint.y - pixelRect.y ) / (float)pixelRect.height;
+		
+		p.x = px * earthRect.width  + earthRect.x;
+		p.y = py * earthRect.height + earthRect.y;
 		
 		return p;
 	}

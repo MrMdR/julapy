@@ -48,10 +48,24 @@ public:
 			item.lat	= xml.getValue( "event:lat",	120.0,	i );
 			item.lon	= xml.getValue( "event:lon",	55.0,	i );
 			item.thumb	= xml.getValue( "event:thumb",	"",		i );
+			item.copy	= xml.getValue( "event:copy",	"",		i );
 			item.image	= xml.getValue( "event:image",	"",		i );
 			item.video	= xml.getValue( "event:video",	"",		i );
 			item.sound	= xml.getValue( "event:sound",	"",		i );
 			item.body	= xml.getValue( "event:body",	"",		i );
+
+			cout << "EVENT " << item.id << endl;
+			cout << "-----title :: " << item.title << endl;
+			cout << "------year :: " << item.year << endl;
+			cout << "-------lat :: " << item.lat << endl;
+			cout << "-------lon :: " << item.lon << endl;
+			cout << "-----thumb :: " << item.thumb << endl;
+			cout << "------copy :: " << item.copy << endl;
+			cout << "-----image :: " << item.image << endl;
+			cout << "-----video :: " << item.video << endl;
+			cout << "-----sound :: " << item.sound << endl;
+			cout << "------body :: " << item.body << endl;
+			cout << "" << endl;
 			
 			if( item.image.length() > 0 )
 			{

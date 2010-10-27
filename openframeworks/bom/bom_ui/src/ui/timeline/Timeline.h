@@ -82,10 +82,6 @@ public:
 		btn.setPos( rect.x, rect.y );
 		btn.setSize( rect.width, rect.height );
 		
-		ofAddListener( btn.btnOverEvent,	this, &Timeline :: btnOver );
-		ofAddListener( btn.btnOutEvent,		this, &Timeline :: btnOut );
-		ofAddListener( btn.btnPressEvent,	this, &Timeline :: btnPressed );
-		
 		//-- model.
 		
 		model = Model :: getInstance();
@@ -100,10 +96,10 @@ public:
 		int t = data->size();
 		for( int i=0; i<t; i++ )
 		{
-			EventDataItem& dataItem = data->at( i );
+			EventDataItem dataItem = data->at( i );
 			
 			TimelineMarker* marker;
-			marker = new TimelineMarker( i );
+			marker = new TimelineMarker();
 			marker->populate( dataItem );
 			
 			float p;
@@ -130,9 +126,6 @@ public:
 	{
 		if( bMarkerPressed )
 		{
-			EventDataItem& dataItem = data->at( selectedEventID );
-			positionNew = model->getYearAsProgress( dataItem.year );
-			
 			float dx;
 			dx = ABS( positionNew - position );
 			
@@ -158,7 +151,9 @@ public:
 				position = positionNew;
 				model->setProgress( position );
 				
-				checkMarkersAgainstProgress();
+//				checkMarkersAgainstProgress();
+				
+				model->setEventProgress( position );
 				
 				return;
 			}
@@ -170,7 +165,9 @@ public:
 		if( bMarkerPressed )	// do not check markers against progress if one is selected.
 			return;
 			
-		checkMarkersAgainstProgress();
+		model->setEventProgress( position );
+
+//		checkMarkersAgainstProgress();
 	}
 	
 	void checkMarkersAgainstProgress ()
@@ -181,7 +178,7 @@ public:
 		int t = data->size();
 		for( int i=0; i<t; i++ )
 		{
-			EventDataItem& dataItem = data->at( i );
+			const EventDataItem& dataItem = data->at( i );
 			float p = model->getYearAsProgress( dataItem.year );
 			
 			if( p > ( position - range * 0.5 ) && p < ( position + range * 0.5 ) )
@@ -268,23 +265,6 @@ public:
 	
 	//==================================================
 	
-	void btnOver ( int & btnId )
-	{
-		//
-	}
-	
-	void btnOut ( int & btnId )
-	{
-		//
-	}
-	
-	void btnPressed ( int & btnId )
-	{
-		//
-	}
-	
-	//==================================================
-	
 	void markerPressed ( int & eventID )
 	{
 		if( selectedEventID == eventID )
@@ -292,7 +272,23 @@ public:
 		
 		selectedEventID = eventID;
 		
-		model->setTimelineMarkerPress( eventID );
+		//-- new position.
+		
+		for( int i=0; i<data->size(); i++ )
+		{
+			const EventDataItem& dataItem = data->at( i );
+			
+			if( dataItem.id == selectedEventID )
+			{
+				positionNew = model->getYearAsProgress( dataItem.year );
+			}
+		}
+		
+		model->setEventProgress( positionNew );
+		
+//		model->setTimelineMarkerPress( selectedEventID );
+		
+		//--
 		
 		bMarkerPressed = true;
 		

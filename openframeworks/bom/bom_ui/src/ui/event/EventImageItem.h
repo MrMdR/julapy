@@ -30,7 +30,7 @@ public:
 	{
 		EventItem :: setup();
 		
-		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "event_bg_image" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( data.copy );
 		eventImage	= (ofImage*)ofxAssets :: getInstance()->getAssetByFileName( data.image );
 		
 		if( bg != NULL )

@@ -21,10 +21,8 @@ class TimelineMarker : public ofxSprite
 	
 public:
 	
-	TimelineMarker( int btnId = -1 )
+	TimelineMarker()
 	{
-		setID( btnId );
-		
 		setup();
 	}
 	
@@ -42,7 +40,6 @@ public:
 	ofPoint			offset;
 	
 	Btn				btn;
-	int				btnId;
 	
 	int				tabType;
 	
@@ -50,7 +47,7 @@ public:
 	
 	//==================================================
 
-	void populate ( EventDataItem& data )
+	void populate ( EventDataItem data )
 	{
 		this->data = data;
 	}
@@ -89,16 +86,6 @@ public:
 		btn.setPos( this->x, this->y );
 	}
 	
-	void setID ( int btnId )
-	{
-		this->btnId = btnId;
-	}
-	
-	int getID ()
-	{
-		return btnId;
-	}
-	
 	void update ()
 	{
 		//
@@ -135,6 +122,6 @@ public:
 	
 	void btnPressed ( int & btnId )
 	{
-		ofNotifyEvent( markerPressEvent, this->data.id, this );
+		ofNotifyEvent( markerPressEvent, data.id, this );
 	}
 };
