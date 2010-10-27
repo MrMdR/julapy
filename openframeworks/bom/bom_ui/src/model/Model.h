@@ -34,6 +34,7 @@ private:
 		progress		= 0;
 		eventProgress	= 0;
 		year			= YEAR_START;
+		elninoBtnID		= -1;
 	};
 	
 	~Model() {};
@@ -49,6 +50,7 @@ private:
 	vector<KeyDataItem>		keyTempData;
 	ofRectangle				pixelRect;
 	ofRectangle				earthRect;
+	int						elninoBtnID;
 	
 	//==================================================
 	
@@ -68,6 +70,7 @@ public:
 
 	vector<EventDataItem>	eventData;
 	ofEvent<int>			timelineMarkerPressedEvent;
+	ofEvent<int>			elninoBtnPressedEvent;
 	ofEvent<int>			tabTypeChangeEvent;
 	ofEvent<bool>			timelinePlayChangeEvent;
 	ofEvent<int>			futureBtnPressedEvent;
@@ -129,6 +132,19 @@ public:
 		return eventData[ i ];
 	}
 	
+	EventDataItem getEventDataItemByEventID ( int eventID )
+	{
+		for( int i=0; i<eventData.size(); i++ )
+		{
+			if( eventData[ i ].id == eventID )
+			{
+				return eventData[ i ];
+			}
+		}
+		
+		return eventData[ 0 ];	// default.
+	}
+	
 	int getEventDataSize ()
 	{
 		return eventData.size();
@@ -146,6 +162,13 @@ public:
 	void setFutureBtnPress ( int eventID )
 	{
 		ofNotifyEvent( futureBtnPressedEvent, eventID, this );
+	}
+	
+	//==================================================
+	
+	void setElninoBtnPress ()
+	{
+		ofNotifyEvent( elninoBtnPressedEvent, elninoBtnID, this );
 	}
 	
 	//==================================================

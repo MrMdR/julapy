@@ -150,9 +150,6 @@ public:
 				
 				position = positionNew;
 				model->setProgress( position );
-				
-//				checkMarkersAgainstProgress();
-				
 				model->setEventProgress( position );
 				
 				return;
@@ -166,33 +163,6 @@ public:
 			return;
 			
 		model->setEventProgress( position );
-
-//		checkMarkersAgainstProgress();
-	}
-	
-	void checkMarkersAgainstProgress ()
-	{
-		float range = 0.05;
-		bool found	= false;
-		
-		int t = data->size();
-		for( int i=0; i<t; i++ )
-		{
-			const EventDataItem& dataItem = data->at( i );
-			float p = model->getYearAsProgress( dataItem.year );
-			
-			if( p > ( position - range * 0.5 ) && p < ( position + range * 0.5 ) )
-			{
-				model->setTimelineMarkerPress( dataItem.id );
-				
-				found = true;
-			}
-		}
-		
-		if( !found )
-		{
-			model->setTimelineMarkerPress( -1 );
-		}
 	}
 	
 	void draw ()
@@ -285,8 +255,6 @@ public:
 		}
 		
 		model->setEventProgress( positionNew );
-		
-//		model->setTimelineMarkerPress( selectedEventID );
 		
 		//--
 		
