@@ -28,9 +28,9 @@ public:
 	
 	void setup ()
 	{
-		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "elnino" );
-		eventVideo	= (ofVideoPlayer*)ofxAssets :: getInstance()->getAsset( "" );
-		sound		= ofxAssets :: getInstance()->getSound( "sound_2_2" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "elnino_copy" );
+		eventVideo	= (ofVideoPlayer*)ofxAssets :: getInstance()->getAsset( "elnino_video" );
+		sound		= ofxAssets :: getInstance()->getSound( "elnino_sound" );
 		
 		if( bg != NULL )
 		{
@@ -70,6 +70,16 @@ public:
 	void update ()
 	{
 		EventItem :: update();
+		
+		if( bSoundFinished )
+		{
+			if( !bFinished )
+			{
+				bFinished = true;
+				
+				ofNotifyEvent( finishedEvent, bSoundFinished, this );
+			}
+		}
 	}
 	
 	void draw ()
@@ -77,7 +87,7 @@ public:
 		if( !visible )
 			return;
 		
-		ofSetColor( 0xFFFFFF );
+		ofSetColor( 255, 255, 255, 255 * alpha );
 		ofEnableAlphaBlending();
 		
 		if( bg != NULL )

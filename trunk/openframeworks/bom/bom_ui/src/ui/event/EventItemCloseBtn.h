@@ -42,7 +42,7 @@ public:
 		
 		if( isMouseOver() )
 		{
-			ofSetColor( 0xFF0000 );
+			ofSetColor( 0xFFFFFF );
 		}
 		else
 		{

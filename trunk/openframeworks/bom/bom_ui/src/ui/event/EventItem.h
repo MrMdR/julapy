@@ -10,11 +10,12 @@
 #pragma once
 
 #include "ofMain.h"
+#include "BasePanel.h"
 #include "ofxSprite.h"
 #include "EventDataItem.h"
 #include "EventItemCloseBtn.h"
 
-class EventItem : public ofxSprite
+class EventItem : public BasePanel
 {
 
 public:
@@ -32,6 +33,9 @@ public:
 		
 		sound = NULL;
 		
+		bSoundFinished	= false;
+		bFinished		= false;
+		
 		ofAddListener( closeBtn.btnPressEvent, this, &EventItem :: closeBtnPressed );
 	};
 	
@@ -48,9 +52,12 @@ public:
 	EventDataItem		data;
 	ofImage*			bg;
 	ofSoundPlayer*		sound;
+	bool				bSoundFinished;
+	bool				bFinished;
 	
 	EventItemCloseBtn	closeBtn;
 	ofEvent<int>		closeEvent;
+	ofEvent<bool>		finishedEvent;
 	
 	//==================================================
 	
@@ -72,8 +79,9 @@ public:
 		
 		if( sound != NULL )
 		{
-			sound->setPosition( 0 );
 			sound->play();
+			sound->setPosition( 0 );
+			sound->setPaused( false );
 		}
 	}
 	
@@ -85,18 +93,31 @@ public:
 		
 		if( sound != NULL )
 		{
-			sound->stop();
+			sound->setPaused( true );
 		}
 	}
 	
 	virtual void update ()
 	{
-		//
+		BasePanel :: update();
+		
+		if( sound != NULL )
+		{
+			if( !bSoundFinished )
+			{
+				bSoundFinished = ( sound->getPosition() == 1.0 );
+			}
+		}
 	}
 	
 	virtual void draw ()
 	{
+		ofEnableAlphaBlending();
+		ofSetColor( 255, 255, 255, 255 * alpha );
+		
 		closeBtn.draw();
+		
+		ofDisableAlphaBlending();
 	}
 	
 	void closeBtnPressed ( int & btnId )

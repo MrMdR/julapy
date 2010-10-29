@@ -74,7 +74,7 @@ public:
 		tempBtn.setID( TIMELINE_TAB_TEMP );
 		tempBtn.hide();
 		
-		futureBtn.setPos( x + 1224, y + 107 );
+		futureBtn.setPos( x + 1100, y + 101 );
 		if( futureBtnBm != NULL )
 			futureBtn.setSize( futureBtnBm->width, futureBtnBm->height );
 		
@@ -131,7 +131,7 @@ public:
 			drawImage( lineTemp, x + 145, y + 160 );
 		}
 		
-		drawImage( futureBtnBm, x + 1224, y + 107 );
+		drawImage( futureBtnBm, x + 1100, y + 101 );
 		drawImage( bg, x + 104, y + 73 );
 		
 		ofDisableAlphaBlending();

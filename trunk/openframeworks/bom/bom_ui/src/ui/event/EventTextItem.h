@@ -61,6 +61,16 @@ public:
 	void update ()
 	{
 		EventItem :: update();
+		
+		if( bSoundFinished )
+		{
+			if( !bFinished )
+			{
+				bFinished = true;
+				
+				ofNotifyEvent( finishedEvent, bSoundFinished, this );
+			}
+		}
 	}
 	
 	void draw ()
@@ -68,7 +78,7 @@ public:
 		if( !visible )
 			return;
 		
-		ofSetColor( 0xFFFFFF );
+		ofSetColor( 255, 255, 255, 255 * alpha );
 		ofEnableAlphaBlending();
 		
 		if( bg != NULL )

@@ -23,6 +23,7 @@ public:
 	//==================================================
 	
 	ofVideoPlayer*	eventVideo;
+	bool			bVideoFinished;
 	
 	//==================================================
 	
@@ -31,7 +32,11 @@ public:
 		EventItem :: setup();
 		
 		bg			= (ofImage*)ofxAssets :: getInstance()->getAssetByFileName( data.copy );
+		
 		eventVideo	= (ofVideoPlayer*)ofxAssets :: getInstance()->getAssetByFileName( data.video );
+		eventVideo->setVolume( 0 );
+		
+		bVideoFinished = false;
 		
 		if( bg != NULL )
 		{
@@ -55,6 +60,7 @@ public:
 		{
 			eventVideo->setPosition( 0 );
 			eventVideo->play();
+			eventVideo->setLoopState( false );
 		}
 	}
 	
@@ -64,6 +70,7 @@ public:
 	
 		if( eventVideo != NULL )
 		{
+			eventVideo->setPosition( 0 );
 			eventVideo->stop();
 		}
 	}
@@ -71,6 +78,24 @@ public:
 	void update ()
 	{
 		EventItem :: update();
+		
+		if( eventVideo != NULL )
+		{
+			if( !bVideoFinished )
+			{
+				bVideoFinished = eventVideo->getIsMovieDone();
+			}
+		}
+		
+		if( bVideoFinished && bSoundFinished )
+		{
+			if( !bFinished )
+			{
+				bFinished = true;
+			
+				ofNotifyEvent( finishedEvent, bSoundFinished, this );
+			}
+		}
 	}
 	
 	void draw ()
@@ -78,14 +103,14 @@ public:
 		if( !visible )
 			return;
 		
-		ofSetColor( 0xFFFFFF );
+		ofSetColor( 255, 255, 255, 255 * alpha );
 		ofEnableAlphaBlending();
 		
 		if( bg != NULL )
 			bg->draw( x, y );
 		
-		ofFill();
-		ofRect( x + 69, y + 72, 356, 232 );
+//		ofFill();
+//		ofRect( x + 69, y + 72, 356, 232 );
 		
 		if( eventVideo != NULL )
 			eventVideo->draw( x + 69, y + 72 );
