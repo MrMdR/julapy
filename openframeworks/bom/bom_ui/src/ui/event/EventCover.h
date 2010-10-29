@@ -10,9 +10,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxFlash.h"
+#include "BasePanel.h"
 
-class EventCover : public ofxSprite
+class EventCover : public BasePanel
 {
 
 public:
@@ -27,12 +27,17 @@ public:
 		//
 	}
 	
+	void update()
+	{
+		BasePanel :: update();
+	}
+	
 	void draw ()
 	{
 		ofEnableAlphaBlending();
 		
 		ofFill();
-		ofSetColor( 0, 0, 0, 0.7 * 255 );
+		ofSetColor( 0, 0, 0, 0.7 * 255 * alpha );
 		ofRect( 0, 0, ofGetWidth(), ofGetHeight() );
 		
 		ofDisableAlphaBlending();

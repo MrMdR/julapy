@@ -119,6 +119,6 @@ public:
 		ofxStage :: draw();
 		
 		ofSetColor( 0x000000 );
-		ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ) + " fps" , ofGetWidth() - 60, 15 );
+//		ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ) + " fps" , ofGetWidth() - 60, 15 );
 	}
 };

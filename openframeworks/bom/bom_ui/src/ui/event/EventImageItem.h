@@ -60,6 +60,16 @@ public:
 	void update ()
 	{
 		EventItem :: update();
+		
+		if( bSoundFinished )
+		{
+			if( !bFinished )
+			{
+				bFinished = true;
+				
+				ofNotifyEvent( finishedEvent, bSoundFinished, this );
+			}
+		}
 	}
 	
 	void draw ()

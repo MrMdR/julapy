@@ -12,11 +12,12 @@
 #include "ofMain.h"
 #include "EventDataItem.h"
 #include "KeyDataItem.h"
+#include "ofxAssets.h"
 
 #define TIMELINE_TAB_RAIN		0
 #define TIMELINE_TAB_TEMP		1
 
-#define TIMELINE_PLAY_SPEED		0.001
+#define TIMELINE_PLAY_SPEED		0.0005
 #define YEAR_START				1915
 #define YEAR_END				2005
 
@@ -29,8 +30,8 @@ private:
 	
 	Model() 
 	{
-		tabType			= TIMELINE_TAB_RAIN;
-		bTimelinePlay	= false;
+		tabType			= TIMELINE_TAB_TEMP;
+		bTimelinePlay	= true;
 		progress		= 0;
 		eventProgress	= 0;
 		year			= YEAR_START;
@@ -335,6 +336,24 @@ public:
 		p.y = py * earthRect.height + earthRect.y;
 		
 		return p;
+	}
+	
+	//==================================================
+	
+	void stopAllSoundsButLoop ()
+	{
+		vector<string> soundsToStop;
+		soundsToStop.push_back( "attractor" );
+		soundsToStop.push_back( "instruct_0" );
+		soundsToStop.push_back( "instruct_1" );
+		
+		ofSoundPlayer* sound;
+		
+		for( int i=0; i<soundsToStop.size(); i++ )
+		{
+			sound = ofxAssets :: getInstance()->getSound( soundsToStop[ i ] );
+			sound->stop();
+		}
 	}
 	
 	//==================================================

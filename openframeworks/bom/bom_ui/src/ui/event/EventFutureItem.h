@@ -17,8 +17,15 @@ class EventFutureItem : public EventItem
 	
 public:
 	
-	 EventFutureItem() {};
-	~EventFutureItem() {};
+	EventFutureItem()
+	{
+		futureImage = NULL;
+	};
+	
+	~EventFutureItem()
+	{
+		//
+	};
 	
 	//==================================================
 	
@@ -28,9 +35,9 @@ public:
 	
 	void setup ()
 	{
-		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "2_4_V" );
-		futureImage	= (ofImage*)ofxAssets :: getInstance()->getAsset( "image_sample_356x232" );
-		sound		= ofxAssets :: getInstance()->getSound( "sound_2_2" );
+		bg			= (ofImage*)ofxAssets :: getInstance()->getAsset( "future_copy" );
+//		futureImage	= (ofImage*)ofxAssets :: getInstance()->getAsset( "image_sample_356x232" );
+		sound		= ofxAssets :: getInstance()->getSound( "future_sound" );
 		
 		if( bg != NULL )
 		{
@@ -59,6 +66,16 @@ public:
 	void update ()
 	{
 		EventItem :: update();
+		
+		if( bSoundFinished )
+		{
+			if( !bFinished )
+			{
+				bFinished = true;
+				
+				ofNotifyEvent( finishedEvent, bSoundFinished, this );
+			}
+		}
 	}
 	
 	void draw ()
@@ -66,14 +83,14 @@ public:
 		if( !visible )
 			return;
 		
-		ofSetColor( 0xFFFFFF );
+		ofSetColor( 255, 255, 255, 255 * alpha );
 		ofEnableAlphaBlending();
 		
 		if( bg != NULL )
 			bg->draw( x, y );
 		
-		ofFill();
-		ofRect( x + 69, y + 72, 356, 232 );
+//		ofFill();
+//		ofRect( x + 69, y + 72, 356, 232 );
 		
 		if( futureImage != NULL )
 			futureImage->draw( x + 69, y + 72 );

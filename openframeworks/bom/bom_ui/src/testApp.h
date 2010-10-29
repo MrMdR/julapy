@@ -24,6 +24,7 @@ public:
 
 	ofxAssets*			assets;
 	ApplicationView*	appView;
+	bool				bShowMouse;
 };
 
 #endif
