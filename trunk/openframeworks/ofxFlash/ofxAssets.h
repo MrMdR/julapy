@@ -154,7 +154,7 @@ public:
 	{
 		ofSoundPlayer* sound;
 		sound = new ofSoundPlayer();
-		sound->loadSound( assetPath );
+		sound->loadSound( assetPath, true );	// stream set to true - not sure what to do about this right now?
 		
 		ofxAssetItem* item;
 		item = new ofxAssetItem();
