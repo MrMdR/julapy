@@ -7,9 +7,8 @@
  *
  */
 
-#pragma once
-
 #include "ofxFlashXFL.h"
+#include "ofxFlashXFLBuilder.h"
 #include "ofxFlashLibrary.h"
 #include "ofxFlashStage.h"
 #include "ofxFlashMovieClip.h"

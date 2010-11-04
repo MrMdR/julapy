@@ -88,7 +88,13 @@ void ofxFlashStage :: updateChildren ( vector<ofxFlashDisplayObject*>& children 
 		
 		child->update();
 		
-		if( child->typeID == OFX_FLASH_DISPLAY_OBJECT_CONTAINER_TYPE )
+		bool bCanHaveChildren;
+		bCanHaveChildren = false;
+		bCanHaveChildren = bCanHaveChildren || ( child->typeID == OFX_FLASH_DISPLAY_OBJECT_CONTAINER_TYPE );
+		bCanHaveChildren = bCanHaveChildren || ( child->typeID == OFX_FLASH_SPRITE_TYPE );
+		bCanHaveChildren = bCanHaveChildren || ( child->typeID == OFX_FLASH_MOVIE_CLIP_TYPE );
+		
+		if( bCanHaveChildren )
 		{
 			ofxFlashDisplayObjectContainer* container;
 			container = (ofxFlashDisplayObjectContainer*)child;
@@ -113,8 +119,14 @@ void ofxFlashStage :: drawChildren ( vector<ofxFlashDisplayObject*>& children )
 		child = children[ i ];
 		
 		child->draw();
-
-		if( child->typeID == OFX_FLASH_DISPLAY_OBJECT_CONTAINER_TYPE )
+		
+		bool bCanHaveChildren;
+		bCanHaveChildren = false;
+		bCanHaveChildren = bCanHaveChildren || ( child->typeID == OFX_FLASH_DISPLAY_OBJECT_CONTAINER_TYPE );
+		bCanHaveChildren = bCanHaveChildren || ( child->typeID == OFX_FLASH_SPRITE_TYPE );
+		bCanHaveChildren = bCanHaveChildren || ( child->typeID == OFX_FLASH_MOVIE_CLIP_TYPE );
+		
+		if( bCanHaveChildren )
 		{
 			ofxFlashDisplayObjectContainer* container;
 			container = (ofxFlashDisplayObjectContainer*)child;
