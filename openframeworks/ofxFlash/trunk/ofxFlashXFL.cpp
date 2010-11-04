@@ -31,7 +31,7 @@ struct DOMBitmapItem
 
 ofxFlashXFL :: ofxFlashXFL()
 {
-	//
+	bLoaded = false;
 }
 
 ofxFlashXFL :: ~ofxFlashXFL()
@@ -51,17 +51,35 @@ vector<DOMBitmapItem>	domBitmapItems;
 //	LOAD XFL.
 ///////////////////////////////////////////
 
-void ofxFlashXFL :: loadXFL ( string pathToXFL )
+bool ofxFlashXFL :: loadFile ( const string& file )
 {
-	this->pathToXFL = pathToXFL;
+	vector<string> xflFileSplit;
+	xflFile			= file;
+	xflFileSplit	= ofSplitString( xflFile, "/" );
+	xflFolder		= "";
+	for( int i=0; i<xflFileSplit.size()-1; i++ )	// drop the file
+	{
+		xflFolder += xflFileSplit[ i ] + "/";
+	}
 	
-	xml.loadFile( pathToXFL + "DOMDocument.xml" );
+	bLoaded = xml.loadFile( xflFile );
+	
+	if( !bLoaded )
+	{
+		cout << "DOMDocument.xml did not load." << endl;
+	}
 	
 	loadXFLMedia();
+	loadAssets();
+	
+	return bLoaded;
 }
 
 void ofxFlashXFL :: loadXFLMedia ()
 {
+	if( !bLoaded )
+		return;
+	
 	xml.pushTag( "DOMDocument", 0 );
 	xml.pushTag( "media", 0 );
 	
@@ -86,6 +104,8 @@ void ofxFlashXFL :: loadXFLMedia ()
 		
 		domBitmapItems.push_back( item );
 	}
+	
+	xml.popTag();
 }
 
 ///////////////////////////////////////////
@@ -94,6 +114,9 @@ void ofxFlashXFL :: loadXFLMedia ()
 
 void ofxFlashXFL :: loadAssets ()
 {
+	if( !bLoaded )
+		return;
+	
 	ofxFlashLibrary* library;
 	library = ofxFlashLibrary :: getInstance();
 	
@@ -101,7 +124,9 @@ void ofxFlashXFL :: loadAssets ()
 	{
 		const DOMBitmapItem& item = domBitmapItems[ i ];
 		int mediaType	= determineMediaType( item.sourceExternalFilepath );
-		string path		= pathToXFL + item.sourceExternalFilepath;
+		string path		= xflFolder + item.sourceExternalFilepath;
+		
+		cout << "loading asset :: " << path << endl;
 		
 		if( mediaType == OFX_FLASH_LIBRARY_TYPE_IMAGE )
 		{
@@ -120,7 +145,7 @@ void ofxFlashXFL :: loadAssets ()
 
 int ofxFlashXFL :: determineMediaType ( string fileName )
 {
-	return OFX_FLASH_LIBRARY_TYPE_IMAGE;
+	return OFX_FLASH_LIBRARY_TYPE_IMAGE;					// TODO :: work out correct file type.
 }
 
 ///////////////////////////////////////////
@@ -129,8 +154,13 @@ int ofxFlashXFL :: determineMediaType ( string fileName )
 
 void ofxFlashXFL :: build ()
 {
+	if( !bLoaded )
+		return;
+	
 	ofxFlashStage* stage;
 	stage = ofxFlashStage :: getInstance();
 	
-	//
+	ofxFlashXFLBuilder* builder;
+	builder = new ofxFlashXFLBuilder();
+	builder->build( xflFile, stage );
 }

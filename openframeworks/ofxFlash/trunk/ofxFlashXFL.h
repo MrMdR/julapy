@@ -22,16 +22,16 @@ public:
 	~ofxFlashXFL();
 	
 	ofxXmlSettings	xml;
-	string			pathToXFL;
+	string			xflFile;
+	string			xflFolder;
+	bool			bLoaded;
 	
-	void loadXFL			( string pathToXFL );
+	bool loadFile			( const string& xflFile );
 	void loadAssets			();
 	void build				();
 	
 private:
 	
 	void loadXFLMedia		();
-	
 	int  determineMediaType	( string fileName );
-	
 };
