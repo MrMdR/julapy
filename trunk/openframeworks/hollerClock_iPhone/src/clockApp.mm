@@ -87,14 +87,14 @@ void clockApp :: setup()
 	if( deviceType == DEVICE_IPHONE )
 	{
 		cellNames.push_back( "image/cell01_64x64.png" );
-		cellNames.push_back( "image/cell02_64x64.png" );
-		cellNames.push_back( "image/cell03_64x64.png" );
+//		cellNames.push_back( "image/cell02_64x64.png" );
+//		cellNames.push_back( "image/cell03_64x64.png" );
 	}
 	else if( deviceType == DEVICE_IPAD )
 	{
 		cellNames.push_back( "image/cell01_128x128.png" );
-		cellNames.push_back( "image/cell02_128x128.png" );
-		cellNames.push_back( "image/cell03_128x128.png" );
+//		cellNames.push_back( "image/cell02_128x128.png" );
+//		cellNames.push_back( "image/cell03_128x128.png" );
 	}
 	
 	texCellsNum = cellNames.size();
@@ -339,11 +339,13 @@ void clockApp::touchUp(ofTouchEventArgs &touch){
 
 void clockApp::touchDoubleTap( ofTouchEventArgs &touch )
 {
+	clock.toggleClockMode();
+	return;
+	
 	if( footer != NULL )
 	{
 		footer->toggleShow();
 	}
-//	clock.toggleClockMode();
 }
 
 void clockApp::lostFocus(){
