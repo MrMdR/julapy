@@ -273,12 +273,16 @@ void Clock :: createCircles ()
 	float area	= 0.015;		// biggest area as start.
 	float dec	= 0.5;		// decrease in area for the next batch of circles.
 	
-	createCircle( hrsOne, digits[ 0 ].valueMax, 0, areaToRadius( area ),			0xa65eb3, 0.10 );		// 0x6b007e
-	createCircle( hrsTwo, digits[ 1 ].valueMax, 1, areaToRadius( area *= dec ),	0xf17a81, 0.23 );		// 0xf51d2a
-	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	0xf169c0, 0.44 );		// 0xf6009d
-	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	0xa94f62, 0.57 );		// 0x8c162f
-	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	0xdca6fb, 0.76 );		// 0xc96dfd
-	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	0xf8a7c0, 0.88 );		// 0xf7719a
+//	int colors[] = { 0x6b007e, 0xf51d2a, 0xf6009d, 0x8c162f, 0xc96dfd, 0xf7719a };
+	int colors[] = { 0xa65eb3, 0xf17a81, 0xf169c0, 0xa94f62, 0xdca6fb, 0xf8a7c0 };
+//	int colors[] = { 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff };
+	
+	createCircle( hrsOne, digits[ 0 ].valueMax, 0, areaToRadius( area ),		colors[ 0 ], 0.10 );
+	createCircle( hrsTwo, digits[ 1 ].valueMax, 1, areaToRadius( area *= dec ),	colors[ 1 ], 0.23 );
+	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	colors[ 2 ], 0.44 );
+	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	colors[ 3 ], 0.57 );
+	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	colors[ 4 ], 0.76 );
+	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	colors[ 5 ], 0.88 );
 }
 
 void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, int texIndex, float radius, int color, float lx )
