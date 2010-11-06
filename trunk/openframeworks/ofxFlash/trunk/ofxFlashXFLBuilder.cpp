@@ -96,6 +96,12 @@ void ofxFlashXFLBuilder :: buildLayers ()
 	
 	for( int i=numOfLayers-1; i>=0; i-- )	// work backwards through layers. so when adding to stage, objects sit in right order.
 	{
+		string layerType;
+		layerType = getAttribute( "DOMLayer", "layerType", "", i );
+		
+		if( layerType == "guide" )		// skip guide layers.
+			continue;
+		
 		pushTag( "DOMLayer", i );
 		pushTag( "frames", 0 );
 		
