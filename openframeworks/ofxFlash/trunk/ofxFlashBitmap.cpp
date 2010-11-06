@@ -9,12 +9,54 @@
 
 #include "ofxFlashBitmap.h"
 
-ofxFlashBitmap :: ofxFlashBitmap ()
+ofxFlashBitmap :: ofxFlashBitmap ( ofImage* image )
 {
+	bitmapImage = image;
+	
 	typeID = OFX_FLASH_BITMAP_TYPE;
 }
 
 ofxFlashBitmap :: ~ofxFlashBitmap ()
 {
 	//
+}
+
+///////////////////////////////////////////////
+//	RUNTIME METHODS.
+///////////////////////////////////////////////
+
+void ofxFlashBitmap :: setup ()
+{
+	
+}
+
+void ofxFlashBitmap :: update ()
+{
+	//
+}
+
+void ofxFlashBitmap :: draw ()
+{
+	drawBitmap();
+}
+
+///////////////////////////////////////////////
+//
+///////////////////////////////////////////////
+
+void ofxFlashBitmap :: drawBitmap ()
+{
+	if( bitmapImage != NULL )
+	{
+		bool bAlpha;
+		bAlpha = bitmapImage->type == OF_IMAGE_COLOR_ALPHA;
+		
+		if( bAlpha )
+			ofEnableAlphaBlending();
+		
+		bitmapImage->draw( globalX, globalY );
+		
+		if( bAlpha )
+			ofDisableAlphaBlending();
+	}
 }

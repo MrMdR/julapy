@@ -54,19 +54,25 @@ vector<DOMBitmapItem>	domBitmapItems;
 bool ofxFlashXFL :: loadFile ( const string& file )
 {
 	vector<string> xflFileSplit;
-	xflFile			= file;
-	xflFileSplit	= ofSplitString( xflFile, "/" );
+	xflFileSplit	= ofSplitString( file, "/" );
+	
+	xflFile			= xflFileSplit[ xflFileSplit.size() - 1 ];
 	xflFolder		= "";
 	for( int i=0; i<xflFileSplit.size()-1; i++ )	// drop the file
 	{
 		xflFolder += xflFileSplit[ i ] + "/";
 	}
 	
-	bLoaded = xml.loadFile( xflFile );
+	string xflPath;
+	xflPath = xflFolder + xflFile;
+	
+	bLoaded = xml.loadFile( xflPath );
 	
 	if( !bLoaded )
 	{
 		cout << "DOMDocument.xml did not load." << endl;
+		
+		return bLoaded;
 	}
 	
 	loadXFLMedia();
@@ -77,9 +83,6 @@ bool ofxFlashXFL :: loadFile ( const string& file )
 
 void ofxFlashXFL :: loadXFLMedia ()
 {
-	if( !bLoaded )
-		return;
-	
 	xml.pushTag( "DOMDocument", 0 );
 	xml.pushTag( "media", 0 );
 	
@@ -114,9 +117,6 @@ void ofxFlashXFL :: loadXFLMedia ()
 
 void ofxFlashXFL :: loadAssets ()
 {
-	if( !bLoaded )
-		return;
-	
 	ofxFlashLibrary* library;
 	library = ofxFlashLibrary :: getInstance();
 	
@@ -162,5 +162,5 @@ void ofxFlashXFL :: build ()
 	
 	ofxFlashXFLBuilder* builder;
 	builder = new ofxFlashXFLBuilder();
-	builder->build( xflFile, stage );
+	builder->build( xflFolder + xflFile, stage );
 }

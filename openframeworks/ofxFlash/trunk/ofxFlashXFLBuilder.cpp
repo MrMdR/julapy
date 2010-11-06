@@ -14,6 +14,7 @@ ofxFlashXFLBuilder :: ofxFlashXFLBuilder()
 	xflFile		= "";
 	xflFolder	= "";
 	container	= NULL;
+	domType		= DOM_DOCUMENT_TYPE;
 }
 
 ofxFlashXFLBuilder :: ~ofxFlashXFLBuilder()
@@ -42,10 +43,23 @@ void ofxFlashXFLBuilder :: build ( const string& file, ofxFlashDisplayObjectCont
 		xflFolder += xflFileSplit[ i ] + "/";
 	}
 	
+	this->container = container;
+	
 	if( loadFile( xflFile ) )
 	{
-		pushTag( "DOMDocument", 0 );
-		pushTag( "timelines", 0 );
+		TiXmlElement* child = ( storedHandle.FirstChild() ).ToElement();
+		domType = child->Value();
+		
+		pushTag( domType, 0 );
+		
+		if( domType == DOM_DOCUMENT_TYPE )
+		{
+			pushTag( "timelines", 0 );
+		}
+		else if( domType == DOM_SYMBOL_ITEM_TYPE )
+		{
+			pushTag( "timeline", 0 );
+		}
 		
 		buildTimelines();
 		
@@ -69,7 +83,7 @@ void ofxFlashXFLBuilder :: buildTimelines ()
 		popTag();
 		popTag();
 		
-		return;		// only one timeline supported for now.
+		return;		// SUPPORT ONLY ONE TIMELINE.
 	}
 	
 	popTag();
@@ -107,7 +121,7 @@ void ofxFlashXFLBuilder :: buildFrames ()
 		popTag();
 		popTag();
 		
-		return;		// only one frame supported for now.
+		return;		// SUPPORT ONLY THE FIRST FRAME FOR NOW.
 	}
 }
 
@@ -121,29 +135,107 @@ void ofxFlashXFLBuilder :: buildElements ()
 	//
 	// we are only interested in MovieClips for now.
 	
-	int numOfElements;
-	numOfElements = getNumTags( "DOMSymbolInstance" );
+	int numOfElements = 0;
+	TiXmlElement* child = ( storedHandle.FirstChildElement() ).ToElement();
+	for( numOfElements = 0; child; child = child->NextSiblingElement(), ++numOfElements ) {}
 	
 	for( int i=numOfElements-1; i>=0; i-- )		// work backwards through elements. so when adding to stage, objects sit in right order.
 	{
-		pushTag( "DOMSymbolInstance", i );
+		TiXmlElement* child = ( storedHandle.ChildElement( i ) ).ToElement();
+		string elementTag = child->Value();
 		
-		ofxFlashMovieClip* mc;
-		mc = new ofxFlashMovieClip();
-		container->addChild( mc );
+		if( elementTag == "DOMShape" )
+		{
+			// NOT SUPPORTED AT THE MOMENT.
+		}
+		else if( elementTag == "DOMBitmapInstance" )
+		{
+			string libraryItemName;
+			const string* value = new string( child->Attribute( "libraryItemName" ) );
+			libraryItemName = *value;
+			
+			TiXmlHandle isRealHandle = storedHandle.ChildElement( i );		//-- pushTag custom.
+			if( isRealHandle.ToNode() )
+			{
+				storedHandle = isRealHandle;
+				level++;
+			}
+			
+			buildBitmap( libraryItemName );
+			
+			popTag();
+		}
+		else if( elementTag == "DOMSymbolInstance" )
+		{
+			string libraryItemName;
+			const string* value = new string( child->Attribute( "libraryItemName" ) );
+			libraryItemName = *value;
+			
+			TiXmlHandle isRealHandle = storedHandle.ChildElement( i );		//-- pushTag custom.
+			if( isRealHandle.ToNode() )
+			{
+				storedHandle = isRealHandle;
+				level++;
+			}
+			
+			buildMovieClip( libraryItemName );
+			
+			popTag();
+		}
+	}
+}
+
+void ofxFlashXFLBuilder :: buildBitmap ( string libraryItemName )
+{
+	ofImage* bitmapImage;
+	bitmapImage = (ofImage*)ofxFlashLibrary :: getInstance()->getAsset( libraryItemName );
+	
+	ofxFlashBitmap* bm;
+	bm = new ofxFlashBitmap( bitmapImage );
+
+	setupDisplayObject( bm );
+	
+	container->addChild( bm );
+}
+
+void ofxFlashXFLBuilder :: buildMovieClip ( string libraryItemName )
+{
+	string libraryItemPath;
+	libraryItemPath = xflFolder;
+	libraryItemPath += ( domType == DOM_DOCUMENT_TYPE ) ? "LIBRARY/" : "";
+	libraryItemPath += libraryItemName;
+	libraryItemPath += ".xml";
+	
+	ofxFlashMovieClip* mc;
+	mc = new ofxFlashMovieClip();
+	
+	setupDisplayObject( mc );
+	
+	container->addChild( mc );
+	
+	ofxFlashXFLBuilder* builder;
+	builder = new ofxFlashXFLBuilder();
+	builder->build( libraryItemPath, mc );
+	
+	delete builder;
+	builder = NULL;
+}
+
+void ofxFlashXFLBuilder :: setupDisplayObject ( ofxFlashDisplayObject* displayObject )
+{
+	if( pushTag( "matrix", 0 ) )
+	{
+		float tx = getAttribute( "Matrix", "tx", 0.0, 0 );
+		float ty = getAttribute( "Matrix", "ty", 0.0, 0 );
+		float tz = getAttribute( "Matrix", "tz", 0.0, 0 );
 		
-		string libraryItemName;
-		libraryItemName = getAttribute( "DOMSymbolInstance", "libraryItemName",	"", i );
+		displayObject->x = tx;
+		displayObject->y = ty;
+		displayObject->z = tz;
 		
-		string libraryItemPath;
-		libraryItemPath = libraryItemName + ".xml";
-		
-		ofxFlashXFLBuilder* builder;
-		builder = new ofxFlashXFLBuilder();
-		builder->build( libraryItemPath, mc );
-		
-		delete builder;
-		builder = NULL;
+		displayObject->globalX = container->x + tx;
+		displayObject->globalY = container->y + ty;
+		displayObject->globalZ = container->z + tz;
 		
 		popTag();
 	}
