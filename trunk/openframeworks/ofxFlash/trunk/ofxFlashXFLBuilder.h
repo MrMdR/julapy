@@ -13,6 +13,9 @@
 #include "ofxFlash.h"
 #include "ofxXmlSettings.h"
 
+#define DOM_DOCUMENT_TYPE		"DOMDocument"
+#define DOM_SYMBOL_ITEM_TYPE	"DOMSymbolItem"
+
 class ofxFlashXFLBuilder : public ofxXmlSettings
 {
 
@@ -28,10 +31,14 @@ private:
 	string	xflFile;
 	string	xflFolder;
 	ofxFlashDisplayObjectContainer* container;
+	string	domType;
 	
 	void buildTimelines		();
 	void buildLayers		();
 	void buildFrames		();
 	void buildElements		();
+	void buildBitmap		( string libraryItemName );
+	void buildMovieClip		( string libraryItemName );
+	void setupDisplayObject ( ofxFlashDisplayObject* displayObject );
 	
 };
