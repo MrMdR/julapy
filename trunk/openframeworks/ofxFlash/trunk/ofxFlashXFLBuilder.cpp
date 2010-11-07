@@ -75,8 +75,10 @@ void ofxFlashXFLBuilder :: buildTimelines ()
 	
 	for( int i=0; i<numOfTimelines; i++ )
 	{
-		domTimeline.name			= getAttribute( "DOMTimeline", "name",			"", i );
-		domTimeline.currentFrame	= getAttribute( "DOMTimeline", "currentFrame",	1,  i );
+		DOMTimeline dom;
+		dom.name			= getAttribute( "DOMTimeline", "name",			"", i );
+		dom.currentFrame	= getAttribute( "DOMTimeline", "currentFrame",	1,  i );
+		domTimeline			= dom;
 		
 		pushTag( "DOMTimeline", i );
 		pushTag( "layers", 0 );
@@ -132,24 +134,23 @@ void ofxFlashXFLBuilder :: buildLayers ()
 		popTag();
 	}
 	
-	if( container->typeID == OFX_FLASH_MOVIE_CLIP_TYPE )		// stage currently only extends ofxFlashDisplayObjectContainer.
-	{															// perhaps it should extend ofxFlashMovieClip - will look into this.
-		ofxFlashMovieClip* mc;
-		mc = (ofxFlashMovieClip*)container;
-		mc->setup( totalFrames );
-	}
+	ofxFlashMovieClip* mc;
+	mc = (ofxFlashMovieClip*)container;
+	mc->setup( totalFrames );
 	
 	//-- build frames.
 	
 	for( int i=numOfLayers-1; i>=0; i-- )	// work backwards through layers. so when adding to stage, objects sit in right order.
 	{
-		domLayer.name			= getAttribute( "DOMLayer", "name",			"",		i );
-		domLayer.color			= getAttribute( "DOMLayer", "color",		0,		i );
-		domLayer.locked			= getAttribute( "DOMLayer", "locked",		false,  i );
-		domLayer.current		= getAttribute( "DOMLayer", "current",		false,  i );
-		domLayer.isSelected		= getAttribute( "DOMLayer", "isSelected",	false,  i );
-		domLayer.autoNamed		= getAttribute( "DOMLayer", "autoNamed",	false,  i );
-		domLayer.layerType		= getAttribute( "DOMLayer", "layerType",	"",		i );
+		DOMLayer dom;
+		dom.name		= getAttribute( "DOMLayer", "name",			"",		i );
+		dom.color		= getAttribute( "DOMLayer", "color",		0,		i );
+		dom.locked		= getAttribute( "DOMLayer", "locked",		false,  i );
+		dom.current		= getAttribute( "DOMLayer", "current",		false,  i );
+		dom.isSelected	= getAttribute( "DOMLayer", "isSelected",	false,  i );
+		dom.autoNamed	= getAttribute( "DOMLayer", "autoNamed",	false,  i );
+		dom.layerType	= getAttribute( "DOMLayer", "layerType",	"",		i );
+		domLayer		= dom;
 		
 		if( domLayer.layerType == "guide" )		// skip guide layers.
 			continue;
@@ -171,11 +172,13 @@ void ofxFlashXFLBuilder :: buildFrames ()
 	
 	for( int i=0; i<numOfFrames; i++ )
 	{
-		domFrame.index				= getAttribute( "DOMFrame", "index",			0,		i );
-		domFrame.duration			= getAttribute( "DOMFrame", "duration",			1,		i );
-		domFrame.tweenType			= getAttribute( "DOMFrame", "tweenType",		"",		i );
-		domFrame.motionTweenSnap	= getAttribute( "DOMFrame", "motionTweenSnap",	false,	i );
-		domFrame.keyMode			= getAttribute( "DOMFrame", "keyMode",			0,		i );
+		DOMFrame dom;
+		dom.index			= getAttribute( "DOMFrame", "index",			0,		i );
+		dom.duration		= getAttribute( "DOMFrame", "duration",			1,		i );
+		dom.tweenType		= getAttribute( "DOMFrame", "tweenType",		"",		i );
+		dom.motionTweenSnap	= getAttribute( "DOMFrame", "motionTweenSnap",	false,	i );
+		dom.keyMode			= getAttribute( "DOMFrame", "keyMode",			0,		i );
+		domFrame			= dom;
 		
 		pushTag( "DOMFrame", i );
 		pushTag( "elements", 0 );
@@ -201,7 +204,7 @@ void ofxFlashXFLBuilder :: buildElements ()
 	TiXmlElement* child = ( storedHandle.FirstChildElement() ).ToElement();
 	for( numOfElements = 0; child; child = child->NextSiblingElement(), ++numOfElements ) {}
 	
-	for( int i=numOfElements-1; i>=0; i-- )		// work backwards through elements. so when adding to stage, objects sit in right order.
+	for( int i=0; i<numOfElements; i++ )
 	{
 		TiXmlElement* child = ( storedHandle.ChildElement( i ) ).ToElement();
 		string elementTag = child->Value();
@@ -212,9 +215,11 @@ void ofxFlashXFLBuilder :: buildElements ()
 		}
 		else if( elementTag == "DOMBitmapInstance" )
 		{
-			domBitmapInstance.libraryItemName	= *new string( child->Attribute( "libraryItemName" ) );
-			domBitmapInstance.name				= "";
-			domBitmapInstance.referenceID		= "";
+			DOMBitmapInstance dom;
+			dom.libraryItemName	= *new string( child->Attribute( "libraryItemName" ) );
+			dom.name			= "";
+			dom.referenceID		= "";
+			domBitmapInstance	= dom;
 			
 			TiXmlHandle isRealHandle = storedHandle.ChildElement( i );		//-- pushTag custom.
 			if( isRealHandle.ToNode() )
@@ -229,10 +234,12 @@ void ofxFlashXFLBuilder :: buildElements ()
 		}
 		else if( elementTag == "DOMSymbolInstance" )
 		{
-			domSymbolInstance.libraryItemName	= *new string( child->Attribute( "libraryItemName" ) );
-			domSymbolInstance.name				= "";
-			domSymbolInstance.centerPoint3DX	= 0.0;
-			domSymbolInstance.centerPoint3DY	= 0.0;
+			DOMSymbolInstance dom;
+			dom.libraryItemName	= *new string( child->Attribute( "libraryItemName" ) );
+			dom.name			= "";
+			dom.centerPoint3DX	= 0.0;
+			dom.centerPoint3DY	= 0.0;
+			domSymbolInstance	= dom;
 			
 			TiXmlHandle isRealHandle = storedHandle.ChildElement( i );		//-- pushTag custom.
 			if( isRealHandle.ToNode() )
@@ -259,20 +266,13 @@ void ofxFlashXFLBuilder :: buildBitmap ()
 
 	setupDisplayObject( bm );
 	
-	if( container->typeID == OFX_FLASH_MOVIE_CLIP_TYPE )		// stage currently only extends ofxFlashDisplayObjectContainer.
-	{															// perhaps it should extend ofxFlashMovieClip - will look into this.
-		int i = domFrame.index;
-		int t = domFrame.index + domFrame.duration;
-		for( i; i<t; i++ )
-		{
-			ofxFlashDisplayObjectContainer* frame;
-			frame = ( (ofxFlashMovieClip*)container )->getFrameContainer( i );
-			frame->addChild( bm );
-		}
-	}
-	else if( container->typeID == OFX_FLASH_STAGE_TYPE )
+	int i = domFrame.index;
+	int t = domFrame.index + domFrame.duration;
+	for( i; i<t; i++ )
 	{
-		container->addChild( bm );
+		ofxFlashMovieClip* containerMc;
+		containerMc = (ofxFlashMovieClip*)container;
+		containerMc->addChildToFrame( bm, i + 1 );
 	}
 }
 
@@ -290,20 +290,13 @@ void ofxFlashXFLBuilder :: buildMovieClip ()
 	
 	setupDisplayObject( mc );
 	
-	if( container->typeID == OFX_FLASH_MOVIE_CLIP_TYPE )		// stage currently only extends ofxFlashDisplayObjectContainer.
-	{															// perhaps it should extend ofxFlashMovieClip - will look into this.
-		int i = domFrame.index;
-		int t = domFrame.index + domFrame.duration;
-		for( i; i<t; i++ )
-		{
-			ofxFlashDisplayObjectContainer* frame;
-			frame = ( (ofxFlashMovieClip*)container )->getFrameContainer( i );
-			frame->addChild( mc );
-		}
-	}
-	else if( container->typeID == OFX_FLASH_STAGE_TYPE )
+	int i = domFrame.index;
+	int t = domFrame.index + domFrame.duration;
+	for( i; i<t; i++ )
 	{
-		container->addChild( mc );
+		ofxFlashMovieClip* containerMc;
+		containerMc = (ofxFlashMovieClip*)container;
+		containerMc->addChildToFrame( mc, i + 1 );
 	}
 	
 	ofxFlashXFLBuilder* builder;
@@ -316,8 +309,10 @@ void ofxFlashXFLBuilder :: buildMovieClip ()
 
 void ofxFlashXFLBuilder :: setupDisplayObject ( ofxFlashDisplayObject* displayObject )
 {
-	if( pushTag( "matrix", 0 ) )
+	if( tagExists( "matrix", 0 ) )
 	{
+		pushTag( "matrix", 0 );
+		
 		float tx = getAttribute( "Matrix", "tx", 0.0, 0 );
 		float ty = getAttribute( "Matrix", "ty", 0.0, 0 );
 		float tz = getAttribute( "Matrix", "tz", 0.0, 0 );
