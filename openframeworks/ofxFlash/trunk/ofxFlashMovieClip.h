@@ -19,7 +19,9 @@ public:
 	 ofxFlashMovieClip();
 	~ofxFlashMovieClip();
 	
-	virtual void setup			( int totalFrames = 1 );
+	void setTotalFrames	( int totalFrames = 1 );
+	ofxFlashDisplayObject* addChildToFrame( ofxFlashDisplayObject* child, int frameNum );
+	
 	virtual void update			();
 	virtual void draw			();
 	
@@ -32,8 +34,6 @@ public:
 	
 	int totalFrames		();
 	int currentFrame	();
-	
-	ofxFlashDisplayObject* addChildToFrame( ofxFlashDisplayObject* child, int frameNum );
 	
 private:
 	

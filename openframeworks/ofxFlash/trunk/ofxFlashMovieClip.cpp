@@ -24,21 +24,54 @@ ofxFlashMovieClip :: ~ofxFlashMovieClip()
 }
 
 ///////////////////////////////////////////////
-//	CORE.
+//	SETUP.
 ///////////////////////////////////////////////
 
-void ofxFlashMovieClip :: setup ( int total )
+void ofxFlashMovieClip :: setTotalFrames ( int total )
 {
-	for( int i=0; i<total; i++ )
+	int t1	= total;
+	int t2	= frames.size();
+	int t	= MAX( t1, t2 );
+	
+	for( int i=0; i<t; i++ )
 	{
-		ofxFlashDisplayObjectContainer* frame;
-		frame = new ofxFlashDisplayObjectContainer();
-		frames.push_back( frame );
+		if( i > t2 - 1 )			// number of frames has increased, add more.
+		{
+			frames.push_back( new ofxFlashDisplayObjectContainer() );
+		}
+		else if( i > t1 - 1 )		// number of frames has decreased, remove some.
+		{
+			ofxFlashDisplayObjectContainer* frameToRemove;
+			frameToRemove = frames[ i ];
+			
+			frames.erase( frames.begin() + i );
+			
+			--i;
+			--t;
+			
+			delete frameToRemove;
+			frameToRemove = NULL;
+		}
 	}
 	
 	frameIndex	= 0;
 	this->frame	= frames[ frameIndex ];
 }
+
+ofxFlashDisplayObject* ofxFlashMovieClip :: addChildToFrame( ofxFlashDisplayObject* child, int frameNum )
+{
+	int index = ofClamp( frameNum - 1, 0, totalFrames() - 1 );
+	
+	ofxFlashDisplayObjectContainer* frameContainer;
+	frameContainer = frames[ index ];
+	frameContainer->addChild( child );
+	
+	return child;
+}
+
+///////////////////////////////////////////////
+//	CORE.
+///////////////////////////////////////////////
 
 void ofxFlashMovieClip :: update ()
 {
@@ -151,19 +184,4 @@ int ofxFlashMovieClip :: totalFrames ()
 int ofxFlashMovieClip :: currentFrame ()
 {
 	return frameIndex + 1;
-}
-
-///////////////////////////////////////////////
-//	ADD CHILD TO FRAME.
-///////////////////////////////////////////////
-
-ofxFlashDisplayObject* ofxFlashMovieClip :: addChildToFrame( ofxFlashDisplayObject* child, int frameNum )
-{
-	int index = frameNum - 1;
-	
-	ofxFlashDisplayObjectContainer* frameContainer;
-	frameContainer = frames[ index ];
-	frameContainer->addChild( child );
-	
-	return child;
 }
