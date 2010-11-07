@@ -13,6 +13,12 @@ ofxFlashBitmap :: ofxFlashBitmap ( ofImage* image )
 {
 	bitmapImage = image;
 	
+	if( bitmapImage != NULL )
+	{
+		width	= bitmapImage->width;
+		height	= bitmapImage->height;
+	}
+	
 	typeID = OFX_FLASH_BITMAP_TYPE;
 }
 

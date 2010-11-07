@@ -140,7 +140,12 @@ void ofxFlashXFL :: build ()
 	ofxFlashStage* stage;
 	stage = ofxFlashStage :: getInstance();
 	
+	ofxFlashMovieClip* root;			// this is the root.
+	root = new ofxFlashMovieClip();		// all other content sit in the root.
+	root->name = "root";
+	stage->addChild( root );
+	
 	ofxFlashXFLBuilder* builder;
 	builder = new ofxFlashXFLBuilder();
-	builder->build( xflFolder + xflFile, stage );
+	builder->build( xflFolder + xflFile, root );
 }

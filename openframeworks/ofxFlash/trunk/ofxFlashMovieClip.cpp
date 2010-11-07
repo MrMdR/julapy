@@ -49,9 +49,6 @@ void ofxFlashMovieClip :: update ()
 		nextFrame();
 	}
 	
-	cout << libraryItemName << endl;
-	cout << totalFrames() << endl;
-	
 	addFrameChildren();
 }
 
@@ -86,18 +83,28 @@ void ofxFlashMovieClip :: removeFrameChildren ()
 
 void ofxFlashMovieClip :: gotoAndPlay ( int frameNum )
 {
-	frameIndex	= frameNum - 1;
-	frameIndex	= ofClamp( frameIndex, 0, totalFrames() - 1 );
-	frame		= frames[ frameIndex ];
+	int index = frameNum - 1;
+	
+	if( frameIndex != index )
+	{
+		frameIndex	= frameNum - 1;
+		frameIndex	= ofClamp( frameIndex, 0, totalFrames() - 1 );
+		frame		= frames[ frameIndex ];
+	}
 	
 	play();
 }
 
 void ofxFlashMovieClip :: gotoAndStop ( int frameNum )
 {
-	frameIndex	= frameNum - 1;
-	frameIndex	= ofClamp( frameIndex, 0, totalFrames() - 1 );
-	frame		= frames[ frameIndex ];
+	int index = frameNum - 1;
+	
+	if( frameIndex != index )
+	{
+		frameIndex	= index;
+		frameIndex	= ofClamp( frameIndex, 0, totalFrames() - 1 );
+		frame		= frames[ frameIndex ];
+	}
 	
 	stop();
 }
@@ -147,11 +154,16 @@ int ofxFlashMovieClip :: currentFrame ()
 }
 
 ///////////////////////////////////////////////
-//	GETTERS FOR FRAME CONTAINER.
+//	ADD CHILD TO FRAME.
 ///////////////////////////////////////////////
 
-ofxFlashDisplayObjectContainer* ofxFlashMovieClip :: getFrameContainer( int i )
+ofxFlashDisplayObject* ofxFlashMovieClip :: addChildToFrame( ofxFlashDisplayObject* child, int frameNum )
 {
-	i = (int)ofClamp( i, 0, frames.size() - 1 );
-	return frames[ i ];
+	int index = frameNum - 1;
+	
+	ofxFlashDisplayObjectContainer* frameContainer;
+	frameContainer = frames[ index ];
+	frameContainer->addChild( child );
+	
+	return child;
 }

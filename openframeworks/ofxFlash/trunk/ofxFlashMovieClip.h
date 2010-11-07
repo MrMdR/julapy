@@ -33,7 +33,7 @@ public:
 	int totalFrames		();
 	int currentFrame	();
 	
-	ofxFlashDisplayObjectContainer* getFrameContainer( int frameIndex );
+	ofxFlashDisplayObject* addChildToFrame( ofxFlashDisplayObject* child, int frameNum );
 	
 private:
 	
