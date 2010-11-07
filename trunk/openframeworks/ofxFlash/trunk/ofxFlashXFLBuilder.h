@@ -80,6 +80,7 @@ private:
 	string	xflFile;
 	string	xflFolder;
 	string	domType;
+	int		totalFrames;
 	
 	DOMTimeline			domTimeline;
 	DOMLayer			domLayer;
@@ -87,6 +88,7 @@ private:
 	DOMSymbolInstance	domSymbolInstance;
 	DOMBitmapInstance	domBitmapInstance;
 	
+	void countTotalFrames	();
 	void buildTimelines		();
 	void buildLayers		();
 	void buildFrames		();

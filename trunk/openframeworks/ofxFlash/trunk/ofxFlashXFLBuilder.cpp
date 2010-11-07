@@ -15,18 +15,13 @@ ofxFlashXFLBuilder :: ofxFlashXFLBuilder()
 	xflFolder	= "";
 	container	= NULL;
 	domType		= DOM_DOCUMENT_TYPE;
+	totalFrames	= 1;
 }
 
 ofxFlashXFLBuilder :: ~ofxFlashXFLBuilder()
 {
 	//
 }
-
-///////////////////////////////////////////
-//
-///////////////////////////////////////////
-
-
 
 ///////////////////////////////////////////
 //	BUILD.
@@ -61,11 +56,59 @@ void ofxFlashXFLBuilder :: build ( const string& file, ofxFlashDisplayObjectCont
 			pushTag( "timeline", 0 );
 		}
 		
+		countTotalFrames();
+		
+		ofxFlashMovieClip* mc;
+		mc = (ofxFlashMovieClip*)container;
+		mc->setTotalFrames( totalFrames );
+		
 		buildTimelines();
 		
 		popTag();
 		popTag();
 	}
+}
+
+void ofxFlashXFLBuilder :: countTotalFrames ()
+{
+	pushTag( "DOMTimeline", 0 );
+	pushTag( "layers", 0 );
+	
+	int numOfLayers;
+	numOfLayers = getNumTags( "DOMLayer" );
+	
+	for( int i=0; i<numOfLayers; i++ )
+	{
+		string layerType;
+		layerType = getAttribute( "DOMLayer", "layerType", "", i );
+		
+		if( layerType == "guide" )		// skip guide layers.
+			continue;
+		
+		pushTag( "DOMLayer", i );
+		pushTag( "frames", 0 );
+		
+		int numOfFrames;
+		numOfFrames = getNumTags( "DOMFrame" );
+		
+		for( int j=0; j<numOfFrames; j++ )
+		{
+			int frameIndex		= getAttribute( "DOMFrame", "index",	0, j );
+			int frameDuration	= getAttribute( "DOMFrame", "duration",	1, j );
+			int frameEnd		= frameIndex + frameDuration;
+			
+			if( frameEnd > totalFrames )
+			{
+				totalFrames = frameEnd;
+			}
+		}
+		
+		popTag();
+		popTag();
+	}
+	
+	popTag();
+	popTag();
 }
 
 void ofxFlashXFLBuilder :: buildTimelines ()
@@ -98,47 +141,6 @@ void ofxFlashXFLBuilder :: buildLayers ()
 {
 	int numOfLayers;
 	numOfLayers = getNumTags( "DOMLayer" );
-	
-	//-- count total number of frames in movie clip.
-	
-	int totalFrames;
-	totalFrames = 1;
-	
-	for( int i=0; i<numOfLayers; i++ )
-	{
-		string layerType;
-		layerType = getAttribute( "DOMLayer", "layerType", "", i );
-		
-		if( layerType == "guide" )		// skip guide layers.
-			continue;
-		
-		pushTag( "DOMLayer", i );
-		pushTag( "frames", 0 );
-		
-		int numOfFrames;
-		numOfFrames = getNumTags( "DOMFrame" );
-		
-		for( int j=0; j<numOfFrames; j++ )
-		{
-			int frameIndex		= getAttribute( "DOMFrame", "index",	0, j );
-			int frameDuration	= getAttribute( "DOMFrame", "duration",	1, j );
-			int frameEnd		= frameIndex + frameDuration;
-			
-			if( frameEnd > totalFrames )
-			{
-				totalFrames = frameEnd;
-			}
-		}
-		
-		popTag();
-		popTag();
-	}
-	
-	ofxFlashMovieClip* mc;
-	mc = (ofxFlashMovieClip*)container;
-	mc->setup( totalFrames );
-	
-	//-- build frames.
 	
 	for( int i=numOfLayers-1; i>=0; i-- )	// work backwards through layers. so when adding to stage, objects sit in right order.
 	{
@@ -192,14 +194,6 @@ void ofxFlashXFLBuilder :: buildFrames ()
 
 void ofxFlashXFLBuilder :: buildElements ()
 {
-	// there a few different elements types.
-	//
-	// - DOMShape
-	// - DOMBitmapInstance
-	// - DOMSymbolInstance (MovieClip)
-	//
-	// we are only interested in MovieClips for now.
-	
 	int numOfElements = 0;
 	TiXmlElement* child = ( storedHandle.FirstChildElement() ).ToElement();
 	for( numOfElements = 0; child; child = child->NextSiblingElement(), ++numOfElements ) {}
