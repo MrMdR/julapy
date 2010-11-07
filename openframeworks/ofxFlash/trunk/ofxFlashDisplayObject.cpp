@@ -37,6 +37,8 @@ ofxFlashDisplayObject :: ofxFlashDisplayObject ()
 	mask		= NULL;
 	parent		= NULL;
 	stage		= NULL;
+	
+	libraryItemName = "";
 }
 
 ofxFlashDisplayObject :: ~ofxFlashDisplayObject ()

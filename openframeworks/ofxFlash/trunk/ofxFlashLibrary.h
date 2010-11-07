@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxFlash.h"
 
 #define OFX_FLASH_LIBRARY_TYPE_IMAGE	0
 #define OFX_FLASH_LIBRARY_TYPE_VIDEO	1
@@ -50,6 +51,7 @@ private:
 	vector<ofxFlashLibraryItem*> imageItems;
 	vector<ofxFlashLibraryItem*> videoItems;
 	vector<ofxFlashLibraryItem*> soundItems;
+	vector<ofxFlashDisplayObject*> displayObjects;
 	
 public:
 	
@@ -75,4 +77,9 @@ public:
 	ofSoundPlayer* getSoundByFileName	( string fileName );
 	ofBaseImage* getAsset				( string assetID );
 	ofBaseImage* getAssetByFileName		( string fileName );
+	
+	ofxFlashDisplayObject*	addDisplayObject	( string libraryItemName, ofxFlashDisplayObject* displayObject );
+	ofxFlashDisplayObject*	getDisplayObject	( string libraryItemName );
+	bool					hasDisplayObject	( string libraryItemName );
+	
 };

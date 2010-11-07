@@ -13,6 +13,22 @@
 #include "ofxFlash.h"
 #include "ofxXmlSettings.h"
 
+struct DOMBitmapItem
+{
+	string	name;
+	string	itemID;
+	string	sourceExternalFilepath;
+	int		sourceLastImported;
+	string	sourcePlatform;
+	int		externalFileSize;
+	string	originalCompressionType;
+	int		quality;
+	string	href;
+	string	bitmapDataHRef;
+	int		frameRight;
+	int		frameBottom;
+};
+
 class ofxFlashXFL
 {
 
