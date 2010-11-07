@@ -42,15 +42,17 @@ void ofxFlashMovieClip :: setup ( int total )
 
 void ofxFlashMovieClip :: update ()
 {
-	if( totalFrames() < 2 )			// if only one frame, leave it, nothing to update.
-		return;
+	removeFrameChildren();			// remove + add is done on every frame. not a good idea, but will go with it for now.
 	
 	if( bPlay )
 	{
-		removeFrameChildren();
 		nextFrame();
-		addFrameChildren();
 	}
+	
+	cout << libraryItemName << endl;
+	cout << totalFrames() << endl;
+	
+	addFrameChildren();
 }
 
 void ofxFlashMovieClip :: draw ()

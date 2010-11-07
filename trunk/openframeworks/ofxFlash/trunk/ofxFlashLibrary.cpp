@@ -206,3 +206,45 @@ ofBaseImage* ofxFlashLibrary :: getAssetByFileName ( string fileName )
 	
 	return NULL;
 }
+
+//================================================== DISPLAY OBJECTS.
+
+ofxFlashDisplayObject* ofxFlashLibrary :: addDisplayObject ( string libraryItemName, ofxFlashDisplayObject* displayObject )
+{
+	if( !hasDisplayObject( displayObject->libraryItemName ) )
+	{
+		displayObjects.push_back( displayObject );
+	}
+}
+
+ofxFlashDisplayObject* ofxFlashLibrary :: getDisplayObject ( string libraryItemName )
+{
+	for( int i=0; i<displayObjects.size(); i++ )
+	{
+		ofxFlashDisplayObject* displayObject;
+		displayObject = displayObjects[ i ];
+		
+		if( displayObject->libraryItemName == libraryItemName )
+		{
+			return displayObject;
+		}
+	}
+	
+	return NULL;
+}
+
+bool ofxFlashLibrary :: hasDisplayObject ( string libraryItemName )
+{
+	for( int i=0; i<displayObjects.size(); i++ )
+	{
+		ofxFlashDisplayObject* displayObject;
+		displayObject = displayObjects[ i ];
+		
+		if( displayObject->libraryItemName == libraryItemName )
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}

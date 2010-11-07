@@ -73,6 +73,8 @@ public:
 	ofxFlashDisplayObject*	parent;			// DisplayObjectContainer in AS3.
 	ofxStage*				stage;			// Stage in AS3.
 	
+	string		libraryItemName;
+	
 	ofRectangle getRect			( ofxFlashDisplayObject* targetCoordinateSpace );
 	ofPoint		globalToLocal	( const ofPoint& point );
 	ofPoint		globalToLocal3D	( const ofPoint& point );

@@ -11,10 +11,58 @@
 
 #include "ofMain.h"
 #include "ofxFlash.h"
+//#include "ofxFlashLibrary.h"
+//#include "ofxFlashDisplayObjectContainer.h"
+//#include "ofxFlashDisplayObject.h"
 #include "ofxXmlSettings.h"
 
 #define DOM_DOCUMENT_TYPE		"DOMDocument"
 #define DOM_SYMBOL_ITEM_TYPE	"DOMSymbolItem"
+
+//====================================================
+
+struct DOMTimeline
+{
+	string	name;
+	int		currentFrame;
+};
+
+struct DOMLayer
+{
+	string	name;
+	int		color;
+	bool	locked;
+	bool	current;
+	bool	isSelected;
+	bool	autoNamed;
+	string	layerType;
+};
+
+struct DOMFrame
+{
+	int		index;
+	int		duration;
+	string	tweenType;
+	bool	motionTweenSnap;
+	int		keyMode;
+};
+
+struct DOMSymbolInstance
+{
+	string	libraryItemName;
+	string	name;
+	float	centerPoint3DX;
+	float	centerPoint3DY;
+};
+
+struct DOMBitmapInstance
+{
+	string	libraryItemName;
+	string	name;
+	string	referenceID;
+};
+
+//====================================================
 
 class ofxFlashXFLBuilder : public ofxXmlSettings
 {
@@ -28,17 +76,23 @@ public:
 	
 private:
 	
+	ofxFlashDisplayObjectContainer* container;
 	string	xflFile;
 	string	xflFolder;
-	ofxFlashDisplayObjectContainer* container;
 	string	domType;
+	
+	DOMTimeline			domTimeline;
+	DOMLayer			domLayer;
+	DOMFrame			domFrame;
+	DOMSymbolInstance	domSymbolInstance;
+	DOMBitmapInstance	domBitmapInstance;
 	
 	void buildTimelines		();
 	void buildLayers		();
 	void buildFrames		();
 	void buildElements		();
-	void buildBitmap		( string libraryItemName );
-	void buildMovieClip		( string libraryItemName );
+	void buildBitmap		();
+	void buildMovieClip		();
 	void setupDisplayObject ( ofxFlashDisplayObject* displayObject );
 	
 };
