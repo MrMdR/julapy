@@ -17,8 +17,12 @@ NawlzFluid :: NawlzFluid()
 	fluidTexture		= NULL;
 	fluidPixels			= NULL;
 	
-	useMesh				= true;
-	useParticles		= true;
+	bDrawMeshGrid		= true;
+	bDrawMeshQuads		= true;
+	bDrawParticles		= true;
+	bDrawBackground		= true;
+	bDrawVectors		= false;
+	bDrawFluid			= false;
 	useCircleMotion		= false;
 }
 
@@ -71,12 +75,9 @@ void NawlzFluid :: initMesh ()
 //	int w = mesh_w_inc = 16;
 //	int h = mesh_h_inc = 16;
 	
-//	int w = mesh_w_inc = 32;
-//	int h = mesh_h_inc = 32;
+	int w = mesh_w_inc = 32;
+	int h = mesh_h_inc = 32;
 
-	int w = mesh_w_inc = 64;
-	int h = mesh_h_inc = 64;
-	
 	for( int y=0; y<=ofGetHeight(); y+= mesh_h_inc )
 	{
 		for( int x=0; x<=ofGetWidth(); x+=mesh_w_inc )
@@ -188,21 +189,52 @@ void NawlzFluid :: initMesh ()
 
 void NawlzFluid :: initFluid ()
 {
-	fluidEnableRGB			= false;
-	fluidFadeSpeed			= 0.002;
-	fluidDeltaT				= 0.5;
-	fluidVisc				= 0.00015;
-	fluidColorDiffusion		= 0;
-	fluidSolverIterations	= 10;
+	switch ( 1 )
+	{
+		case 0:
+			
+			fluidEnableRGB					= false;
+			fluidFadeSpeed					= 0.002;
+			fluidDeltaT						= 0.5;
+			fluidVisc						= 0.00015;
+			fluidColorDiffusion				= 0;
+			fluidSolverIterations			= 10;
+			fluidEnableVorticityConfinement	= false;
+			fluidWrapX						= false;
+			fluidWrapY						= false;
+			fluidInputVelocityMult			= 0.2;
+			
+			break;
+			
+		case 1:
+			
+			fluidEnableRGB					= false;
+			fluidFadeSpeed					= 0.002;
+			fluidDeltaT						= 0.06;
+			fluidVisc						= 0.001;
+			fluidColorDiffusion				= 0;
+			fluidSolverIterations			= 5;
+			fluidEnableVorticityConfinement	= false;
+			fluidWrapX						= false;
+			fluidWrapY						= false;
+			fluidInputVelocityMult			= 0.2;
+			
+			break;
+			
+		default:
+			break;
+	}
 	
-	fluidSolver.setup(100, 100);
+	
+	fluidSolver.setup( 100, 100 );
 	fluidSolver.enableRGB( fluidEnableRGB );
 	fluidSolver.setFadeSpeed( fluidFadeSpeed );
 	fluidSolver.setDeltaT( fluidDeltaT );
 	fluidSolver.setVisc( fluidVisc );
 	fluidSolver.setColorDiffusion( fluidColorDiffusion );
 	fluidSolver.setSolverIterations( fluidSolverIterations );
-//	fluidSolver.doVorticityConfinement = true;
+	fluidSolver.enableVorticityConfinement( fluidEnableVorticityConfinement );
+	fluidSolver.setWrap( fluidWrapX, fluidWrapY );
 	
 //	fluidCellsX		= 150;
 //	fluidCellsX		= 100;
@@ -372,17 +404,19 @@ void NawlzFluid :: update()
 	fluidSolver.setVisc( fluidVisc );
 	fluidSolver.setColorDiffusion( fluidColorDiffusion );
 	fluidSolver.setSolverIterations( fluidSolverIterations );
+	fluidSolver.enableVorticityConfinement( fluidEnableVorticityConfinement );
+	fluidSolver.setWrap( fluidWrapX, fluidWrapY );
 	fluidSolver.update();
 	
 //	updateMeshPointsWithMouse();
 	
-	if( useMesh )
+	if( bDrawMeshGrid || bDrawMeshQuads )
 	{
 		updateMeshPointsWithFluid();
 		updateMeshQuads();
 	}
 	
-	if( useParticles )
+	if( bDrawParticles )
 	{
 		updateParticles();
 	}
@@ -509,9 +543,9 @@ void NawlzFluid :: updateParticles ()
 	maxVel = 0.00025;
 	maxVel = 0.0005;
 	maxVel = 0.001;
-	//	maxVel = 0.003;
+//	maxVel = 0.003;
 	
-	float velDrawMult	= 1;
+	float velDrawMult = 0.5;
 	
 	int i = 0;
 	int t = particles.size();
@@ -565,24 +599,36 @@ void NawlzFluid :: draw()
 	ofEnableAlphaBlending();
 	ofSetColor( 255, 255, 255, 255 );
 	
-	if( backgroundTexture )
+	if( backgroundTexture && bDrawBackground )
 	{
 		backgroundTexture->draw( backgroundTextureXY.x, backgroundTextureXY.y );
 	}
 	
-	if( useMesh )
+	if( bDrawMeshGrid )
+	{
+		drawMeshGrid();
+	}
+	
+//	drawMeshPoints();
+	
+	if( bDrawMeshQuads )
 	{
 		drawMeshQuads();
-//		drawMeshPoints();
-		drawMeshGrid();
 	}
 	
 //	drawMeshLines();
 	
-//	drawVectors( 0, 0, ofGetWidth(), ofGetHeight() );
-//	drawFluid();
+	if( bDrawVectors )
+	{
+		drawVectors( 0, 0, ofGetWidth(), ofGetHeight() );
+	}
 	
-	if( useParticles )
+	if( bDrawFluid )
+	{
+		drawFluid();
+	}
+	
+	if( bDrawParticles )
 	{
 		drawParticles();
 	}
@@ -592,6 +638,8 @@ void NawlzFluid :: drawMeshQuads ()
 {
 	if( !whaleTexture )
 		return;
+	
+	ofSetColor( 255, 255, 255, 255 );
 	
 	whaleTexture->bind();
 	
@@ -703,9 +751,6 @@ void NawlzFluid :: addToFluid( Vec2f pos, Vec2f vel, bool addColor, bool addForc
 		pos.y = constrain(pos.y, 0.0f, 1.0f);
 		
 		const float colorMult = 100;
-		const float velocityMult = 0.05;
-//		const float velocityMult = 30;
-//		const float velocityMult = 100;
 		
         int index = fluidSolver.getIndexForPos(pos);
 		
@@ -716,7 +761,7 @@ void NawlzFluid :: addToFluid( Vec2f pos, Vec2f vel, bool addColor, bool addForc
 		
 		if( addForce )
 		{
-			fluidSolver.addForceAtIndex( index, vel * velocityMult );
+			fluidSolver.addForceAtIndex( index, vel * fluidInputVelocityMult );
 		}
     }
 }
@@ -773,10 +818,10 @@ void NawlzFluid :: drawVectors( float x, float y, float renderWidth, float rende
 
 void NawlzFluid :: drawFluid ()
 {
-	//	glBlendFunc(GL_ONE, GL_ONE);
-	//	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);		// screen.
-	//	glBlendFunc(GL_ZERO, GL_SRC_COLOR);					// multiply - fake.
-	//	glEnable(GL_BLEND);
+//	glBlendFunc(GL_ONE, GL_ONE);
+//	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);		// screen.
+//	glBlendFunc(GL_ZERO, GL_SRC_COLOR);					// multiply - fake.
+//	glEnable(GL_BLEND);
 	
 	int fw = fluidSolver.getWidth();
 	int fh = fluidSolver.getHeight();
@@ -809,8 +854,6 @@ void NawlzFluid :: drawFluid ()
 	
 	fluidTexture->loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
 	fluidTexture->draw( 0, 0, ofGetWidth(), ofGetHeight() );
-	
-	ofEnableAlphaBlending();
 }
 
 ///////////////////////////////////////////
@@ -835,11 +878,10 @@ void NawlzFluid :: mouseMoved(int x, int y )
 	mouseX = x;
 	mouseY = y;
 	
-	Vec2f eventPos = Vec2f(x, y);
-	Vec2f mouseNorm = Vec2f( eventPos) / getWindowSize();
-	Vec2f mouseVel = Vec2f( eventPos - pMouse ) / getWindowSize();
-//	addToFluid( mouseNorm, mouseVel, true, true );
-	addToFluid( mouseNorm, mouseVel, false, true );
+	Vec2f eventPos	= Vec2f( x, y );
+	Vec2f mouseNorm	= Vec2f( eventPos ) / getWindowSize();
+	Vec2f mouseVel	= Vec2f( eventPos - pMouse ) / getWindowSize();
+	addToFluid( mouseNorm, mouseVel, bDrawFluid, true );
 	pMouse = eventPos;
 	
 	for( int i=0; i<particlesNumPerShoot; i++ )
@@ -864,7 +906,7 @@ void NawlzFluid :: mouseDragged(int x, int y, int button)
 
 void NawlzFluid :: mousePressed(int x, int y, int button)
 {
-	
+	pMouse = Vec2f( x, y );
 }
 
 void NawlzFluid :: mouseReleased(int x, int y, int button)

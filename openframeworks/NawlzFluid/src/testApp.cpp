@@ -21,23 +21,34 @@ void testApp::setup()
 	nawlzFluid.createWhaleTexture( whaleImage.getPixels(), whaleImage.width, whaleImage.height, GL_RGBA, 358, 220 );
 //	nawlzFluid.createParticleTexture( particleImage.getPixels(), particleImage.width, particleImage.height, GL_RGB );
 //	nawlzFluid.useCircleMotion	= true;
-	nawlzFluid.useMesh			= true;
-	nawlzFluid.useParticles		= true;
+	nawlzFluid.bDrawMeshGrid	= true;
+	nawlzFluid.bDrawMeshQuads	= true;
+	nawlzFluid.bDrawParticles	= true;
+	nawlzFluid.bDrawBackground	= true;
+	nawlzFluid.bDrawVectors		= false;
+	nawlzFluid.bDrawFluid		= false;
 	nawlzFluid.setup();
 	
 	bDebug = true;
 	
-	gui.addToggle( "draw mesh",			nawlzFluid.useMesh );
-	gui.addToggle( "draw particles",	nawlzFluid.useParticles );
-	gui.addSlider( "num of particles",	nawlzFluid.particlesNumPerShoot, 1, 20 );
+	gui.addToggle( "draw mesh grid",		nawlzFluid.bDrawMeshGrid );
+	gui.addToggle( "draw mesh quads",		nawlzFluid.bDrawMeshQuads );
+	gui.addToggle( "draw particles",		nawlzFluid.bDrawParticles );
+	gui.addToggle( "draw background",		nawlzFluid.bDrawBackground );
+	gui.addToggle( "draw vectors",			nawlzFluid.bDrawVectors );
+	gui.addToggle( "draw fluid",			nawlzFluid.bDrawFluid );
+	gui.addSlider( "num of particles",		nawlzFluid.particlesNumPerShoot, 1, 20 );
 	
 	gui.addPage( "fluid" );
-	gui.addToggle( "enableRGB",			nawlzFluid.fluidEnableRGB );
-	gui.addSlider( "fadeSpeed",			nawlzFluid.fluidFadeSpeed,			0.0, 0.005 );
-	gui.addSlider( "deltaT",			nawlzFluid.fluidDeltaT,				0.0, 1.0 );
-	gui.addSlider( "visc",				nawlzFluid.fluidVisc,				0.0, 0.001 );
-	gui.addSlider( "colorDiffusion",	nawlzFluid.fluidColorDiffusion,		0.0, 0.1 );
-	gui.addSlider( "solverIterations",	nawlzFluid.fluidSolverIterations,	5.0, 20 );
+	gui.addToggle( "enableRGB",				nawlzFluid.fluidEnableRGB );
+	gui.addSlider( "fadeSpeed",				nawlzFluid.fluidFadeSpeed,			0.0, 0.005 );
+	gui.addSlider( "deltaT",				nawlzFluid.fluidDeltaT,				0.0, 1.0 );
+	gui.addSlider( "visc",					nawlzFluid.fluidVisc,				0.0, 0.001 );
+	gui.addSlider( "colorDiffusion",		nawlzFluid.fluidColorDiffusion,		0.0, 0.1 );
+	gui.addSlider( "solverIterations",		nawlzFluid.fluidSolverIterations,	5.0, 20 );
+	gui.addToggle( "vorticityConfinement",	nawlzFluid.fluidEnableVorticityConfinement );
+	gui.addToggle( "wrapX",					nawlzFluid.fluidWrapX );
+	gui.addToggle( "wrapY",					nawlzFluid.fluidWrapY );
 	
 	gui.setAutoSave( false );
 	gui.show();

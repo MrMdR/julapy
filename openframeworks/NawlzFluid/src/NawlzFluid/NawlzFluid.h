@@ -114,11 +114,7 @@ public:
 	
 	~NawlzParticle()
 	{
-		if( !tex )
-			return;
-		
-		tex->clear();
-		tex = NULL;
+		tex	= NULL;
 	}
 	
 	ofTexture*	tex;
@@ -195,8 +191,12 @@ public:
 	int			mouseX;
 	int			mouseY;
 
-	bool		useMesh;
-	bool		useParticles;
+	bool		bDrawMeshGrid;
+	bool		bDrawMeshQuads;
+	bool		bDrawParticles;
+	bool		bDrawBackground;
+	bool		bDrawVectors;
+	bool		bDrawFluid;
 	bool		useCircleMotion;
 	
 	ofTexture*		backgroundTexture;
@@ -221,6 +221,11 @@ public:
 	float				fluidVisc;
 	float				fluidColorDiffusion;
 	int					fluidSolverIterations;
+	bool				fluidEnableVorticityConfinement;
+	bool				fluidWrapX;
+	bool				fluidWrapY;
+	bool				fluidInputVelocityMult;
+	
 	bool				bResizeFluid;
 	Vec2f				pMouse;
 	

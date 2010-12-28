@@ -94,8 +94,9 @@ DEBUG_LINE(BOOL glViewExists = NO);
 //	[ self createParticleTexture ];
 	
 //	nawlzFluid->useCircleMotion		= true;
-	nawlzFluid->useMesh				= true;
-	nawlzFluid->useParticles		= true;
+	nawlzFluid->bDrawMeshGrid		= true;
+	nawlzFluid->bDrawMeshQuads		= true;
+	nawlzFluid->bDrawParticles		= true;
 	
 	nawlzFluid->setup();
 }
