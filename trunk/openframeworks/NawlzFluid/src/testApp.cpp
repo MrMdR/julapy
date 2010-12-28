@@ -13,11 +13,12 @@ void testApp::setup()
 	ofBackground( 0, 0, 0 );
 	
 	backgroundImage.loadImage( "whale_bg_1024x768.png" );
-	whaleImage.loadImage( "whale_1024x768.png" );
+//	whaleImage.loadImage( "whale_1024x768.png" );
+	whaleImage.loadImage( "whale_477x223.png" );
 	particleImage.loadImage( "particle_4x4.png" );
 	
 	nawlzFluid.createBackgroundTexture( backgroundImage.getPixels(), backgroundImage.width, backgroundImage.height, GL_RGB );
-	nawlzFluid.createWhaleTexture( whaleImage.getPixels(), whaleImage.width, whaleImage.height, GL_RGBA );
+	nawlzFluid.createWhaleTexture( whaleImage.getPixels(), whaleImage.width, whaleImage.height, GL_RGBA, 358, 220 );
 //	nawlzFluid.createParticleTexture( particleImage.getPixels(), particleImage.width, particleImage.height, GL_RGB );
 //	nawlzFluid.useCircleMotion	= true;
 	nawlzFluid.useMesh			= true;

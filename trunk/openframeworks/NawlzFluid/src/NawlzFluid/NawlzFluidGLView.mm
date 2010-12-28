@@ -13,9 +13,6 @@
 #import "Defines.h"
 #import "FilePath.h"
 
-#include "ofMain.h"
-#include "NawlzFluid.h"
-
 #define USE_DEPTH_BUFFER 0
 
 @implementation NawlzFluidGLView
@@ -31,8 +28,6 @@
 #pragma mark Initialization and Shutdown
 
 DEBUG_LINE(BOOL glViewExists = NO);
-
-NawlzFluid* nawlzFluid;
 
 - (id)initWithFrame:(CGRect)aRect
 {
@@ -65,39 +60,44 @@ NawlzFluid* nawlzFluid;
 		[self initOpenGL];
 		[self clearScreen];	
 		
-		//===================================== NAWLZ FLUID.
-		
-		nawlzFluid = new NawlzFluid();
-		
-		if( false )
-		{
-			NSString*		imagePath;
-			UIImage*		image;
-			UIImageView*	imageView;
-			
-			imagePath	= [ FilePath pathForAsset : @"whale_bg_1024x768.png" ];
-			image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
-			imageView	= [ [ UIImageView alloc ] initWithImage: image ];
-			
-			[ self addSubview : imageView ];
-			
-			[ image release ];
-			[ imageView release ];
-		}
-		
-		[ self createBackgroundTexture ];
-		[ self createWhaleTexture ];
-//		[ self createParticleTexture ];
-		
-		nawlzFluid->useCircleMotion		= true;
-		nawlzFluid->useMesh				= true;
-		nawlzFluid->useParticles		= true;
-		
-		nawlzFluid->setup();
-		
-		//===================================== NAWLZ FLUID.
+		[self initNawlzFluid];
 	}
     return self;
+}
+
+/////////////////////////////////////////////////////
+//	NAWLZ FLUID.
+/////////////////////////////////////////////////////
+
+- (void) initNawlzFluid
+{
+	nawlzFluid = new NawlzFluid();
+	
+	if( false )
+	{
+		NSString*		imagePath;
+		UIImage*		image;
+		UIImageView*	imageView;
+		
+		imagePath	= [ FilePath pathForAsset : @"whale_bg_1024x768.png" ];
+		image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
+		imageView	= [ [ UIImageView alloc ] initWithImage: image ];
+		
+		[ self addSubview : imageView ];
+		
+		[ image release ];
+		[ imageView release ];
+	}
+	
+	[ self createBackgroundTexture ];
+	[ self createWhaleTexture ];
+//	[ self createParticleTexture ];
+	
+//	nawlzFluid->useCircleMotion		= true;
+	nawlzFluid->useMesh				= true;
+	nawlzFluid->useParticles		= true;
+	
+	nawlzFluid->setup();
 }
 
 /////////////////////////////////////////////////////
@@ -373,9 +373,16 @@ NawlzFluid* nawlzFluid;
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event 
 {
-	if( nawlzFluid )
+	if( !nawlzFluid )
+		return;
+	
+	for( int i = 0; i < (int)[touches count]; ++i )
 	{
-		nawlzFluid->mouseMoved( touchLocation.x, touchLocation.y );
+		UITouch* touch				= [ [ touches allObjects ] objectAtIndex : i ];
+		CGPoint currentLocation		= [ touch locationInView : self ];
+		CGPoint previousLocation	= [ touch previousLocationInView : self ];
+		
+		nawlzFluid->mouseMoved( currentLocation.x, currentLocation.y );
 	}
 }
 

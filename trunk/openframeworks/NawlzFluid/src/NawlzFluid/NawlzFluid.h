@@ -39,6 +39,8 @@ struct mesh_quad
 	
 	GLfloat ver_coords[ 8 ];
 	GLfloat tex_coords[ 8 ];
+	
+	bool bTextureInside;
 };
 
 //////////////////////////////////////////////
@@ -162,9 +164,9 @@ public:
 	void initMesh	();
 	void initFluid	();
 	
-	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType );
-	void createWhaleTexture			( unsigned char* pixels, int width, int height, int glType );
-	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType );
+	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
+	void createWhaleTexture			( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
+	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType);
 	void createFluidTexture			();
 	
 	void updateMeshPointsWithMouse	();
@@ -197,13 +199,17 @@ public:
 	bool		useParticles;
 	bool		useCircleMotion;
 	
-	ofTexture*	backgroundTexture;
-	ofTexture*	whaleTexture;
-	ofTexture*	particleTexture;
+	ofTexture*		backgroundTexture;
+	ofTexture*		whaleTexture;
+	ofTexture*		particleTexture;
+	ofTexture*		fluidTexture;
+	unsigned char*	fluidPixels;
 	
-	int			mesh_w_inc;
-	int			mesh_h_inc;
+	ofPoint			backgroundTextureXY;
+	ofPoint			whaleTextureXY;
 	
+	int					mesh_w_inc;
+	int					mesh_h_inc;
 	vector<mesh_quad>	mesh_quads;
 	vector<mesh_point>	mesh_points;
 	
@@ -217,9 +223,6 @@ public:
 	int					fluidSolverIterations;
 	bool				bResizeFluid;
 	Vec2f				pMouse;
-	
-	unsigned char*		fluidPixels;
-	ofTexture			fluidTexture;
 	
 	vector<NawlzParticle>	particles;
 	int						particlesNumPerShoot;

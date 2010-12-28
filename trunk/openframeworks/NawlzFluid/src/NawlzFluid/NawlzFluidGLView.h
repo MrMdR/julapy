@@ -11,10 +11,15 @@
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
+#include "ofMain.h"
+#include "NawlzFluid.h"
+
 @interface NawlzFluidGLView : UIView {
 	/* The pixel dimensions of the backbuffer */
 	GLint backingWidth;
 	GLint backingHeight;
+	
+	NawlzFluid* nawlzFluid;
 	
 	EAGLContext *context;
 	
@@ -58,6 +63,7 @@
 
 - (id)initWithFrame:(CGRect)aRect;
 
+- (void) initNawlzFluid;
 - (void) createBackgroundTexture;
 - (void) createWhaleTexture;
 - (void) createParticleTexture;
