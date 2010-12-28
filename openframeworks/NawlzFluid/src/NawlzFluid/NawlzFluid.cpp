@@ -14,6 +14,8 @@ NawlzFluid :: NawlzFluid()
 	backgroundTexture	= NULL;
 	whaleTexture		= NULL;
 	particleTexture		= NULL;
+	fluidTexture		= NULL;
+	fluidPixels			= NULL;
 	
 	useMesh				= true;
 	useParticles		= true;
@@ -42,6 +44,13 @@ NawlzFluid :: ~NawlzFluid()
 		delete particleTexture;
 		particleTexture = NULL;
 	}
+	
+	if( fluidTexture )
+	{
+		fluidTexture->clear();
+		delete fluidTexture;
+		fluidTexture = NULL;
+	}
 }
 
 ///////////////////////////////////////////
@@ -62,8 +71,11 @@ void NawlzFluid :: initMesh ()
 //	int w = mesh_w_inc = 16;
 //	int h = mesh_h_inc = 16;
 	
-	int w = mesh_w_inc = 32;
-	int h = mesh_h_inc = 32;
+//	int w = mesh_w_inc = 32;
+//	int h = mesh_h_inc = 32;
+
+	int w = mesh_w_inc = 64;
+	int h = mesh_h_inc = 64;
 	
 	for( int y=0; y<=ofGetHeight(); y+= mesh_h_inc )
 	{
@@ -122,10 +134,31 @@ void NawlzFluid :: initMesh ()
 			
 			ofPoint p;
 			float p1x, p1y, p2x, p2y;
-			p1x = ( x + 0 ) / (float)whaleTexture->getWidth();
-			p1y = ( y + 0 ) / (float)whaleTexture->getHeight();
-			p2x = ( x + w ) / (float)whaleTexture->getWidth();
-			p2y = ( y + w ) / (float)whaleTexture->getHeight();
+			p1x = ( x + 0 - whaleTextureXY.x ) / (float)whaleTexture->getWidth();
+			p1y = ( y + 0 - whaleTextureXY.y ) / (float)whaleTexture->getHeight();
+			p2x = ( x + w - whaleTextureXY.x ) / (float)whaleTexture->getWidth();
+			p2y = ( y + w - whaleTextureXY.y ) / (float)whaleTexture->getHeight();
+			
+			bool bHorCheck = false;
+			bool bVerCheck = false;
+
+			bHorCheck = ( bHorCheck || ( p1x >= 0 && p1x <= 1 ) );
+			bHorCheck = ( bHorCheck || ( p2x >= 0 && p2x <= 1 ) );
+			
+			bVerCheck = ( bVerCheck || ( p1y >= 0 && p1y <= 1 ) );
+			bVerCheck = ( bVerCheck || ( p2y >= 0 && p2y <= 1 ) );
+			
+			mq.bTextureInside = true;
+			mq.bTextureInside = mq.bTextureInside && bHorCheck;
+			mq.bTextureInside = mq.bTextureInside && bVerCheck;
+			
+			if( !mq.bTextureInside )
+			{
+				p1x = ofClamp( p1x, 0, 1 );
+				p1y = ofClamp( p1y, 0, 1 );
+				p2x = ofClamp( p2x, 0, 1 );
+				p2y = ofClamp( p2y, 0, 1 );
+			}
 			
 			p = whaleTexture->getCoordFromPercent( p1x, p1y );
 			mq.tex_coords[ 0 ]	= p.x;
@@ -181,18 +214,98 @@ void NawlzFluid :: initFluid ()
 	particlesNumPerShoot = 5;
 }
 
-void NawlzFluid :: createBackgroundTexture ( unsigned char* pixels, int width, int height, int glType )
+void NawlzFluid :: createBackgroundTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
 {
 	backgroundTexture = new ofTexture();
 	backgroundTexture->allocate( width, height, glType );
 	backgroundTexture->loadData( pixels, width, height, glType );
+	
+	backgroundTextureXY.x = x;
+	backgroundTextureXY.y = y;
 }
 
-void NawlzFluid :: createWhaleTexture ( unsigned char* pixels, int width, int height, int glType )
+void NawlzFluid :: createWhaleTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
 {
+	int w, h;						// expanded width and height by a 1 pixel border.
+	w = width  + 2;					// need to do this otherwise the corners of the texture smear across.
+	h = height + 2;
+	
+	int pt;							// pixels total.
+	pt = w * h * 4;
+	
+	unsigned char* pix;
+	pix = new unsigned char[ pt ];
+	
+	int count;
+	count = 0;
+	
+	for( int i=0; i<pt; i+=4 )
+	{
+		int p = i / 4;
+		int y = p / w;
+		int x = p - w * y;
+		
+		bool bHorCheck = false;
+		bool bVerCheck = false;
+		
+		bHorCheck = ( x == 0 ) || ( x == w - 1 );
+		bVerCheck = ( y == 0 ) || ( y == h - 1 );
+		
+		if( bHorCheck || bVerCheck )
+		{
+			pix[ i + 0 ] = 255;
+			pix[ i + 1 ] = 255;
+			pix[ i + 2 ] = 255;
+			pix[ i + 3 ] = 0;
+		}
+		else
+		{
+			if( glType == GL_LUMINANCE )
+			{
+				pix[ i + 0 ] = pixels[ count ];
+				pix[ i + 1 ] = pixels[ count ];
+				pix[ i + 2 ] = pixels[ count ];
+				pix[ i + 3 ] = 255;
+				
+				count += 1;
+			}
+			else if( glType == GL_RGB )
+			{
+				pix[ i + 0 ] = pixels[ count + 0 ];
+				pix[ i + 1 ] = pixels[ count + 1 ];
+				pix[ i + 2 ] = pixels[ count + 2 ];
+				pix[ i + 3 ] = 255;
+				
+				count += 3;
+			}
+			else if( glType == GL_RGBA )
+			{
+				pix[ i + 0 ] = pixels[ count + 0 ];
+				pix[ i + 1 ] = pixels[ count + 1 ];
+				pix[ i + 2 ] = pixels[ count + 2 ];
+				pix[ i + 3 ] = pixels[ count + 3 ];
+				
+				count += 4;
+			}
+			else
+			{
+				pix[ i + 0 ] = 255;
+				pix[ i + 1 ] = 0;
+				pix[ i + 2 ] = 0;
+				pix[ i + 3 ] = 255;
+			}
+		}
+	}
+	
 	whaleTexture = new ofTexture();
-	whaleTexture->allocate( width, height, glType );
-	whaleTexture->loadData( pixels, width, height, glType );
+	whaleTexture->allocate( w, h, GL_RGBA );
+	whaleTexture->loadData( pix, w, h, GL_RGBA );
+
+	delete[] pix;
+	pix = NULL;
+	
+	whaleTextureXY.x = x;
+	whaleTextureXY.y = y;
 }
 
 void NawlzFluid :: createParticleTexture ( unsigned char* pixels, int width, int height, int glType )
@@ -223,8 +336,9 @@ void NawlzFluid :: createFluidTexture ()
 		fluidPixels[ i + 3 ] = 124;
 	}
 	
-	fluidTexture.allocate( texWidth, texHeight, GL_RGBA );
-	fluidTexture.loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
+	fluidTexture = new ofTexture();
+	fluidTexture->allocate( texWidth, texHeight, GL_RGBA );
+	fluidTexture->loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
 }
 
 ///////////////////////////////////////////
@@ -317,7 +431,7 @@ void NawlzFluid :: updateMeshPointsWithFluid ()
 	maxVel = 0.00025;
 	maxVel = 0.0005;
 	maxVel = 0.001;
-	//	maxVel = 0.003;
+//	maxVel = 0.003;
 	
 	float velDrawMult	= 1;
 	
@@ -453,7 +567,7 @@ void NawlzFluid :: draw()
 	
 	if( backgroundTexture )
 	{
-		backgroundTexture->draw( 0, 0 );
+		backgroundTexture->draw( backgroundTextureXY.x, backgroundTextureXY.y );
 	}
 	
 	if( useMesh )
@@ -485,6 +599,9 @@ void NawlzFluid :: drawMeshQuads ()
 	{
 		mesh_quad& mq = mesh_quads[ i ];
 		
+		if( !mq.bTextureInside )
+			continue;
+		
 		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer( 2, GL_FLOAT, 0, mq.tex_coords );
 		glEnableClientState( GL_VERTEX_ARRAY );		
@@ -512,11 +629,20 @@ void NawlzFluid :: drawMeshPoints ()
 void NawlzFluid :: drawMeshGrid ()
 {
 	ofNoFill();
-	ofSetColor( 255, 255, 255, 20 );
+	ofSetColor( 255, 255, 255, 40 );
 	
 	for( int i=0; i<mesh_quads.size(); i++ )
 	{
 		mesh_quad& mq = mesh_quads[ i ];
+		
+		// optimised but not pretty.
+		
+		ofLine( mq.ver_coords[ 0 ], mq.ver_coords[ 1 ], mq.ver_coords[ 2 ], mq.ver_coords[ 3 ] );	
+		ofLine( mq.ver_coords[ 6 ], mq.ver_coords[ 7 ], mq.ver_coords[ 0 ], mq.ver_coords[ 1 ] );
+		
+		continue;
+		
+		// pretty but not optimised.
 		
 		ofPoint p0( mq.ver_coords[ 0 ], mq.ver_coords[ 1 ] );
 		ofPoint p1( mq.ver_coords[ 2 ], mq.ver_coords[ 3 ] );
@@ -524,8 +650,8 @@ void NawlzFluid :: drawMeshGrid ()
 		ofPoint p3( mq.ver_coords[ 6 ], mq.ver_coords[ 7 ] );
 		
 		ofLine( p0.x, p0.y, p1.x, p1.y );
-		ofLine( p1.x, p1.y, p2.x, p2.y );
-		ofLine( p2.x, p2.y, p3.x, p3.y );
+//		ofLine( p1.x, p1.y, p2.x, p2.y );	// don't draw 2nd and 3rd line as it doubles up.
+//		ofLine( p2.x, p2.y, p3.x, p3.y );	// don't draw 2nd and 3rd line as it doubles up.
 		ofLine( p3.x, p3.y, p0.x, p0.y );
 	}
 }
@@ -678,11 +804,11 @@ void NawlzFluid :: drawFluid ()
 	ofFill();
 	ofSetColor( 0xFFFFFF );
 	
-	int texWidth	= (int)fluidTexture.getWidth();
-	int texHeight	= (int)fluidTexture.getHeight();
+	int texWidth	= (int)fluidTexture->getWidth();
+	int texHeight	= (int)fluidTexture->getHeight();
 	
-	fluidTexture.loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
-	fluidTexture.draw( 0, 0, ofGetWidth(), ofGetHeight() );
+	fluidTexture->loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
+	fluidTexture->draw( 0, 0, ofGetWidth(), ofGetHeight() );
 	
 	ofEnableAlphaBlending();
 }
