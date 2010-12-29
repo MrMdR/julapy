@@ -246,17 +246,7 @@ void NawlzFluid :: initFluid ()
 	particlesNumPerShoot = 5;
 }
 
-void NawlzFluid :: createBackgroundTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
-{
-	backgroundTexture = new ofTexture();
-	backgroundTexture->allocate( width, height, glType );
-	backgroundTexture->loadData( pixels, width, height, glType );
-	
-	backgroundTextureXY.x = x;
-	backgroundTextureXY.y = y;
-}
-
-void NawlzFluid :: createWhaleTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
+void NawlzFluid :: createImageTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
 {
 	int w, h;						// expanded width and height by a 1 pixel border.
 	w = width  + 2;					// need to do this otherwise the corners of the texture smear across.
@@ -332,12 +322,22 @@ void NawlzFluid :: createWhaleTexture ( unsigned char* pixels, int width, int he
 	whaleTexture = new ofTexture();
 	whaleTexture->allocate( w, h, GL_RGBA );
 	whaleTexture->loadData( pix, w, h, GL_RGBA );
-
+	
 	delete[] pix;
 	pix = NULL;
 	
 	whaleTextureXY.x = x;
 	whaleTextureXY.y = y;
+}
+
+void NawlzFluid :: createBackgroundTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
+{
+	backgroundTexture = new ofTexture();
+	backgroundTexture->allocate( width, height, glType );
+	backgroundTexture->loadData( pixels, width, height, glType );
+	
+	backgroundTextureXY.x = x;
+	backgroundTextureXY.y = y;
 }
 
 void NawlzFluid :: createParticleTexture ( unsigned char* pixels, int width, int height, int glType )
