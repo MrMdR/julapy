@@ -210,7 +210,7 @@ void NawlzFluid :: initFluid ()
 			
 			fluidEnableRGB					= false;
 			fluidFadeSpeed					= 0.002;
-			fluidDeltaT						= 0.06;
+			fluidDeltaT						= 0.15;
 			fluidVisc						= 0.001;
 			fluidColorDiffusion				= 0;
 			fluidSolverIterations			= 5;
