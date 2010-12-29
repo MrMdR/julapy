@@ -146,7 +146,7 @@ DEBUG_LINE(BOOL glViewExists = NO);
 	int imageWidth;
 	int imageHeight;
 	
-	imagePath	= [ FilePath pathForAsset : @"whale_1024x768.png" ];
+	imagePath	= [ FilePath pathForAsset : @"whale_477x223.png" ];
 	image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
 	
 	CGContextRef spriteContext;
@@ -163,7 +163,7 @@ DEBUG_LINE(BOOL glViewExists = NO);
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
 	CGContextRelease(spriteContext);
 	
-	nawlzFluid->createWhaleTexture( pixels, imageWidth, imageHeight, GL_RGBA );
+	nawlzFluid->createImageTexture( pixels, imageWidth, imageHeight, GL_RGBA, 358, 220 );
 	
 	free( pixels );
 	[ image release ];

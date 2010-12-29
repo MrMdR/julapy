@@ -156,13 +156,45 @@ public:
 	void setup	();
 	void update	();
 	void draw	();
+
+	void createImageTexture			( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
+	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
+	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType );
+	
+	void keyPressed		( int key );
+	void keyReleased	( int key );
+	void mouseMoved		( int x, int y );
+	void mouseDragged	( int x, int y, int button );
+	void mousePressed	( int x, int y, int button );
+	void mouseReleased	( int x, int y, int button );
+	void windowResized	( int w, int h );
+	
+	bool	bDrawMeshGrid;
+	bool	bDrawMeshQuads;
+	bool	bDrawParticles;
+	bool	bDrawBackground;
+	bool	bDrawVectors;
+	bool	bDrawFluid;
+	bool	useCircleMotion;
+	
+	bool	fluidEnableRGB;
+	float	fluidFadeSpeed;
+	float	fluidDeltaT;
+	float	fluidVisc;
+	float	fluidColorDiffusion;
+	int		fluidSolverIterations;
+	bool	fluidEnableVorticityConfinement;
+	bool	fluidWrapX;
+	bool	fluidWrapY;
+	bool	fluidInputVelocityMult;
+	
+	int		particlesNumPerShoot;
+	
+private:
 	
 	void initMesh	();
 	void initFluid	();
 	
-	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
-	void createWhaleTexture			( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
-	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType);
 	void createFluidTexture			();
 	
 	void updateMeshPointsWithMouse	();
@@ -180,24 +212,8 @@ public:
 	void drawVectors	( float x, float y, float renderWidth, float renderHeight );
 	void drawFluid		();
 	
-	void keyPressed		( int key );
-	void keyReleased	( int key );
-	void mouseMoved		( int x, int y );
-	void mouseDragged	( int x, int y, int button );
-	void mousePressed	( int x, int y, int button );
-	void mouseReleased	( int x, int y, int button );
-	void windowResized	( int w, int h );
-	
 	int			mouseX;
 	int			mouseY;
-
-	bool		bDrawMeshGrid;
-	bool		bDrawMeshQuads;
-	bool		bDrawParticles;
-	bool		bDrawBackground;
-	bool		bDrawVectors;
-	bool		bDrawFluid;
-	bool		useCircleMotion;
 	
 	ofTexture*		backgroundTexture;
 	ofTexture*		whaleTexture;
@@ -215,23 +231,10 @@ public:
 	
 	FluidSolver			fluidSolver;
 	int					fluidCellsX;
-	bool				fluidEnableRGB;
-	float				fluidFadeSpeed;
-	float				fluidDeltaT;
-	float				fluidVisc;
-	float				fluidColorDiffusion;
-	int					fluidSolverIterations;
-	bool				fluidEnableVorticityConfinement;
-	bool				fluidWrapX;
-	bool				fluidWrapY;
-	bool				fluidInputVelocityMult;
-	
 	bool				bResizeFluid;
 	Vec2f				pMouse;
 	
 	vector<NawlzParticle>	particles;
-	int						particlesNumPerShoot;
 	
 	CircleMotion		circleMotion;
-	
 };
