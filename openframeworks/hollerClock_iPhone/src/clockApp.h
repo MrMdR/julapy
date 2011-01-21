@@ -5,7 +5,7 @@
 #include "ofxiPhoneExtras.h"
 #include "ofxALSoundPlayer.h"
 #include "Quad.h"
-#include "ofxFlash.h"
+//#include "ofxFlash.h"
 
 #include "ofxBox2d.h"
 #include "Clock.h"
@@ -61,7 +61,7 @@ public:
 	ofTexture				texMembrane;
 	ofTexture*				texDigits;
 	int						texDigitsNum;
-	ofxMovieClip			texCellAnim;
+//	ofxMovieClip			texCellAnim;
 	
 	float					rot;
 	float					rotTime;
