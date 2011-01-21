@@ -175,6 +175,8 @@ void clockApp :: initClock ()
 
 void clockApp :: initGui ()
 {
+#ifdef USE_GUI
+	
 	gui.addTitle( "clock" );
 	gui.addSlider( "forceCenterPull",	clock.forceCenterPull,	0, 100 );
 	gui.addSlider( "forceCenterPush",	clock.forceCenterPush,	0, 100 );
@@ -185,6 +187,8 @@ void clockApp :: initGui ()
 	
 	if( bDebug )
 		gui.show();
+	
+#endif
 }
 
 ///////////////////////////////////////////
@@ -230,7 +234,9 @@ void clockApp::draw()
 	ofSetColor( 0x000000 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, 15 );
 
+#ifdef USE_GUI
 	gui.draw();
+#endif
 	
 	screenGrabber.save();
 	
@@ -261,6 +267,8 @@ void clockApp :: keyPressed(int key)
 	{
 		bDebug = !bDebug;
 		
+#ifdef USE_GUI
+		
 		if( bDebug )
 		{
 			gui.show();
@@ -269,6 +277,8 @@ void clockApp :: keyPressed(int key)
 		{
 			gui.hide();
 		}
+		
+#endif
 	}
 	
 	if( key == ' ' )
