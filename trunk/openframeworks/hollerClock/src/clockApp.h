@@ -1,11 +1,17 @@
 #ifndef _CLOCK_APP
 #define _CLOCK_APP
 
+#define USE_GUI
+
 
 #include "ofMain.h"
 #include "ofxXmlSettings.h"
 #include "ofxScreenGrabUtil.h"
+
+#ifdef USE_GUI
 #include "ofxSimpleGuiToo.h"
+#endif
+
 #include "ofxVideoSaver.h"
 //#include "ofxFlash.h"
 #include "ofxDirList.h"
@@ -51,7 +57,9 @@ public:
 	
 	ofxScreenGrabUtil		screenGrabber;
 	
+#ifdef USE_GUI
 	ofxSimpleGuiToo			gui;
+#endif
 	
 	ofImage					screenImage;
 	ofxVideoSaver			videoSaver;
