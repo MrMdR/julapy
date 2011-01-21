@@ -43,10 +43,6 @@
 		B260F2D6120B8F6C0023B90D /* Quart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F2C8120B8F6C0023B90D /* Quart.cpp */; };
 		B260F2D7120B8F6C0023B90D /* Quint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F2CA120B8F6C0023B90D /* Quint.cpp */; };
 		B260F2D8120B8F6C0023B90D /* Sine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F2CC120B8F6C0023B90D /* Sine.cpp */; };
-		B260F6B5120BE96C0023B90D /* ofxFlash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F6AD120BE96C0023B90D /* ofxFlash.cpp */; };
-		B260F6B6120BE96C0023B90D /* ofxMovieClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F6AF120BE96C0023B90D /* ofxMovieClip.cpp */; };
-		B260F6B7120BE96C0023B90D /* ofxSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F6B1120BE96C0023B90D /* ofxSprite.cpp */; };
-		B260F6B8120BE96C0023B90D /* ofxStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260F6B3120BE96C0023B90D /* ofxStage.cpp */; };
 		B26D49821208FB0A00AFDC69 /* ClockLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26D49801208FB0A00AFDC69 /* ClockLine.cpp */; };
 		B26D4C311209516B00AFDC69 /* ofxGeom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26D4C2F1209516B00AFDC69 /* ofxGeom.cpp */; };
 		B27B673B1206A14C00643337 /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B67361206A14C00643337 /* Delaunay.cpp */; };
@@ -183,14 +179,6 @@
 		B260F2CB120B8F6C0023B90D /* Quint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quint.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/PennerEasing/Quint.h; sourceTree = SOURCE_ROOT; };
 		B260F2CC120B8F6C0023B90D /* Sine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sine.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/PennerEasing/Sine.cpp; sourceTree = SOURCE_ROOT; };
 		B260F2CD120B8F6C0023B90D /* Sine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sine.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/PennerEasing/Sine.h; sourceTree = SOURCE_ROOT; };
-		B260F6AD120BE96C0023B90D /* ofxFlash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlash.cpp; path = ../../../../of_0061/addons/ofxFlash/ofxFlash.cpp; sourceTree = SOURCE_ROOT; };
-		B260F6AE120BE96C0023B90D /* ofxFlash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlash.h; path = ../../../../of_0061/addons/ofxFlash/ofxFlash.h; sourceTree = SOURCE_ROOT; };
-		B260F6AF120BE96C0023B90D /* ofxMovieClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMovieClip.cpp; path = ../../../../of_0061/addons/ofxFlash/ofxMovieClip.cpp; sourceTree = SOURCE_ROOT; };
-		B260F6B0120BE96C0023B90D /* ofxMovieClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMovieClip.h; path = ../../../../of_0061/addons/ofxFlash/ofxMovieClip.h; sourceTree = SOURCE_ROOT; };
-		B260F6B1120BE96C0023B90D /* ofxSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxSprite.cpp; path = ../../../../of_0061/addons/ofxFlash/ofxSprite.cpp; sourceTree = SOURCE_ROOT; };
-		B260F6B2120BE96C0023B90D /* ofxSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxSprite.h; path = ../../../../of_0061/addons/ofxFlash/ofxSprite.h; sourceTree = SOURCE_ROOT; };
-		B260F6B3120BE96C0023B90D /* ofxStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxStage.cpp; path = ../../../../of_0061/addons/ofxFlash/ofxStage.cpp; sourceTree = SOURCE_ROOT; };
-		B260F6B4120BE96C0023B90D /* ofxStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxStage.h; path = ../../../../of_0061/addons/ofxFlash/ofxStage.h; sourceTree = SOURCE_ROOT; };
 		B26D49801208FB0A00AFDC69 /* ClockLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockLine.cpp; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockLine.cpp; sourceTree = SOURCE_ROOT; };
 		B26D49811208FB0A00AFDC69 /* ClockLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockLine.h; path = ../../../../of_0061/apps/julapy/hollerClock/src/clock/ClockLine.h; sourceTree = SOURCE_ROOT; };
 		B26D4C2F1209516B00AFDC69 /* ofxGeom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxGeom.cpp; path = ../../../../of_0061/addons/ofxJulapyUtils/ofxGeom.cpp; sourceTree = SOURCE_ROOT; };
@@ -583,22 +571,6 @@
 			path = ../../../../of_0061/apps/julapy/hollerClock/src/PennerEasing;
 			sourceTree = SOURCE_ROOT;
 		};
-		B260F6AC120BE96C0023B90D /* ofxFlash */ = {
-			isa = PBXGroup;
-			children = (
-				B260F6AD120BE96C0023B90D /* ofxFlash.cpp */,
-				B260F6AE120BE96C0023B90D /* ofxFlash.h */,
-				B260F6AF120BE96C0023B90D /* ofxMovieClip.cpp */,
-				B260F6B0120BE96C0023B90D /* ofxMovieClip.h */,
-				B260F6B1120BE96C0023B90D /* ofxSprite.cpp */,
-				B260F6B2120BE96C0023B90D /* ofxSprite.h */,
-				B260F6B3120BE96C0023B90D /* ofxStage.cpp */,
-				B260F6B4120BE96C0023B90D /* ofxStage.h */,
-			);
-			name = ofxFlash;
-			path = ../../../../of_0061/addons/ofxFlash;
-			sourceTree = SOURCE_ROOT;
-		};
 		B26D4C2D1209514500AFDC69 /* ofxGeom */ = {
 			isa = PBXGroup;
 			children = (
@@ -947,7 +919,6 @@
 				B27B67331206A14C00643337 /* ofxDelaunay */,
 				B26D4C2D1209514500AFDC69 /* ofxGeom */,
 				B260F2B7120B8F6C0023B90D /* PennerEasing */,
-				B260F6AC120BE96C0023B90D /* ofxFlash */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1343,10 +1314,6 @@
 				B260F2D6120B8F6C0023B90D /* Quart.cpp in Sources */,
 				B260F2D7120B8F6C0023B90D /* Quint.cpp in Sources */,
 				B260F2D8120B8F6C0023B90D /* Sine.cpp in Sources */,
-				B260F6B5120BE96C0023B90D /* ofxFlash.cpp in Sources */,
-				B260F6B6120BE96C0023B90D /* ofxMovieClip.cpp in Sources */,
-				B260F6B7120BE96C0023B90D /* ofxSprite.cpp in Sources */,
-				B260F6B8120BE96C0023B90D /* ofxStage.cpp in Sources */,
 				B2BA93891210ED3900668BDF /* ClockLabel.cpp in Sources */,
 				B22322E7121144220015ED6A /* ClockFreeCircle.cpp in Sources */,
 				B23DF4141221F61C00A66192 /* FooterBarConfigViewController.m in Sources */,
