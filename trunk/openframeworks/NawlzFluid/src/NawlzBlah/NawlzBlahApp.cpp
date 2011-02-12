@@ -20,6 +20,8 @@ void NawlzBlahApp :: setup()
 	ofSetCircleResolution( 100 );
 	ofEnableAlphaBlending();
 	ofBackground( 0, 0, 0 );
+	
+	backgroundImage.loadImage( "NawlzBlah/blah_bg.png" );
 }
 
 ///////////////////////////////////////////
@@ -37,7 +39,7 @@ void NawlzBlahApp :: update()
 
 void NawlzBlahApp :: draw()
 {
-	//
+	backgroundImage.draw( 0, 0 );
 }
 
 ///////////////////////////////////////////

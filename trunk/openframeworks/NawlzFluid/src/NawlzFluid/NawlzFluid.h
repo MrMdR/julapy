@@ -15,6 +15,8 @@
 #include "ofBaseApp.h"
 #include "ofTexture.h"
 
+#include "NawlzParticle.h"
+
 using namespace MSA;
 
 //////////////////////////////////////////////
@@ -83,64 +85,6 @@ public:
 		angle += angleInc; 
 	}
 	
-};
-
-//////////////////////////////////////////////
-//	PARTICLE
-//////////////////////////////////////////////
-
-class NawlzParticle : public ofBaseApp
-{
-	
-public:
-	
-	NawlzParticle( ofTexture* texIn, const Vec2f& pos, const Vec2f& vel )
-	{
-		tex		= NULL;
-		width	= 4;
-		height	= 4;
-		alpha	= 0.85;
-		mass	= ofRandom( 0.1, 1.0 );
-		
-		if( texIn )
-		{
-			tex		= texIn;
-			
-			width	= tex->getWidth();
-			height	= tex->getHeight();
-		}
-		
-		this->pos = pos;
-		this->vel = vel;
-	}
-	
-	~NawlzParticle()
-	{
-		tex	= NULL;
-	}
-	
-	ofTexture*	tex;
-	int			width;
-	int			height;
-	float		alpha;
-	float		mass;
-	Vec2f		pos;
-	Vec2f		vel;
-	
-	void draw ()
-	{
-		ofFill();
-		ofSetColor( 255, 255, 255, 255 * alpha );
-		
-		if( tex )
-		{
-			tex->draw( pos.x - width * 0.5, pos.y - height * 0.5 );
-		}
-		else
-		{
-			ofRect( pos.x - width * 0.5, pos.y - height * 0.5, width, height );
-		}
-	}
 };
 
 //////////////////////////////////////////////
