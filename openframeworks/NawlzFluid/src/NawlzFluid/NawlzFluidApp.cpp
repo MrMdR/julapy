@@ -1,10 +1,10 @@
-#include "testApp.h"
+#include "NawlzFluidApp.h"
 
 ///////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////
 
-void testApp::setup()
+void NawlzFluidApp :: setup()
 {
 	ofSetFrameRate( 30 );							// OF setup.
 	ofSetVerticalSync( true );
@@ -57,7 +57,7 @@ void testApp::setup()
 //	UPDATE.
 ///////////////////////////////////////////
 
-void testApp::update()
+void NawlzFluidApp :: update()
 {
 	nawlzFluid.update();
 }
@@ -66,7 +66,7 @@ void testApp::update()
 //	DRAW.
 ///////////////////////////////////////////
 
-void testApp::draw()
+void NawlzFluidApp :: draw()
 {
 	ofSetColor( 255, 255, 255, 255 );
 	
@@ -82,7 +82,7 @@ void testApp::draw()
 //	HANDLERS.
 ///////////////////////////////////////////
 
-void testApp::keyPressed(int key)
+void NawlzFluidApp :: keyPressed(int key)
 {
 	if( key >= '0' && key <= '9' )
 	{
@@ -107,32 +107,32 @@ void testApp::keyPressed(int key)
 	}
 }
 
-void testApp::keyReleased(int key)
+void NawlzFluidApp :: keyReleased(int key)
 {
 
 }
 
-void testApp::mouseMoved(int x, int y )
+void NawlzFluidApp :: mouseMoved(int x, int y )
 {
 	nawlzFluid.mouseMoved( x, y );
 }
 
-void testApp::mouseDragged(int x, int y, int button)
+void NawlzFluidApp :: mouseDragged(int x, int y, int button)
 {
 
 }
 
-void testApp::mousePressed(int x, int y, int button)
+void NawlzFluidApp :: mousePressed(int x, int y, int button)
 {
 
 }
 
-void testApp::mouseReleased(int x, int y, int button)
+void NawlzFluidApp :: mouseReleased(int x, int y, int button)
 {
 
 }
 
-void testApp::windowResized(int w, int h)
+void NawlzFluidApp :: windowResized(int w, int h)
 {
 
 }

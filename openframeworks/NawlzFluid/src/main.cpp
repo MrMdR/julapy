@@ -1,16 +1,19 @@
 #include "ofMain.h"
-#include "testApp.h"
 #include "ofAppGlutWindow.h"
+
+#include "NawlzFluidApp.h"
+#include "NawlzFishBowlApp.h"
+#include "NawlzBlahApp.h"
+#include "NawlzSandApp.h"
 
 //========================================================================
 int main( ){
 
     ofAppGlutWindow window;
-	ofSetupOpenGL(&window, 1024, 768, OF_WINDOW);			// <-------- setup the GL context
+	ofSetupOpenGL( &window, 1024, 768, OF_WINDOW );			// <-------- setup the GL context
 
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp( new testApp());
-
+	ofRunApp( new NawlzFluidApp() );
+//	ofRunApp( new NawlzFishBowlApp() );
+//	ofRunApp( new NawlzBlahApp() );
+//	ofRunApp( new NawlzSandApp() );
 }
