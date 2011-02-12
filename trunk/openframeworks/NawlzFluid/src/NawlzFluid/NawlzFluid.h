@@ -7,6 +7,8 @@
  *
  */
 
+#pragma once
+
 #include "MSACore.h"
 #include "MSAFluid.h"
 
