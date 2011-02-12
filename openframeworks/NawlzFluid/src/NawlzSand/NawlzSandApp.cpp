@@ -20,6 +20,8 @@ void NawlzSandApp :: setup()
 	ofSetCircleResolution( 100 );
 	ofEnableAlphaBlending();
 	ofBackground( 0, 0, 0 );
+	
+	backgroundImage.loadImage( "NawlzSand/sand_bg.png" );
 }
 
 ///////////////////////////////////////////
@@ -37,7 +39,7 @@ void NawlzSandApp :: update()
 
 void NawlzSandApp :: draw()
 {
-	//
+	backgroundImage.draw( 0, 0 );
 }
 
 ///////////////////////////////////////////

@@ -22,6 +22,8 @@ public:
 	
 	bool				bDebug;
 	
+	ofImage				backgroundImage;
+	
 	ofxSimpleGuiToo		gui;
 };
 

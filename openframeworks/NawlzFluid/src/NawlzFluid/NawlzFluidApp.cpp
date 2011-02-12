@@ -12,9 +12,9 @@ void NawlzFluidApp :: setup()
 	ofEnableAlphaBlending();
 	ofBackground( 0, 0, 0 );
 	
-	backgroundImage.loadImage( "whale_bg_1024x768.png" );
-	whaleImage.loadImage( "whale_477x223.png" );
-	particleImage.loadImage( "particle_4x4.png" );
+	backgroundImage.loadImage( "NawlzFluid/whale_bg_1024x768.png" );
+	whaleImage.loadImage( "NawlzFluid/whale_477x223.png" );
+	particleImage.loadImage( "NawlzFluid/particle_4x4.png" );
 
 	nawlzFluid.createImageTexture( whaleImage.getPixels(), whaleImage.width, whaleImage.height, GL_RGBA, 358, 220 );
 	nawlzFluid.createBackgroundTexture( backgroundImage.getPixels(), backgroundImage.width, backgroundImage.height, GL_RGB );

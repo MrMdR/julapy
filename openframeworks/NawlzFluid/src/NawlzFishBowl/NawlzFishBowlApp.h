@@ -4,6 +4,8 @@
 #include "ofMain.h"
 #include "ofxSimpleGuiToo.h"
 
+#include "NawlzFishBowl.h"
+
 class NawlzFishBowlApp : public ofBaseApp
 {
 public:
@@ -21,6 +23,12 @@ public:
 	void windowResized	( int w, int h );
 	
 	bool				bDebug;
+	
+	NawlzFishBowl		nawlzFishBowl;
+	
+	ofImage				backgroundImage;
+	ofImage				particleImage;
+	ofImage				bowlImage;
 	
 	ofxSimpleGuiToo		gui;
 };
