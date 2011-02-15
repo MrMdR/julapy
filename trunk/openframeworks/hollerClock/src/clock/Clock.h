@@ -82,7 +82,7 @@ public :
 	
 	void setup				();
 	void update				( int hrs, int min, int sec );
-	void draw				();
+	void draw				( int x=0, int y=0 );
 	
 	void initModeOne		();
 	void initModeTwo		();
@@ -126,9 +126,9 @@ public :
 	void drawDelaunay		( vector<ofxDelaunayTriangle>& triangles );
 	
 #ifdef TARGET_OF_IPHONE
-	void touchDown			( ofTouchEventArgs &touch );
-	void touchMoved			( ofTouchEventArgs &touch );
-	void touchUp			( ofTouchEventArgs &touch );
+	void touchDown			( int x, int y, int id );
+	void touchMoved			( int x, int y, int id );
+	void touchUp			( int x, int y, int id );
 #else
 	void mouseMoved			( ofMouseEventArgs &e );
 	void mousePressed		( ofMouseEventArgs &e );

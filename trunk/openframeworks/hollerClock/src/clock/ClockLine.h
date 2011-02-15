@@ -31,6 +31,7 @@ public :
 	ofTexture*		tex;
 	float			angle;
 	float			scale;
+	float			length;
 	ofRectangle		size;
 	
 	float*			pointsPos;

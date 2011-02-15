@@ -16,6 +16,7 @@ ClockLine :: ClockLine ()
 	scale		= ofRandom( 0.8, 1.0 );
 	size.width	= 0;
 	size.height	= 0;
+	length		= 0;
 	
 	pointsNum	= 3;
 	pointsPos	= new float[ pointsNum ];
@@ -40,9 +41,13 @@ void ClockLine :: setTexture ( ofTexture* tex )
 
 void ClockLine :: setup ()
 {
+	float px	= size.width  * 0.5 * cos( angle * DEG_TO_RAD );
+	float py	= size.height * 0.5 * sin( angle * DEG_TO_RAD );
+	length		= ofDist( 0, 0, px, py );
+	
 	linePoints[ 0 ] = 0;
 	linePoints[ 1 ] = 0;
-	linePoints[ 2 ] = size.width;
+	linePoints[ 2 ] = length;
 	linePoints[ 3 ] = 0;
 	
 	lineColors[ 0 ] = 0.0;

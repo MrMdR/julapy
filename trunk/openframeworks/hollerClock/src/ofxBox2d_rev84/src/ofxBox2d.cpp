@@ -58,9 +58,9 @@ void ofxBox2d::setContactListener(ofxBox2dContactListener * listener) {
 // ------------------------------------------------------ grab shapes Events
 void ofxBox2d::registerGrabbing() {
 #ifdef TARGET_OF_IPHONE
-	ofAddListener(ofEvents.touchDown, this, &ofxBox2d::touchDown);
-	ofAddListener(ofEvents.touchMoved, this, &ofxBox2d::touchMoved);
-	ofAddListener(ofEvents.touchUp, this, &ofxBox2d::touchUp);
+//	ofAddListener(ofEvents.touchDown, this, &ofxBox2d::touchDown);
+//	ofAddListener(ofEvents.touchMoved, this, &ofxBox2d::touchMoved);
+//	ofAddListener(ofEvents.touchUp, this, &ofxBox2d::touchUp);
 #else
 	ofAddListener(ofEvents.mousePressed, this, &ofxBox2d::mousePressed);
 	ofAddListener(ofEvents.mouseDragged, this, &ofxBox2d::mouseDragged);
@@ -69,14 +69,17 @@ void ofxBox2d::registerGrabbing() {
 }
 
 #ifdef TARGET_OF_IPHONE
-void ofxBox2d::touchDown(ofTouchEventArgs &touch) {
-	grabShapeDown( touch.x, touch.y, touch.id );
+void ofxBox2d::touchDown( int x, int y, int id )
+{
+	grabShapeDown( x, y, id );
 }
-void ofxBox2d::touchMoved(ofTouchEventArgs &touch) {
-	grabShapeDragged( touch.x, touch.y, touch.id );
+void ofxBox2d::touchMoved( int x, int y, int id )
+{
+	grabShapeDragged( x, y, id );
 }
-void ofxBox2d::touchUp(ofTouchEventArgs &touch) {
-	grabShapeUp( touch.x, touch.y, touch.id );
+void ofxBox2d::touchUp( int x, int y, int id )
+{
+	grabShapeUp( x, y, id );
 }
 #else
 void ofxBox2d::mousePressed(ofMouseEventArgs &e) {
