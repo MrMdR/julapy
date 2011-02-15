@@ -52,9 +52,9 @@ public:
 	void		setFPS(float theFps) { fps = theFps; }
 	
 #ifdef TARGET_OF_IPHONE
-	void		touchDown(ofTouchEventArgs &touch);
-	void		touchMoved(ofTouchEventArgs &touch);
-	void		touchUp(ofTouchEventArgs &touch);
+	void		touchDown	( int x, int y, int id );
+	void		touchMoved	( int x, int y, int id );
+	void		touchUp		( int x, int y, int id );
 #else
 	void		mousePressed(ofMouseEventArgs &e);
 	void		mouseDragged(ofMouseEventArgs &e);

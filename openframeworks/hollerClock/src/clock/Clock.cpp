@@ -36,9 +36,11 @@ Clock :: Clock ()
 	
 	float x ,d, g;
 	
-	x = 0.05;
+//	x = 0.05;
+	x = 0.14;
 	d = 0.022;
-	g = 0.05;
+//	g = 0.05;
+	g = 0.04;
 	
 	digits[ 0 ].p.x = digits[ 0 ].p1.x	= x;
 	digits[ 1 ].p.x = digits[ 1 ].p1.x	= x += d;
@@ -47,9 +49,11 @@ Clock :: Clock ()
 	digits[ 4 ].p.x = digits[ 4 ].p1.x	= x += g;
 	digits[ 5 ].p.x = digits[ 5 ].p1.x	= x += d;
 
-	x = 0.102;
+//	x = 0.102;
+	x = 0.16;
 	d = 0.075;
-	g = 0.26;
+//	g = 0.26;
+	g = 0.215;
 	
 	digits[ 0 ].p2.x = x;
 	digits[ 1 ].p2.x = x += d;
@@ -72,9 +76,9 @@ Clock :: Clock ()
 	setScreenScale( 1.0 );
 
 #ifdef TARGET_OF_IPHONE	
-	ofAddListener( ofEvents.touchDown,		this, &Clock::touchDown		);
-	ofAddListener( ofEvents.touchMoved,		this, &Clock::touchMoved	);
-	ofAddListener( ofEvents.touchUp,		this, &Clock::touchUp		);
+//	ofAddListener( ofEvents.touchDown,		this, &Clock::touchDown		);
+//	ofAddListener( ofEvents.touchMoved,		this, &Clock::touchMoved	);
+//	ofAddListener( ofEvents.touchUp,		this, &Clock::touchUp		);
 #else
 	ofAddListener( ofEvents.mousePressed,	this, &Clock::mousePressed	);
 	ofAddListener( ofEvents.mouseMoved,		this, &Clock::mouseMoved	);
@@ -277,12 +281,12 @@ void Clock :: createCircles ()
 	int colors[] = { 0xa65eb3, 0xf17a81, 0xf169c0, 0xa94f62, 0xdca6fb, 0xf8a7c0 };
 //	int colors[] = { 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff };
 	
-	createCircle( hrsOne, digits[ 0 ].valueMax, 0, areaToRadius( area ),		colors[ 0 ], 0.10 );
-	createCircle( hrsTwo, digits[ 1 ].valueMax, 1, areaToRadius( area *= dec ),	colors[ 1 ], 0.23 );
-	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	colors[ 2 ], 0.44 );
-	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	colors[ 3 ], 0.57 );
-	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	colors[ 4 ], 0.76 );
-	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	colors[ 5 ], 0.88 );
+	createCircle( hrsOne, digits[ 0 ].valueMax, 0, areaToRadius( area ),		colors[ 0 ], 0.14 );
+	createCircle( hrsTwo, digits[ 1 ].valueMax, 1, areaToRadius( area *= dec ),	colors[ 1 ], 0.26 );
+	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	colors[ 2 ], 0.475 );
+	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	colors[ 3 ], 0.55 );
+	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	colors[ 4 ], 0.75 );
+	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	colors[ 5 ], 0.82 );
 }
 
 void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, int texIndex, float radius, int color, float lx )
@@ -377,8 +381,9 @@ void Clock :: createLines ()
 		if( texLines != NULL )
 			line.setTexture( &texLines[ r ] );
 		
-		line.size.width = screenDiagonal;
-		line.angle		= p * 360;
+		line.size.width		= screenWidth;
+		line.size.height	= screenHeight;
+		line.angle			= p * 360;
 		line.setup();
 	}
 }
@@ -522,7 +527,7 @@ void Clock :: update ( int hrs, int min, int sec )
 	updateConvexBlob();
 	updateDelaunay();
 	
-	infoScreen.update();
+//	infoScreen.update();
 }
 
 void Clock :: playSecTwoSound ()
@@ -1118,8 +1123,16 @@ void Clock :: box2dContactEventHandler ( const b2ContactPoint* p )
 //	DRAW.
 ///////////////////////////////////////////////
 
-void Clock :: draw ()
+void Clock :: draw ( int x, int y )
 {
+	bool bMove = ( x != 0 || y != 0 );
+	
+	if( bMove )
+	{
+		glPushMatrix();
+		glTranslatef( x, y, 0 );
+	}
+	
 	ofSetColor( 255, 255, 255 );
 	drawBg();
 	
@@ -1147,10 +1160,10 @@ void Clock :: draw ()
 	
 //	drawLabels();
 	
-	if( softBody != NULL )
-		softBody->draw();
-	
-	infoScreen.draw();
+	if( bMove )
+	{
+		glPopMatrix();
+	}
 }
 
 void Clock :: drawBg ()
@@ -1478,19 +1491,19 @@ void Clock :: drawDelaunay ( vector<ofxDelaunayTriangle>& triangles )
 
 #ifdef TARGET_OF_IPHONE
 
-void Clock :: touchDown	( ofTouchEventArgs &touch )
+void Clock :: touchDown	( int x, int y, int id )
 {
 	bMouseDown		= true;
 	mouseDownCount	= 0;
-	mouseDownPoint.set( touch.x, touch.y );
+	mouseDownPoint.set( x, y );
 }
 
-void Clock :: touchMoved ( ofTouchEventArgs &touch )
+void Clock :: touchMoved ( int x, int y, int id )
 {
 	bMouseDown		= false;
 }
 
-void Clock :: touchUp ( ofTouchEventArgs &touch )
+void Clock :: touchUp ( int x, int y, int id )
 {
 	bMouseDown		= false;
 	
