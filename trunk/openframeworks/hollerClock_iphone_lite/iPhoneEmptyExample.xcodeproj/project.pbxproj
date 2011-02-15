@@ -10,6 +10,26 @@
 		152711C71300CA57000DE05F /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 152711C61300CA57000DE05F /* MessageUI.framework */; };
 		152712571300D126000DE05F /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1527121C1300D126000DE05F /* Default.png */; };
 		1527125D1300D126000DE05F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 152712231300D126000DE05F /* Icon.png */; };
+		15363BF4130A40E0004D325F /* Background.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363BEE130A40E0004D325F /* Background.cpp */; };
+		15363BF5130A40E0004D325F /* BackgroundBtn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363BF0130A40E0004D325F /* BackgroundBtn.cpp */; };
+		15363BF6130A40E0004D325F /* BackgroundPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363BF2130A40E0004D325F /* BackgroundPanel.cpp */; };
+		15363F3F130A4108004D325F /* ofxFlashBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DE7130A4108004D325F /* ofxFlashBitmap.cpp */; };
+		15363F40130A4108004D325F /* ofxFlashDisplayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DE9130A4108004D325F /* ofxFlashDisplayObject.cpp */; };
+		15363F41130A4108004D325F /* ofxFlashDisplayObjectContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DEB130A4108004D325F /* ofxFlashDisplayObjectContainer.cpp */; };
+		15363F42130A4108004D325F /* ofxFlashEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DED130A4108004D325F /* ofxFlashEventDispatcher.cpp */; };
+		15363F43130A4108004D325F /* ofxFlashInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DEF130A4108004D325F /* ofxFlashInteractiveObject.cpp */; };
+		15363F44130A4108004D325F /* ofxFlashLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DF1130A4108004D325F /* ofxFlashLibrary.cpp */; };
+		15363F45130A4108004D325F /* ofxFlashLibraryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DF3130A4108004D325F /* ofxFlashLibraryLoader.cpp */; };
+		15363F46130A4108004D325F /* ofxFlashLibraryLoaderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15363DF6130A4108004D325F /* ofxFlashLibraryLoaderIOS.mm */; };
+		15363F47130A4108004D325F /* ofxFlashMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DF7130A4108004D325F /* ofxFlashMatrix.cpp */; };
+		15363F48130A4108004D325F /* ofxFlashMovieClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DF9130A4108004D325F /* ofxFlashMovieClip.cpp */; };
+		15363F49130A4108004D325F /* ofxFlashObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DFB130A4108004D325F /* ofxFlashObject.cpp */; };
+		15363F4A130A4108004D325F /* ofxFlashRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DFD130A4108004D325F /* ofxFlashRectangle.cpp */; };
+		15363F4B130A4108004D325F /* ofxFlashShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363DFF130A4108004D325F /* ofxFlashShape.cpp */; };
+		15363F4C130A4108004D325F /* ofxFlashSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363E01130A4108004D325F /* ofxFlashSprite.cpp */; };
+		15363F4D130A4108004D325F /* ofxFlashStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363E03130A4108004D325F /* ofxFlashStage.cpp */; };
+		15363F4E130A4108004D325F /* ofxFlashXFL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363E05130A4108004D325F /* ofxFlashXFL.cpp */; };
+		15363F4F130A4108004D325F /* ofxFlashXFLBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363E07130A4108004D325F /* ofxFlashXFLBuilder.cpp */; };
 		154DB99A12FA640B003A77BD /* ofxAccelerometer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 154DB96712FA640B003A77BD /* ofxAccelerometer.cpp */; };
 		154DB99D12FA640B003A77BD /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 154DB97012FA640B003A77BD /* EAGLView.mm */; };
 		154DB99E12FA640B003A77BD /* ES1Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 154DB97212FA640B003A77BD /* ES1Renderer.mm */; };
@@ -41,10 +61,6 @@
 		15D63AD512FFC598004664AC /* clockApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15D63AD412FFC598004664AC /* clockApp.mm */; };
 		15D63ADB12FFC5B4004664AC /* ofxALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D63AD712FFC5B4004664AC /* ofxALSoundPlayer.cpp */; };
 		15D63ADC12FFC5B4004664AC /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D63AD912FFC5B4004664AC /* SoundEngine.cpp */; };
-		15D63AE512FFC5DF004664AC /* FooterBarConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15D63AE012FFC5DF004664AC /* FooterBarConfigViewController.m */; };
-		15D63AE612FFC5DF004664AC /* FooterBarConfigViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 15D63AE112FFC5DF004664AC /* FooterBarConfigViewController.xib */; };
-		15D63AE712FFC5DF004664AC /* FooterBarViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15D63AE312FFC5DF004664AC /* FooterBarViewController.mm */; };
-		15D63AE812FFC5DF004664AC /* FooterBarViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 15D63AE412FFC5DF004664AC /* FooterBarViewController.xib */; };
 		15D63B3412FFC6B3004664AC /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D63B2812FFC6B3004664AC /* Clock.cpp */; };
 		15D63B3512FFC6B3004664AC /* ClockCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D63B2A12FFC6B3004664AC /* ClockCircle.cpp */; };
 		15D63B3612FFC6B3004664AC /* ClockFreeCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D63B2C12FFC6B3004664AC /* ClockFreeCircle.cpp */; };
@@ -131,6 +147,47 @@
 		152711C61300CA57000DE05F /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		1527121C1300D126000DE05F /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = bin/data/Default.png; sourceTree = SOURCE_ROOT; };
 		152712231300D126000DE05F /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = bin/data/Icon.png; sourceTree = SOURCE_ROOT; };
+		15363BEE130A40E0004D325F /* Background.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Background.cpp; path = src/ui/Background.cpp; sourceTree = SOURCE_ROOT; };
+		15363BEF130A40E0004D325F /* Background.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Background.h; path = src/ui/Background.h; sourceTree = SOURCE_ROOT; };
+		15363BF0130A40E0004D325F /* BackgroundBtn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BackgroundBtn.cpp; path = src/ui/BackgroundBtn.cpp; sourceTree = SOURCE_ROOT; };
+		15363BF1130A40E0004D325F /* BackgroundBtn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundBtn.h; path = src/ui/BackgroundBtn.h; sourceTree = SOURCE_ROOT; };
+		15363BF2130A40E0004D325F /* BackgroundPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BackgroundPanel.cpp; path = src/ui/BackgroundPanel.cpp; sourceTree = SOURCE_ROOT; };
+		15363BF3130A40E0004D325F /* BackgroundPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundPanel.h; path = src/ui/BackgroundPanel.h; sourceTree = SOURCE_ROOT; };
+		15363DE6130A4108004D325F /* ofxFlash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlash.h; path = ../../../addons/ofxFlash/ofxFlash.h; sourceTree = SOURCE_ROOT; };
+		15363DE7130A4108004D325F /* ofxFlashBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashBitmap.cpp; path = ../../../addons/ofxFlash/ofxFlashBitmap.cpp; sourceTree = SOURCE_ROOT; };
+		15363DE8130A4108004D325F /* ofxFlashBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashBitmap.h; path = ../../../addons/ofxFlash/ofxFlashBitmap.h; sourceTree = SOURCE_ROOT; };
+		15363DE9130A4108004D325F /* ofxFlashDisplayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashDisplayObject.cpp; path = ../../../addons/ofxFlash/ofxFlashDisplayObject.cpp; sourceTree = SOURCE_ROOT; };
+		15363DEA130A4108004D325F /* ofxFlashDisplayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashDisplayObject.h; path = ../../../addons/ofxFlash/ofxFlashDisplayObject.h; sourceTree = SOURCE_ROOT; };
+		15363DEB130A4108004D325F /* ofxFlashDisplayObjectContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashDisplayObjectContainer.cpp; path = ../../../addons/ofxFlash/ofxFlashDisplayObjectContainer.cpp; sourceTree = SOURCE_ROOT; };
+		15363DEC130A4108004D325F /* ofxFlashDisplayObjectContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashDisplayObjectContainer.h; path = ../../../addons/ofxFlash/ofxFlashDisplayObjectContainer.h; sourceTree = SOURCE_ROOT; };
+		15363DED130A4108004D325F /* ofxFlashEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashEventDispatcher.cpp; path = ../../../addons/ofxFlash/ofxFlashEventDispatcher.cpp; sourceTree = SOURCE_ROOT; };
+		15363DEE130A4108004D325F /* ofxFlashEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashEventDispatcher.h; path = ../../../addons/ofxFlash/ofxFlashEventDispatcher.h; sourceTree = SOURCE_ROOT; };
+		15363DEF130A4108004D325F /* ofxFlashInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashInteractiveObject.cpp; path = ../../../addons/ofxFlash/ofxFlashInteractiveObject.cpp; sourceTree = SOURCE_ROOT; };
+		15363DF0130A4108004D325F /* ofxFlashInteractiveObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashInteractiveObject.h; path = ../../../addons/ofxFlash/ofxFlashInteractiveObject.h; sourceTree = SOURCE_ROOT; };
+		15363DF1130A4108004D325F /* ofxFlashLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashLibrary.cpp; path = ../../../addons/ofxFlash/ofxFlashLibrary.cpp; sourceTree = SOURCE_ROOT; };
+		15363DF2130A4108004D325F /* ofxFlashLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashLibrary.h; path = ../../../addons/ofxFlash/ofxFlashLibrary.h; sourceTree = SOURCE_ROOT; };
+		15363DF3130A4108004D325F /* ofxFlashLibraryLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashLibraryLoader.cpp; path = ../../../addons/ofxFlash/ofxFlashLibraryLoader.cpp; sourceTree = SOURCE_ROOT; };
+		15363DF4130A4108004D325F /* ofxFlashLibraryLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashLibraryLoader.h; path = ../../../addons/ofxFlash/ofxFlashLibraryLoader.h; sourceTree = SOURCE_ROOT; };
+		15363DF5130A4108004D325F /* ofxFlashLibraryLoaderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashLibraryLoaderIOS.h; path = ../../../addons/ofxFlash/ofxFlashLibraryLoaderIOS.h; sourceTree = SOURCE_ROOT; };
+		15363DF6130A4108004D325F /* ofxFlashLibraryLoaderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxFlashLibraryLoaderIOS.mm; path = ../../../addons/ofxFlash/ofxFlashLibraryLoaderIOS.mm; sourceTree = SOURCE_ROOT; };
+		15363DF7130A4108004D325F /* ofxFlashMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashMatrix.cpp; path = ../../../addons/ofxFlash/ofxFlashMatrix.cpp; sourceTree = SOURCE_ROOT; };
+		15363DF8130A4108004D325F /* ofxFlashMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashMatrix.h; path = ../../../addons/ofxFlash/ofxFlashMatrix.h; sourceTree = SOURCE_ROOT; };
+		15363DF9130A4108004D325F /* ofxFlashMovieClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashMovieClip.cpp; path = ../../../addons/ofxFlash/ofxFlashMovieClip.cpp; sourceTree = SOURCE_ROOT; };
+		15363DFA130A4108004D325F /* ofxFlashMovieClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashMovieClip.h; path = ../../../addons/ofxFlash/ofxFlashMovieClip.h; sourceTree = SOURCE_ROOT; };
+		15363DFB130A4108004D325F /* ofxFlashObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashObject.cpp; path = ../../../addons/ofxFlash/ofxFlashObject.cpp; sourceTree = SOURCE_ROOT; };
+		15363DFC130A4108004D325F /* ofxFlashObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashObject.h; path = ../../../addons/ofxFlash/ofxFlashObject.h; sourceTree = SOURCE_ROOT; };
+		15363DFD130A4108004D325F /* ofxFlashRectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashRectangle.cpp; path = ../../../addons/ofxFlash/ofxFlashRectangle.cpp; sourceTree = SOURCE_ROOT; };
+		15363DFE130A4108004D325F /* ofxFlashRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashRectangle.h; path = ../../../addons/ofxFlash/ofxFlashRectangle.h; sourceTree = SOURCE_ROOT; };
+		15363DFF130A4108004D325F /* ofxFlashShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashShape.cpp; path = ../../../addons/ofxFlash/ofxFlashShape.cpp; sourceTree = SOURCE_ROOT; };
+		15363E00130A4108004D325F /* ofxFlashShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashShape.h; path = ../../../addons/ofxFlash/ofxFlashShape.h; sourceTree = SOURCE_ROOT; };
+		15363E01130A4108004D325F /* ofxFlashSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashSprite.cpp; path = ../../../addons/ofxFlash/ofxFlashSprite.cpp; sourceTree = SOURCE_ROOT; };
+		15363E02130A4108004D325F /* ofxFlashSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashSprite.h; path = ../../../addons/ofxFlash/ofxFlashSprite.h; sourceTree = SOURCE_ROOT; };
+		15363E03130A4108004D325F /* ofxFlashStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashStage.cpp; path = ../../../addons/ofxFlash/ofxFlashStage.cpp; sourceTree = SOURCE_ROOT; };
+		15363E04130A4108004D325F /* ofxFlashStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashStage.h; path = ../../../addons/ofxFlash/ofxFlashStage.h; sourceTree = SOURCE_ROOT; };
+		15363E05130A4108004D325F /* ofxFlashXFL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashXFL.cpp; path = ../../../addons/ofxFlash/ofxFlashXFL.cpp; sourceTree = SOURCE_ROOT; };
+		15363E06130A4108004D325F /* ofxFlashXFL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashXFL.h; path = ../../../addons/ofxFlash/ofxFlashXFL.h; sourceTree = SOURCE_ROOT; };
+		15363E07130A4108004D325F /* ofxFlashXFLBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFlashXFLBuilder.cpp; path = ../../../addons/ofxFlash/ofxFlashXFLBuilder.cpp; sourceTree = SOURCE_ROOT; };
+		15363E08130A4108004D325F /* ofxFlashXFLBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFlashXFLBuilder.h; path = ../../../addons/ofxFlash/ofxFlashXFLBuilder.h; sourceTree = SOURCE_ROOT; };
 		154DB96712FA640B003A77BD /* ofxAccelerometer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxAccelerometer.cpp; path = openFrameworks/addons/ofxAccelerometer/src/ofxAccelerometer.cpp; sourceTree = SOURCE_ROOT; };
 		154DB96812FA640B003A77BD /* ofxAccelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxAccelerometer.h; path = openFrameworks/addons/ofxAccelerometer/src/ofxAccelerometer.h; sourceTree = SOURCE_ROOT; };
 		154DB96C12FA640B003A77BD /* ofxiPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxiPhone.h; path = openFrameworks/addons/ofxiPhone/ofxiPhone.h; sourceTree = SOURCE_ROOT; };
@@ -186,13 +243,6 @@
 		15D63AD812FFC5B4004664AC /* ofxALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxALSoundPlayer.h; path = src/ofxALSoundPlayer/ofxALSoundPlayer.h; sourceTree = SOURCE_ROOT; };
 		15D63AD912FFC5B4004664AC /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundEngine.cpp; path = src/ofxALSoundPlayer/SoundEngine.cpp; sourceTree = SOURCE_ROOT; };
 		15D63ADA12FFC5B4004664AC /* SoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundEngine.h; path = src/ofxALSoundPlayer/SoundEngine.h; sourceTree = SOURCE_ROOT; };
-		15D63ADE12FFC5DF004664AC /* FooterBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FooterBar.h; path = src/footerBar/FooterBar.h; sourceTree = SOURCE_ROOT; };
-		15D63ADF12FFC5DF004664AC /* FooterBarConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FooterBarConfigViewController.h; path = src/footerBar/FooterBarConfigViewController.h; sourceTree = SOURCE_ROOT; };
-		15D63AE012FFC5DF004664AC /* FooterBarConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FooterBarConfigViewController.m; path = src/footerBar/FooterBarConfigViewController.m; sourceTree = SOURCE_ROOT; };
-		15D63AE112FFC5DF004664AC /* FooterBarConfigViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = FooterBarConfigViewController.xib; path = src/footerBar/FooterBarConfigViewController.xib; sourceTree = SOURCE_ROOT; };
-		15D63AE212FFC5DF004664AC /* FooterBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FooterBarViewController.h; path = src/footerBar/FooterBarViewController.h; sourceTree = SOURCE_ROOT; };
-		15D63AE312FFC5DF004664AC /* FooterBarViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FooterBarViewController.mm; path = src/footerBar/FooterBarViewController.mm; sourceTree = SOURCE_ROOT; };
-		15D63AE412FFC5DF004664AC /* FooterBarViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = FooterBarViewController.xib; path = src/footerBar/FooterBarViewController.xib; sourceTree = SOURCE_ROOT; };
 		15D63B2812FFC6B3004664AC /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../hollerClock/src/clock/Clock.cpp; sourceTree = SOURCE_ROOT; };
 		15D63B2912FFC6B3004664AC /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Clock.h; path = ../hollerClock/src/clock/Clock.h; sourceTree = SOURCE_ROOT; };
 		15D63B2A12FFC6B3004664AC /* ClockCircle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClockCircle.cpp; path = ../hollerClock/src/clock/ClockCircle.cpp; sourceTree = SOURCE_ROOT; };
@@ -375,7 +425,7 @@
 		15E5E1521302607E00AD693B /* ofTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTypes.h; path = openFrameworks/libs/openFrameworks/utils/ofTypes.h; sourceTree = SOURCE_ROOT; };
 		15E5E1531302607E00AD693B /* ofUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofUtils.cpp; path = openFrameworks/libs/openFrameworks/utils/ofUtils.cpp; sourceTree = SOURCE_ROOT; };
 		15E5E1541302607E00AD693B /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofUtils.h; path = openFrameworks/libs/openFrameworks/utils/ofUtils.h; sourceTree = SOURCE_ROOT; };
-		1D6058910D05DD3D006BFB54 /* hollerclock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hollerclock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* Haeckel Clock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Haeckel Clock.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
 		BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ofxiphone-Info.plist"; sourceTree = "<group>"; };
 		E4D8936B11527B74007E1F53 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
@@ -412,6 +462,63 @@
 			);
 			name = data;
 			path = bin/data;
+			sourceTree = SOURCE_ROOT;
+		};
+		15363BED130A40E0004D325F /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				15363BEE130A40E0004D325F /* Background.cpp */,
+				15363BEF130A40E0004D325F /* Background.h */,
+				15363BF0130A40E0004D325F /* BackgroundBtn.cpp */,
+				15363BF1130A40E0004D325F /* BackgroundBtn.h */,
+				15363BF2130A40E0004D325F /* BackgroundPanel.cpp */,
+				15363BF3130A40E0004D325F /* BackgroundPanel.h */,
+			);
+			name = ui;
+			path = src/ui;
+			sourceTree = SOURCE_ROOT;
+		};
+		15363BF7130A4104004D325F /* ofxFlash */ = {
+			isa = PBXGroup;
+			children = (
+				15363DE6130A4108004D325F /* ofxFlash.h */,
+				15363DE7130A4108004D325F /* ofxFlashBitmap.cpp */,
+				15363DE8130A4108004D325F /* ofxFlashBitmap.h */,
+				15363DE9130A4108004D325F /* ofxFlashDisplayObject.cpp */,
+				15363DEA130A4108004D325F /* ofxFlashDisplayObject.h */,
+				15363DEB130A4108004D325F /* ofxFlashDisplayObjectContainer.cpp */,
+				15363DEC130A4108004D325F /* ofxFlashDisplayObjectContainer.h */,
+				15363DED130A4108004D325F /* ofxFlashEventDispatcher.cpp */,
+				15363DEE130A4108004D325F /* ofxFlashEventDispatcher.h */,
+				15363DEF130A4108004D325F /* ofxFlashInteractiveObject.cpp */,
+				15363DF0130A4108004D325F /* ofxFlashInteractiveObject.h */,
+				15363DF1130A4108004D325F /* ofxFlashLibrary.cpp */,
+				15363DF2130A4108004D325F /* ofxFlashLibrary.h */,
+				15363DF3130A4108004D325F /* ofxFlashLibraryLoader.cpp */,
+				15363DF4130A4108004D325F /* ofxFlashLibraryLoader.h */,
+				15363DF5130A4108004D325F /* ofxFlashLibraryLoaderIOS.h */,
+				15363DF6130A4108004D325F /* ofxFlashLibraryLoaderIOS.mm */,
+				15363DF7130A4108004D325F /* ofxFlashMatrix.cpp */,
+				15363DF8130A4108004D325F /* ofxFlashMatrix.h */,
+				15363DF9130A4108004D325F /* ofxFlashMovieClip.cpp */,
+				15363DFA130A4108004D325F /* ofxFlashMovieClip.h */,
+				15363DFB130A4108004D325F /* ofxFlashObject.cpp */,
+				15363DFC130A4108004D325F /* ofxFlashObject.h */,
+				15363DFD130A4108004D325F /* ofxFlashRectangle.cpp */,
+				15363DFE130A4108004D325F /* ofxFlashRectangle.h */,
+				15363DFF130A4108004D325F /* ofxFlashShape.cpp */,
+				15363E00130A4108004D325F /* ofxFlashShape.h */,
+				15363E01130A4108004D325F /* ofxFlashSprite.cpp */,
+				15363E02130A4108004D325F /* ofxFlashSprite.h */,
+				15363E03130A4108004D325F /* ofxFlashStage.cpp */,
+				15363E04130A4108004D325F /* ofxFlashStage.h */,
+				15363E05130A4108004D325F /* ofxFlashXFL.cpp */,
+				15363E06130A4108004D325F /* ofxFlashXFL.h */,
+				15363E07130A4108004D325F /* ofxFlashXFLBuilder.cpp */,
+				15363E08130A4108004D325F /* ofxFlashXFLBuilder.h */,
+			);
+			name = ofxFlash;
+			path = ../../../addons/ofxFlash;
 			sourceTree = SOURCE_ROOT;
 		};
 		154DB96212FA640B003A77BD /* ofxAccelerometer */ = {
@@ -533,21 +640,6 @@
 			);
 			name = ofxALSoundPlayer;
 			path = src/ofxALSoundPlayer;
-			sourceTree = SOURCE_ROOT;
-		};
-		15D63ADD12FFC5DF004664AC /* footerBar */ = {
-			isa = PBXGroup;
-			children = (
-				15D63ADE12FFC5DF004664AC /* FooterBar.h */,
-				15D63ADF12FFC5DF004664AC /* FooterBarConfigViewController.h */,
-				15D63AE012FFC5DF004664AC /* FooterBarConfigViewController.m */,
-				15D63AE112FFC5DF004664AC /* FooterBarConfigViewController.xib */,
-				15D63AE212FFC5DF004664AC /* FooterBarViewController.h */,
-				15D63AE312FFC5DF004664AC /* FooterBarViewController.mm */,
-				15D63AE412FFC5DF004664AC /* FooterBarViewController.xib */,
-			);
-			name = footerBar;
-			path = src/footerBar;
 			sourceTree = SOURCE_ROOT;
 		};
 		15D63B2712FFC6B3004664AC /* clock */ = {
@@ -1030,7 +1122,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* hollerclock.app */,
+				1D6058910D05DD3D006BFB54 /* Haeckel Clock.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1095,6 +1187,7 @@
 				15D63C0B12FFC723004664AC /* ofxDelaunay */,
 				15D63C1512FFC738004664AC /* ofxJulapyUtils */,
 				15E2FD5413024CA700A92981 /* ofxXmlSettings */,
+				15363BF7130A4104004D325F /* ofxFlash */,
 				15D63BD012FFC6CD004664AC /* PennerEasing */,
 			);
 			name = addons;
@@ -1125,7 +1218,7 @@
 				15D63AD312FFC598004664AC /* clockApp.h */,
 				15D63AD412FFC598004664AC /* clockApp.mm */,
 				15D63B2712FFC6B3004664AC /* clock */,
-				15D63ADD12FFC5DF004664AC /* footerBar */,
+				15363BED130A40E0004D325F /* ui */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1133,9 +1226,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* hollerclock */ = {
+		1D6058900D05DD3D006BFB54 /* Haeckel Clock */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "hollerclock" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Haeckel Clock" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -1146,9 +1239,9 @@
 			);
 			dependencies = (
 			);
-			name = hollerclock;
+			name = "Haeckel Clock";
 			productName = iPhone;
-			productReference = 1D6058910D05DD3D006BFB54 /* hollerclock.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* Haeckel Clock.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1170,7 +1263,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* hollerclock */,
+				1D6058900D05DD3D006BFB54 /* Haeckel Clock */,
 			);
 		};
 /* End PBXProject section */
@@ -1181,8 +1274,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */,
-				15D63AE612FFC5DF004664AC /* FooterBarConfigViewController.xib in Resources */,
-				15D63AE812FFC5DF004664AC /* FooterBarViewController.xib in Resources */,
 				15D63C8312FFCCA4004664AC /* haeckel_mode_one_icon.png in Resources */,
 				15D63C8412FFCCA4004664AC /* haeckel_mode_two_icon.png in Resources */,
 				152712571300D126000DE05F /* Default.png in Resources */,
@@ -1204,7 +1295,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -rf bin/data/ \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app\"\n\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/assets/assets_ipad_1024x768\"\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/assets/assets_iphone3_480x320\"\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/assets/assets_iphone4_960x640\"\n\ncp -rf assets/assets_ipad_1024x768/DOMDocument.xml \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/assets/assets_ipad_1024x768\"\ncp -rf assets/assets_ipad_1024x768/LIBRARY \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/assets/assets_ipad_1024x768\"";
+			shellScript = "cp -rf bin/data/ \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1234,8 +1325,6 @@
 				15D63AD512FFC598004664AC /* clockApp.mm in Sources */,
 				15D63ADB12FFC5B4004664AC /* ofxALSoundPlayer.cpp in Sources */,
 				15D63ADC12FFC5B4004664AC /* SoundEngine.cpp in Sources */,
-				15D63AE512FFC5DF004664AC /* FooterBarConfigViewController.m in Sources */,
-				15D63AE712FFC5DF004664AC /* FooterBarViewController.mm in Sources */,
 				15D63B3412FFC6B3004664AC /* Clock.cpp in Sources */,
 				15D63B3512FFC6B3004664AC /* ClockCircle.cpp in Sources */,
 				15D63B3612FFC6B3004664AC /* ClockFreeCircle.cpp in Sources */,
@@ -1312,6 +1401,26 @@
 				15E5E15C1302607E00AD693B /* ofTexture.cpp in Sources */,
 				15E5E15D1302607E00AD693B /* ofMath.cpp in Sources */,
 				15E5E15E1302607E00AD693B /* ofUtils.cpp in Sources */,
+				15363BF4130A40E0004D325F /* Background.cpp in Sources */,
+				15363BF5130A40E0004D325F /* BackgroundBtn.cpp in Sources */,
+				15363BF6130A40E0004D325F /* BackgroundPanel.cpp in Sources */,
+				15363F3F130A4108004D325F /* ofxFlashBitmap.cpp in Sources */,
+				15363F40130A4108004D325F /* ofxFlashDisplayObject.cpp in Sources */,
+				15363F41130A4108004D325F /* ofxFlashDisplayObjectContainer.cpp in Sources */,
+				15363F42130A4108004D325F /* ofxFlashEventDispatcher.cpp in Sources */,
+				15363F43130A4108004D325F /* ofxFlashInteractiveObject.cpp in Sources */,
+				15363F44130A4108004D325F /* ofxFlashLibrary.cpp in Sources */,
+				15363F45130A4108004D325F /* ofxFlashLibraryLoader.cpp in Sources */,
+				15363F46130A4108004D325F /* ofxFlashLibraryLoaderIOS.mm in Sources */,
+				15363F47130A4108004D325F /* ofxFlashMatrix.cpp in Sources */,
+				15363F48130A4108004D325F /* ofxFlashMovieClip.cpp in Sources */,
+				15363F49130A4108004D325F /* ofxFlashObject.cpp in Sources */,
+				15363F4A130A4108004D325F /* ofxFlashRectangle.cpp in Sources */,
+				15363F4B130A4108004D325F /* ofxFlashShape.cpp in Sources */,
+				15363F4C130A4108004D325F /* ofxFlashSprite.cpp in Sources */,
+				15363F4D130A4108004D325F /* ofxFlashStage.cpp in Sources */,
+				15363F4E130A4108004D325F /* ofxFlashXFL.cpp in Sources */,
+				15363F4F130A4108004D325F /* ofxFlashXFLBuilder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1375,7 +1484,7 @@
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "FA6AC7AC-FE77-4DCE-AEBD-194B57E08DA8";
 				SDKROOT = iphoneos4.2;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 				WARNING_LDFLAGS = "";
 			};
 			name = Debug;
@@ -1402,7 +1511,7 @@
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "FA6AC7AC-FE77-4DCE-AEBD-194B57E08DA8";
 				SDKROOT = iphoneos4.2;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
@@ -1428,7 +1537,7 @@
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "FA6AC7AC-FE77-4DCE-AEBD-194B57E08DA8";
 				SDKROOT = iphoneos4.2;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = ReleaseArmv7;
 		};
@@ -1450,7 +1559,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "hollerclock" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Haeckel Clock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
