@@ -48,11 +48,11 @@ void clockApp :: setup()
 	
 	if( deviceType == DEVICE_IPHONE )
 	{
-		loadImageToTexture( ofToDataPath( "image/background_480x320.png" ), texBg );
+//		loadImageToTexture( ofToDataPath( "image/background_480x320.png" ), texBg );
 	}
 	else if( deviceType == DEVICE_IPAD )
 	{
-		loadImageToTexture( ofToDataPath( "image/background_1024x768.png" ), texBg );
+//		loadImageToTexture( ofToDataPath( "image/background_1024x768.png" ), texBg );
 	}
 	
 	if( deviceType == DEVICE_IPHONE )
@@ -114,12 +114,16 @@ void clockApp :: setup()
 	{
 		loadImageToTexture( ofToDataPath( digitNames[ i ] ), texDigits[ i ] );
 	}
-
-	//--
 	
-	footer = NULL;
-	footer = new FooterBar();
-	footer->setup();
+	//-- flash.
+	
+	stage = ofxFlashStage :: getInstance();			// ofxFlash setup.
+	
+	
+	xfl.loadFile( "assets/assets_ipad_1024x768/DOMDocument.xml" );		// load XFL flash file.
+	xfl.build();
+	
+	bg = new Background( (ofxFlashMovieClip*)stage->root()->getChildByName( "bg" ) );
 	
 	//--
 	
@@ -148,9 +152,8 @@ void clockApp :: initClock ()
 	clock.setSize( w, h );
 	clock.setScreenScale( fs );
 	clock.setSound( &secTwoSound, &secOneSound );
-	clock.setBgTexture( &texBg );
+//	clock.setBgTexture( &texBg );
 	clock.setCellTexture( texCells, texCellsNum );
-//	clock.setCellAnimTex( &texCellAnim.getFrames() );
 	clock.setInfoTexture( &texInfo );
 	clock.setMembraneTex( &texMembrane );
 	clock.setDigitTexture( texDigits, texDigitsNum );
@@ -249,8 +252,12 @@ void clockApp :: update()
 	clock.setGravity( gx, gy );
 	
 	//-- update.
+
+	bg->update();
 	
 	clock.update( hrs, min, sec );
+	
+	stage->update();
 }
 
 void clockApp :: flipLeft ()
@@ -297,10 +304,12 @@ void clockApp :: draw()
 		glTranslatef( -screenSize.width * 0.5, -screenSize.height * 0.5, 0 );
 	}
 	
-	int bg = 0;
-	ofBackground( bg, bg, bg );
+	stage->draw();
+//	bg->draw();
 	
-	clock.draw();
+	int cx = (int)( bg->asset->x() + BG_TILE_WIDTH );
+	int cy = (int)( bg->asset->y() + BG_TILE_HEIGHT );
+	clock.draw( cx, cy );
 	
 	ofSetColor( 0x000000 );
 	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, 15 );
@@ -324,29 +333,32 @@ void clockApp::touchDown( int x, int y, int id )
 {
 	clock.touchDown( x, y, id );
 	box2d.touchDown( x, y, id );
+	
+	bg->touchDown( x, y, id );
+	stage->mousePressed( x, y, id );
 }
 
 void clockApp::touchMoved( int x, int y, int id )
 {
 	clock.touchMoved( x, y, id );
 	box2d.touchMoved( x, y, id );
+	
+	bg->touchMoved( x, y, id );
+	stage->mouseMoved( x, y, id );
 }
 
 void clockApp::touchUp( int x, int y, int id )
 {
 	clock.touchUp( x, y, id );
 	box2d.touchUp( x, y, id );
+	
+	bg->touchUp( x, y, id );
+	stage->mouseReleased( x, y, id );
 }
 
 void clockApp::touchDoubleTap( int x, int y, int id )
 {
 	clock.toggleClockMode();
-	return;
-	
-	if( footer != NULL )
-	{
-		footer->toggleShow();
-	}
 }
 
 void clockApp::lostFocus(){
