@@ -4,12 +4,12 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 #include "ofxALSoundPlayer.h"
+#include "ofxFlash.h"
 #include "Quad.h"
-//#include "ofxFlash.h"
 
 #include "ofxBox2d.h"
 #include "Clock.h"
-#include "FooterBar.h"
+#include "Background.h"
 
 #define DEVICE_IPAD		0
 #define DEVICE_IPHONE	1
@@ -71,7 +71,10 @@ public:
 	bool					bFlipLeft;
 	bool					bFlipRight;
 	
-	FooterBar*				footer;
+	ofxFlashStage*			stage;
+	ofxFlashXFL				xfl;
+	
+	Background*				bg;
 };
 
 
