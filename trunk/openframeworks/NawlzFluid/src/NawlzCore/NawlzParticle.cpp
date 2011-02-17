@@ -34,6 +34,11 @@ NawlzParticle :: ~NawlzParticle()
 	tex	= NULL;
 }
 
+void NawlzParticle :: update ()
+{
+	//
+}
+
 void NawlzParticle :: draw ()
 {
 	ofFill();

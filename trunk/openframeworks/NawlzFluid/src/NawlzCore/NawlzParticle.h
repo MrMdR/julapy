@@ -23,7 +23,8 @@ public:
 	 NawlzParticle( ofTexture* texIn, const Vec2f& pos, const Vec2f& vel );
 	~NawlzParticle();
 	
-	virtual void draw ();
+	virtual void update	();
+	virtual void draw	();
 	
 	ofTexture*	tex;
 	int			width;
