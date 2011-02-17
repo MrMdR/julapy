@@ -20,8 +20,9 @@ NawlzFishBowl :: NawlzFishBowl ()
 	
 	bDrawBackground = true;
 	bDrawParticles	= true;
-	bDrawBowl		= true;
+	bDrawBowl		= false;
 	bOverRoi		= false;
+	bTouchDown		= false;
 }
 
 NawlzFishBowl :: ~NawlzFishBowl ()
@@ -122,6 +123,7 @@ void NawlzFishBowl :: initFluid ()
 //	fluidCellsX		= 150;
 //	fluidCellsX		= 100;
 	fluidCellsX		= 50;
+	fluidScale		= 0;
 	bResizeFluid	= true;
 }
 
@@ -178,6 +180,11 @@ void NawlzFishBowl :: createBowlTexture ( unsigned char* pixels, int width, int 
 	
 	bowlTextureXY.x = x;
 	bowlTextureXY.y = y;
+	
+	bowlRect.x		= x;
+	bowlRect.y		= y;
+	bowlRect.width	= width;
+	bowlRect.height	= height;
 }
 
 void NawlzFishBowl :: createParticles ()
@@ -189,13 +196,18 @@ void NawlzFishBowl :: createParticles ()
 		vel.rotate( ofRandom( -360, 360 ) * DEG_TO_RAD );
 		vel *= ofRandom( 1.0, 3.0 );
 		
-		float gap = 0.1;
+		float gap = 0.4;
 		
 		Vec2f pos;
 		pos.x = roi.x + ( roi.width  * gap ) + ofRandom( 0, roi.width  - ( roi.width  * gap * 2 ) );
 		pos.y = roi.y + ( roi.height * gap ) + ofRandom( 0, roi.height - ( roi.height * gap * 2 ) );
 		
-		particles.push_back( NawlzParticle01( particleTexture, pos, vel ) );
+		particles.push_back( NawlzFishBowlParticle() );
+		particles.back().setLoc( pos.x, pos.y );
+		particles.back().setVel( vel.x, vel.y );
+		particles.back().setBounds( roi );
+		particles.back().setImageBounds( bowlRect, bowlPixels );
+		particles.back().setTexture( particleTexture );
 	}
 }
 
@@ -205,6 +217,15 @@ void NawlzFishBowl :: createParticles ()
 
 void NawlzFishBowl :: update ()
 {
+	if( bTouchDown )
+	{
+		fluidScale += ( 1 - fluidScale ) * 0.8;
+	}
+	else
+	{
+		fluidScale += ( 0 - fluidScale ) * 0.1;
+	}
+	
 	if( bResizeFluid )
 	{
 		float r;
@@ -254,18 +275,25 @@ void NawlzFishBowl :: updateParticles ()
 	int t = particles.size();
 	for( int i=0; i<t; i++ )
 	{
-		NawlzParticle01& particle = particles[ i ];
+		NawlzFishBowlParticle& particle = particles[ i ];
 		
-		bool b1 = isPointInsideROI( particle.pos.x, particle.pos.y );
-		bool b2 = isPointInsideBowl( particle.pos.x, particle.pos.y );
+		particle.update();
+		continue;
+		
+		//-- fluid forces.
+		
+		bool b1 = isPointInsideROI( particle.loc.x, particle.loc.y );
+		bool b2 = isPointInsideBowl( particle.loc.x, particle.loc.y );
 		
 		if( b2 )
 		{
-			float px = ( particle.pos.x - roi.x ) / (float)roi.width;
-			float py = ( particle.pos.y - roi.y ) / (float)roi.height;
+			float px = ( particle.loc.x - roi.x ) / (float)roi.width;
+			float py = ( particle.loc.y - roi.y ) / (float)roi.height;
+			
+			float particleMass = 1.0;
 			
 			Vec2f p( px, py );
-			vel = fluidSolver.getVelocityAtPos( p ) * particle.mass;
+			vel = fluidSolver.getVelocityAtPos( p ) * particleMass;
 			
 			float d2 = vel.lengthSquared();
 			
@@ -284,14 +312,17 @@ void NawlzFishBowl :: updateParticles ()
 		else
 		{
 			Vec2f dir;
-			dir = roiCenter - particle.pos;
+			dir.x = roiCenter.x - particle.loc.x;
+			dir.y = roiCenter.y - particle.loc.y;
 			dir.normalize();
 			vel = dir * 10;
 		}
 		
-		particle.vel += vel * 0.5;
+		particle.vel.x += vel.x * 0.5;
+		particle.vel.y += vel.y * 0.5;
 		particle.vel *= 0.7;
-		particle.pos += particle.vel;
+		particle.loc.x += particle.vel.x;
+		particle.loc.y += particle.vel.y;
 	}
 }
 
@@ -356,7 +387,7 @@ void NawlzFishBowl :: drawParticles ()
 {
 	for( int i=0; i<particles.size(); i++ )
 	{
-		NawlzParticle01& particle = particles[ i ];
+		NawlzFishBowlParticle& particle = particles[ i ];
 		particle.draw();
 	}
 }
@@ -523,12 +554,12 @@ void NawlzFishBowl :: mouseDragged(int x, int y, int button)
 
 void NawlzFishBowl :: mousePressed(int x, int y, int button)
 {
-	//
+	bTouchDown = true;
 }
 
 void NawlzFishBowl :: mouseReleased(int x, int y, int button)
 {
-	//
+	bTouchDown = false;
 }
 
 void NawlzFishBowl :: windowResized(int w, int h)

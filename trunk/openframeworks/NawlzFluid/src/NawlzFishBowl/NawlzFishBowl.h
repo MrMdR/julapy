@@ -19,6 +19,7 @@
 
 #include "NawlzParticle.h"
 #include "NawlzParticle01.h"
+#include "NawlzFishBowlParticle.h"
 
 using namespace MSA;
 
@@ -92,6 +93,7 @@ private:
 	ofTexture*		particleTexture;
 	ofTexture*		bowlTexture;
 	unsigned char*	bowlPixels;
+	ofRectangle		bowlRect;
 	ofTexture*		fluidTexture;
 	unsigned char*	fluidPixels;
 	
@@ -100,10 +102,12 @@ private:
 	
 	FluidSolver		fluidSolver;
 	int				fluidCellsX;
+	float			fluidScale;
 	bool			bResizeFluid;
 	Vec2f			pMouse;
 	
-	vector<NawlzParticle01>	particles;
+	vector<NawlzFishBowlParticle>	particles;
 	
 	bool			bOverRoi;
+	bool			bTouchDown;
 };
