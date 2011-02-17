@@ -33,13 +33,13 @@ void NawlzFishBowlApp :: setup()
 	
 	nawlzFishBowl.setROI( roi );
 	nawlzFishBowl.createBackgroundTexture( backgroundImage.getPixels(), backgroundImage.width, backgroundImage.height, GL_RGB );
-//	nawlzFishBowl.createParticleTexture( particleImage.getPixels(), particleImage.width, particleImage.height, GL_RGBA );
+	nawlzFishBowl.createParticleTexture( particleImage.getPixels(), particleImage.width, particleImage.height, GL_RGBA );
 	nawlzFishBowl.createBowlTexture( bowlImage.getPixels(), bowlImage.width, bowlImage.height, GL_RGB, roi.x, roi.y );
 	nawlzFishBowl.bDrawParticles	= true;
 	nawlzFishBowl.bDrawBackground	= true;
 	nawlzFishBowl.setup();
 	
-	bDebug = true;
+	bDebug = false;
 	
 	gui.addToggle( "draw particles",		nawlzFishBowl.bDrawParticles );
 	gui.addToggle( "draw background",		nawlzFishBowl.bDrawBackground );
@@ -130,12 +130,12 @@ void NawlzFishBowlApp :: mouseDragged(int x, int y, int button)
 
 void NawlzFishBowlApp :: mousePressed(int x, int y, int button)
 {
-	
+	nawlzFishBowl.mousePressed( x, y, button );
 }
 
 void NawlzFishBowlApp :: mouseReleased(int x, int y, int button)
 {
-	
+	nawlzFishBowl.mouseReleased( x, y, button );
 }
 
 void NawlzFishBowlApp :: windowResized(int w, int h)
