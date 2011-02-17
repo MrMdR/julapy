@@ -4,6 +4,8 @@
 #include "ofMain.h"
 #include "ofxSimpleGuiToo.h"
 
+#include "NawlzSand.h"
+
 class NawlzSandApp : public ofBaseApp
 {
 public:
@@ -23,6 +25,9 @@ public:
 	bool				bDebug;
 	
 	ofImage				backgroundImage;
+	ofImage				particleImage;
+	
+	NawlzSand			nawlzSand;
 	
 	ofxSimpleGuiToo		gui;
 };
