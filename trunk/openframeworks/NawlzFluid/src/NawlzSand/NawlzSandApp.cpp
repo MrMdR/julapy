@@ -22,6 +22,18 @@ void NawlzSandApp :: setup()
 	ofBackground( 0, 0, 0 );
 	
 	backgroundImage.loadImage( "NawlzSand/sand_bg.png" );
+	particleImage.loadImage( "NawlzSand/sand_particle.png" );
+	
+	nawlzSand.createBackgroundTexture( backgroundImage.getPixels(), backgroundImage.getWidth(), backgroundImage.getHeight(), GL_RGB );
+	nawlzSand.createParticleTexture( particleImage.getPixels(), particleImage.getWidth(), particleImage.getHeight(), GL_RGBA );
+	nawlzSand.setup();
+	
+	bDebug = false;
+	
+	gui.addToggle( "bDebug", bDebug );
+	
+	gui.setAutoSave( false );
+	gui.show();
 }
 
 ///////////////////////////////////////////
@@ -30,7 +42,7 @@ void NawlzSandApp :: setup()
 
 void NawlzSandApp :: update()
 {
-	//
+	nawlzSand.update();
 }
 
 ///////////////////////////////////////////
@@ -39,7 +51,12 @@ void NawlzSandApp :: update()
 
 void NawlzSandApp :: draw()
 {
-	backgroundImage.draw( 0, 0 );
+	nawlzSand.draw();
+	
+	if( bDebug )
+	{
+		gui.draw();
+	}
 }
 
 ///////////////////////////////////////////
@@ -78,7 +95,7 @@ void NawlzSandApp :: keyReleased(int key)
 
 void NawlzSandApp :: mouseMoved(int x, int y )
 {
-	//
+	nawlzSand.mouseMoved( x, y );
 }
 
 void NawlzSandApp :: mouseDragged(int x, int y, int button)
@@ -88,12 +105,12 @@ void NawlzSandApp :: mouseDragged(int x, int y, int button)
 
 void NawlzSandApp :: mousePressed(int x, int y, int button)
 {
-	
+	nawlzSand.mousePressed( x, y, button );
 }
 
 void NawlzSandApp :: mouseReleased(int x, int y, int button)
 {
-	
+	nawlzSand.mouseReleased( x, y, button );
 }
 
 void NawlzSandApp :: windowResized(int w, int h)
