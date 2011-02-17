@@ -28,7 +28,7 @@ void NawlzFluidApp :: setup()
 	nawlzFluid.bDrawFluid		= false;
 	nawlzFluid.setup();
 	
-	bDebug = true;
+	bDebug = false;
 	
 	gui.addToggle( "draw mesh grid",		nawlzFluid.bDrawMeshGrid );
 	gui.addToggle( "draw mesh quads",		nawlzFluid.bDrawMeshQuads );
