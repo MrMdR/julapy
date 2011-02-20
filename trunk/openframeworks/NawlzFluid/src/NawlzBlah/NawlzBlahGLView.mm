@@ -140,7 +140,7 @@ DEBUG_LINE(BOOL glViewExists = NO);
 	int imageWidth;
 	int imageHeight;
 	
-	imagePath	= [ FilePath pathForAsset : @"blah_particle.png" ];
+	imagePath	= [ FilePath pathForAsset : @"blah_particle_2.png" ];
 	image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
 	
 	CGContextRef spriteContext;

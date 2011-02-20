@@ -28,7 +28,7 @@ public:
 	
 	bool		isAlive		();
 	
-	void		update		();
+	void		update		( float forceScale = 1.0 );
 	void		draw		();
 	void		drawDebug	();
 	
@@ -73,4 +73,6 @@ public:
 	
 	float		scale;
 	float		scaleMin;
+	
+	float		friction;
 };

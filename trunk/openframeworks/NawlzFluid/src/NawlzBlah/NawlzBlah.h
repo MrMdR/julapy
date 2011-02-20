@@ -31,10 +31,14 @@ public:
 	void update	();
 	void draw	();
 	
+	void initFluid				();
+	void createFluidTexture		();
+	
 	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
 	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
 	
 	void addParticle	();
+	void addToFluid		( Vec2f pos, Vec2f vel, bool addColor, bool addForce );
 	
 	void keyPressed		( int key );
 	void keyReleased	( int key );
@@ -54,4 +58,23 @@ public:
 	float wanderChange;
 	float wanderEase;
 	
+	ofTexture*		fluidTexture;
+	unsigned char*	fluidPixels;
+	
+	FluidSolver		fluidSolver;
+	int				fluidCellsX;
+	bool			bResizeFluid;
+	Vec2f			pMouse;
+	
+	bool	fluidEnableRGB;
+	float	fluidFadeSpeed;
+	float	fluidDeltaT;
+	float	fluidVisc;
+	float	fluidColorDiffusion;
+	int		fluidSolverIterations;
+	bool	fluidEnableVorticityConfinement;
+	bool	fluidWrapX;
+	bool	fluidWrapY;
+	bool	fluidInputVelocityMult;
+	float	fluidScale;
 };
