@@ -55,6 +55,12 @@ NawlzFluid :: ~NawlzFluid()
 		delete fluidTexture;
 		fluidTexture = NULL;
 	}
+	
+	if( fluidPixels )
+	{
+		delete[] fluidPixels;
+		fluidPixels = NULL;
+	}
 }
 
 ///////////////////////////////////////////
@@ -685,7 +691,7 @@ void NawlzFluid :: drawMeshGrid ()
 		
 		// optimised but not pretty.
 		
-		ofLine( mq.ver_coords[ 0 ], mq.ver_coords[ 1 ], mq.ver_coords[ 2 ], mq.ver_coords[ 3 ] );	
+		ofLine( mq.ver_coords[ 0 ], mq.ver_coords[ 1 ], mq.ver_coords[ 2 ], mq.ver_coords[ 3 ] );
 		ofLine( mq.ver_coords[ 6 ], mq.ver_coords[ 7 ], mq.ver_coords[ 0 ], mq.ver_coords[ 1 ] );
 		
 		continue;

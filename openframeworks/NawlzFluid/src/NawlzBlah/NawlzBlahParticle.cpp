@@ -38,6 +38,8 @@ NawlzBlahParticle :: NawlzBlahParticle()
 	scale		= 0;
 	scaleMin	= ofRandom( 0.4, 0.6 );
 	
+	friction	= ofRandom( 0.5, 1.0 );
+	
 	bUseImageForBounds = false;
 	
 	tex = NULL;
@@ -82,11 +84,11 @@ bool NawlzBlahParticle :: isAlive ()
 	return lifeCount < lifeLimit;
 }
 
-void NawlzBlahParticle :: update()
+void NawlzBlahParticle :: update( float forceScale )
 {
 	wander();
 	
-	vel += acc;
+	vel += acc * forceScale;
 	vel.limit( maxspeed );
 	loc += vel;
 	acc.set( 0, 0 );
