@@ -13,11 +13,39 @@ NawlzSand :: NawlzSand ()
 {
 	backgroundTexture	= NULL;
 	particleTexture		= NULL;
+	
+	fluidTexture	= NULL;
+	fluidPixels		= NULL;
 }
 
 NawlzSand :: ~NawlzSand ()
 {
-	//
+	if( backgroundTexture )
+	{
+		backgroundTexture->clear();
+		delete backgroundTexture;
+		backgroundTexture = NULL;
+	}
+	
+	if( particleTexture )
+	{
+		particleTexture->clear();
+		delete particleTexture;
+		particleTexture = NULL;
+	}
+	
+	if( fluidTexture )
+	{
+		fluidTexture->clear();
+		delete fluidTexture;
+		fluidTexture = NULL;
+	}
+	
+	if( fluidPixels )
+	{
+		delete[] fluidPixels;
+		fluidPixels = NULL;
+	}
 }
 
 ///////////////////////////////////////////
@@ -44,6 +72,8 @@ void NawlzSand :: createParticleTexture ( unsigned char* pixels, int width, int 
 
 void NawlzSand :: setup	()
 {
+	initFluid();
+	
 	bounds.x		= 553;
 	bounds.y		= 97;
 	bounds.width	= 435;
@@ -55,10 +85,66 @@ void NawlzSand :: setup	()
 	bounds.width  *= 1 + ( extra * 2 );
 	bounds.height *= 1 + ( extra * 2 );
 	
-	for( int i=0; i<300; i++ )
+	for( int i=0; i<400; i++ )
 	{
 		addParticle();
 	}
+}
+
+void NawlzSand :: initFluid ()
+{
+	fluidEnableRGB					= false;
+	fluidFadeSpeed					= 0.002;
+	fluidDeltaT						= 0.15;
+	fluidVisc						= 0.001;
+	fluidColorDiffusion				= 0;
+	fluidSolverIterations			= 5;
+	fluidEnableVorticityConfinement	= false;
+	fluidWrapX						= false;
+	fluidWrapY						= false;
+	fluidInputVelocityMult			= 0.2;
+	fluidScale						= 0;
+	
+	fluidSolver.setup( 100, 100 );
+	fluidSolver.enableRGB( fluidEnableRGB );
+	fluidSolver.setFadeSpeed( fluidFadeSpeed );
+	fluidSolver.setDeltaT( fluidDeltaT );
+	fluidSolver.setVisc( fluidVisc );
+	fluidSolver.setColorDiffusion( fluidColorDiffusion );
+	fluidSolver.setSolverIterations( fluidSolverIterations );
+	fluidSolver.enableVorticityConfinement( fluidEnableVorticityConfinement );
+	fluidSolver.setWrap( fluidWrapX, fluidWrapY );
+	
+	fluidCellsX		= 50;
+	bResizeFluid	= true;
+	
+	createFluidTexture();
+}
+
+void NawlzSand :: createFluidTexture ()
+{
+	if( fluidPixels )
+	{
+		delete[] fluidPixels;
+	}
+	
+	int texWidth	= fluidSolver.getWidth()  - 2;
+	int texHeight	= fluidSolver.getHeight() - 2;
+	int texPixCount	= texWidth * texHeight * 4;
+	
+	fluidPixels		= new unsigned char[ texPixCount ];
+	
+	for( int i=0; i<texPixCount; i+=4 )
+	{
+		fluidPixels[ i + 0 ] = 0;
+		fluidPixels[ i + 1 ] = 0;
+		fluidPixels[ i + 2 ] = 0;
+		fluidPixels[ i + 3 ] = 124;
+	}
+	
+	fluidTexture = new ofTexture();
+	fluidTexture->allocate( texWidth, texHeight, GL_RGBA );
+	fluidTexture->loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
 }
 
 void NawlzSand :: addParticle ()
@@ -91,13 +177,91 @@ void NawlzSand :: addParticle ()
 
 void NawlzSand :: update ()
 {
+	if( bResizeFluid )
+	{
+		float r;
+		r = ofGetWidth() / (float)ofGetHeight();
+		
+		fluidSolver.setSize( fluidCellsX, fluidCellsX / r );
+		
+		createFluidTexture();
+		
+		bResizeFluid = false;
+	}
+	
+	fluidSolver.enableRGB( fluidEnableRGB );
+	fluidSolver.setFadeSpeed( fluidFadeSpeed );
+	fluidSolver.setDeltaT( fluidDeltaT );
+	fluidSolver.setVisc( fluidVisc );
+	fluidSolver.setColorDiffusion( fluidColorDiffusion );
+	fluidSolver.setSolverIterations( fluidSolverIterations );
+	fluidSolver.enableVorticityConfinement( fluidEnableVorticityConfinement );
+	fluidSolver.setWrap( fluidWrapX, fluidWrapY );
+	fluidSolver.update();
+	
+	fluidScale *= 0.98;		// decay fluid scale.
+	
+	//--- particles.
+	
+	Vec2f fluidVel;
+	
+	float maxVel;
+	maxVel = 0.00025;
+	maxVel = 0.0005;
+	maxVel = 0.001;
+	maxVel = 0.002;
+	
 	int t = particles.size();
 	for( int i=0; i<t; i++ )
 	{
 		NawlzSandParticle* particle;
 		particle = particles[ i ];
-		particle->update();
+		
+		particle->update( 1 - fluidScale );
+		
+		//--- calc fluid force.
+		
+		float px = particle->loc.x / (float)ofGetWidth();
+		float py = particle->loc.y / (float)ofGetHeight();
+		
+		Vec2f p( px, py );
+		fluidVel = fluidSolver.getVelocityAtPos( p );
+		
+		fluidVel.limit( maxVel );
+		fluidVel *= 10000;
+		fluidVel *= fluidScale * fluidScale;
+		fluidVel *= particle->friction;
+//		fluidVel *= ( lp < 0.1 ) ? 0 : 1.0;
+//		fluidVel *= ( lp < 0.15 ) ? ( ( lp - 0.1 ) / 0.15 ) : 1.0;
+		
+		particle->loc.x += fluidVel.x;
+		particle->loc.y += fluidVel.y;
 	}
+}
+
+void NawlzSand :: addToFluid( Vec2f pos, Vec2f vel, bool addColor, bool addForce )
+{
+    float speed = vel.x * vel.x  + vel.y * vel.y * getWindowAspectRatio() * getWindowAspectRatio();    // balance the x and y components of speed with the screen aspect ratio
+    
+	if(speed > 0) 
+	{
+		pos.x = constrain(pos.x, 0.0f, 1.0f);
+		pos.y = constrain(pos.y, 0.0f, 1.0f);
+		
+		const float colorMult = 100;
+		
+        int index = fluidSolver.getIndexForPos(pos);
+		
+		if( addColor )
+		{
+			fluidSolver.addColorAtIndex( index, Color :: white() * colorMult );
+		}
+		
+		if( addForce )
+		{
+			fluidSolver.addForceAtIndex( index, vel * fluidInputVelocityMult );
+		}
+    }
 }
 
 ///////////////////////////////////////////
@@ -141,7 +305,14 @@ void NawlzSand :: keyReleased(int key)
 
 void NawlzSand :: mouseMoved(int x, int y )
 {
-	//
+	Vec2f eventPos	= Vec2f( x, y );
+	Vec2f mouseNorm	= Vec2f( eventPos ) / getWindowSize();
+	Vec2f mouseVel	= Vec2f( eventPos - pMouse ) / getWindowSize();
+	pMouse = eventPos;
+	
+	addToFluid( mouseNorm, mouseVel, false, true );
+	
+	fluidScale = 1.0;
 }
 
 void NawlzSand :: mouseDragged(int x, int y, int button)
