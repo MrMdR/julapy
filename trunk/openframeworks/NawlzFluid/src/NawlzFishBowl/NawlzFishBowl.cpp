@@ -20,7 +20,7 @@ NawlzFishBowl :: NawlzFishBowl ()
 	
 	bDrawBackground = true;
 	bDrawParticles	= true;
-	bDrawBowl		= false;
+	bDrawBowl		= true;
 	bOverRoi		= false;
 	bTouchDown		= false;
 }
@@ -46,6 +46,9 @@ NawlzFishBowl :: ~NawlzFishBowl ()
 		bowlTexture->clear();
 		delete bowlTexture;
 		bowlTexture = NULL;
+		
+		delete[] bowlPixels;
+		bowlPixels = NULL;
 	}
 	
 	if( fluidTexture )
@@ -61,8 +64,8 @@ void NawlzFishBowl :: setup ()
 	mouseX = 0;
 	mouseY = 0;
 	
-	initFluid();
-	createFluidTexture();
+//	initFluid();
+//	createFluidTexture();
 	createParticles();
 }
 
@@ -172,11 +175,22 @@ void NawlzFishBowl :: createParticleTexture ( unsigned char* pixels, int width, 
 
 void NawlzFishBowl :: createBowlTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
 {
-	bowlPixels = pixels;
+	int bowlPixelDepth = 1;
+	if( glType == GL_RGB )
+		bowlPixelDepth = 3;
+	else if( glType == GL_RGBA )
+		bowlPixelDepth = 4;
+	
+	int t = width * height * bowlPixelDepth;
+	bowlPixels = new unsigned char[ t ];
+	for( int i=0; i<t; i++ )
+	{
+		bowlPixels[ i ] = pixels[ i ];
+	}
 	
 	bowlTexture = new ofTexture();
 	bowlTexture->allocate( width, height, glType );
-	bowlTexture->loadData( pixels, width, height, glType );
+	bowlTexture->loadData( bowlPixels, width, height, glType );
 	
 	bowlTextureXY.x = x;
 	bowlTextureXY.y = y;
@@ -206,7 +220,7 @@ void NawlzFishBowl :: createParticles ()
 		particles.back().setLoc( pos.x, pos.y );
 		particles.back().setVel( vel.x, vel.y );
 		particles.back().setBounds( roi );
-		particles.back().setImageBounds( bowlRect, bowlPixels );
+		particles.back().setImageBounds( bowlRect, bowlPixels, bowlPixelDepth );
 		particles.back().setTexture( particleTexture );
 	}
 }
@@ -231,22 +245,22 @@ void NawlzFishBowl :: update ()
 		float r;
 		r = ofGetWidth() / (float)ofGetHeight();
 		
-		fluidSolver.setSize( fluidCellsX, fluidCellsX / r );
+//		fluidSolver.setSize( fluidCellsX, fluidCellsX / r );
 		
 		createFluidTexture();
 		
 		bResizeFluid = false;
 	}
 	
-	fluidSolver.enableRGB( fluidEnableRGB );
-	fluidSolver.setFadeSpeed( fluidFadeSpeed );
-	fluidSolver.setDeltaT( fluidDeltaT );
-	fluidSolver.setVisc( fluidVisc );
-	fluidSolver.setColorDiffusion( fluidColorDiffusion );
-	fluidSolver.setSolverIterations( fluidSolverIterations );
-	fluidSolver.enableVorticityConfinement( fluidEnableVorticityConfinement );
-	fluidSolver.setWrap( fluidWrapX, fluidWrapY );
-	fluidSolver.update();
+//	fluidSolver.enableRGB( fluidEnableRGB );
+//	fluidSolver.setFadeSpeed( fluidFadeSpeed );
+//	fluidSolver.setDeltaT( fluidDeltaT );
+//	fluidSolver.setVisc( fluidVisc );
+//	fluidSolver.setColorDiffusion( fluidColorDiffusion );
+//	fluidSolver.setSolverIterations( fluidSolverIterations );
+//	fluidSolver.enableVorticityConfinement( fluidEnableVorticityConfinement );
+//	fluidSolver.setWrap( fluidWrapX, fluidWrapY );
+//	fluidSolver.update();
 	
 	if( bDrawParticles )
 	{
@@ -256,9 +270,6 @@ void NawlzFishBowl :: update ()
 
 void NawlzFishBowl :: updateParticles ()
 {
-	int fw = fluidSolver.getWidth();
-	int fh = fluidSolver.getHeight();
-	
 	Vec2f vel;
 	Vec2f roiCenter;
 	roiCenter.set( roi.x + roi.width * 0.5, roi.y + roi.height * 0.5 );
@@ -348,7 +359,7 @@ bool NawlzFishBowl :: isPointInsideBowl ( float x, float y )
 	int ix	= px * iw;
 	int iy	= py * ih;
 	
-	int p	= ( ( iy * iw ) + ix ) * 3;
+	int p	= ( ( iy * iw ) + ix ) * bowlPixelDepth;
 	
 	return bowlPixels[ p ] < 255;
 }
@@ -542,7 +553,7 @@ void NawlzFishBowl :: mouseMoved(int x, int y )
 	Vec2f eventPos	= Vec2f( mouseX, mouseY );
 	Vec2f mouseNorm	= Vec2f( eventPos ) / getWindowSize();
 	Vec2f mouseVel	= Vec2f( eventPos - pMouse ) / getWindowSize();
-	addToFluid( mouseNorm, mouseVel, false, true );
+//	addToFluid( mouseNorm, mouseVel, false, true );
 	
 	pMouse = eventPos;
 }
