@@ -58,6 +58,8 @@ public:
 	float wanderChange;
 	float wanderEase;
 	
+	//---- fluid.
+	
 	ofTexture*		fluidTexture;
 	unsigned char*	fluidPixels;
 	

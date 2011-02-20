@@ -24,6 +24,8 @@ NawlzSandParticle :: NawlzSandParticle()
 	wanderDistance	= 60.0;
 	wanderChange	= 0.25;
 	
+	friction		= ofRandom( 0.5, 1.0 );
+	
 	bUseImageForBounds = false;
 	
 	tex = NULL;
@@ -66,11 +68,13 @@ void NawlzSandParticle :: setTexture ( ofTexture* tex )
 	this->tex = tex;
 }
 
-void NawlzSandParticle :: update()
+void NawlzSandParticle :: update( float forceScale )
 {
 	wander();
 	
-	vel += acc;
+	forceScale = ofClamp( forceScale, 0.3, 1.0 );
+	
+	vel += acc * forceScale;
 	vel.limit( maxspeed );
 	loc += vel;
 	acc.set( 0, 0 );
@@ -88,7 +92,7 @@ void NawlzSandParticle :: wander()
 	bool isOutside;
 	isOutside = constrainToBorders( circle );
 	
-	ease = isOutside ? 1.0 : 0.2;
+	ease		= isOutside ? 1.0 : 0.2;
 	
 	circleOffSet	= ofxVec2f( wanderRadius * cos( wanderTheta ), wanderRadius * sin( wanderTheta ) );
 	circleTarget	= circle + circleOffSet;

@@ -26,7 +26,7 @@ public:
 	void		setImageBounds	( const ofRectangle& rect, unsigned char* pixels );
 	void		setTexture		( ofTexture* tex );
 	
-	void		update		();
+	void		update		( float forceScale = 1.0 );
 	void		draw		();
 	void		drawDebug	();
 	
@@ -60,4 +60,6 @@ public:
 	unsigned char*	imagePixels;
 	
 	ofTexture*	tex;
+	
+	float friction;
 };
