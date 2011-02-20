@@ -94,6 +94,7 @@ private:
 	ofTexture*		bowlTexture;
 	unsigned char*	bowlPixels;
 	ofRectangle		bowlRect;
+	int				bowlPixelDepth;
 	ofTexture*		fluidTexture;
 	unsigned char*	fluidPixels;
 	

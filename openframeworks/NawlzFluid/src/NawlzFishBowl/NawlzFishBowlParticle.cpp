@@ -66,10 +66,11 @@ void NawlzFishBowlParticle :: setBounds ( const ofRectangle& rect )
 	bounds = rect;
 }
 
-void NawlzFishBowlParticle :: setImageBounds ( const ofRectangle& rect, unsigned char* pixels )
+void NawlzFishBowlParticle :: setImageBounds ( const ofRectangle& rect, unsigned char* pixels, int pixelDepth )
 {
-	imageRect	= rect;
-	imagePixels	= pixels;
+	imageRect		= rect;
+	imagePixels		= pixels;
+	imagePixelDepth	= pixelDepth;
 	bUseImageForBounds = true;
 }
 
@@ -175,7 +176,7 @@ bool NawlzFishBowlParticle :: constrainToImage ( const ofxVec2f& target )
 	int ix	= px * iw;
 	int iy	= py * ih;
 	
-	int p	= ( ( iy * iw ) + ix ) * 3;
+	int p	= ( ( iy * iw ) + ix ) * imagePixelDepth;
 	
 	isOutside = imagePixels[ p ] == 255;
 	

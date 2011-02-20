@@ -23,7 +23,7 @@ public:
 	void		setLoc			( float x, float y );
 	void		setVel			( float x, float y );
 	void		setBounds		( const ofRectangle& rect );
-	void		setImageBounds	( const ofRectangle& rect, unsigned char* pixels );
+	void		setImageBounds	( const ofRectangle& rect, unsigned char* pixels, int pixelDepth );
 	void		setTexture		( ofTexture* tex );
 	
 	void		update		();
@@ -63,6 +63,7 @@ public:
 	bool			bUseImageForBounds;
 	ofRectangle		imageRect;
 	unsigned char*	imagePixels;
+	int				imagePixelDepth;
 	
 	ofTexture*	tex;
 };
