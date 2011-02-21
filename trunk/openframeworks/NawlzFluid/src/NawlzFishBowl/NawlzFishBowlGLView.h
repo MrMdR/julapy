@@ -20,7 +20,6 @@
 	GLint backingHeight;
 	
 	NawlzFishBowl*	nawlzFishBowl;
-	ofRectangle		roi;
 	
 	EAGLContext *context;
 	

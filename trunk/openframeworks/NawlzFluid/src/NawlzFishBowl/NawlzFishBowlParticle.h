@@ -26,7 +26,7 @@ public:
 	void		setImageBounds	( const ofRectangle& rect, unsigned char* pixels, int pixelDepth );
 	void		setTexture		( ofTexture* tex );
 	
-	void		update		();
+	void		update		( float forceScale = 1.0 );
 	void		draw		();
 	void		drawDebug	();
 	
@@ -57,10 +57,13 @@ public:
 	float rotation;
 	float rotationVel;
 	
+	float friction;
+	
 	vector<int>		colors;
 	int				color;
 	
 	bool			bUseImageForBounds;
+	bool			bIsOutsideImageBounds;
 	ofRectangle		imageRect;
 	unsigned char*	imagePixels;
 	int				imagePixelDepth;
