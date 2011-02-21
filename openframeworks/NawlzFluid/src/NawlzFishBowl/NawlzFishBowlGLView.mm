@@ -73,13 +73,6 @@ DEBUG_LINE(BOOL glViewExists = NO);
 {
 	nawlzFishBowl = new NawlzFishBowl();
 	
-	roi.x		= 647;
-	roi.y		= 80;
-	roi.width	= 359;
-	roi.height	= 359;
-	
-	nawlzFishBowl->setROI( roi );
-	
 	[ self createBackgroundTexture ];
 //	[ self createParticleTexture ];
 	[ self createBowlTexture ];
@@ -151,7 +144,7 @@ DEBUG_LINE(BOOL glViewExists = NO);
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
 	CGContextRelease(spriteContext);
 	
-	nawlzFishBowl->createBowlTexture( pixels, imageWidth, imageHeight, GL_RGBA, roi.x, roi.y );
+	nawlzFishBowl->createBowlTexture( pixels, imageWidth, imageHeight, GL_RGBA );
 	
 	free( pixels );
 	[ image release ];

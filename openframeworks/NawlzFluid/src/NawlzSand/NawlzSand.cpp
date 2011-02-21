@@ -13,9 +13,6 @@ NawlzSand :: NawlzSand ()
 {
 	backgroundTexture	= NULL;
 	particleTexture		= NULL;
-	
-	fluidTexture	= NULL;
-	fluidPixels		= NULL;
 }
 
 NawlzSand :: ~NawlzSand ()
@@ -32,19 +29,6 @@ NawlzSand :: ~NawlzSand ()
 		particleTexture->clear();
 		delete particleTexture;
 		particleTexture = NULL;
-	}
-	
-	if( fluidTexture )
-	{
-		fluidTexture->clear();
-		delete fluidTexture;
-		fluidTexture = NULL;
-	}
-	
-	if( fluidPixels )
-	{
-		delete[] fluidPixels;
-		fluidPixels = NULL;
 	}
 }
 
@@ -117,34 +101,6 @@ void NawlzSand :: initFluid ()
 	
 	fluidCellsX		= 50;
 	bResizeFluid	= true;
-	
-	createFluidTexture();
-}
-
-void NawlzSand :: createFluidTexture ()
-{
-	if( fluidPixels )
-	{
-		delete[] fluidPixels;
-	}
-	
-	int texWidth	= fluidSolver.getWidth()  - 2;
-	int texHeight	= fluidSolver.getHeight() - 2;
-	int texPixCount	= texWidth * texHeight * 4;
-	
-	fluidPixels		= new unsigned char[ texPixCount ];
-	
-	for( int i=0; i<texPixCount; i+=4 )
-	{
-		fluidPixels[ i + 0 ] = 0;
-		fluidPixels[ i + 1 ] = 0;
-		fluidPixels[ i + 2 ] = 0;
-		fluidPixels[ i + 3 ] = 124;
-	}
-	
-	fluidTexture = new ofTexture();
-	fluidTexture->allocate( texWidth, texHeight, GL_RGBA );
-	fluidTexture->loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
 }
 
 void NawlzSand :: addParticle ()
@@ -183,8 +139,6 @@ void NawlzSand :: update ()
 		r = ofGetWidth() / (float)ofGetHeight();
 		
 		fluidSolver.setSize( fluidCellsX, fluidCellsX / r );
-		
-		createFluidTexture();
 		
 		bResizeFluid = false;
 	}

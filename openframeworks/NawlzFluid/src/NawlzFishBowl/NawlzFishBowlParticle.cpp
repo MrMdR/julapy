@@ -16,7 +16,7 @@ NawlzFishBowlParticle :: NawlzFishBowlParticle()
 	vel = ofPoint( 0, 0 );
 	
 	float r = ofRandom( 0.0, 1.0 );
-	r = (int)( r * 4 );
+	r = (int)( r * 2 );
 	r *= 2;
 	
 	size = r + 5;
@@ -34,12 +34,15 @@ NawlzFishBowlParticle :: NawlzFishBowlParticle()
 	rotationVel *= ( ofRandom( 0, 1.0 ) > 0.5 ) ? 1 : -1;
 	rotationVel	*= ( ofRandom( 0, 1.0 ) > 0.9 ) ? 3 : 1;
 	
-	colors.push_back( 0xc7c7c7 );
+	friction = ofRandom( 0.5, 1.0 );
+	
+//	colors.push_back( 0xc7c7c7 );
 	colors.push_back( 0x929292 );
-	colors.push_back( 0x777777 );
+//	colors.push_back( 0x777777 );
 	color = colors[ (int)ofRandom( 0, colors.size() ) ];
 	
-	bUseImageForBounds = false;
+	bUseImageForBounds		= false;
+	bIsOutsideImageBounds	= false;
 	
 	tex = NULL;
 }
@@ -79,11 +82,11 @@ void NawlzFishBowlParticle :: setTexture ( ofTexture* tex )
 	this->tex = tex;
 }
 
-void NawlzFishBowlParticle :: update()
+void NawlzFishBowlParticle :: update( float forceScale )
 {
 	wander();
 	
-	vel += acc;
+	vel += acc * forceScale;
 	vel.limit( maxspeed );
 	loc += vel;
 	acc.set( 0, 0 );
@@ -103,7 +106,7 @@ void NawlzFishBowlParticle :: wander()
 	bool isOutside;
 	if( bUseImageForBounds )
 	{
-		isOutside = constrainToImage( circle );
+		isOutside = bIsOutsideImageBounds = constrainToImage( circle );
 	}
 	else
 	{

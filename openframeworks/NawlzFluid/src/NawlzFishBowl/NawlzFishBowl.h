@@ -39,7 +39,6 @@ public:
 	void update	();
 	void draw	();
 	
-	void setROI						( const ofRectangle& roi );
 	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
 	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
 	void createBowlTexture			( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
@@ -52,26 +51,7 @@ public:
 	void mouseReleased	( int x, int y, int button );
 	void windowResized	( int w, int h );
 	
-	bool	bDrawBackground;
-	bool	bDrawParticles;
-	bool	bDrawBowl;
-	
-	bool	fluidEnableRGB;
-	float	fluidFadeSpeed;
-	float	fluidDeltaT;
-	float	fluidVisc;
-	float	fluidColorDiffusion;
-	int		fluidSolverIterations;
-	bool	fluidEnableVorticityConfinement;
-	bool	fluidWrapX;
-	bool	fluidWrapY;
-	bool	fluidInputVelocityMult;
-	
-private:
-	
 	void initFluid	();
-	
-	void createFluidTexture			();
 	void createParticles			();
 	
 	void updateParticles			();
@@ -81,11 +61,14 @@ private:
 	void drawParticles	();
 	
 	void addToFluid		( Vec2f pos, Vec2f vel, bool addColor, bool addForce );
-	void drawVectors	( float x, float y, float renderWidth, float renderHeight );
-	void drawFluid		();
 	
-	int			mouseX;
-	int			mouseY;
+	bool		bDrawBackground;
+	bool		bDrawParticles;
+	bool		bDrawBowl;
+	bool		bOverRoi;
+	bool		bTouchDown;
+
+	vector<NawlzFishBowlParticle*>	particles;
 	
 	ofRectangle		roi;
 	
@@ -95,8 +78,6 @@ private:
 	unsigned char*	bowlPixels;
 	ofRectangle		bowlRect;
 	int				bowlPixelDepth;
-	ofTexture*		fluidTexture;
-	unsigned char*	fluidPixels;
 	
 	ofPoint			backgroundTextureXY;
 	ofPoint			bowlTextureXY;
@@ -107,8 +88,15 @@ private:
 	bool			bResizeFluid;
 	Vec2f			pMouse;
 	
-	vector<NawlzFishBowlParticle>	particles;
+	bool			fluidEnableRGB;
+	float			fluidFadeSpeed;
+	float			fluidDeltaT;
+	float			fluidVisc;
+	float			fluidColorDiffusion;
+	int				fluidSolverIterations;
+	bool			fluidEnableVorticityConfinement;
+	bool			fluidWrapX;
+	bool			fluidWrapY;
+	bool			fluidInputVelocityMult;
 	
-	bool			bOverRoi;
-	bool			bTouchDown;
 };

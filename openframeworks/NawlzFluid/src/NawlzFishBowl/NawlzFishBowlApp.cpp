@@ -25,16 +25,9 @@ void NawlzFishBowlApp :: setup()
 	particleImage.loadImage( "NawlzFishBowl/fish_bowl_particle.png" );
 	bowlImage.loadImage( "NawlzFishBowl/fish_bowl_trace.png" );
 	
-	ofRectangle	roi;
-	roi.x		= 647;
-	roi.y		= 80;
-	roi.width	= 359;
-	roi.height	= 359;
-	
-	nawlzFishBowl.setROI( roi );
 	nawlzFishBowl.createBackgroundTexture( backgroundImage.getPixels(), backgroundImage.width, backgroundImage.height, GL_RGB );
 	nawlzFishBowl.createParticleTexture( particleImage.getPixels(), particleImage.width, particleImage.height, GL_RGBA );
-	nawlzFishBowl.createBowlTexture( bowlImage.getPixels(), bowlImage.width, bowlImage.height, GL_RGB, roi.x, roi.y );
+	nawlzFishBowl.createBowlTexture( bowlImage.getPixels(), bowlImage.width, bowlImage.height, GL_RGB );
 	nawlzFishBowl.bDrawParticles	= true;
 	nawlzFishBowl.bDrawBackground	= true;
 	nawlzFishBowl.setup();
