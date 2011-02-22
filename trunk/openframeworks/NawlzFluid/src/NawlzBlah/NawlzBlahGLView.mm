@@ -27,7 +27,7 @@
 #pragma mark -
 #pragma mark Initialization and Shutdown
 
-DEBUG_LINE(BOOL glViewExists = NO);
+//DEBUG_LINE(BOOL glViewExists = NO);
 
 - (id)initWithFrame:(CGRect)aRect
 {
