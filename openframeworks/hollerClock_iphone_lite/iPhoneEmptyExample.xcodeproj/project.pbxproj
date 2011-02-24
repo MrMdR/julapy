@@ -128,6 +128,7 @@
 		15D63C3112FFC738004664AC /* ofxGeom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D63C1E12FFC738004664AC /* ofxGeom.cpp */; };
 		15D63C8312FFCCA4004664AC /* haeckel_mode_one_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15D63C8112FFCCA4004664AC /* haeckel_mode_one_icon.png */; };
 		15D63C8412FFCCA4004664AC /* haeckel_mode_two_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15D63C8212FFCCA4004664AC /* haeckel_mode_two_icon.png */; };
+		15D9B7E61316583700EF1143 /* Util.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15D9B7E51316583700EF1143 /* Util.mm */; };
 		15E2FD5D13024CA700A92981 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15E2FD5613024CA700A92981 /* tinyxml.cpp */; };
 		15E2FD5E13024CA700A92981 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15E2FD5813024CA700A92981 /* tinyxmlerror.cpp */; };
 		15E2FD5F13024CA700A92981 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15E2FD5913024CA700A92981 /* tinyxmlparser.cpp */; };
@@ -397,6 +398,9 @@
 		15D63C1F12FFC738004664AC /* ofxGeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGeom.h; path = ../../../addons/ofxJulapyUtils/ofxGeom.h; sourceTree = SOURCE_ROOT; };
 		15D63C8112FFCCA4004664AC /* haeckel_mode_one_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = haeckel_mode_one_icon.png; path = "Resources-iPad/haeckel_mode_one_icon.png"; sourceTree = SOURCE_ROOT; };
 		15D63C8212FFCCA4004664AC /* haeckel_mode_two_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = haeckel_mode_two_icon.png; path = "Resources-iPad/haeckel_mode_two_icon.png"; sourceTree = SOURCE_ROOT; };
+		15D9B7CB1316568100EF1143 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		15D9B7E51316583700EF1143 /* Util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Util.mm; sourceTree = "<group>"; };
+		15D9B8A813167BC000EF1143 /* SplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SplashScreen.h; path = src/screens/SplashScreen.h; sourceTree = SOURCE_ROOT; };
 		15E2FD5613024CA700A92981 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
 		15E2FD5713024CA700A92981 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../addons/ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
 		15E2FD5813024CA700A92981 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
@@ -1021,6 +1025,25 @@
 			path = "Resources-iPad";
 			sourceTree = SOURCE_ROOT;
 		};
+		15D9B7C91316566F00EF1143 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				15D9B7CB1316568100EF1143 /* Util.h */,
+				15D9B7E51316583700EF1143 /* Util.mm */,
+			);
+			name = util;
+			path = src/util;
+			sourceTree = SOURCE_ROOT;
+		};
+		15D9B8A713167BC000EF1143 /* screens */ = {
+			isa = PBXGroup;
+			children = (
+				15D9B8A813167BC000EF1143 /* SplashScreen.h */,
+			);
+			name = screens;
+			path = src/screens;
+			sourceTree = SOURCE_ROOT;
+		};
 		15E2FD5413024CA700A92981 /* ofxXmlSettings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1219,6 +1242,8 @@
 				15D63AD412FFC598004664AC /* clockApp.mm */,
 				15D63B2712FFC6B3004664AC /* clock */,
 				15363BED130A40E0004D325F /* ui */,
+				15D9B8A713167BC000EF1143 /* screens */,
+				15D9B7C91316566F00EF1143 /* util */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1421,6 +1446,7 @@
 				15363F4D130A4108004D325F /* ofxFlashStage.cpp in Sources */,
 				15363F4E130A4108004D325F /* ofxFlashXFL.cpp in Sources */,
 				15363F4F130A4108004D325F /* ofxFlashXFLBuilder.cpp in Sources */,
+				15D9B7E61316583700EF1143 /* Util.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1518,7 +1544,7 @@
 		E49BCC2F12554938009F19D0 /* ReleaseArmv7 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Lukasz Karluk (C93W7G3N3S)";
 				COMPRESS_PNG_FILES = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
