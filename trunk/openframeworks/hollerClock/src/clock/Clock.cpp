@@ -49,11 +49,9 @@ Clock :: Clock ()
 	digits[ 4 ].p.x = digits[ 4 ].p1.x	= x += g;
 	digits[ 5 ].p.x = digits[ 5 ].p1.x	= x += d;
 
-//	x = 0.102;
 	x = 0.16;
 	d = 0.075;
-//	g = 0.26;
-	g = 0.215;
+	g = 0.2;
 	
 	digits[ 0 ].p2.x = x;
 	digits[ 1 ].p2.x = x += d;
@@ -104,9 +102,10 @@ void Clock :: setup ()
 	createBounds();
 	createCircles();
 	createLines();
-	createInfoScreen();
+//	createInfoScreen();
 //	createLabels();
 //	creatFreeCircles();
+	createButtonBoxes();
 }
 
 ///////////////////////////////////////////////
@@ -283,10 +282,10 @@ void Clock :: createCircles ()
 	
 	createCircle( hrsOne, digits[ 0 ].valueMax, 0, areaToRadius( area ),		colors[ 0 ], 0.14 );
 	createCircle( hrsTwo, digits[ 1 ].valueMax, 1, areaToRadius( area *= dec ),	colors[ 1 ], 0.26 );
-	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	colors[ 2 ], 0.475 );
-	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	colors[ 3 ], 0.55 );
-	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	colors[ 4 ], 0.75 );
-	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	colors[ 5 ], 0.82 );
+	createCircle( minOne, digits[ 2 ].valueMax, 2, areaToRadius( area *= dec ),	colors[ 2 ], 0.455 );
+	createCircle( minTwo, digits[ 3 ].valueMax, 3, areaToRadius( area *= dec ),	colors[ 3 ], 0.53 );
+	createCircle( secOne, digits[ 4 ].valueMax, 4, areaToRadius( area *= dec ),	colors[ 4 ], 0.73 );
+	createCircle( secTwo, digits[ 5 ].valueMax, 5, areaToRadius( area *= dec ),	colors[ 5 ], 0.80 );
 }
 
 void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle, int texIndex, float radius, int color, float lx )
@@ -330,9 +329,13 @@ void Clock  :: createCircle ( vector<ClockCircle*> &circlesVec, int numOfCircle,
 		float bounce	= 0.53;
 		float friction	= 0.1;
 		
+		float b = 0.3;	// border
+		float cx = screenWidth  * b + ofRandom( 0, screenWidth  * ( 1 - b * 2 ) );
+		float cy = screenHeight * b + ofRandom( 0, screenHeight * ( 1 - b * 2 ) );
+		
 		circle->enableGravity( false );
 		circle->setPhysics( mass, bounce, friction );
-		circle->setup( box2d->getWorld(), ofRandom( 0, screenWidth ), ofRandom( 0, screenHeight ), radius, false );
+		circle->setup( box2d->getWorld(), cx, cy, radius, false );
 		circle->setRotationFriction( 1.0 );
 		circle->setDamping( 1.0 );
 		
@@ -468,6 +471,46 @@ void Clock :: creatFreeCircles ()
 		
 		freeCircles.push_back( circle );
 	}
+}
+
+void Clock :: createButtonBoxes ()
+{
+	float h = 135;
+	
+	createButtonBox( 0,    0,    1,  1, h, -PI * 0.25 );
+	createButtonBox( 1024, 0,   -1,  1, h,  PI * 0.25 );
+	createButtonBox( 0,    768,  1, -1, h,  PI * 0.25 );
+	createButtonBox( 1024, 768, -1, -1, h, -PI * 0.25 );
+	
+	createButtonBox2( 20,  14,  116, 48 );
+	createButtonBox2( 871, 14,  116, 48 );
+	createButtonBox2( 19,  699, 116, 48 );
+	createButtonBox2( 874, 699, 116, 48 );
+}
+
+void Clock :: createButtonBox ( float x, float y, int dx, int dy, float h, float a )
+{
+	float d;
+	float w;
+	
+	d  = h * 0.5 * cos( a );
+	x += d * dx;
+	y += d * dy;
+	w  = h * tan( PI * 0.25 ) * 2;
+	
+	ofxBox2dRect* box;
+	box = new ofxBox2dRect();
+	box->setup( box2d->world, x, y, w, h, true );
+	box->body->SetXForm( b2Vec2( b2dNum( x ), b2dNum( y ) ), a );
+	buttonShapes.push_back( box );
+}
+
+void Clock :: createButtonBox2 ( float x, float y, float w, float h )
+{
+	ofxBox2dRect* box;
+	box = new ofxBox2dRect();
+	box->setup( box2d->world, x, y, w, h, true );
+	buttonShapes.push_back( box );
 }
 
 ///////////////////////////////////////////////
@@ -1123,6 +1166,11 @@ void Clock :: box2dContactEventHandler ( const b2ContactPoint* p )
 //	DRAW.
 ///////////////////////////////////////////////
 
+void Clock :: draw ()
+{
+	draw ( 0, 0 );
+}
+
 void Clock :: draw ( int x, int y )
 {
 	bool bMove = ( x != 0 || y != 0 );
@@ -1159,6 +1207,7 @@ void Clock :: draw ( int x, int y )
 	}
 	
 //	drawLabels();
+//	drawButtonBoxes();
 	
 	if( bMove )
 	{
@@ -1255,6 +1304,14 @@ void Clock :: drawFreeCircles ()
 	}
 	
 	ofDisableAlphaBlending();
+}
+
+void Clock :: drawButtonBoxes ()
+{
+	for( int i=0; i<buttonShapes.size(); i++ )
+	{
+		buttonShapes[ i ]->draw();
+	}
 }
 
 void Clock :: drawLabels ()
