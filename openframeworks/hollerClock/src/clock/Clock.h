@@ -11,6 +11,7 @@
 #define CLOCK_H
 
 #include "ofMain.h"
+#include "ofxFlashSprite.h"
 #include "ofxBox2d.h"
 #include "ofxVec2f.h"
 #include "ofxContourUtil.h"
@@ -41,7 +42,7 @@ struct ClockDigit
 	ofPoint p2;
 };
 
-class Clock : public ofxBox2dContactReceiver
+class Clock : public ofxFlashSprite, public ofxBox2dContactReceiver
 {
 public :
 	
@@ -79,9 +80,13 @@ public :
 	void  createInfoScreen	();
 	void  createLabels		();
 	void  creatFreeCircles	();
+	void  createButtonBoxes	();
+	void  createButtonBox	( float x, float y, int dx, int dy, float h, float a );
+	void  createButtonBox2	( float x, float y, float w, float h );
 	
 	void setup				();
 	void update				( int hrs, int min, int sec );
+	void draw				();
 	void draw				( int x=0, int y=0 );
 	
 	void initModeOne		();
@@ -117,6 +122,7 @@ public :
 	void drawCircleLine		( ClockCircle &circle );
 	void drawCircleNumbers	();
 	void drawFreeCircles	();
+	void drawButtonBoxes	();
 	void drawLabels			();
 	void drawTime			();
 	void drawRayCasts		();
@@ -149,6 +155,8 @@ public :
 	vector<ClockLabel*>		labels;
 	
 	vector<ClockFreeCircle*>	freeCircles;
+	
+	vector<ofxBox2dBaseShape*>	buttonShapes;
 	
 	int						clockMode;
 	

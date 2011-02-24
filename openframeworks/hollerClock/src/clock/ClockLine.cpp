@@ -41,9 +41,54 @@ void ClockLine :: setTexture ( ofTexture* tex )
 
 void ClockLine :: setup ()
 {
-	float px	= size.width  * 0.5 * cos( angle * DEG_TO_RAD );
-	float py	= size.height * 0.5 * sin( angle * DEG_TO_RAD );
-	length		= ofDist( 0, 0, px, py );
+	float half_w	= size.width  * 0.5;
+	float half_h	= size.height * 0.5;
+	float diag_len	= sqrt( half_w * half_w + half_h * half_h );
+	float diag_rad	= acos( half_h / diag_len );
+	float diag_ang	= diag_rad * RAD_TO_DEG;
+	
+	float a;
+	
+	if( angle < diag_ang )
+	{
+		a		= angle;
+		length	= half_h / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 90 )
+	{
+		a		= 90 - angle;
+		length	= half_w / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 180 - diag_ang )
+	{
+		a		= angle - 90;
+		length	= half_w / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 180 )
+	{
+		a		= 180 - angle;
+		length	= half_h / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 180 + diag_ang )
+	{
+		a		= angle - 180;
+		length	= half_h / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 270 )
+	{
+		a		= 270 - angle;
+		length	= half_w / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 360 - diag_ang )
+	{
+		a		= angle - 270;
+		length	= half_w / cos( a * DEG_TO_RAD );
+	}
+	else if( angle < 360 )
+	{
+		a		= 360 - angle;
+		length	= half_h / cos( a * DEG_TO_RAD );
+	}
 	
 	linePoints[ 0 ] = 0;
 	linePoints[ 1 ] = 0;
@@ -88,7 +133,7 @@ void ClockLine :: draw ( float w, float h )
 void ClockLine :: drawLine ( float w, float h )
 {
 	glPushMatrix();
-	glRotatef( angle, 0, 0, 1 );
+	glRotatef( angle - 90, 0, 0, 1 );
 	
 	//-- line.
 	
@@ -110,7 +155,7 @@ void ClockLine :: drawLine ( float w, float h )
 		glColor4f( 0, 0, 0, pointsPos[ i ] * 0.15 );
 		
 		ofFill();
-		ofRect( ( pointsPos[ i ] * w ) + 5, -1.5, 5, 3 );
+		ofRect( ( pointsPos[ i ] * length ) + 5, -1.5, 5, 3 );
 		
 		pointsPos[ i ] += pointsVel[ i ];
 		
