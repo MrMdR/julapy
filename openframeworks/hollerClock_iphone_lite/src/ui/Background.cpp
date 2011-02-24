@@ -54,6 +54,9 @@ Background :: Background( ofxFlashMovieClip* asset )
 	btn_home = new BackgroundBtn( (ofxFlashMovieClip*)asset->getChildByName( "btn_home" ) );
 	btn_home->asset->visible( false );
 	btns.push_back( btn_home );
+
+	btn_holler = new BackgroundBtn( (ofxFlashMovieClip*)asset->getChildByName( "btn_holler" ) );
+	btn_holler->asset->visible( true );
 	
 	screenIndex = 0;
 	
@@ -174,6 +177,13 @@ void Background :: update ()
 		
 		if( btn->isPressed() )
 			btnPressedHandler( btn );
+	}
+	
+	btn_holler->update();
+	
+	if( btn_holler->isPressed() )
+	{
+		Util :: getInstance()->launchSite( "http://hollersydney.com.au" );
 	}
 }
 
@@ -380,6 +390,12 @@ void Background :: setScreenByID ( int screenID )
 	tweenY = -screenPoint.y;
 	
 	bCenterScreen = ( screenID == 4 );
+
+	for( int i=0; i<btns.size(); i++ )
+	{
+		BackgroundBtn* btn = btns[ i ];
+		btn->asset->visible( bCenterScreen );
+	}
 	
 	btn_home->asset->visible( !bCenterScreen );
 }
