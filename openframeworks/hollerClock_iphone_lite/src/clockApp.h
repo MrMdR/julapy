@@ -10,6 +10,7 @@
 #include "ofxBox2d.h"
 #include "Clock.h"
 #include "Background.h"
+#include "SplashScreen.h"
 
 #define DEVICE_IPAD		0
 #define DEVICE_IPHONE	1
@@ -75,6 +76,8 @@ public:
 	ofxFlashXFL				xfl;
 	
 	Background*				bg;
+	
+	SplashScreen*			splashScreen;
 };
 
 
