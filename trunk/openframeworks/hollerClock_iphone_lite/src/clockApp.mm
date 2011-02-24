@@ -12,9 +12,19 @@ void clockApp :: setup()
 	
 	//-------------------
 	
+	splashScreen = NULL;
+	splashScreen = new SplashScreen();		// comment out to remove.
+	if( splashScreen != NULL )
+	{
+		splashScreen->setup();
+		splashScreen->draw();
+	}
+	
+	//-------------------
+	
 	rot				= 0;
 	rotTime			= 0;
-	rotTimeTotal	= 30;
+	rotTimeTotal	= 20;
 	bFlipLeft		= false;
 	bFlipRight		= false;
 
@@ -115,6 +125,8 @@ void clockApp :: setup()
 		loadImageToTexture( ofToDataPath( digitNames[ i ] ), texDigits[ i ] );
 	}
 	
+	initClock();
+	
 	//-- flash.
 	
 	stage = ofxFlashStage :: getInstance();			// ofxFlash setup.
@@ -125,9 +137,9 @@ void clockApp :: setup()
 	
 	bg = new Background( (ofxFlashMovieClip*)stage->root()->getChildByName( "bg" ) );
 	
-	//--
-	
-	initClock();
+	ofxFlashMovieClip* clockHolder;
+	clockHolder = (ofxFlashMovieClip*)bg->asset->getChildByName( "clock" );
+	clockHolder->addChild( &clock );
 }
 
 void clockApp :: initClock ()
@@ -179,6 +191,10 @@ void clockApp :: loadImageToTexture	( string path, ofTexture& tex )
 
 void clockApp :: update()
 {
+	if( splashScreen )
+		if( !splashScreen->isFading() )			// splash screen is not fading yet... don't update yet.
+			return;
+	
 	int hrs;
 	int min;
 	int sec;
@@ -250,13 +266,11 @@ void clockApp :: update()
 	gy *= ( ofxiPhoneGetOrientation() == OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT ) ? -1 : 1;
 	
 	clock.setGravity( gx, gy );
+	clock.update( hrs, min, sec );
 	
 	//-- update.
 
 	bg->update();
-	
-	clock.update( hrs, min, sec );
-	
 	stage->update();
 }
 
@@ -304,15 +318,35 @@ void clockApp :: draw()
 		glTranslatef( -screenSize.width * 0.5, -screenSize.height * 0.5, 0 );
 	}
 	
-	stage->draw();
-//	bg->draw();
+	bool bDrawStage = true;
+	if( splashScreen )
+	{
+		if( !splashScreen->isFading() )
+		{
+			bDrawStage = false;
+		}
+	}
 	
-	int cx = (int)( bg->asset->x() + BG_TILE_WIDTH );
-	int cy = (int)( bg->asset->y() + BG_TILE_HEIGHT );
-	clock.draw( cx, cy );
+	if( bDrawStage )
+	{
+		stage->draw();
+	}
 	
-	ofSetColor( 0x000000 );
-	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, 15 );
+	if( splashScreen )
+	{
+		if( splashScreen->isComplete() )
+		{
+			delete splashScreen;
+			splashScreen = NULL;
+		}
+		else
+		{
+			splashScreen->draw();
+		}
+	}
+	
+//	ofSetColor( 0x000000 );
+//	ofDrawBitmapString( ofToString( ofGetFrameRate(), 0 ), 15, 15 );
 	
 	if( bFlipLeft || bFlipRight )
 	{
