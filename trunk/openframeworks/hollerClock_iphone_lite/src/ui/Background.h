@@ -14,6 +14,7 @@
 #include "ofxVec2f.h"
 #include "BackgroundPanel.h"
 #include "BackgroundBtn.h"
+#include "Util.h"
 
 #define		BG_WIDTH		2048
 #define		BG_HEIGHT		1536
@@ -50,11 +51,12 @@ public:
 	void touchMoved		( int x, int y, int id );
 	void touchUp		( int x, int y, int id );
 	void touchDoubleTap	( int x, int y, int id );
-
+	
 	ofxFlashMovieClip*			asset;
 	vector<BackgroundPanel*>	tiles;
 	vector<BackgroundBtn*>		btns;
 	BackgroundBtn*				btn_home;
+	BackgroundBtn*				btn_holler;
 	
 	ofRectangle				screenRect;
 	vector<ofPoint>			screenPoints;
