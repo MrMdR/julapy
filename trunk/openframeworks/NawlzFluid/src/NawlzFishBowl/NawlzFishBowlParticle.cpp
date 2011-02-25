@@ -49,7 +49,7 @@ NawlzFishBowlParticle :: NawlzFishBowlParticle()
 	
 NawlzFishBowlParticle :: ~NawlzFishBowlParticle ()
 {
-	//
+	tex = NULL;
 }
 
 void NawlzFishBowlParticle :: setLoc ( float x, float y )

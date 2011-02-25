@@ -91,7 +91,7 @@ public:
 //	FLUID
 //////////////////////////////////////////////
 
-class NawlzFluid
+class NawlzFluid : public ofBaseApp
 {
 
 public:

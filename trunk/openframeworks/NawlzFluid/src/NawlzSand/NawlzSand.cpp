@@ -30,6 +30,21 @@ NawlzSand :: ~NawlzSand ()
 		delete particleTexture;
 		particleTexture = NULL;
 	}
+	
+	int t = particles.size();			// delete all particles.
+	for( int i=0; i<t; i++ )
+	{
+		NawlzSandParticle* particle;
+		particle = particles[ i ];
+		
+		particles.erase( particles.begin() + i );
+		
+		--i;
+		--t;
+		
+		delete particle;
+		particle = NULL;
+	}		
 }
 
 ///////////////////////////////////////////

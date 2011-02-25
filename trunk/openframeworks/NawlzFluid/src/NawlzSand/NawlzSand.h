@@ -19,7 +19,7 @@
 
 using namespace MSA;
 
-class NawlzSand
+class NawlzSand : public ofBaseApp
 {
 	
 public:

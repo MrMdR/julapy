@@ -32,7 +32,6 @@ public:
 	void draw	();
 	
 	void initFluid				();
-	void createFluidTexture		();
 	
 	void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
 	void createParticleTexture		( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
@@ -59,9 +58,6 @@ public:
 	float wanderEase;
 	
 	//---- fluid.
-	
-	ofTexture*		fluidTexture;
-	unsigned char*	fluidPixels;
 	
 	FluidSolver		fluidSolver;
 	int				fluidCellsX;
