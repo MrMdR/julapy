@@ -53,6 +53,21 @@ NawlzFishBowl :: ~NawlzFishBowl ()
 		delete[] bowlPixels;
 		bowlPixels = NULL;
 	}
+	
+	int t = particles.size();			// delete all particles.
+	for( int i=0; i<t; i++ )
+	{
+		NawlzFishBowlParticle* particle;
+		particle = particles[ i ];
+		
+		particles.erase( particles.begin() + i );
+		
+		--i;
+		--t;
+		
+		delete particle;
+		particle = NULL;
+	}		
 }
 
 void NawlzFishBowl :: setup ()

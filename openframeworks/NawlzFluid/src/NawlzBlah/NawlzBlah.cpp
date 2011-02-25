@@ -15,9 +15,6 @@ NawlzBlah :: NawlzBlah()
 	wanderRadius	= 16.0;
 	wanderDistance	= 60.0;
 	wanderEase		= 0.2;
-	
-	fluidTexture	= NULL;
-	fluidPixels		= NULL;
 }
 
 NawlzBlah :: ~NawlzBlah()
@@ -36,18 +33,20 @@ NawlzBlah :: ~NawlzBlah()
 		particleTexture = NULL;
 	}
 	
-	if( fluidTexture )
+	int t = particles.size();			// delete all particles.
+	for( int i=0; i<t; i++ )
 	{
-		fluidTexture->clear();
-		delete fluidTexture;
-		fluidTexture = NULL;
-	}
-	
-	if( fluidPixels )
-	{
-		delete[] fluidPixels;
-		fluidPixels = NULL;
-	}
+		NawlzBlahParticle* particle;
+		particle = particles[ i ];
+		
+		particles.erase( particles.begin() + i );
+		
+		--i;
+		--t;
+		
+		delete particle;
+		particle = NULL;
+	}		
 }
 
 ///////////////////////////////////////////
@@ -103,34 +102,6 @@ void NawlzBlah :: initFluid ()
 	
 	fluidCellsX		= 50;
 	bResizeFluid	= true;
-	
-	createFluidTexture();
-}
-
-void NawlzBlah :: createFluidTexture ()
-{
-	if( fluidPixels )
-	{
-		delete[] fluidPixels;
-	}
-	
-	int texWidth	= fluidSolver.getWidth()  - 2;
-	int texHeight	= fluidSolver.getHeight() - 2;
-	int texPixCount	= texWidth * texHeight * 4;
-	
-	fluidPixels		= new unsigned char[ texPixCount ];
-	
-	for( int i=0; i<texPixCount; i+=4 )
-	{
-		fluidPixels[ i + 0 ] = 0;
-		fluidPixels[ i + 1 ] = 0;
-		fluidPixels[ i + 2 ] = 0;
-		fluidPixels[ i + 3 ] = 124;
-	}
-	
-	fluidTexture = new ofTexture();
-	fluidTexture->allocate( texWidth, texHeight, GL_RGBA );
-	fluidTexture->loadData( fluidPixels, texWidth, texHeight, GL_RGBA );
 }
 
 ///////////////////////////////////////////
@@ -145,8 +116,6 @@ void NawlzBlah :: update ()
 		r = ofGetWidth() / (float)ofGetHeight();
 		
 		fluidSolver.setSize( fluidCellsX, fluidCellsX / r );
-		
-		createFluidTexture();
 		
 		bResizeFluid = false;
 	}
