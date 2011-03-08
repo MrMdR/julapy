@@ -13,7 +13,7 @@
 #include "ofxVec2f.h"
 #include "PixelFlow.h"
 
-#define PARTICLE_MAX_LENGTH		10000
+#define PARTICLE_MAX_LENGTH		100000
 
 class Particle
 {
@@ -26,6 +26,10 @@ public:
 	void setup		();
 	void update		();
 	
+	void wander					();
+	bool checkIsInsideBounds	( const ofxVec2f& target );
+	void constrainToBounds		( const ofxVec2f& target );
+	
 	void drawHead	();
 	void drawLine	();
 	void drawStrip	();
@@ -34,29 +38,59 @@ public:
 	void setInitialPosition		( float x, float y );
 	void setInitialVelocity		( float x, float y );
 	void setPixelRange			( int x, int y );
+	void setBounds				( const ofRectangle& rect );
 	
 	void addToStrip				();
 	void addToLineVertexArray	( const ofPoint& p, const ofColor& c );
 	void addToStripVertexArray	( const ofPoint& p1, const ofPoint& p2, const ofColor& c1, const ofColor& c2 );
 	
-	bool		bEnableImageForce;
-	bool		bEnableTraceForce;
-	bool		bMarkAsTestParticle;
 	bool		bUseImageColour;
+	bool		bUseImageForce;
+	bool		bUseTraceForce;
+	bool		bUseWanderForce;
+	bool		bMarkAsTestParticle;
 	
 	PixelFlow*	pfImage;
 	PixelFlow*	pfTrace;
 	int			pfSampleRangeX;
 	int			pfSampleRangeY;
 	
+	ofRectangle	bounds;
+	bool		bInsideBounds;
+	
 	int			pid;
+	
+	//--- vectors.
 	
 	ofxVec2f	posVec;
 	ofxVec2f	posPrevVec;
 	ofxVec2f	velVec;
+	float		velLimit;
+	float		velEase;
 	ofPoint		stripPoint0;
 	ofPoint		stripPoint1;
-
+	
+	ofxVec2f	imgVec;
+	ofxVec2f	trcVec;
+	
+	ofxVec2f	wanderVel;
+	ofxVec2f	wanderCircle;
+	ofxVec2f	wanderCircleTarget;
+	ofxVec2f	wanderCircleOffSet;
+	float		wanderTheta;
+	float		wanderRadius;			// Radius for our "wander circle"
+	float		wanderDistance;			// Distance for our "wander circle"
+	float		wanderChange;
+	float		wanderEase;
+	float		wanderEaseTarget;
+	float		wanderMaxSpeed;
+	
+	float		imageVecScale;
+	float		traceVecScale;
+	float		wanderVecScale;
+	
+	//--- render.
+	
 	GLfloat*	line_ver_array;
 	GLfloat*	line_col_array;
 	int			line_ind_total;
@@ -66,18 +100,10 @@ public:
 	int			strip_ind_total;
 	float		stripWidth;
 	
-	ofxVec2f	imgVec;
-	ofxVec2f	trcVec;
-	
-	float		imgVecScale;
-	float		trcVecScale;
-	
 	ofColor		currentColor;
 	float		colorEase;
 	
-	int size;
-	int sizeHalf;
-	
-	float		lineAlpha;
+	int			size;
+	int			sizeHalf;
 	
 };

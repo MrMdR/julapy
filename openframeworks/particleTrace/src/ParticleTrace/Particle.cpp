@@ -17,8 +17,14 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	pfSampleRangeX	= 5;
 	pfSampleRangeY	= 5;
 	
-	imgVecScale = 100;
-	trcVecScale = 100;
+	//---
+	
+	imageVecScale	= 100;
+	traceVecScale	= 100;
+	wanderVecScale	= 1;
+
+	velLimit		= 2.0;
+	velEase			= 0.2;
 	
 	//---
 	
@@ -30,27 +36,54 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	strip_col_array = new GLfloat[ PARTICLE_MAX_LENGTH * 8 ];
 	strip_ind_total = 0;
 	
-	//---
-	
-	size		= 2;
-	sizeHalf	= size * 0.5;
-	
-	lineAlpha	= 1.0;
-	
 	stripWidth	= 0.1;
 	
 	colorEase	= 0.1;
 	
-	bEnableImageForce	= true;
-	bEnableTraceForce	= true;
-	bMarkAsTestParticle	= false;
+	size		= 2;
+	sizeHalf	= size * 0.5;
+	
+	//---
+	
+	wanderTheta			= ofRandom( 0, TWO_PI );
+	wanderRadius		= 16.0;
+	wanderDistance		= 60.0;
+	wanderChange		= 0.25;
+	wanderEase			= 0.2;
+	wanderEaseTarget	= wanderEase;
+	wanderMaxSpeed		= 2.0;
+	
+	//---
+	
+	bounds.x		= 0;
+	bounds.y		= 0;
+	bounds.width	= ofGetWidth();
+	bounds.height	= ofGetHeight();
+	bInsideBounds	= true;
+	
+	//---
+
 	bUseImageColour		= true;
+	bUseImageForce		= true;
+	bUseTraceForce		= true;
+	bUseWanderForce		= true;
+	bMarkAsTestParticle	= false;
 }
 
 Particle :: ~Particle()
 {
 	pfImage = NULL;
 	pfTrace = NULL;
+	
+	delete[] line_ver_array;
+	delete[] line_col_array;
+	line_ver_array = NULL;
+	line_col_array = NULL;
+	
+	delete[] strip_ver_array;
+	delete[] strip_col_array;
+	strip_ver_array = NULL;
+	strip_col_array = NULL;
 }
 
 //////////////////////////////////////////////////
@@ -83,6 +116,11 @@ void Particle :: setPixelRange ( int x, int y )
 	pfSampleRangeY = y;
 }
 
+void Particle :: setBounds ( const ofRectangle& rect )
+{
+	bounds = rect;
+}
+
 void Particle :: setup ()
 {
 	
@@ -104,28 +142,33 @@ void Particle :: update ()
 	imgVec.set( 0, 0 );
 	trcVec.set( 0, 0 );
 	
-	if( bEnableImageForce )
+	if( bUseImageForce )
 	{
 		imgVec = pfImage->getVectorAt( posVec, pfSampleRangeX, pfSampleRangeY );
-		imgVec *= imgVecScale;
+		imgVec *= imageVecScale;
 	
 		totalVec += imgVec;
 	}
 	
-	if( bEnableTraceForce )
+	if( bUseTraceForce )
 	{
 		trcVec = pfTrace->getVectorAt( posVec, pfSampleRangeX, pfSampleRangeY );
-		trcVec *= trcVecScale * -1;
+		trcVec *= traceVecScale * -1;
 		
 		totalVec += trcVec;
 	}
 	
-	totalVec.limit( 2 );
+	if( bUseWanderForce )
+	{
+		wander();
+		
+		totalVec += wanderVel * wanderVecScale;
+	}
 	
-	float ease = 0.2;
+	totalVec.limit( velLimit );
 	
-	velVec.x += ( totalVec.x - velVec.x ) * ease;
-	velVec.y += ( totalVec.y - velVec.y ) * ease;
+	velVec.x += ( totalVec.x - velVec.x ) * velEase;
+	velVec.y += ( totalVec.y - velVec.y ) * velEase;
 	
 	posVec.x += velVec.x;
 	posVec.y += velVec.y;
@@ -151,6 +194,60 @@ void Particle :: update ()
 
 	addToLineVertexArray( posVec, currentColor );
 	addToStrip();
+}
+
+void Particle :: wander()
+{
+	wanderTheta += ofRandom( -wanderChange, wanderChange );     // Randomly change wander theta
+	
+	wanderCircle = wanderVel;			// Start with velocity
+	wanderCircle.normalize();			// Normalize to get heading
+	wanderCircle *= wanderDistance;		// Multiply by distance
+	wanderCircle += posVec;				// Make it relative to boid's locationx
+	
+	bool isInside;
+	isInside = checkIsInsideBounds( wanderCircle );
+	if( !isInside )
+		constrainToBounds( wanderCircle );
+	
+	wanderEaseTarget = isInside ? 0.2 : 1.0;
+	wanderEase		+= ( wanderEaseTarget - wanderEase ) * 0.3;
+	
+	wanderCircleOffSet	= ofxVec2f( wanderRadius * cos( wanderTheta ), wanderRadius * sin( wanderTheta ) );
+	wanderCircleTarget	= wanderCircle + wanderCircleOffSet;
+	
+	ofxVec2f steerVec;
+	steerVec		= wanderCircleTarget - posVec;		// A vector pointing from the location to the target
+	steerVec.normalize();
+	steerVec *= wanderMaxSpeed;
+	
+	wanderVel.x += ( steerVec.x - wanderVel.x ) * wanderEase;
+	wanderVel.y += ( steerVec.y - wanderVel.y ) * wanderEase;
+}
+
+bool Particle :: checkIsInsideBounds ( const ofxVec2f& target )
+{
+	bool l = target.x >= bounds.x;
+	bool t = target.y >= bounds.y;
+	bool r = target.x < bounds.x + bounds.width;
+	bool b = target.y < bounds.y + bounds.height;
+	
+	return ( l && t && r && b );
+}
+
+void Particle :: constrainToBounds ( const ofxVec2f& target )		// target back to center of bounds.
+{
+	float cx = bounds.x + bounds.width  * 0.5;
+	float cy = bounds.y + bounds.height * 0.5;
+	
+	float px = target.x - cx;
+	float py = target.y - cy;
+	
+	ofxVec2f vec = ofxVec2f( px, py );
+	float ang = vec.angle( ofxVec2f( 0, -1 ) );							// return an angle between -180 and 180.
+	
+	wanderTheta = ( ( ang + 180 ) / 360.0 ) * TWO_PI + PI * 0.5;		// circle starts at 12 oclock and moves clock wise.
+	wanderTheta *= -1;
 }
 
 //////////////////////////////////////////////////
@@ -241,7 +338,11 @@ void Particle :: drawHead ()
 		glColor4f( 0.0, 1.0, 0.0, 1.0 );
 	}
 	
-	ofRect( posVec.x - sizeHalf, posVec.y - sizeHalf, size, size );
+	int x = posVec.x;
+	int y = posVec.y;
+
+	ofRect( x, y, 1, 1 );
+//	ofRect( posVec.x - sizeHalf, posVec.y - sizeHalf, size, size );
 }
 
 void Particle :: drawLine ()
@@ -288,5 +389,12 @@ void Particle :: drawTrace ()
 		currentColor.a / 255.0
 	);
 	
+	glColor4f( 1.0, 1.0, 1.0, 0.5 );
+	
+	int x = posVec.x;
+	int y = posVec.y;
+	
+	ofFill();
+//	ofRect( x, y, 1, 1 );
 	ofLine( posPrevVec.x, posPrevVec.y, posVec.x, posVec.y );
 }

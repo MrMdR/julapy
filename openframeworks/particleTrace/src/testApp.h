@@ -28,6 +28,8 @@ public:
 	void windowResized	(int w, int h );
 
 	bool				bDebug;
+	bool				bStepMode;
+	bool				bStepOne;
 	
 	ParticleTrace		pt;
 	

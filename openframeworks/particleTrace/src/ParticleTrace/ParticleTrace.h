@@ -29,7 +29,7 @@ public:
 	void draw	( bool bTiling = false );
 	
 	void loadImage			( string fileName );
-	void addParticle		( float x, float y );
+	void addParticle		( float x, float y, bool bMarkAsTestParticle = false );
 	void addRandomParticles ( int numOfParticles );
 	void killAllParticles	();
 	
@@ -54,12 +54,21 @@ public:
 	bool			bShowSourceImage;
 	bool			bShowTraceImage;
 	bool			bShowParticles;
+	bool			bShowParticleLines;
+	bool			bShowParticleStrip;
+	bool			bShowParticleHead;
+	
 	bool			bUseImageColour;
-	bool			bEnableImageForce;
-	bool			bEnableTraceForce;
-	bool			bDrawParticleLines;
-	bool			bDrawParticleStrip;
-	bool			bDrawParticleHead;
+	bool			bUseImageForce;
+	bool			bUseTraceForce;
+	bool			bUseWanderForce;
+	
+	float			imageVecScale;
+	float			traceVecScale;
+	float			wanderVecScale;
+	
+	float			velLimit;
+	float			velEase;
 	
 	float			exportScale;
 	float			lineWidth;

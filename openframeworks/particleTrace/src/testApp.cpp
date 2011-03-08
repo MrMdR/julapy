@@ -6,14 +6,17 @@ void testApp::setup()
 	ofSetFrameRate( 30 );
 	ofSetVerticalSync( true );
 	ofBackground( 0, 0, 0 );
-	ofEnableSmoothing();
+//	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
-	bDebug = false;
+	bDebug		= false;
+	bStepMode	= false;
+	bStepOne	= false;
 	
 //	pt.loadImage( "perlin_noise.png" );
-	pt.loadImage( "old_man.jpg" );
-	pt.addRandomParticles( 500 );
+//	pt.loadImage( "old_man.jpg" );
+	pt.loadImage( "bec_500x614.png" );
+//	pt.addRandomParticles( 10 );
 	pt.setup();
 	
 	tileSaver.init( 10, 0, true );
@@ -28,32 +31,33 @@ void testApp :: initGui ()
 {
 	gui.setAutoSave( false );
 	
-	gui.addTitle( "toggles" );
-	
+	gui.addTitle( "render toggles" );
 	gui.addToggle( "bShowSourceImage  ",	pt.bShowSourceImage );
 	gui.addToggle( "bShowTraceImage  ",		pt.bShowTraceImage );
 	gui.addToggle( "bShowParticles  ",		pt.bShowParticles );
+	gui.addToggle( "bShowParticleLines  ",	pt.bShowParticleLines );
+	gui.addToggle( "bShowParticleStrip  ",	pt.bShowParticleStrip );
+	gui.addToggle( "bShowParticleHead  ",	pt.bShowParticleHead );
+	
+	gui.addPage( "render params" );
+	gui.addSlider( "lineWidth",				pt.lineWidth, 0.0, 1.0 );
+	
+	gui.addPage( "force toggles" );
 	gui.addToggle( "bUseImageColour  ",		pt.bUseImageColour );
-	gui.addToggle( "bEnableImageForce  ",	pt.bEnableImageForce );
-	gui.addToggle( "bEnableTraceForce  ",	pt.bEnableTraceForce );
-	gui.addToggle( "bDrawParticleLines  ",	pt.bDrawParticleLines );
-	gui.addToggle( "bDrawParticleStrip  ",	pt.bDrawParticleStrip );
+	gui.addToggle( "bUseImageForce  ",		pt.bUseImageForce );
+	gui.addToggle( "bUseTraceForce  ",		pt.bUseTraceForce );
+	gui.addToggle( "bUseWanderForce  ",		pt.bUseWanderForce );
 	
-	gui.addPage( "particle params" );
-	gui.addSlider( "lineWidth", pt.lineWidth, 0.0, 1.0 );
+	gui.addPage( "force params" );
+	gui.addSlider( "velLimit",				pt.velLimit,		0.0, 5.0 );
+	gui.addSlider( "velEase",				pt.velEase,			0.0, 1.0 );
+	gui.addSlider( "imageVecScale",			pt.imageVecScale,	0.0, 300.0 );
+	gui.addSlider( "traceVecScale",			pt.traceVecScale,	0.0, 300.0 );
+	gui.addSlider( "wanderVecScale",		pt.wanderVecScale,	0.0, 1.0 );
 	
-	if( bDebug )
-	{
-		gui.show();
-	}
-	else
-	{
-		gui.hide();
-	}
+	bDebug ? gui.show() : gui.hide();
 	
 	gui.setPage( 1 );
-	
-//	gui.loadFromXML();
 }
 
 //--------------------------------------------------------------
@@ -61,6 +65,14 @@ void testApp::update()
 {
 	if( tileSaver.bGoTiling )
 		return;
+	
+	if( bStepMode )
+	{
+		if( !bStepOne )
+			return;
+		
+		bStepOne = false;
+	}
 	
 	pt.update();
 }
@@ -80,14 +92,34 @@ void testApp::draw()
 	if( screenGrabber.isRecording() )
 		screenGrabber.save();
 	
+	//---
+
+	ofSetColor( 0xFF0000 );
+	
+	string msg = "";
+	
+	msg = "debug mode : ";
+	msg += bDebug ? "ON" : "OFF";
+	ofDrawBitmapString( msg, 20, ofGetHeight() - 100 );
+	
+	msg = "press 'd' to toggle debug mode.";
+	ofDrawBitmapString( msg, 20, ofGetHeight() - 80 );
+	
+	msg = "step mode : ";
+	msg += bStepMode ? "ON" : "OFF";
+	ofDrawBitmapString( msg, 20, ofGetHeight() - 40 );
+	
+	msg = bStepMode ? "press space to step" : "press shift + space to toggle step mode";
+	ofDrawBitmapString( msg, 20, ofGetHeight() - 20 );
+	
+	//---
+	
 	gui.draw();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
 {
-	pt.keyPressed( key );
-	
 	if( key == 'd' )
 	{
 		bDebug = !bDebug;
@@ -126,6 +158,11 @@ void testApp::keyPressed(int key)
 		screenGrabber.togglePause();
 	}
 	
+	if( key == 'k' )
+	{
+		pt.killAllParticles();
+	}
+	
 	if( key >= '0' && key <= '9' )
 	{
 		gui.setPage( key - '0' );
@@ -137,6 +174,18 @@ void testApp::keyPressed(int key)
 		{
 			case '[': gui.prevPage(); break;
 			case ']': gui.nextPage(); break;
+		}
+	}
+	
+	if( key == ' ' )
+	{
+		if( glutGetModifiers() == GLUT_ACTIVE_SHIFT )
+		{
+			bStepMode = !bStepMode;
+		}
+		else
+		{
+			bStepOne = true;
 		}
 	}
 }
@@ -162,6 +211,11 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button)
 {
+	if( !bDebug )
+	{
+		pt.addParticle( x, y, true );
+	}
+	
 	pt.mousePressed( x, y, button );
 }
 
