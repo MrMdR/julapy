@@ -15,8 +15,16 @@ void testApp::setup()
 	
 //	pt.loadImage( "perlin_noise.png" );
 //	pt.loadImage( "old_man.jpg" );
-	pt.loadImage( "bec_500x614.png" );
-//	pt.addRandomParticles( 10 );
+//	pt.loadImage( "bec_500x614.png" );
+//	pt.loadImage( "old_postcard.png" );
+	pt.loadImage( "lossy_07.jpg" );
+//	pt.addRandomParticles( 100 );
+	
+	for( int i=0; i<500; i++ )
+	{
+		pt.addParticle( 0, 0 );
+	}
+	
 	pt.setup();
 	
 	tileSaver.init( 10, 0, true );
@@ -40,7 +48,9 @@ void testApp :: initGui ()
 	gui.addToggle( "bShowParticleHead  ",	pt.bShowParticleHead );
 	
 	gui.addPage( "render params" );
-	gui.addSlider( "lineWidth",				pt.lineWidth, 0.0, 1.0 );
+	gui.addSlider( "lineWidth",				pt.lineWidth,	0.0, 1.0 );
+	gui.addSlider( "traceAlpha",			pt.traceAlpha,	0.0, 1.0 );
+	gui.addSlider( "traceBlur",				pt.traceBlur,	0, 10 );
 	
 	gui.addPage( "force toggles" );
 	gui.addToggle( "bUseImageColour  ",		pt.bUseImageColour );
@@ -49,10 +59,10 @@ void testApp :: initGui ()
 	gui.addToggle( "bUseWanderForce  ",		pt.bUseWanderForce );
 	
 	gui.addPage( "force params" );
-	gui.addSlider( "velLimit",				pt.velLimit,		0.0, 5.0 );
+	gui.addSlider( "velLimit",				pt.velLimit,		0.0, 10.0 );
 	gui.addSlider( "velEase",				pt.velEase,			0.0, 1.0 );
-	gui.addSlider( "imageVecScale",			pt.imageVecScale,	0.0, 300.0 );
-	gui.addSlider( "traceVecScale",			pt.traceVecScale,	0.0, 300.0 );
+	gui.addSlider( "imageVecScale",			pt.imageVecScale,	0.0, 500.0 );
+	gui.addSlider( "traceVecScale",			pt.traceVecScale,	0.0, 500.0 );
 	gui.addSlider( "wanderVecScale",		pt.wanderVecScale,	0.0, 1.0 );
 	
 	bDebug ? gui.show() : gui.hide();

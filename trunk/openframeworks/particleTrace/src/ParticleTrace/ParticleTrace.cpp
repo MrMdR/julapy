@@ -11,8 +11,10 @@
 
 ParticleTrace :: ParticleTrace ()
 {
-	sampleRangeX	= 5;
-	sampleRangeY	= 5;
+//	sampleRangeX	= 5;
+//	sampleRangeY	= 5;
+	sampleRangeX	= 7;
+	sampleRangeY	= 7;
 	sampleW			= sampleRangeX * 2 + 1;
 	sampleH			= sampleRangeY * 2 + 1;
 	
@@ -21,6 +23,8 @@ ParticleTrace :: ParticleTrace ()
 	
 	exportScale = 10;
 	lineWidth	= 1.0;
+	traceAlpha	= 0.1;
+	traceBlur	= 2;
 	
 	pid = 0;
 	
@@ -35,7 +39,7 @@ ParticleTrace :: ParticleTrace ()
 	bShowParticles		= true;
 	bShowParticleLines	= false;
 	bShowParticleStrip	= false;
-	bShowParticleHead	= true;
+	bShowParticleHead	= false;
 	
 	bUseImageColour		= true;
 	bUseImageForce		= true;
@@ -44,11 +48,11 @@ ParticleTrace :: ParticleTrace ()
 	
 	//--- vector scales.
 	
-	imageVecScale	= 100;
-	traceVecScale	= 100;
-	wanderVecScale	= 0.2;
+	imageVecScale	= 400;
+	traceVecScale	= 250;
+	wanderVecScale	= 1.0;
 	
-	velLimit		= 2.0;
+	velLimit		= 5.0;
 	velEase			= 0.2;
 }
 
@@ -77,25 +81,33 @@ void ParticleTrace :: loadImage( string fileName )
 	if( !bImageLoaded )
 		return;
 	
-	if( img.bpp != 8 )
-		img.setImageType( OF_IMAGE_GRAYSCALE );
+	if( img.bpp != 24 )
+		img.setImageType( OF_IMAGE_COLOR );
 	
 	imgRect.width	= img.width;
 	imgRect.height	= img.height;
 	
-	imgTrace.allocate( imgRect.width, imgRect.height, OF_IMAGE_COLOR_ALPHA );
+	//-- opencv.
+	
+	imgSrc.allocate( imgRect.width, imgRect.height );
+	imgSrc.setFromPixels( img.getPixels(), imgRect.width, imgRect.height );
+	
+	imgTrace.allocate( imgRect.width, imgRect.height );
+	imgTrace.set( 0 );
+	
+	img.clear();
 	
 	//-- initialise fbo.
 	
-	fboTrace.allocate( imgRect.width, imgRect.height );
+	fboTrace.allocate( imgRect.width, imgRect.height, GL_RGB );
 	fboParticles.allocate( imgRect.width, imgRect.height );
 	
-	fboTrace.clear( 1, 1, 1, 0 );
+	fboTrace.clear( 0, 0, 0, 0 );
 	
 	//-- pixel flow.
 	
-	pfImage.setPixels( img.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_GRAYSCALE );
-	pfTrace.setPixels( (unsigned char*)fboTrace.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR_ALPHA );
+	pfImage.setPixels( imgSrc.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR );
+	pfTrace.setPixels( imgTrace.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR );
 }
 
 //////////////////////////////////////////////////
@@ -112,7 +124,7 @@ void ParticleTrace :: addRandomParticles ( int numOfParticles )
 		bool bMarkAsTestParticle;
 		bMarkAsTestParticle = ( i == 0 );
 		
-		addParticle( (int)ofRandom( 0, img.width ), (int)ofRandom( 0, img.height ), bMarkAsTestParticle );
+		addParticle( (int)ofRandom( 0, imgRect.width ), (int)ofRandom( 0, imgRect.height ), bMarkAsTestParticle );
 	}
 }
 
@@ -124,7 +136,7 @@ void ParticleTrace :: addParticle ( float x, float y, bool bMarkAsTestParticle )
 	Particle* p;
 	p = new Particle( &pfImage, &pfTrace );
 	p->setInitialPosition( x, y );
-	p->setInitialVelocity( 1, 1 );
+	p->setInitialVelocity( ofRandom( -1, 1 ), ofRandom( -1, 1 ) );
 	p->setPixelRange( sampleRangeX, sampleRangeY );
 	p->setBounds( imgRect );
 	p->pid = pid++;
@@ -170,8 +182,8 @@ void ParticleTrace :: update()
 	
 	//---
 
-	pfImage.setPixels( img.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_GRAYSCALE );
-	pfTrace.setPixels( imgTrace.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR_ALPHA );
+	pfImage.setPixels( imgSrc.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR );
+	pfTrace.setPixels( imgTrace.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR );
 	
 	//---
 	
@@ -211,7 +223,16 @@ void ParticleTrace :: updateParticles ()
 		p->wanderVecScale	= wanderVecScale;
 		p->velLimit			= velLimit;
 		p->velEase			= velEase;
+		p->traceAlpha		= traceAlpha;
 		p->update();
+		
+		if( p->lifeCount % 30 == 0 )
+		{
+			if( ofRandom( 0, 1.0 ) > 0.92 )
+			{
+				addParticle( p->posVec.x, p->posVec.y );
+			}
+		}
 	}
 }
 
@@ -236,7 +257,7 @@ void ParticleTrace :: draw ( bool bTiling )
 	drawTraceImage();
 	drawParticles();
 	
-	drawSamples();
+//	drawSamples();
 }
 
 void ParticleTrace :: drawSourceImage ()
@@ -245,18 +266,21 @@ void ParticleTrace :: drawSourceImage ()
 		return;
 
 	glColor4f( 1.0, 1.0, 1.0, 1.0 );
-	img.draw( 0, 0 );
+	imgSrc.draw( 0, 0 );
 }
 
 void ParticleTrace :: drawTraceImage ()
 {
+	fboTrace.clear( 0, 0, 0, 0 );
 	fboTrace.begin();
 	
-//	ofSetLineWidth( 1.0 );
-	ofSetLineWidth( 2.0 );
+	ofSetLineWidth( 1.0 );
+//	ofSetLineWidth( 2.0 );
 	
 	glEnable(GL_BLEND);									// additive blending.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	
+	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
 	
 	int t = particles.size();
 	for( int i=0; i<t; i++ )
@@ -266,20 +290,39 @@ void ParticleTrace :: drawTraceImage ()
 		p->drawTrace();
 	}
 	
+	glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST );
+	
 	glEnable(GL_BLEND);									// return to alpha blending.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	fboTrace.end();
 	
-	imgTrace.setFromPixels( (unsigned char*)fboTrace.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR_ALPHA, true );
-	imgTrace.mirror( false, true );
-
+	ofxCvColorImage imgTemp;
+	imgTemp.allocate( imgRect.width, imgRect.height );
+	imgTemp.setFromPixels( (unsigned char*)fboTrace.getPixels(), imgRect.width, imgRect.height );
+	imgTemp.mirror( true, false );
+	imgTemp.blur( traceBlur );
+	
+	imgSrc -= imgTemp;
+	
+//	imgTrace += imgTemp;
+//	imgTrace.blur( traceBlur );
+	
+	imgTemp.clear();
+	
 	if( !bShowTraceImage )
 		return;
 
+	glEnable( GL_BLEND );
+//	glBlendFunc( GL_ONE, GL_ONE );
+	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_COLOR );
+	
 	glColor4f( 1.0, 1.0, 1.0, 1.0 );
 //	fboTrace.draw( 0, 0 );
 	imgTrace.draw( 0, 0 );
+	
+	glEnable(GL_BLEND);									// return to alpha blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void ParticleTrace :: drawParticles ( bool bDrawToFbo, bool bTiling )
