@@ -13,6 +13,7 @@
 #include "ofxFBOTexture.h"
 #include "ofImagePlus.h"
 #include "ofxVec2f.h"
+#include "ofxCvColorImage.h"
 #include "PixelFlow.h"
 #include "Particle.h"
 
@@ -72,12 +73,15 @@ public:
 	
 	float			exportScale;
 	float			lineWidth;
+	float			traceAlpha;
+	int				traceBlur;
 
 	ofxFBOTexture	fboTrace;
 	ofxFBOTexture	fboParticles;
 	
 	ofImage			img;
-	ofImagePlus		imgTrace;
+	ofxCvColorImage	imgSrc;
+	ofxCvColorImage	imgTrace;
 	ofRectangle		imgRect;
 	ofImage			sampleImage0;
 	ofImage			sampleImage1;

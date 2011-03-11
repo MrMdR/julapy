@@ -38,10 +38,34 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	
 	stripWidth	= 0.1;
 	
+	float r = ofRandom( 0.0, 1.0 );
+	if( r < 0.33 )
+	{
+		headColor.r = 255;
+		headColor.g = 255;
+		headColor.b = 0;
+	}
+	else if( r < 0.67 )
+	{
+		headColor.r = 255;
+		headColor.g = 0;
+		headColor.b = 255;
+	}
+	else
+	{
+		headColor.r = 0;
+		headColor.g = 255;
+		headColor.b = 255;
+	}
+	
 	colorEase	= 0.1;
+	
+	traceAlpha	= 1.0;
 	
 	size		= 2;
 	sizeHalf	= size * 0.5;
+	
+	lifeCount	= 0;
 	
 	//---
 	
@@ -68,6 +92,7 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	bUseTraceForce		= true;
 	bUseWanderForce		= true;
 	bMarkAsTestParticle	= false;
+	bVerbose			= false;
 }
 
 Particle :: ~Particle()
@@ -132,6 +157,10 @@ void Particle :: setup ()
 
 void Particle :: update ()
 {
+	++lifeCount;
+	
+	//--
+	
 	posPrevVec.x = posVec.x;
 	posPrevVec.y = posVec.y;
 	
@@ -276,7 +305,10 @@ void Particle :: addToLineVertexArray ( const ofPoint& p, const ofColor& c )
 {
 	if( line_ind_total >= PARTICLE_MAX_LENGTH )
 	{
-		cout << "particle " << pid << ", PARTICLE_MAX_LENGTH exceeded.";
+		if( bVerbose )
+		{
+			cout << "particle " << pid << ", PARTICLE_MAX_LENGTH exceeded.";
+		}
 		return;
 	}
 	
@@ -299,7 +331,11 @@ void Particle :: addToStripVertexArray ( const ofPoint& p1, const ofPoint& p2, c
 {
 	if( strip_ind_total >= ( PARTICLE_MAX_LENGTH * 2 ) )
 	{
-		cout << "particle " << pid << ", PARTICLE_MAX_LENGTH exceeded.";
+		if( bVerbose )
+		{
+			cout << "particle " << pid << ", PARTICLE_MAX_LENGTH exceeded.";
+		}
+		
 		return;
 	}
 	
@@ -337,6 +373,8 @@ void Particle :: drawHead ()
 	{
 		glColor4f( 0.0, 1.0, 0.0, 1.0 );
 	}
+	
+	ofSetColor( headColor.r, headColor.g, headColor.b );
 	
 	int x = posVec.x;
 	int y = posVec.y;
@@ -389,12 +427,20 @@ void Particle :: drawTrace ()
 		currentColor.a / 255.0
 	);
 	
-	glColor4f( 1.0, 1.0, 1.0, 0.5 );
+	glColor4f( 1.0, 1.0, 1.0, traceAlpha );
 	
 	int x = posVec.x;
 	int y = posVec.y;
 	
+	ofxVec2f dir;
+	dir = velVec.getNormalized();
+	
 	ofFill();
 //	ofRect( x, y, 1, 1 );
-	ofLine( posPrevVec.x, posPrevVec.y, posVec.x, posVec.y );
+//	ofLine( posPrevVec.x, posPrevVec.y, posVec.x, posVec.y );
+	
+	// adding a unit dir vector so line is drawn to point, otherwise it falls short.
+	// not sure why, but think its the way lines are drawn to fbo.
+	
+	ofLine( posPrevVec.x, posPrevVec.y, posVec.x + dir.x, posVec.y + dir.y );
 }

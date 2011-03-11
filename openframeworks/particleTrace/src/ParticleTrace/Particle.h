@@ -13,7 +13,8 @@
 #include "ofxVec2f.h"
 #include "PixelFlow.h"
 
-#define PARTICLE_MAX_LENGTH		100000
+//#define PARTICLE_MAX_LENGTH		100000
+#define PARTICLE_MAX_LENGTH		100
 
 class Particle
 {
@@ -49,6 +50,7 @@ public:
 	bool		bUseTraceForce;
 	bool		bUseWanderForce;
 	bool		bMarkAsTestParticle;
+	bool		bVerbose;
 	
 	PixelFlow*	pfImage;
 	PixelFlow*	pfTrace;
@@ -59,6 +61,8 @@ public:
 	bool		bInsideBounds;
 	
 	int			pid;
+	
+	int			lifeCount;
 	
 	//--- vectors.
 	
@@ -101,7 +105,9 @@ public:
 	float		stripWidth;
 	
 	ofColor		currentColor;
+	ofColor		headColor;
 	float		colorEase;
+	float		traceAlpha;
 	
 	int			size;
 	int			sizeHalf;
