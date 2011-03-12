@@ -13,8 +13,8 @@
 #include "ofxVec2f.h"
 #include "PixelFlow.h"
 
-//#define PARTICLE_MAX_LENGTH		100000
-#define PARTICLE_MAX_LENGTH		100
+#define PARTICLE_MAX_LENGTH		100000
+//#define PARTICLE_MAX_LENGTH		100
 
 class Particle
 {
@@ -45,6 +45,9 @@ public:
 	void addToLineVertexArray	( const ofPoint& p, const ofColor& c );
 	void addToStripVertexArray	( const ofPoint& p1, const ofPoint& p2, const ofColor& c1, const ofColor& c2 );
 	
+	void setLineColor			( const ofColor& c );
+	void setLineAlpha			( float alpha );
+	
 	bool		bUseImageColour;
 	bool		bUseImageForce;
 	bool		bUseTraceForce;
@@ -68,6 +71,7 @@ public:
 	
 	ofxVec2f	posVec;
 	ofxVec2f	posPrevVec;
+	ofxVec2f	posLastAdded;
 	ofxVec2f	velVec;
 	float		velLimit;
 	float		velEase;
@@ -98,16 +102,20 @@ public:
 	GLfloat*	line_ver_array;
 	GLfloat*	line_col_array;
 	int			line_ind_total;
+	int			line_ind_max;
 	
 	GLfloat*	strip_ver_array;
 	GLfloat*	strip_col_array;
 	int			strip_ind_total;
+	int			strip_ind_max;
 	float		stripWidth;
 	
 	ofColor		currentColor;
+	ofColor		lineColor;
 	ofColor		headColor;
 	float		colorEase;
 	float		traceAlpha;
+	float		minPosDist;
 	
 	int			size;
 	int			sizeHalf;

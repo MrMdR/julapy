@@ -27,38 +27,30 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	velEase			= 0.2;
 	
 	//---
-	
-	line_ver_array = new GLfloat[ PARTICLE_MAX_LENGTH * 3 ];
-	line_col_array = new GLfloat[ PARTICLE_MAX_LENGTH * 4 ];
-	line_ind_total = 0;
 
-	strip_ver_array = new GLfloat[ PARTICLE_MAX_LENGTH * 6 ];
-	strip_col_array = new GLfloat[ PARTICLE_MAX_LENGTH * 8 ];
+	line_ind_max   = PARTICLE_MAX_LENGTH;
+	line_ind_total = 0;
+	line_ver_array = new GLfloat[ line_ind_max * 3 ];
+	line_col_array = new GLfloat[ line_ind_max * 4 ];
+
+	strip_ind_max   = PARTICLE_MAX_LENGTH * 2;
 	strip_ind_total = 0;
+	strip_ver_array = new GLfloat[ strip_ind_max * 3 ];
+	strip_col_array = new GLfloat[ strip_ind_max * 4 ];
 	
 	stripWidth	= 0.1;
 	
-	float r = ofRandom( 0.0, 1.0 );
-	if( r < 0.33 )
-	{
-		headColor.r = 255;
-		headColor.g = 255;
-		headColor.b = 0;
-	}
-	else if( r < 0.67 )
-	{
-		headColor.r = 255;
-		headColor.g = 0;
-		headColor.b = 255;
-	}
-	else
-	{
-		headColor.r = 0;
-		headColor.g = 255;
-		headColor.b = 255;
-	}
+	headColor.r = 255;
+	headColor.g = 0;
+	headColor.b = 0;
+	headColor.a = 255;
 	
-	colorEase	= 0.1;
+	lineColor.r = 255;
+	lineColor.g = 255;
+	lineColor.b = 255;
+	lineColor.a = 128;
+	
+	colorEase	= 0.03;
 	
 	traceAlpha	= 1.0;
 	
@@ -66,6 +58,8 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	sizeHalf	= size * 0.5;
 	
 	lifeCount	= 0;
+	
+	minPosDist	= 2.0;
 	
 	//---
 	
@@ -122,6 +116,9 @@ void Particle :: setInitialPosition	( float x, float y )
 	
 	posPrevVec.x = x;
 	posPrevVec.y = y;
+	
+	posLastAdded.x = x;
+	posLastAdded.y = y;
 	
 	currentColor = pfImage->getColourAt( posVec );
 	
@@ -204,6 +201,17 @@ void Particle :: update ()
 	
 	//---
 	
+	float d = ofDist( posLastAdded.x, posLastAdded.y, posVec.x, posVec.y );
+	if( d >= minPosDist )
+	{
+		posLastAdded.x = posVec.x;
+		posLastAdded.y = posVec.y;
+	}
+	else
+	{
+		return;
+	}
+	
 	if( bUseImageColour )
 	{
 		ofColor c = pfImage->getColourAt( posVec );
@@ -215,10 +223,10 @@ void Particle :: update ()
 	}
 	else
 	{
-		currentColor.r = 255;
-		currentColor.g = 255;
-		currentColor.b = 255;
-		currentColor.a = 128;
+		currentColor.r = lineColor.r;
+		currentColor.g = lineColor.g;
+		currentColor.b = lineColor.b;
+		currentColor.a = lineColor.a;
 	}
 
 	addToLineVertexArray( posVec, currentColor );
@@ -303,7 +311,7 @@ void Particle :: addToStrip ()
 
 void Particle :: addToLineVertexArray ( const ofPoint& p, const ofColor& c )
 {
-	if( line_ind_total >= PARTICLE_MAX_LENGTH )
+	if( line_ind_total >= line_ind_max )
 	{
 		if( bVerbose )
 		{
@@ -329,7 +337,7 @@ void Particle :: addToLineVertexArray ( const ofPoint& p, const ofColor& c )
 
 void Particle :: addToStripVertexArray ( const ofPoint& p1, const ofPoint& p2, const ofColor& c1, const ofColor& c2 )
 {
-	if( strip_ind_total >= ( PARTICLE_MAX_LENGTH * 2 ) )
+	if( strip_ind_total >= strip_ind_max )
 	{
 		if( bVerbose )
 		{
@@ -361,20 +369,77 @@ void Particle :: addToStripVertexArray ( const ofPoint& p1, const ofPoint& p2, c
 	strip_ind_total += 2;
 }
 
+void Particle :: setLineColor ( const ofColor& c )
+{
+	if( bUseImageColour )
+		return;
+	
+	bool b1 = lineColor.r == c.r;
+	bool b2 = lineColor.g == c.g;
+	bool b3 = lineColor.b == c.b;
+	bool b4 = lineColor.a == c.a;
+	
+	if( b1 && b2 && b3 && b4 )
+		return;
+	
+	lineColor.r = c.r;
+	lineColor.g = c.g;
+	lineColor.b = c.b;
+	lineColor.a = c.a;
+	
+	for( int i=0; i<line_ind_total; i++ )
+	{
+		line_col_array[ i * 4 + 0 ] = c.r / 255.0;
+		line_col_array[ i * 4 + 1 ] = c.g / 255.0;
+		line_col_array[ i * 4 + 2 ] = c.b / 255.0;
+		line_col_array[ i * 4 + 3 ] = c.a / 255.0;
+	}
+	
+	for( int i=0; i<strip_ind_total; i++ )
+	{
+		strip_col_array[ i * 4 + 0 ] = c.r / 255.0;
+		strip_col_array[ i * 4 + 1 ] = c.g / 255.0;
+		strip_col_array[ i * 4 + 2 ] = c.b / 255.0;
+		strip_col_array[ i * 4 + 3 ] = c.a / 255.0;
+	}
+}
+
+void Particle :: setLineAlpha ( float alpha )
+{
+	if( bUseImageColour )
+		return;
+	
+	int a = alpha * 255;
+	
+	if( lineColor.a == a )
+		return;
+	
+	lineColor.a = a;
+	
+	for( int i=0; i<line_ind_total; i++ )
+	{
+		line_col_array[ i * 4 + 3 ] = alpha;
+	}
+	
+	for( int i=0; i<strip_ind_total; i++ )
+	{
+		strip_col_array[ i * 4 + 3 ] = alpha;
+	}
+}
+
+
 //////////////////////////////////////////////////
 //	DRAW
 //////////////////////////////////////////////////
 
 void Particle :: drawHead ()
 {
-	glColor4f( 1.0, 0.0, 0.0, 1.0 );
+	ofSetColor( headColor.r, headColor.g, headColor.b, headColor.a );
 	
 	if( bMarkAsTestParticle )
 	{
 		glColor4f( 0.0, 1.0, 0.0, 1.0 );
 	}
-	
-	ofSetColor( headColor.r, headColor.g, headColor.b );
 	
 	int x = posVec.x;
 	int y = posVec.y;

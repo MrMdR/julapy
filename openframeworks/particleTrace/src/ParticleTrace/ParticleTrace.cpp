@@ -11,10 +11,8 @@
 
 ParticleTrace :: ParticleTrace ()
 {
-//	sampleRangeX	= 5;
-//	sampleRangeY	= 5;
-	sampleRangeX	= 7;
-	sampleRangeY	= 7;
+	sampleRangeX	= 5;
+	sampleRangeY	= 5;
 	sampleW			= sampleRangeX * 2 + 1;
 	sampleH			= sampleRangeY * 2 + 1;
 	
@@ -23,8 +21,10 @@ ParticleTrace :: ParticleTrace ()
 	
 	exportScale = 10;
 	lineWidth	= 1.0;
-	traceAlpha	= 0.1;
-	traceBlur	= 2;
+	lineAlpha	= 0.5;
+	traceAlpha	= 0.2;
+	traceBlur	= 0;
+	minPosDist	= 2.0;
 	
 	pid = 0;
 	
@@ -39,7 +39,7 @@ ParticleTrace :: ParticleTrace ()
 	bShowParticles		= true;
 	bShowParticleLines	= false;
 	bShowParticleStrip	= false;
-	bShowParticleHead	= false;
+	bShowParticleHead	= true;
 	
 	bUseImageColour		= true;
 	bUseImageForce		= true;
@@ -48,11 +48,11 @@ ParticleTrace :: ParticleTrace ()
 	
 	//--- vector scales.
 	
-	imageVecScale	= 400;
+	imageVecScale	= 350;
 	traceVecScale	= 250;
 	wanderVecScale	= 1.0;
 	
-	velLimit		= 5.0;
+	velLimit		= 3.0;
 	velEase			= 0.2;
 }
 
@@ -224,15 +224,9 @@ void ParticleTrace :: updateParticles ()
 		p->velLimit			= velLimit;
 		p->velEase			= velEase;
 		p->traceAlpha		= traceAlpha;
+		p->minPosDist		= minPosDist;
+		p->setLineAlpha( lineAlpha );
 		p->update();
-		
-		if( p->lifeCount % 30 == 0 )
-		{
-			if( ofRandom( 0, 1.0 ) > 0.92 )
-			{
-				addParticle( p->posVec.x, p->posVec.y );
-			}
-		}
 	}
 }
 
@@ -257,7 +251,7 @@ void ParticleTrace :: draw ( bool bTiling )
 	drawTraceImage();
 	drawParticles();
 	
-//	drawSamples();
+	drawSamples();
 }
 
 void ParticleTrace :: drawSourceImage ()
@@ -303,10 +297,10 @@ void ParticleTrace :: drawTraceImage ()
 	imgTemp.mirror( true, false );
 	imgTemp.blur( traceBlur );
 	
-	imgSrc -= imgTemp;
+//	imgSrc -= imgTemp;		// particle decay.
 	
-//	imgTrace += imgTemp;
-//	imgTrace.blur( traceBlur );
+	imgTrace += imgTemp;
+	imgTrace.blur( traceBlur );
 	
 	imgTemp.clear();
 	
@@ -450,7 +444,7 @@ void ParticleTrace :: drawSampleImage ( ofImage& img )
 			ofRect( x * w, y * h, w, h );
 			
 			ofNoFill();
-			ofSetColor( 50, 50, 50 );
+			ofSetColor( 100, 100, 100 );
 			ofRect( x * w, y * h, w, h );
 		}
 	}

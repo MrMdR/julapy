@@ -15,15 +15,13 @@ void testApp::setup()
 	
 //	pt.loadImage( "perlin_noise.png" );
 //	pt.loadImage( "old_man.jpg" );
-//	pt.loadImage( "bec_500x614.png" );
+	pt.loadImage( "bec_500x614.png" );
 //	pt.loadImage( "old_postcard.png" );
-	pt.loadImage( "lossy_07.jpg" );
+//	pt.loadImage( "lossy_07.jpg" );
 //	pt.addRandomParticles( 100 );
 	
-	for( int i=0; i<500; i++ )
-	{
-		pt.addParticle( 0, 0 );
-	}
+//	for( int i=0; i<500; i++ )
+//		pt.addParticle( 0, 0 );
 	
 	pt.setup();
 	
@@ -48,9 +46,11 @@ void testApp :: initGui ()
 	gui.addToggle( "bShowParticleHead  ",	pt.bShowParticleHead );
 	
 	gui.addPage( "render params" );
-	gui.addSlider( "lineWidth",				pt.lineWidth,	0.0, 1.0 );
+	gui.addSlider( "lineWidth",				pt.lineWidth,	0.0, 3.0 );
+	gui.addSlider( "lineAlpha",				pt.lineAlpha,	0.0, 1.0 );
 	gui.addSlider( "traceAlpha",			pt.traceAlpha,	0.0, 1.0 );
 	gui.addSlider( "traceBlur",				pt.traceBlur,	0, 10 );
+	gui.addSlider( "minPosDist",			pt.minPosDist,	0, 40 );
 	
 	gui.addPage( "force toggles" );
 	gui.addToggle( "bUseImageColour  ",		pt.bUseImageColour );
