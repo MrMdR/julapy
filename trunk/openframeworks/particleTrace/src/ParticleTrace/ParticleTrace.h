@@ -73,8 +73,10 @@ public:
 	
 	float			exportScale;
 	float			lineWidth;
+	float			lineAlpha;
 	float			traceAlpha;
 	int				traceBlur;
+	float			minPosDist;
 
 	ofxFBOTexture	fboTrace;
 	ofxFBOTexture	fboParticles;
