@@ -19,7 +19,7 @@ void testApp::setup()
 	ofxFlashMovieClip* main;
 	main = (ofxFlashMovieClip*)stage->root()->getChildByName( "main" );
 	
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<6; i++ )
 	{
 		string btnID = "";
 		char btnIDChar[ 255 ];
@@ -41,10 +41,12 @@ void testApp::setup()
 	nawlzApp	= NULL;
 	appID		= -1;
 	
-	loadApp( NAWLZ_FLUID_APP );
+//	loadApp( NAWLZ_FLUID_APP );
 //	loadApp( NAWLZ_BLAH_APP );
 //	loadApp( NAWLZ_SAND_APP );
 //	loadApp( NAWLZ_FISH_BOWL_APP );
+//    loadApp( NAWLZ_INFODEL_APP );
+    loadApp( NAWLZ_QUESTIONS_APP );
 }
 
 void testApp :: loadApp ( int appID )
@@ -137,6 +139,54 @@ void testApp :: loadApp ( int appID )
 		
 		nawlzApp = nawlzFishBowl;
 	}
+    else if( appID == NAWLZ_INFODEL_APP )
+    {
+        NawlzInfodel* nawlzInfodel;
+        nawlzInfodel = new NawlzInfodel();
+        
+		img = new Image();
+		loadImage( ofToDataPath( "NawlzInfodel/infodel_bg_clean.png" ), *img );
+		nawlzInfodel->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+
+		img = new Image();
+		loadImage( ofToDataPath( "NawlzInfodel/infodel_harley_0.png" ), *img );
+		nawlzInfodel->createHarleyOneTexture( img->pixels, img->width, img->height, img->glType, 366, 311 );
+		delete img;
+
+		img = new Image();
+		loadImage( ofToDataPath( "NawlzInfodel/infodel_harley_1.png" ), *img );
+		nawlzInfodel->createHarleyOneTexture( img->pixels, img->width, img->height, img->glType, 438, 366 );
+		delete img;
+        
+		img = new Image();
+		loadImage( ofToDataPath( "NawlzInfodel/infodel_particle.png" ), *img );
+		nawlzInfodel->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzInfodel->setup();
+		
+		nawlzApp = nawlzInfodel;
+    }
+    else if( appID == NAWLZ_QUESTIONS_APP )
+    {
+        NawlzQuestions* nawlzQuestions;
+        nawlzQuestions = new NawlzQuestions();
+        
+		img = new Image();
+		loadImage( ofToDataPath( "NawlzQuestions/questions_bg.png" ), *img );
+		nawlzQuestions->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new Image();
+		loadImage( ofToDataPath( "NawlzQuestions/questions_particle.png" ), *img );
+		nawlzQuestions->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzQuestions->setup();
+		
+		nawlzApp = nawlzQuestions;
+    }
 }
 
 void testApp :: loadImage ( string path, Image& imageOut )

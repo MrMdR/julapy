@@ -1,4 +1,4 @@
-<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="main" itemID="4d67a619-0000025d" sourceLibraryItemHRef="Symbol 1" lastModified="1298639276" lastUniqueIdentifier="3">
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="main" itemID="4d67a619-0000025d" sourceLibraryItemHRef="Symbol 1" lastModified="1300956319" lastUniqueIdentifier="10">
   <timeline>
     <DOMTimeline name="main">
       <layers>
@@ -6,7 +6,7 @@
           <frames>
             <DOMFrame index="0" keyMode="9728">
               <elements>
-                <DOMSymbolInstance libraryItemName="btn" name="btn0" selected="true" centerPoint3DX="37.5" centerPoint3DY="37.5">
+                <DOMSymbolInstance libraryItemName="btn" name="btn0" centerPoint3DX="37.5" centerPoint3DY="37.5">
                   <matrix>
                     <Matrix tx="25" ty="25"/>
                   </matrix>
@@ -33,6 +33,22 @@
                 <DOMSymbolInstance libraryItemName="btn" name="btn3" centerPoint3DX="37.5" centerPoint3DY="148.5">
                   <matrix>
                     <Matrix tx="25" ty="136"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+                <DOMSymbolInstance libraryItemName="btn" name="btn4" centerPoint3DX="37.5" centerPoint3DY="185.5">
+                  <matrix>
+                    <Matrix tx="25" ty="173"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+                <DOMSymbolInstance libraryItemName="btn" name="btn5" selected="true" centerPoint3DX="37.5" centerPoint3DY="222.5">
+                  <matrix>
+                    <Matrix tx="25" ty="210"/>
                   </matrix>
                   <transformationPoint>
                     <Point/>
