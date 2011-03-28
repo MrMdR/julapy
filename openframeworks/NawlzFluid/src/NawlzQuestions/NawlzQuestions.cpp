@@ -136,7 +136,10 @@ void NawlzQuestions :: draw ()
     ofEnableAlphaBlending();
     
     ofSetColor( 255, 255, 255 );
-    backgroundTexture->draw( 0, 0 );
+    if( backgroundTexture )
+    {
+        backgroundTexture->draw( 0, 0 );
+    }
 
     drawParticles( particles0 );
 }
