@@ -30,8 +30,12 @@ void NawlzJackInBoxApp :: setup()
     
     //---
     
-    img.loadImage( "NawlzJackInBox/jack_in_box_bg.png" );
-    app.createBackgroundTexture	( img.getPixels(), img.width, img.height, GL_RGB, 0, 0 );
+    img.loadImage( "NawlzJackInBox/jackinbox_bg.png" );
+    app.createBackgroundTexture( img.getPixels(), img.width, img.height, GL_RGB, 0, 0 );
+    img.clear();
+
+    img.loadImage( "NawlzJackInBox/jackinbox_tongue.png" );
+    app.createTongueTexture( img.getPixels(), img.width, img.height, GL_RGBA, 0, 0 );
     img.clear();
     
     app.setup();
