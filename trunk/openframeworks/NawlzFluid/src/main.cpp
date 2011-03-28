@@ -15,7 +15,7 @@ int main( ){
     ofAppGlutWindow window;
 	ofSetupOpenGL( &window, 1024, 768, OF_WINDOW );			// <-------- setup the GL context
 
-    switch( 5 )
+    switch( 4 )
     {
         case 0 : ofRunApp( new NawlzFluidApp()      );  break;
         case 1 : ofRunApp( new NawlzFishBowlApp()   );  break;
