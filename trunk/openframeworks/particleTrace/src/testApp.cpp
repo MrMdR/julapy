@@ -18,10 +18,7 @@ void testApp::setup()
 	pt.loadImage( "bec_500x614.png" );
 //	pt.loadImage( "old_postcard.png" );
 //	pt.loadImage( "lossy_07.jpg" );
-//	pt.addRandomParticles( 100 );
-	
-//	for( int i=0; i<500; i++ )
-//		pt.addParticle( 0, 0 );
+//	pt.addRandomParticles( 300 );
 	
 	pt.setup();
 	

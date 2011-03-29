@@ -110,6 +110,12 @@ void ParticleTrace :: loadImage( string fileName )
 	pfTrace.setPixels( imgTrace.getPixels(), imgRect.width, imgRect.height, OF_IMAGE_COLOR );
 }
 
+void ParticleTrace :: loadFont( string fileName )
+{
+	fontSize = 10;
+	font.loadFont( fileName, fontSize, true, true, true );
+}
+
 //////////////////////////////////////////////////
 //	PARTICLES
 //////////////////////////////////////////////////

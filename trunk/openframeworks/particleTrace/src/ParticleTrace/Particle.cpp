@@ -50,7 +50,7 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	lineColor.b = 255;
 	lineColor.a = 128;
 	
-	colorEase	= 0.03;
+	colorEase	= 0.4;
 	
 	traceAlpha	= 1.0;
 	
