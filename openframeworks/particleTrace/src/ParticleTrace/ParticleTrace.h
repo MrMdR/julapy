@@ -16,6 +16,7 @@
 #include "ofxCvColorImage.h"
 #include "PixelFlow.h"
 #include "Particle.h"
+#include "ParticleType.h"
 
 class ParticleTrace : public ofBaseApp
 {
@@ -30,6 +31,8 @@ public:
 	void draw	( bool bTiling = false );
 	
 	void loadImage			( string fileName );
+    void loadFont           ( string fileName );
+    
 	void addParticle		( float x, float y, bool bMarkAsTestParticle = false );
 	void addRandomParticles ( int numOfParticles );
 	void killAllParticles	();
@@ -103,4 +106,8 @@ public:
 	int					pid;
 	vector<Particle*>	particles;
 	Particle*			testParticle;
+    
+    ofTrueTypeFont      font;
+	float               fontSize;
+    ParticleType        ptype;
 };
