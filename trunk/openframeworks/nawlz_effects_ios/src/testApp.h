@@ -12,6 +12,7 @@
 #include "NawlzFishBowl.h"
 #include "NawlzInfodel.h"
 #include "NawlzQuestions.h"
+#include "NawlzJackInBox.h"
 
 #define NAWLZ_FLUID_APP			0
 #define NAWLZ_BLAH_APP			1
@@ -19,6 +20,7 @@
 #define NAWLZ_FISH_BOWL_APP		3
 #define NAWLZ_INFODEL_APP		4
 #define NAWLZ_QUESTIONS_APP		5
+#define NAWLZ_JACKINBOX_APP		6
 
 class Image
 {
@@ -78,6 +80,7 @@ public:
 	vector<Btn*>	btns;
 	ofBaseApp*		nawlzApp;
 	int				appID;
+    Image*          img;
 
 };
 
