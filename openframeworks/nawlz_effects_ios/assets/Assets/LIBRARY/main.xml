@@ -1,4 +1,4 @@
-<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="main" itemID="4d67a619-0000025d" sourceLibraryItemHRef="Symbol 1" lastModified="1300956319" lastUniqueIdentifier="10">
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="main" itemID="4d67a619-0000025d" sourceLibraryItemHRef="Symbol 1" lastModified="1301627736" lastUniqueIdentifier="13">
   <timeline>
     <DOMTimeline name="main">
       <layers>
@@ -46,9 +46,17 @@
                     <Point/>
                   </transformationPoint>
                 </DOMSymbolInstance>
-                <DOMSymbolInstance libraryItemName="btn" name="btn5" selected="true" centerPoint3DX="37.5" centerPoint3DY="222.5">
+                <DOMSymbolInstance libraryItemName="btn" name="btn5" centerPoint3DX="37.5" centerPoint3DY="222.5">
                   <matrix>
                     <Matrix tx="25" ty="210"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+                <DOMSymbolInstance libraryItemName="btn" name="btn6" centerPoint3DX="37.5" centerPoint3DY="259.5">
+                  <matrix>
+                    <Matrix tx="25" ty="247"/>
                   </matrix>
                   <transformationPoint>
                     <Point/>
