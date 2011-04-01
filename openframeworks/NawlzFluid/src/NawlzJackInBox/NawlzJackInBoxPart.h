@@ -22,7 +22,7 @@ public:
     
     void setup  ( const ofPoint& p, float length, float angle );
     void update ();
-    void draw   ();
+    void draw   ( bool bDrawDebug = false );
     
     void updateForce    ( const ofPoint& v );
     void updateForce    ( int x, int y );
@@ -32,8 +32,15 @@ public:
 	void mousePressed	( int x, int y, int button );
 	void mouseReleased	( int x, int y, int button );
     
+    ofTexture*  tex;
+    ofPoint     texPos;
+    ofPoint     texReg;
+    
+    bool        bJiggle;
+    
     ofPoint     pStr;
     ofPoint     pEnd;
+    ofPoint     pEndInit;
     float       length;
     float       angle;
     ofxBounce   bounce;
