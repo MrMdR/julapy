@@ -13,6 +13,7 @@
 
 #include "ofMain.h"
 #include "NawlzSand.h"
+#include "NawlzImage.h"
 
 @interface NawlzSandGLView : UIView {
 	/* The pixel dimensions of the backbuffer */
@@ -64,7 +65,6 @@
 - (id)initWithFrame:(CGRect)aRect;
 
 - (void) initNawlzSand;
-- (void) createBackgroundTexture;
-- (void) createParticleTexture;
+- (void) loadImage :(NSString*) fileName : (NawlzImage*) imageOut;
 
 @end

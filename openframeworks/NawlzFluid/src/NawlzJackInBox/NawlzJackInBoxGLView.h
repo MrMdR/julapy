@@ -1,9 +1,9 @@
 //
-//  NawlzFluidGLView.h
+//  NawlzSandGLView.h
 //  Nawlz
 //
-//  Created by lukasz karluk on 17/12/10.
-//  Copyright 2010 com.nawlz. All rights reserved.
+//  Created by lukasz karluk on 20/02/11.
+//  Copyright 2011 com.nawlz. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -12,15 +12,15 @@
 #import <OpenGLES/ES1/glext.h>
 
 #include "ofMain.h"
-#include "NawlzFluid.h"
+#include "NawlzJackInBox.h"
 #include "NawlzImage.h"
 
-@interface NawlzFluidGLView : UIView {
+@interface NawlzJackInBoxGLView : UIView {
 	/* The pixel dimensions of the backbuffer */
 	GLint backingWidth;
 	GLint backingHeight;
 	
-	NawlzFluid* nawlzFluid;
+	NawlzJackInBox*		nawlzJackInBox;
 	
 	EAGLContext *context;
 	
@@ -64,7 +64,7 @@
 
 - (id)initWithFrame:(CGRect)aRect;
 
-- (void) initNawlzFluid;
+- (void) initNawlzJackInBox;
 - (void) loadImage :(NSString*) fileName : (NawlzImage*) imageOut;
 
 @end

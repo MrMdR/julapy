@@ -9,6 +9,8 @@
 
 #include "NawlzQuestionsApp.h"
 
+#ifndef TARGET_OF_IPHONE
+
 ///////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////
@@ -130,3 +132,4 @@ void NawlzQuestionsApp :: windowResized(int w, int h)
 	app.windowResized( w, h );
 }
 
+#endif

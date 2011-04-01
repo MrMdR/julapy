@@ -13,6 +13,7 @@
 
 #include "ofMain.h"
 #include "NawlzInfodel.h"
+#include "NawlzImage.h"
 
 @interface NawlzInfodelGLView : UIView {
 	/* The pixel dimensions of the backbuffer */
@@ -64,9 +65,6 @@
 - (id)initWithFrame:(CGRect)aRect;
 
 - (void) initNawlzInfodel;
-- (void) createBackgroundTexture;
-- (void) createHarleyOneTexture;
-- (void) createHarleyTwoTexture;
-- (void) createParticleTexture;
+- (void) loadImage :(NSString*) fileName : (NawlzImage*) imageOut;
 
 @end

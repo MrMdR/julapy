@@ -9,6 +9,8 @@
 
 #include "NawlzFishBowlApp.h"
 
+#ifndef TARGET_OF_IPHONE
+
 ///////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////
@@ -135,3 +137,5 @@ void NawlzFishBowlApp :: windowResized(int w, int h)
 {
 	
 }
+
+#endif

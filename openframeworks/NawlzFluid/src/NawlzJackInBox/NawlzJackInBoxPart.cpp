@@ -20,7 +20,9 @@ NawlzJackInBoxPart :: NawlzJackInBoxPart ()
 
 NawlzJackInBoxPart :: ~NawlzJackInBoxPart ()
 {
-    //
+    tex->clear();
+    delete tex;
+    tex = NULL;
 }
 
 void NawlzJackInBoxPart :: setup( const ofPoint& p, float length, float angle )
@@ -42,6 +44,7 @@ void NawlzJackInBoxPart :: setup( const ofPoint& p, float length, float angle )
     
     bounce.center( angle );
     bounce.position( angle );
+    bounce.velocity( ofRandom( -20, 20 ) );
     
     bJiggle = true;
 }
@@ -158,7 +161,7 @@ void NawlzJackInBoxPart :: mouseDragged ( int x, int y, int button )
 
 void NawlzJackInBoxPart :: mousePressed ( int x, int y, int button )
 {
-//    bounce.velocity( 10 * forceDir * forceScale );
+    updateForce( x, y );
 }
 
 void NawlzJackInBoxPart :: mouseReleased ( int x, int y, int button )

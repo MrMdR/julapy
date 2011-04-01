@@ -73,24 +73,17 @@
 {
 	nawlzBlah = new NawlzBlah();
 	
-	if( false )
-	{
-		NSString*		imagePath;
-		UIImage*		image;
-		UIImageView*	imageView;
-		
-		imagePath	= [ FilePath pathForAsset : @"whale_bg_1024x768.png" ];
-		image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
-		imageView	= [ [ UIImageView alloc ] initWithImage: image ];
-		
-		[ self addSubview : imageView ];
-		
-		[ image release ];
-		[ imageView release ];
-	}
-	
-	[ self createBackgroundTexture ];
-	[ self createParticleTexture ];
+    NawlzImage* img;
+    
+//    img = new NawlzImage();
+//    [ self loadImage : @"blah_bg.png" : img ];
+//    nawlzBlah->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+//    delete img;
+    
+    img = new NawlzImage();
+    [ self loadImage : @"blah_particle_2.png" : img ];
+    nawlzBlah->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+    delete img;
 	
 	nawlzBlah->setup();
 }
@@ -99,7 +92,7 @@
 //	TEXTURES.
 /////////////////////////////////////////////////////
 
-- (void) createBackgroundTexture
+- (void) loadImage : (NSString*) fileName : (NawlzImage*) imageOut
 {
 	NSString*	imagePath;
 	UIImage*	image;
@@ -108,7 +101,7 @@
 	int imageWidth;
 	int imageHeight;
 	
-	imagePath	= [ FilePath pathForAsset : @"blah_bg.png" ];
+	imagePath	= [ FilePath pathForAsset : fileName ];
 	image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
 	
 	CGContextRef spriteContext;
@@ -125,39 +118,17 @@
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
 	CGContextRelease(spriteContext);
 	
-	nawlzBlah->createBackgroundTexture( pixels, imageWidth, imageHeight, GL_RGBA );
+	imageOut->width         = imageWidth;
+	imageOut->height		= imageHeight;
+	imageOut->pixelDepth	= bytesPerPixel;
+	imageOut->glType		= GL_LUMINANCE;
+	if( bytesPerPixel == 3 )
+		imageOut->glType	= GL_RGB;
+	if( bytesPerPixel == 4 )
+		imageOut->glType	= GL_RGBA;
+	imageOut->pixels		= new unsigned char[ imageWidth * imageHeight * bytesPerPixel ];
 	
-	free( pixels );
-	[ image release ];
-}
-
-- (void) createParticleTexture
-{
-	NSString*	imagePath;
-	UIImage*	image;
-	
-	GLubyte* pixels;
-	int imageWidth;
-	int imageHeight;
-	
-	imagePath	= [ FilePath pathForAsset : @"blah_particle_2.png" ];
-	image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
-	
-	CGContextRef spriteContext;
-	CGImageRef	cgImage = image.CGImage;
-	
-	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
-	if(bytesPerPixel == 3) bytesPerPixel = 4;
-	
-	imageWidth	= CGImageGetWidth(cgImage);
-	imageHeight	= CGImageGetHeight(cgImage);
-	
-	pixels			= (GLubyte *) malloc( imageWidth * imageHeight * bytesPerPixel);
-	spriteContext	= CGBitmapContextCreate(pixels, imageWidth, imageHeight, CGImageGetBitsPerComponent(cgImage), imageWidth * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
-	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
-	CGContextRelease(spriteContext);
-	
-	nawlzBlah->createParticleTexture( pixels, imageWidth, imageHeight, GL_RGBA );
+	memcpy( imageOut->pixels, pixels, imageWidth * imageHeight * bytesPerPixel );
 	
 	free( pixels );
 	[ image release ];

@@ -2,6 +2,9 @@
 #define NAWLZ_QUESTIONS_APP
 
 #include "ofMain.h"
+
+#ifndef TARGET_OF_IPHONE
+
 #include "ofxSimpleGuiToo.h"
 
 #include "NawlzQuestions.h"
@@ -31,5 +34,7 @@ public:
     NawlzQuestions      app;
     
 };
+
+#endif
 
 #endif

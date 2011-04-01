@@ -2,6 +2,9 @@
 #define NAWLZ_SAND_APP
 
 #include "ofMain.h"
+
+#ifndef TARGET_OF_IPHONE
+
 #include "ofxSimpleGuiToo.h"
 
 #include "NawlzSand.h"
@@ -31,5 +34,7 @@ public:
 	
 	ofxSimpleGuiToo		gui;
 };
+
+#endif
 
 #endif
