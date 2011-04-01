@@ -285,7 +285,7 @@ void testApp :: loadApp ( int appID )
         delete img;
         
 		img = new Image();
-		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_head_spine.tiff" ), *img );
+		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_head_spine.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 695, 205 ), ofPoint( 0, 0 ), 0, 0, false );
         delete img;
         
