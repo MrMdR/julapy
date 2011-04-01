@@ -13,6 +13,7 @@
 
 #include "ofMain.h"
 #include "NawlzFishBowl.h"
+#include "NawlzImage.h"
 
 @interface NawlzFishBowlGLView : UIView {
 	/* The pixel dimensions of the backbuffer */
@@ -64,8 +65,6 @@
 - (id)initWithFrame:(CGRect)aRect;
 
 - (void) initNawlzFishBowl;
-- (void) createBackgroundTexture;
-- (void) createParticleTexture;
-- (void) createBowlTexture;
+- (void) loadImage :(NSString*) fileName : (NawlzImage*) imageOut;
 
 @end

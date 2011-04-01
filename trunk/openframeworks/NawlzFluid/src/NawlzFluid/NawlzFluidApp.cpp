@@ -1,4 +1,7 @@
+
 #include "NawlzFluidApp.h"
+
+#ifndef TARGET_OF_IPHONE
 
 ///////////////////////////////////////////
 //	INIT.
@@ -137,3 +140,4 @@ void NawlzFluidApp :: windowResized(int w, int h)
 
 }
 
+#endif

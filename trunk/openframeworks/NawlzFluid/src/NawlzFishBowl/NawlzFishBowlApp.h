@@ -2,6 +2,9 @@
 #define NAWLZ_FISH_BOWL_APP
 
 #include "ofMain.h"
+
+#ifndef TARGET_OF_IPHONE
+
 #include "ofxSimpleGuiToo.h"
 
 #include "NawlzFishBowl.h"
@@ -32,5 +35,7 @@ public:
 	
 	ofxSimpleGuiToo		gui;
 };
+
+#endif
 
 #endif

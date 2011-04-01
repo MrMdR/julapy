@@ -2,6 +2,9 @@
 #define NAWLZ_WHALE_APP
 
 #include "ofMain.h"
+
+#ifndef TARGET_OF_IPHONE
+
 #include "ofxSimpleGuiToo.h"
 
 #include "NawlzFluid.h"
@@ -32,5 +35,7 @@ public:
 	NawlzFluid			nawlzFluid;
 	
 };
+
+#endif
 
 #endif

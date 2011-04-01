@@ -9,6 +9,8 @@
 
 #include "NawlzJackInBoxApp.h"
 
+#ifndef TARGET_OF_IPHONE
+
 ///////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////
@@ -245,3 +247,5 @@ void NawlzJackInBoxApp :: windowResized(int w, int h)
 {
 	app.windowResized( w, h );
 }
+
+#endif

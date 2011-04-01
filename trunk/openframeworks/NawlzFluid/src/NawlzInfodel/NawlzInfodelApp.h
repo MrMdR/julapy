@@ -2,6 +2,9 @@
 #define NAWLZ_INFODEL_APP
 
 #include "ofMain.h"
+
+#ifndef TARGET_OF_IPHONE
+
 #include "ofxSimpleGuiToo.h"
 
 #include "NawlzInfodel.h"
@@ -31,5 +34,7 @@ public:
     NawlzInfodel        app;
     
 };
+
+#endif
 
 #endif

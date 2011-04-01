@@ -9,6 +9,8 @@
 
 #include "NawlzSandApp.h"
 
+#ifndef TARGET_OF_IPHONE
+
 ///////////////////////////////////////////
 //	INIT.
 ///////////////////////////////////////////
@@ -117,3 +119,5 @@ void NawlzSandApp :: windowResized(int w, int h)
 {
 	
 }
+
+#endif

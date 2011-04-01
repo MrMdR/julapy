@@ -73,9 +73,18 @@
 {
 	nawlzQuestions = new NawlzQuestions();
 	
-//	[ self createBackgroundTexture ];
-	[ self createParticleTexture ];
-	
+    NawlzImage* img;
+    
+//    img = new NawlzImage();
+//    [ self loadImage : @"questions_bg.png" : img ];
+//    nawlzQuestions->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+//    delete img;
+
+    img = new NawlzImage();
+    [ self loadImage : @"questions_particle.png" : img ];
+    nawlzQuestions->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+    delete img;
+    
 	nawlzQuestions->setup();
 }
 
@@ -83,7 +92,7 @@
 //	TEXTURES.
 /////////////////////////////////////////////////////
 
-- (void) createBackgroundTexture
+- (void) loadImage : (NSString*) fileName : (NawlzImage*) imageOut
 {
 	NSString*	imagePath;
 	UIImage*	image;
@@ -92,7 +101,7 @@
 	int imageWidth;
 	int imageHeight;
 	
-	imagePath	= [ FilePath pathForAsset : @"questions_bg.png" ];
+	imagePath	= [ FilePath pathForAsset : fileName ];
 	image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
 	
 	CGContextRef spriteContext;
@@ -109,39 +118,17 @@
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
 	CGContextRelease(spriteContext);
 	
-	nawlzQuestions->createBackgroundTexture( pixels, imageWidth, imageHeight, GL_RGBA );
+	imageOut->width         = imageWidth;
+	imageOut->height		= imageHeight;
+	imageOut->pixelDepth	= bytesPerPixel;
+	imageOut->glType		= GL_LUMINANCE;
+	if( bytesPerPixel == 3 )
+		imageOut->glType	= GL_RGB;
+	if( bytesPerPixel == 4 )
+		imageOut->glType	= GL_RGBA;
+	imageOut->pixels		= new unsigned char[ imageWidth * imageHeight * bytesPerPixel ];
 	
-	free( pixels );
-	[ image release ];
-}
-
-- (void) createParticleTexture
-{
-	NSString*	imagePath;
-	UIImage*	image;
-	
-	GLubyte* pixels;
-	int imageWidth;
-	int imageHeight;
-	
-	imagePath	= [ FilePath pathForAsset : @"questions_particle.png" ];
-	image		= [ [ UIImage alloc ] initWithContentsOfFile : imagePath ];
-	
-	CGContextRef spriteContext;
-	CGImageRef	cgImage = image.CGImage;
-	
-	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
-	if(bytesPerPixel == 3) bytesPerPixel = 4;
-	
-	imageWidth	= CGImageGetWidth(cgImage);
-	imageHeight	= CGImageGetHeight(cgImage);
-	
-	pixels			= (GLubyte *) malloc( imageWidth * imageHeight * bytesPerPixel);
-	spriteContext	= CGBitmapContextCreate(pixels, imageWidth, imageHeight, CGImageGetBitsPerComponent(cgImage), imageWidth * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
-	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
-	CGContextRelease(spriteContext);
-	
-	nawlzQuestions->createParticleTexture( pixels, imageWidth, imageHeight, GL_RGBA );
+	memcpy( imageOut->pixels, pixels, imageWidth * imageHeight * bytesPerPixel );
 	
 	free( pixels );
 	[ image release ];

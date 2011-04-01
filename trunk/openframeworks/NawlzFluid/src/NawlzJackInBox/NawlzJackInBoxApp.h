@@ -2,6 +2,9 @@
 #define NAWLZ_JACK_IN_BOX_APP
 
 #include "ofMain.h"
+
+#ifndef TARGET_OF_IPHONE
+
 #include "ofxSimpleGuiToo.h"
 
 #include "NawlzJackInBox.h"
@@ -30,5 +33,7 @@ public:
     
     NawlzJackInBox      app;
 };
+
+#endif
 
 #endif
