@@ -87,6 +87,13 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	bUseWanderForce		= true;
 	bMarkAsTestParticle	= false;
 	bVerbose			= false;
+    
+    //---
+    
+    ribbonType      = NULL;
+    ribbonPositionX = 0;
+    ribbonCopyIndex = 0;
+    ribbonCopy      = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello";
 }
 
 Particle :: ~Particle()
@@ -103,6 +110,10 @@ Particle :: ~Particle()
 	delete[] strip_col_array;
 	strip_ver_array = NULL;
 	strip_col_array = NULL;
+    
+    for( int i=0; i<ribbonLetters.size(); i++ )
+        delete ribbonLetters[ i ];
+    ribbonLetters.clear();
 }
 
 //////////////////////////////////////////////////
@@ -147,9 +158,15 @@ void Particle :: setBounds ( const ofRectangle& rect )
 	bounds = rect;
 }
 
+void Particle :: setRibbonType ( RibbonType2D* ribbonType, string ribbonCopy )
+{
+    this->ribbonType = ribbonType;
+    this->ribbonCopy = ribbonCopy;
+}
+
 void Particle :: setup ()
 {
-	
+	//
 }
 
 //////////////////////////////////////////////////
@@ -239,6 +256,8 @@ void Particle :: update ()
 
 	addToLineVertexArray( posVec, currentColor );
 	addToStrip();
+    
+    addToRibbonType();
 }
 
 void Particle :: wander()
@@ -435,6 +454,28 @@ void Particle :: setLineAlpha ( float alpha )
 	}
 }
 
+//////////////////////////////////////////////////
+//	RIBBON TYPE
+//////////////////////////////////////////////////
+
+void Particle :: addToRibbonType ()
+{
+    if( !ribbonType )
+        return;
+    
+    //--- remove old.
+    
+    for( int i=0; i<ribbonLetters.size(); i++ )
+        delete ribbonLetters[ i ];
+    ribbonLetters.clear();
+    
+    //--- add new.
+    
+    ribbonType->setCopy( ribbonCopy );
+    ribbonType->setRibbon( line_ver_array, line_ind_total );
+    
+    ribbonLetters = ribbonType->generateTypeOnRibbon( ribbonPositionX, ribbonCopyIndex );
+}
 
 //////////////////////////////////////////////////
 //	DRAW
@@ -516,4 +557,16 @@ void Particle :: drawTrace ()
 	// not sure why, but think its the way lines are drawn to fbo.
 	
 	ofLine( posPrevVec.x, posPrevVec.y, posVec.x + dir.x, posVec.y + dir.y );
+}
+
+
+void Particle :: drawType ()
+{
+    glColor4f( 1.0, 1.0, 1.0, 0.15 );
+    
+    for( int i=0; i<ribbonLetters.size(); i++ )
+    {
+        ribbonLetters[ i ]->drawFill();
+//        ribbonLetters[ i ]->drawOutline( true );
+    }
 }

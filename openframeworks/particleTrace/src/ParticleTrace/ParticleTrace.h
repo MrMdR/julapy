@@ -32,6 +32,7 @@ public:
 	
 	void loadImage			( string fileName );
     void loadFont           ( string fileName );
+    void loadCopy           ( string fileName );
     
 	void addParticle		( float x, float y, bool bMarkAsTestParticle = false );
 	void addRandomParticles ( int numOfParticles );
@@ -46,6 +47,8 @@ public:
 	void drawSamples			();
 	void drawSampleImage		( ofImage& img );
 	void drawSampleVector		( const ofxVec2f& v );
+    
+    void saveTypeFBO    ();
 	
 	void keyPressed		( int key );
 	void keyReleased	( int key );
@@ -61,6 +64,7 @@ public:
 	bool			bShowParticles;
 	bool			bShowParticleLines;
 	bool			bShowParticleStrip;
+    bool            bShowParticleType;
 	bool			bShowParticleHead;
 	
 	bool			bUseImageColour;
@@ -84,6 +88,9 @@ public:
 
 	ofxFBOTexture	fboTrace;
 	ofxFBOTexture	fboParticles;
+    ofxFBOTexture   fboType;
+    float           fboLargeScale;
+    ofRectangle     fboLargeRect;
     
     ofRectangle     activeRect;
 	
@@ -114,7 +121,14 @@ public:
 	vector<Particle*>	particles;
 	Particle*			testParticle;
     
-    ofTrueTypeFont      font;
-	float               fontSize;
-    RibbonType2D        rt;
+    ofTrueTypeFont  font;
+    float           fontSize;
+    float           fontSizeAdjust;
+    float           fontOffsetY;
+    float           fontScale;
+    float           fontKerning;
+    
+    RibbonType2D    ribbonType;
+    float           ribbonPositionX;
+    string          ribbonCopy;
 };

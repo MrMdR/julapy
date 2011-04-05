@@ -15,10 +15,12 @@ void testApp::setup()
 	
 //	pt.loadImage( "perlin_noise.png" );
 //	pt.loadImage( "old_man.jpg" );
-	pt.loadImage( "bec_500x614.png" );
 //	pt.loadImage( "old_postcard.png" );
 //	pt.loadImage( "lossy_07.jpg" );
-//	pt.addRandomParticles( 300 );
+    
+    pt.loadImage( "bec_500x614.png" );
+    pt.loadFont( "fonts/verdana.ttf" );
+    pt.loadCopy( "110403_tim/tim_copy.txt" );
 	
 	pt.setup();
 	
@@ -40,6 +42,7 @@ void testApp :: initGui ()
 	gui.addToggle( "bShowParticles  ",		pt.bShowParticles );
 	gui.addToggle( "bShowParticleLines  ",	pt.bShowParticleLines );
 	gui.addToggle( "bShowParticleStrip  ",	pt.bShowParticleStrip );
+    gui.addToggle( "bShowParticleType  ",	pt.bShowParticleType );
 	gui.addToggle( "bShowParticleHead  ",	pt.bShowParticleHead );
 	
 	gui.addPage( "render params" );
@@ -154,10 +157,10 @@ void testApp::keyPressed(int key)
 	
 	if( key == 't' )
 	{
-		char str[255];
-		sprintf( str, "screengrab_lrg/image_%02d%02d%02d_%02d%02d%02d.png", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds() );
-		
-		tileSaver.finish( str, false );
+//		char str[255];
+//		sprintf( str, "screengrab_lrg/image_%02d%02d%02d_%02d%02d%02d.png", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds() );
+//		
+//		tileSaver.finish( str, false );
 	}
 	
 	if( key == 'm' )
@@ -195,6 +198,8 @@ void testApp::keyPressed(int key)
 			bStepOne = true;
 		}
 	}
+    
+    pt.keyPressed( key );
 }
 
 //--------------------------------------------------------------

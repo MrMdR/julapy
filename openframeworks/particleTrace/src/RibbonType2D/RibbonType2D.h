@@ -40,7 +40,7 @@ public :
     void setRibbon              ( float* ribbonPoints, int ribbonLength, float* ribbonNormals = NULL, float* ribbonColors = NULL );
 
     vector<Letter*> generateTypeOnRibbon    ();
-    vector<Letter*> generateTypeOnRibbon    ( float& ribbonPositionX );
+    vector<Letter*> generateTypeOnRibbon    ( float& ribbonPositionX_ref, int& ribbonCopyIndex_ref );
     void generateRibbonNormals  ();
     void generateRibbonColors   ();
     void generateRibbonLengths  ();
@@ -65,6 +65,8 @@ public :
     
     string          ribbonCopy;
     char*           ribbonCopyChars;
+    int             ribbonCopyIndex;
+    int             ribbonCopyTotal;
 	
 	float*          ribbonPoints;
 	float*          ribbonNormals;

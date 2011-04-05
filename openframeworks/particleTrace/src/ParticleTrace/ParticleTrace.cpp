@@ -44,6 +44,7 @@ ParticleTrace :: ParticleTrace ()
 	bShowParticles		= true;
 	bShowParticleLines	= false;
 	bShowParticleStrip	= false;
+    bShowParticleType   = true;
 	bShowParticleHead	= true;
 	
 	bUseImageColour		= true;
@@ -59,6 +60,10 @@ ParticleTrace :: ParticleTrace ()
 	
 	velLimit		= 3.0;
 	velEase			= 0.2;
+    
+    //--- ribbon type.
+    
+    ribbonCopy = "";
 }
 
 ParticleTrace :: ~ParticleTrace()
@@ -72,7 +77,9 @@ ParticleTrace :: ~ParticleTrace()
 
 void ParticleTrace :: setup()
 {
-	//
+    ribbonType.setFont( &font, fontSize, fontScale, fontOffsetY );
+    ribbonType.setKerning( fontKerning );
+    ribbonType.setup();
 }
 
 //////////////////////////////////////////////////
@@ -100,6 +107,10 @@ void ParticleTrace :: loadImage( string fileName )
     imgRectCrop     = ofxResizeUtil :: cropToSize ( imgRect, activeRect );
     
     imgRectCurrent  = imgRectCenter;
+    
+    fboLargeScale       = 12;
+    fboLargeRect.width  = (int)( imgRectCurrent.width  * fboLargeScale );
+    fboLargeRect.height = (int)( imgRectCurrent.height * fboLargeScale );
 	
 	//-- opencv.
 	
@@ -114,9 +125,12 @@ void ParticleTrace :: loadImage( string fileName )
 	//-- initialise fbo.
 	
 	fboTrace.allocate( imgRect.width, imgRect.height, GL_RGB );
+    fboTrace.clear( 0, 0, 0, 0 );
+    
 	fboParticles.allocate( imgRect.width, imgRect.height );
-	
-	fboTrace.clear( 0, 0, 0, 0 );
+    
+    fboType.allocate( fboLargeRect.width, fboLargeRect.height, GL_RGB );
+    fboType.clear( 0, 0, 0, 0 );
 	
 	//-- pixel flow.
 	
@@ -126,8 +140,35 @@ void ParticleTrace :: loadImage( string fileName )
 
 void ParticleTrace :: loadFont( string fileName )
 {
-	fontSize = 10;
-	font.loadFont( fileName, fontSize, true, true, true );
+    fontSize        = 50;                   // desired font size in pixels.
+    fontSizeAdjust  = 1.04;                 // slight arbitrary font adjustment to make it as close to the desired font size.
+    fontOffsetY     = -fontSize * 0.05;     // pushing the font up or down to make it fit better between the lines.
+    fontScale       = 0.04;                  // scale percentage of the original font size.
+    fontKerning     = 0.0625;               // kerning based on percentage of the font size.
+    
+	font.loadFont( fileName, fontSize * fontSizeAdjust, true, true, true );
+}
+
+void ParticleTrace :: loadCopy ( string fileName )
+{
+	ifstream myFile;
+	string line;
+    
+    ribbonCopy = "";
+	
+    myFile.open( ofToDataPath( fileName ).c_str() );
+    
+	if( myFile.is_open() )
+	{
+		while( !myFile.eof() )
+		{
+            getline( myFile, line );
+            
+            ribbonCopy += line;
+        }
+    }
+
+    myFile.close();
 }
 
 //////////////////////////////////////////////////
@@ -162,6 +203,7 @@ void ParticleTrace :: addParticle ( float x, float y, bool bMarkAsTestParticle )
 	p->setInitialPosition( x, y );
 	p->setInitialVelocity( ofRandom( -1, 1 ), ofRandom( -1, 1 ) );
 	p->setPixelRange( sampleRangeX, sampleRangeY );
+    p->setRibbonType( &ribbonType, ribbonCopy );
 	p->pid = pid++;
 	
 	if( bMarkAsTestParticle )
@@ -351,7 +393,6 @@ void ParticleTrace :: drawTraceImage ()
 		return;
 
 	glEnable( GL_BLEND );
-//	glBlendFunc( GL_ONE, GL_ONE );
 	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_COLOR );
 	
 	glColor4f( 1.0, 1.0, 1.0, 1.0 );
@@ -399,7 +440,36 @@ void ParticleTrace :: drawParticles ( bool bDrawToFbo, bool bTiling )
 		{
 			p->drawStrip();
 		}
+        
+        fboType.begin();
+        
+        glPushMatrix();
+        glTranslatef( -imgRectCurrent.x * fboLargeScale, -imgRectCurrent.y * fboLargeScale, 0 );
+        glScalef( fboLargeScale, fboLargeScale, 1 );
+
+        p->drawType();
+        
+        glPopMatrix();
+        
+        fboType.end();
 	}
+    
+    if( bShowParticleType )
+    {
+        glPushMatrix();
+        glTranslatef( imgRectCurrent.x, imgRectCurrent.y, 0 );
+        glScalef( 1 / fboLargeScale, 1 / fboLargeScale, 1 );
+        
+        glEnable( GL_BLEND );
+        glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_COLOR );
+
+		fboType.draw( 0, 0 );
+        
+        glEnable(GL_BLEND);									// return to alpha blending.
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        glPopMatrix();
+    }
 	
 	for( int i=0; i<t; i++ )
 	{
@@ -529,12 +599,45 @@ void ParticleTrace :: drawSampleVector ( const ofxVec2f& v )
 }
 
 //////////////////////////////////////////////////
+//	SAVE FBO.
+//////////////////////////////////////////////////
+
+void ParticleTrace :: saveTypeFBO ()
+{
+    int y = ofGetYear();
+    int m = ofGetMonth();
+    int d = ofGetDay();
+    int h = ofGetHours();
+    int n = ofGetMinutes();
+    int s = ofGetSeconds();
+    
+    char str[255];
+    sprintf( str, "screengrab_lrg/image_type_%02d%02d%02d_%02d%02d%02d.png", y % 1000, m, d, h, n, s );
+    
+	ofxCvColorImage imgTemp;
+	imgTemp.allocate( fboLargeRect.width, fboLargeRect.height );
+	imgTemp.setFromPixels( (unsigned char*)fboType.getPixels(), fboLargeRect.width, fboLargeRect.height );
+	imgTemp.mirror( true, false );
+
+	ofImage imgSave;
+    imgSave.allocate( fboLargeRect.width, fboLargeRect.height, OF_IMAGE_COLOR );
+    imgSave.setFromPixels( imgTemp.getPixels(), fboLargeRect.width, fboLargeRect.height, OF_IMAGE_COLOR );
+    imgSave.saveImage( str );
+    
+	imgTemp.clear();
+    imgSave.clear();
+}
+
+//////////////////////////////////////////////////
 //	HANDLERS
 //////////////////////////////////////////////////
 
 void ParticleTrace :: keyPressed ( int key )
 {
-	//
+	if( key == 't' )
+    {
+        saveTypeFBO();
+    }
 }
 
 void ParticleTrace :: keyReleased ( int key )
