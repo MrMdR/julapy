@@ -9,7 +9,7 @@ void testApp::setup()
 //	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	
-	bDebug		= false;
+	bDebug		= true;
 	bStepMode	= false;
 	bStepOne	= false;
 	
@@ -218,11 +218,7 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button)
 {
-	if( !bDebug )
-	{
-		pt.addParticle( x, y, true );
-	}
-	
+	pt.addParticle( x, y, true );
 	pt.mousePressed( x, y, button );
 }
 
