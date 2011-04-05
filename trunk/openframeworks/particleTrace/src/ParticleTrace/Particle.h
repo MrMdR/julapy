@@ -12,6 +12,7 @@
 #include "ofMain.h"
 #include "ofxVec2f.h"
 #include "PixelFlow.h"
+#include "RibbonType2D.h"
 
 #define PARTICLE_MAX_LENGTH		100000
 //#define PARTICLE_MAX_LENGTH		100
@@ -35,15 +36,18 @@ public:
 	void drawLine	();
 	void drawStrip	();
 	void drawTrace	();
+    void drawType   ();
 	
 	void setInitialPosition		( float x, float y );
 	void setInitialVelocity		( float x, float y );
 	void setPixelRange			( int x, int y );
 	void setBounds				( const ofRectangle& rect );
+    void setRibbonType          ( RibbonType2D* ribbonType, string ribbonCopy = "testing" );
 	
 	void addToStrip				();
 	void addToLineVertexArray	( const ofPoint& p, const ofColor& c );
 	void addToStripVertexArray	( const ofPoint& p1, const ofPoint& p2, const ofColor& c1, const ofColor& c2 );
+    void addToRibbonType        ();
 	
 	void setLineColor			( const ofColor& c );
 	void setLineAlpha			( float alpha );
@@ -120,5 +124,12 @@ public:
 	
 	int			size;
 	int			sizeHalf;
-	
+    
+    //--- ribbon type.
+    
+    RibbonType2D*   ribbonType;
+    float           ribbonPositionX;
+    string          ribbonCopy;
+    int             ribbonCopyIndex;
+    vector<Letter*> ribbonLetters;
 };

@@ -95,7 +95,9 @@ void RibbonType2D :: setCopy ( const string& copy )
         ribbonCopyChars = NULL;
     }
     
-	ribbonCopyChars = new char[ ribbonCopy.size() + 1 ];
+    ribbonCopyTotal = ribbonCopy.size() + 1;
+    
+	ribbonCopyChars = new char[ ribbonCopyTotal ];
 	strcpy( ribbonCopyChars, ribbonCopy.c_str() );
 }
 
@@ -115,7 +117,6 @@ void RibbonType2D :: setup ()
     
 	string supportedCharacter;
     supportedCharacter = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
-//    supportedCharacter = "AabCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";     // capital B removed as its causing issues.
 	
 	lettersTotal	= supportedCharacter.size();
 	characters		= new char[ lettersTotal + 1 ];
@@ -286,7 +287,7 @@ void RibbonType2D :: initCharacterScale ()
 	{
         Letter& letter = letters[ i ];
         
-        scaleLetter( letter, 0, 0, 0.1 );
+        scaleLetter( letter, 0, 0, fontScale );
 	}
 }
 
@@ -333,42 +334,55 @@ void RibbonType2D :: setRibbon ( float* ribbonPoints, int ribbonLength, float* r
 
 vector<Letter*> RibbonType2D :: generateTypeOnRibbon ()
 {
-    float ribbonPositionZero = 0;
-    return  generateTypeOnRibbon( ribbonPositionZero );
+    float ribbonPositionZero  = 0;
+    int   ribbonCopyIndexZero = 0;
+    return generateTypeOnRibbon( ribbonPositionZero, ribbonCopyIndexZero );
 }
 
-vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPosX )
+vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPositionX_ref, int& ribbonCopyIndex_ref )
 {
     lettersOnRibbon.clear();
 
-	ribbonPositionX     = ribbonPosX;
+	ribbonPositionX     = ribbonPositionX_ref;
+    ribbonCopyIndex     = ribbonCopyIndex_ref;
+    ribbonCopyIndex     = MIN( ribbonCopyIndex, ribbonCopyTotal - 1 );
     ribbonPointOffset   = 0;
     
-	for( int i=0; i<ribbonCopy.size(); i++ )
+    while( true )
 	{
-        bool bSuccess;
-        bSuccess = generateLetterAsPlane( ribbonCopyChars[ i ], ribbonPositionX, fontSize * fontScale * 0.5 );
-        
-        if( !bSuccess )
-            continue;
-		
-		if( ribbonCopyChars[ i ] == ' ' )
+        int characterLetter = ribbonCopyChars[ ribbonCopyIndex ];
+        int characterIndex  = getCharacterIndex( characterLetter );
+        if( characterIndex == -1 )
+        {
+            cout << "unsupported character in ribbon copy :: " << ribbonCopyChars[ ribbonCopyIndex ] << endl;
+        }
+        else if( characterLetter == ' ' )
 		{
 			ribbonPositionX += fontSize * fontScale;
 		}
-		else
-		{
-			int characterIndex = getCharacterIndex( ribbonCopyChars[ i ] );
-			if( characterIndex > -1 )
-			{
-				ofRectangle rect;
-				rect = letters[ characterIndex ].rect;
-				ribbonPositionX += rect.width + fontKerning * fontSize * fontScale;
-			}
-		}
+        else
+        {
+            bool bStillRoomOnRibbon;
+            bStillRoomOnRibbon = generateLetterAsPlane( ribbonCopyChars[ ribbonCopyIndex ], ribbonPositionX, fontSize * fontScale * 0.5 );
+        
+            if( bStillRoomOnRibbon )
+            {
+                ofRectangle rect;
+                rect = letters[ characterIndex ].rect;
+                ribbonPositionX += rect.width + fontKerning * fontSize * fontScale;
+            }
+            else
+            {
+                break;
+            }
+        }
+		
+        if( ++ribbonCopyIndex >= ribbonCopyTotal - 1 )
+            ribbonCopyIndex = 0;
 	}
     
-    ribbonPosX = ribbonPositionX;
+    ribbonPositionX_ref = ribbonPositionX;
+    ribbonCopyIndex_ref = ribbonCopyIndex;
     
     return lettersOnRibbon;
 }
@@ -376,8 +390,6 @@ vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPosX )
 bool RibbonType2D :: generateLetterAsPlane ( int letter, float xOffset, float yOffset )
 {
 	int characterIndex = getCharacterIndex( letter );
-	if( characterIndex == -1 )
-		return false;
 	
 	ofRectangle charRect;
 	charRect = letters[ characterIndex ].rect;
