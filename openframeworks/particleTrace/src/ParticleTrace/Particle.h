@@ -72,6 +72,7 @@ public:
 	ofxVec2f	posVec;
 	ofxVec2f	posPrevVec;
 	ofxVec2f	posLastAdded;
+    ofxVec2f    posInImg;
 	ofxVec2f	velVec;
 	float		velLimit;
 	float		velEase;

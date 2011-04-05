@@ -10,13 +10,13 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxResizeUtil.h"
 #include "ofxFBOTexture.h"
-#include "ofImagePlus.h"
 #include "ofxVec2f.h"
 #include "ofxCvColorImage.h"
 #include "PixelFlow.h"
 #include "Particle.h"
-#include "ParticleType.h"
+#include "RibbonType2D.h"
 
 class ParticleTrace : public ofBaseApp
 {
@@ -42,6 +42,7 @@ public:
 	void drawSourceImage		();
 	void drawTraceImage			();
 	void drawParticles			( bool bDrawToFbo = false, bool bTiling = false );
+    void drawRectOutline        ( const ofRectangle& rect );
 	void drawSamples			();
 	void drawSampleImage		( ofImage& img );
 	void drawSampleVector		( const ofxVec2f& v );
@@ -83,11 +84,17 @@ public:
 
 	ofxFBOTexture	fboTrace;
 	ofxFBOTexture	fboParticles;
+    
+    ofRectangle     activeRect;
 	
 	ofImage			img;
 	ofxCvColorImage	imgSrc;
 	ofxCvColorImage	imgTrace;
 	ofRectangle		imgRect;
+    ofRectangle     imgRectCenter;
+    ofRectangle     imgRectFit;
+    ofRectangle     imgRectCrop;
+    ofRectangle     imgRectCurrent;
 	ofImage			sampleImage0;
 	ofImage			sampleImage1;
 	ofImage			sampleImage2;
@@ -109,5 +116,5 @@ public:
     
     ofTrueTypeFont      font;
 	float               fontSize;
-    ParticleType        ptype;
+    RibbonType2D        rt;
 };
