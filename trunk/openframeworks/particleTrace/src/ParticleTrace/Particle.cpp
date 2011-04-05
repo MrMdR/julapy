@@ -119,8 +119,12 @@ void Particle :: setInitialPosition	( float x, float y )
 	
 	posLastAdded.x = x;
 	posLastAdded.y = y;
+    
+    posInImg    = posVec;
+    posInImg.x -= bounds.x;
+    posInImg.y -= bounds.y;
 	
-	currentColor = pfImage->getColourAt( posVec );
+	currentColor = pfImage->getColourAt( posInImg );
 	
 	addToLineVertexArray( posVec, currentColor );
 	addToStripVertexArray( posVec, posVec, currentColor, currentColor );
@@ -160,6 +164,10 @@ void Particle :: update ()
 	
 	posPrevVec.x = posVec.x;
 	posPrevVec.y = posVec.y;
+    
+    posInImg    = posVec;
+    posInImg.x -= bounds.x;
+    posInImg.y -= bounds.y;
 	
 	//--
 	
@@ -170,7 +178,7 @@ void Particle :: update ()
 	
 	if( bUseImageForce )
 	{
-		imgVec = pfImage->getVectorAt( posVec, pfSampleRangeX, pfSampleRangeY );
+		imgVec = pfImage->getVectorAt( posInImg, pfSampleRangeX, pfSampleRangeY );
 		imgVec *= imageVecScale;
 	
 		totalVec += imgVec;
@@ -178,7 +186,7 @@ void Particle :: update ()
 	
 	if( bUseTraceForce )
 	{
-		trcVec = pfTrace->getVectorAt( posVec, pfSampleRangeX, pfSampleRangeY );
+		trcVec = pfTrace->getVectorAt( posInImg, pfSampleRangeX, pfSampleRangeY );
 		trcVec *= traceVecScale * -1;
 		
 		totalVec += trcVec;
@@ -214,7 +222,7 @@ void Particle :: update ()
 	
 	if( bUseImageColour )
 	{
-		ofColor c = pfImage->getColourAt( posVec );
+		ofColor c = pfImage->getColourAt( posInImg );
 		
 		currentColor.r += ( c.r - currentColor.r ) * colorEase;
 		currentColor.g += ( c.g - currentColor.g ) * colorEase;

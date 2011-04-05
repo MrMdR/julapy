@@ -11,6 +11,11 @@
 
 ParticleTrace :: ParticleTrace ()
 {
+    activeRect.width    = (int)( ofGetWidth()  * 0.58 );
+    activeRect.height   = (int)( ofGetHeight() * 1.0 );
+    activeRect.x        = (int)( ( ofGetWidth()  - activeRect.width  ) * 0.5 ) + 24;
+    activeRect.y        = (int)( ( ofGetHeight() - activeRect.height ) * 0.5 );
+    
 	sampleRangeX	= 5;
 	sampleRangeY	= 5;
 	sampleW			= sampleRangeX * 2 + 1;
@@ -86,6 +91,15 @@ void ParticleTrace :: loadImage( string fileName )
 	
 	imgRect.width	= img.width;
 	imgRect.height	= img.height;
+    
+    imgRectCenter   = imgRect;
+    imgRectCenter.x = (int)( ( activeRect.width  - imgRectCenter.width  ) * 0.5 ) + activeRect.x;
+    imgRectCenter.y = (int)( ( activeRect.height - imgRectCenter.height ) * 0.5 ) + activeRect.y;
+    
+    imgRectFit      = ofxResizeUtil :: fitToSize  ( imgRect, activeRect );
+    imgRectCrop     = ofxResizeUtil :: cropToSize ( imgRect, activeRect );
+    
+    imgRectCurrent  = imgRectCenter;
 	
 	//-- opencv.
 	
@@ -138,13 +152,16 @@ void ParticleTrace :: addParticle ( float x, float y, bool bMarkAsTestParticle )
 {
 	if( !bImageLoaded )
 		return;
+    
+    if( !imgRectCurrent.inside( ofPoint( x, y ) ) )
+        return;
 	
 	Particle* p;
 	p = new Particle( &pfImage, &pfTrace );
+    p->setBounds( imgRectCurrent );
 	p->setInitialPosition( x, y );
 	p->setInitialVelocity( ofRandom( -1, 1 ), ofRandom( -1, 1 ) );
 	p->setPixelRange( sampleRangeX, sampleRangeY );
-	p->setBounds( imgRect );
 	p->pid = pid++;
 	
 	if( bMarkAsTestParticle )
@@ -200,13 +217,13 @@ void ParticleTrace :: update()
 	ofPoint pos;
 	if( testParticle )
 	{
-		pos.x = testParticle->posVec.x;
-		pos.y = testParticle->posVec.y;
+		pos.x = testParticle->posVec.x - imgRectCurrent.x;
+		pos.y = testParticle->posVec.y - imgRectCurrent.y;
 	}
 	
 	ofPoint mouse;
-	mouse.x = ofClamp( mouseX, 0, imgRect.width  - 1 );
-	mouse.y = ofClamp( mouseY, 0, imgRect.height - 1 );
+	mouse.x = ofClamp( mouseX - imgRectCurrent.x, 0, imgRect.width  - 1 );
+	mouse.y = ofClamp( mouseY - imgRectCurrent.y, 0, imgRect.height - 1 );
 	
 	pfImage.getPixelsAt( pos, sampleRangeX, sampleRangeY, sampleImage0 );		// sample of image pixels around test particle.
 	pfTrace.getPixelsAt( pos, sampleRangeX, sampleRangeY, sampleImage1 );		// sample of trace pixels around test particle.
@@ -252,11 +269,22 @@ void ParticleTrace :: draw ( bool bTiling )
 		drawParticles( false, true );
 		return;
 	}
+    
+    //----
+    
+    glPushMatrix();
+    glTranslatef( imgRectCurrent.x, imgRectCurrent.y, 0 );
 
 	drawSourceImage();
 	drawTraceImage();
 	drawParticles();
-	
+    
+    glPopMatrix();
+    
+    //----
+
+    drawRectOutline( activeRect );
+    drawRectOutline( imgRectCurrent );
 	drawSamples();
 }
 
@@ -282,6 +310,11 @@ void ParticleTrace :: drawTraceImage ()
 	
 	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
 	
+    //----
+    
+    glPushMatrix();
+    glTranslatef( -imgRectCurrent.x, -imgRectCurrent.y, 0 );
+    
 	int t = particles.size();
 	for( int i=0; i<t; i++ )
 	{
@@ -289,6 +322,10 @@ void ParticleTrace :: drawTraceImage ()
 		p = particles[ i ];
 		p->drawTrace();
 	}
+    
+    glPopMatrix();
+    
+    //----
 	
 	glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST );
 	
@@ -319,7 +356,7 @@ void ParticleTrace :: drawTraceImage ()
 	
 	glColor4f( 1.0, 1.0, 1.0, 1.0 );
 //	fboTrace.draw( 0, 0 );
-	imgTrace.draw( 0, 0 );
+	imgTrace.draw( imgRectCurrent.x, imgRectCurrent.y );
 	
 	glEnable(GL_BLEND);									// return to alpha blending.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -381,6 +418,21 @@ void ParticleTrace :: drawParticles ( bool bDrawToFbo, bool bTiling )
 		glColor4f( 1.0, 1.0, 1.0, 1.0 );
 		fboParticles.draw( 0, 0 );
 	}
+}
+
+void ParticleTrace :: drawRectOutline ( const ofRectangle& r )
+{
+    int x = r.x;
+    int y = r.y;
+    int w = r.width;
+    int h = r.height;
+    
+    ofFill();
+    ofSetColor( 255, 255, 255 );
+    ofRect( r.x, r.y, r.width, 1 );
+    ofRect( r.x, r.y, 1, r.height );
+    ofRect( r.x, r.y + r.height - 1, r.width, 1 );
+    ofRect( r.x + r.width - 1, r.y, 1, r.height );
 }
 
 void ParticleTrace :: drawSamples ()
