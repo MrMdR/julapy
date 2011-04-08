@@ -23,10 +23,11 @@ RibbonType2D :: RibbonType2D()
     fontOffsetY = 0;
     fontKerning = 0;
     
-    setCopy( "" );
+    setCopy( "testing" );
     
     bRibbonNormalsGenerated = false;
     bRibbonColorsGenerated  = false;
+    bRibbonLengthsGenerated = false;
 }
 
 RibbonType2D :: ~RibbonType2D()
@@ -80,7 +81,12 @@ void RibbonType2D :: setFont ( ofTrueTypeFont* font, float fontSize, float fontS
     this->fontOffsetY   = fontOffsetY;
 }
 
-void RibbonType2D :: setKerning( float value )
+void RibbonType2D :: setFontScale ( float value )
+{
+    fontScale = value;
+}
+
+void RibbonType2D :: setFontKerning( float value )
 {
 	fontKerning = value;
 }
@@ -95,7 +101,7 @@ void RibbonType2D :: setCopy ( const string& copy )
         ribbonCopyChars = NULL;
     }
     
-    ribbonCopyTotal = ribbonCopy.size() + 1;
+    ribbonCopyTotal = ribbonCopy.size();
     
 	ribbonCopyChars = new char[ ribbonCopyTotal ];
 	strcpy( ribbonCopyChars, ribbonCopy.c_str() );
@@ -116,17 +122,17 @@ void RibbonType2D :: setup ()
     //----
     
 	string supportedCharacter;
-    supportedCharacter = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+    supportedCharacter = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";    // 52 chars.
+    supportedCharacter += ".,'-";
 	
 	lettersTotal	= supportedCharacter.size();
-	characters		= new char[ lettersTotal + 1 ];
+	characters		= new char[ lettersTotal ];
 	strcpy( characters, supportedCharacter.c_str() );
     
     //----
     
     initCharacterVertices();
     initCharacterFill();
-    initCharacterScale();
     initCharacterVBOs();
 }
 
@@ -158,40 +164,44 @@ void RibbonType2D :: initCharacterVertices()
 		shapesTotal = charOutline.contours.size();
 		for( int j=0; j<shapesTotal; j++ )
 		{
-			shapePointsTotal += ( charOutline.contours[ j ].pts.size() + 1 ) * 3;
+			shapePointsTotal += ( charOutline.contours[ j ].pts.size() + 1 ) * 3;       // 1 is added to close the loop.
 		}
-
-		letters[ i ].rect               = charRect;
-		letters[ i ].shapesTotal		= shapesTotal;
-		letters[ i ].shapePointsTotal	= shapePointsTotal;
-		letters[ i ].shapeIndex			= new int[ shapesTotal ];
-		letters[ i ].shapePointsLength	= new int[ shapesTotal ];
-		letters[ i ].shapePoints		= new float[ shapePointsTotal ];
-		letters[ i ].shapeVBOs			= new GLuint[ shapesTotal ];
+        
+        Letter& letter              = letters[ i ];
+		letter.rect                 = charRect;
+        letter.character            = characters[ i ];
+		letter.shapesTotal          = shapesTotal;
+		letter.shapePointsTotal     = shapePointsTotal;
+		letter.shapeIndex			= new int[ shapesTotal ];
+		letter.shapePointsLength	= new int[ shapesTotal ];
+		letter.shapePoints          = new float[ shapePointsTotal ];
+		letter.shapeVBOs			= new GLuint[ shapesTotal ];
 		
 		for( int j=0; j<shapesTotal; j++ )
 		{
-			letters[ i ].shapeIndex[ j ] = shapeIndex;
+			letter.shapeIndex[ j ] = shapeIndex;
 			
-			int n = 0;
-			for( int k=0; k<charOutline.contours[ j ].pts.size(); k++ )
+            int t = charOutline.contours[ j ].pts.size();
+            int n = shapeIndex;
+            
+			for( int k=0; k<t; k++ )
 			{
-				n = shapeIndex + ( k * 3 );
-				letters[ i ].shapePoints[ n + 0 ] = charOutline.contours[ j ].pts[ k ].x - charRect.width * 0.5;
-				letters[ i ].shapePoints[ n + 1 ] = charOutline.contours[ j ].pts[ k ].y + fontSize * 0.5 + fontOffsetY;
-				letters[ i ].shapePoints[ n + 2 ] = 0;
+				letter.shapePoints[ n + 0 ] = charOutline.contours[ j ].pts[ k ].x - charRect.width * 0.5;
+				letter.shapePoints[ n + 1 ] = charOutline.contours[ j ].pts[ k ].y + fontSize * 0.5 + fontOffsetY;
+				letter.shapePoints[ n + 2 ] = 0;
+                
+                n += 3;
 			}
-			n += 3;
 			
-			letters[ i ].shapePoints[ n + 0 ] = letters[ i ].shapePoints[ shapeIndex + 0 ];	// close loop by adding first value of shape 
-			letters[ i ].shapePoints[ n + 1 ] = letters[ i ].shapePoints[ shapeIndex + 1 ];	// as last value.
-			letters[ i ].shapePoints[ n + 2 ] = letters[ i ].shapePoints[ shapeIndex + 2 ];
+			letter.shapePoints[ n + 0 ] = letters[ i ].shapePoints[ shapeIndex + 0 ];	// close loop by adding first value of shape 
+			letter.shapePoints[ n + 1 ] = letters[ i ].shapePoints[ shapeIndex + 1 ];	// as last value.
+			letter.shapePoints[ n + 2 ] = letters[ i ].shapePoints[ shapeIndex + 2 ];
 			
-			n += 3;
+            t = ( t + 1 ) * 3;
+            
+			letter.shapePointsLength[ j ] = t;
 			
-			letters[ i ].shapePointsLength[ j ] = ( n - shapeIndex );
-			
-			shapeIndex += n;
+			shapeIndex += t;
 		}
 	}
 }
@@ -211,6 +221,8 @@ void RibbonType2D :: initCharacterFill()
 		gluTessNormal( tessObj, 0.0, 0.0, 1.0 );
 		gluTessBeginPolygon( tessObj, NULL );
 		
+        vector<double*> tessPoints;
+        
 		for( int j=0; j<letters[ i ].shapesTotal; j++ )
 		{
 			int shapeIndex			= letters[ i ].shapeIndex[ j ];
@@ -219,10 +231,12 @@ void RibbonType2D :: initCharacterFill()
 			gluTessBeginContour( tessObj );
 			for( int k=shapeIndex; k<shapeIndex+shapePointsLength; k+=3 )
 			{
-				double *point = new double[ 3 ];
+				double* point = new double[ 3 ];
 				point[ 0 ] = letters[ i ].shapePoints[ k + 0 ];
 				point[ 1 ] = letters[ i ].shapePoints[ k + 1 ];
 				point[ 2 ] = letters[ i ].shapePoints[ k + 2 ];
+                
+                tessPoints.push_back( point );
 				
 				gluTessVertex( tessObj, point, point );
 			}
@@ -236,16 +250,27 @@ void RibbonType2D :: initCharacterFill()
 			tessObj = NULL;
 		}
 		
+        //--- must delete tess points.
+        
+        for( int j=0; j<tessPoints.size(); j++ )
+        {
+            delete[] tessPoints[ j ];
+        }
+        tessPoints.clear();
+        
+        //---
+        
 		int tessShapesTotal			= tessShapeFillIndex.size();
 		int tessShapePointsTotal	= tessShapeFillPoints.size();
 		
-		letters[ i ].shapeFillTotal			= tessShapesTotal;
-		letters[ i ].shapeFillPointsTotal	= tessShapePointsTotal;
-		letters[ i ].shapeFillIndex			= new int[ tessShapesTotal ];
-		letters[ i ].shapeFillTypes			= new int[ tessShapesTotal ];
-		letters[ i ].shapeFillPointsLength	= new int[ tessShapesTotal ];
-		letters[ i ].shapeFillPoints		= new float[ tessShapePointsTotal ];
-		letters[ i ].shapeFillVBOs			= new GLuint[ tessShapesTotal ];
+        Letter& letter                  = letters[ i ];
+		letter.shapeFillTotal			= tessShapesTotal;
+		letter.shapeFillPointsTotal     = tessShapePointsTotal;
+		letter.shapeFillIndex			= new int[ tessShapesTotal ];
+		letter.shapeFillTypes			= new int[ tessShapesTotal ];
+		letter.shapeFillPointsLength	= new int[ tessShapesTotal ];
+		letter.shapeFillPoints          = new float[ tessShapePointsTotal ];
+		letter.shapeFillVBOs			= new GLuint[ tessShapesTotal ];
         
 		for( int j=0; j<tessShapesTotal; j++ )
 		{
@@ -257,37 +282,24 @@ void RibbonType2D :: initCharacterFill()
 			{
 				shapeFillPointsLength = tessShapeFillIndex.at( j + 1 ) - tessShapeFillIndex.at( j );
 			}
-			else
+			else    // last one.
 			{
 				shapeFillPointsLength = tessShapeFillPoints.size() - tessShapeFillIndex.at( j );
 			}
 			
-			letters[ i ].shapeFillIndex[ j ]		= shapeFillIndex;
-			letters[ i ].shapeFillTypes[ j ]		= shapeFillTypes;
-			letters[ i ].shapeFillPointsLength[ j ]	= shapeFillPointsLength;
+			letter.shapeFillIndex[ j ]		= shapeFillIndex;
+			letter.shapeFillTypes[ j ]		= shapeFillTypes;
+			letter.shapeFillPointsLength[ j ]	= shapeFillPointsLength;
 		}
 		
 		for( int j=0; j<tessShapePointsTotal; j++ )
 		{
-			letters[ i ].shapeFillPoints[ j ] = tessShapeFillPoints.at( j );
+			letter.shapeFillPoints[ j ] = tessShapeFillPoints.at( j );
 		}
 		
 		tessShapeFillIndex.clear();
 		tessShapeFillTypes.clear();
 		tessShapeFillPoints.clear();
-	}
-}
-
-void RibbonType2D :: initCharacterScale ()
-{
-    if( fontScale == 1.0 )
-        return;
-    
-	for( int i=0; i<lettersTotal; i++ )
-	{
-        Letter& letter = letters[ i ];
-        
-        scaleLetter( letter, 0, 0, fontScale );
 	}
 }
 
@@ -318,7 +330,7 @@ int RibbonType2D :: getCharacterIndex ( int letter )
 //	GENERATE + DRAW - CUSTOM SHAPE
 ////////////////////////////////////////////////////////////
 
-void RibbonType2D :: setRibbon ( float* ribbonPoints, int ribbonLength, float* ribbonNormals, float* ribbonColors )
+void RibbonType2D :: setRibbon ( float* ribbonPoints, int ribbonLength, float* ribbonNormals, float* ribbonColors, float* ribbonLengths )
 {
     reset();
 
@@ -326,6 +338,7 @@ void RibbonType2D :: setRibbon ( float* ribbonPoints, int ribbonLength, float* r
     this->ribbonLength  = ribbonLength;
     this->ribbonNormals = ribbonNormals;
     this->ribbonColors  = ribbonColors;
+    this->ribbonLengths = ribbonLengths;
     
     generateRibbonNormals();
     generateRibbonColors();
@@ -339,7 +352,7 @@ vector<Letter*> RibbonType2D :: generateTypeOnRibbon ()
     return generateTypeOnRibbon( ribbonPositionZero, ribbonCopyIndexZero );
 }
 
-vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPositionX_ref, int& ribbonCopyIndex_ref )
+vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPositionX_ref, int& ribbonCopyIndex_ref, int numOfLetters )
 {
     lettersOnRibbon.clear();
 
@@ -348,18 +361,21 @@ vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPositionX_re
     ribbonCopyIndex     = MIN( ribbonCopyIndex, ribbonCopyTotal - 1 );
     ribbonPointOffset   = 0;
     
+    int numOfLettersAdded = 0;
+    
     while( true )
 	{
         int characterLetter = ribbonCopyChars[ ribbonCopyIndex ];
         int characterIndex  = getCharacterIndex( characterLetter );
-        if( characterIndex == -1 )
-        {
-            cout << "unsupported character in ribbon copy :: " << ribbonCopyChars[ ribbonCopyIndex ] << endl;
-        }
-        else if( characterLetter == ' ' )
+        
+        if( characterLetter == ' ' )
 		{
 			ribbonPositionX += fontSize * fontScale;
 		}
+        else if( characterIndex == -1 )
+        {
+            cout << "unsupported character in ribbon copy :: " << ribbonCopyChars[ ribbonCopyIndex ] << endl;
+        }
         else
         {
             bool bStillRoomOnRibbon;
@@ -369,7 +385,7 @@ vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPositionX_re
             {
                 ofRectangle rect;
                 rect = letters[ characterIndex ].rect;
-                ribbonPositionX += rect.width + fontKerning * fontSize * fontScale;
+                ribbonPositionX += ( rect.width + fontSize * fontKerning ) * fontScale;
             }
             else
             {
@@ -379,6 +395,12 @@ vector<Letter*> RibbonType2D :: generateTypeOnRibbon ( float& ribbonPositionX_re
 		
         if( ++ribbonCopyIndex >= ribbonCopyTotal - 1 )
             ribbonCopyIndex = 0;
+        
+        if( numOfLetters != -1 )
+        {
+            if( ++numOfLettersAdded == numOfLetters )
+                break;
+        }
 	}
     
     ribbonPositionX_ref = ribbonPositionX;
@@ -398,7 +420,7 @@ bool RibbonType2D :: generateLetterAsPlane ( int letter, float xOffset, float yO
 	ofxVec2f cp;	// contour point.
     ofxVec2f cn;    // contour normal.
     
-	float px = xOffset + charRect.width * 0.5;
+	float px = xOffset + charRect.width * 0.5 * fontScale;
 	
 	for( int i=ribbonPointOffset; i<ribbonLength - 1; i++ )
 	{
@@ -440,6 +462,7 @@ bool RibbonType2D :: generateLetterAsPlane ( int letter, float xOffset, float yO
     a = 180 - cn.angle( ofxVec2f( 0, 1 ) );
     
     cloneLetter( letters[ characterIndex ], *ltr );
+    scaleLetter( *ltr, 0, 0, fontScale );
     translateLetter( *ltr, cp.x, cp.y );
     rotateLetter( *ltr, cp.x, cp.y, a );
     
@@ -545,6 +568,9 @@ void RibbonType2D :: generateRibbonColors ()
 
 void RibbonType2D :: generateRibbonLengths ()
 {
+    if( ribbonLengths )
+        return;
+    
     ribbonLengths = new float[ ribbonLength ];
     
     ribbonLengths[ 0 ] = 0;     // at the begining, ribbon length is zero.
@@ -558,6 +584,8 @@ void RibbonType2D :: generateRibbonLengths ()
         
         ribbonLengths[ i ] = ribbonLengths[ i - 1 ] + d;
 	}
+    
+    bRibbonLengthsGenerated = true;
 }
 
 void RibbonType2D :: reset ()
@@ -573,11 +601,13 @@ void RibbonType2D :: reset ()
         delete[] ribbonColors;
     ribbonColors    = NULL;
     
-    if( ribbonLengths )
-    {
+    if( bRibbonLengthsGenerated )
         delete[] ribbonLengths;
-        ribbonLengths = NULL;
-    }
+    ribbonLengths = NULL;
+    
+    bRibbonNormalsGenerated = false;
+    bRibbonColorsGenerated  = false;
+    bRibbonLengthsGenerated = false;
 }
 
 ////////////////////////////////////////////////////////////
@@ -586,6 +616,8 @@ void RibbonType2D :: reset ()
 
 void RibbonType2D :: cloneLetter ( Letter& letterOrig, Letter& letterCopy )
 {
+    letterCopy.character = letterOrig.character;
+    
     int t, p;
     
     t = letterOrig.shapesTotal;

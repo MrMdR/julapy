@@ -28,15 +28,22 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	
 	//---
 
-	line_ind_max   = PARTICLE_MAX_LENGTH;
-	line_ind_total = 0;
-	line_ver_array = new GLfloat[ line_ind_max * 3 ];
-	line_col_array = new GLfloat[ line_ind_max * 4 ];
-
+	line_ind_max    = PARTICLE_MAX_LENGTH;
+	line_ind_total  = 0;
+	line_ver_array  = new GLfloat[ line_ind_max * 3 ];
+	line_col_array  = new GLfloat[ line_ind_max * 4 ];
+    
 	strip_ind_max   = PARTICLE_MAX_LENGTH * 2;
 	strip_ind_total = 0;
 	strip_ver_array = new GLfloat[ strip_ind_max * 3 ];
 	strip_col_array = new GLfloat[ strip_ind_max * 4 ];
+
+    //---
+    
+    line_normals    = new float[ line_ind_max * 3 ];
+    line_lengths    = new float[ line_ind_max ];
+    
+    //---
 	
 	stripWidth	= 0.1;
 	
@@ -50,7 +57,7 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	lineColor.b = 255;
 	lineColor.a = 128;
 	
-	colorEase	= 0.4;
+	colorEase	= 0.05;
 	
 	traceAlpha	= 1.0;
 	
@@ -59,6 +66,7 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	
 	lifeCount	= 0;
 	
+    distMoved   = 0;
 	minPosDist	= 2.0;
 	
 	//---
@@ -81,19 +89,22 @@ Particle :: Particle( PixelFlow* pfImage, PixelFlow* pfTrace )
 	
 	//---
 
-	bUseImageColour		= true;
+	bUseImageColour		= false;
 	bUseImageForce		= true;
 	bUseTraceForce		= true;
 	bUseWanderForce		= true;
 	bMarkAsTestParticle	= false;
 	bVerbose			= false;
+    bPointAdded         = false;
     
     //---
     
-    ribbonType      = NULL;
-    ribbonPositionX = 0;
-    ribbonCopyIndex = 0;
-    ribbonCopy      = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello";
+    ribbonType          = NULL;
+    ribbonPositionX     = 0;
+    ribbonCopyIndex     = 0;
+    ribbonCopy          = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello";
+    ribbonFontScale     = 0.045;
+    ribbonFontScaleVar  = ofRandom( 0.25, 1.0 );
 }
 
 Particle :: ~Particle()
@@ -111,9 +122,17 @@ Particle :: ~Particle()
 	strip_ver_array = NULL;
 	strip_col_array = NULL;
     
+    delete[] line_normals;
+    line_normals = NULL;
+    
+    delete[] line_lengths;
+    line_lengths = NULL;
+    
     for( int i=0; i<ribbonLetters.size(); i++ )
         delete ribbonLetters[ i ];
     ribbonLetters.clear();
+    
+    ribbonType = NULL;
 }
 
 //////////////////////////////////////////////////
@@ -136,9 +155,17 @@ void Particle :: setInitialPosition	( float x, float y )
     posInImg.y -= bounds.y;
 	
 	currentColor = pfImage->getColourAt( posInImg );
-	
+    
 	addToLineVertexArray( posVec, currentColor );
 	addToStripVertexArray( posVec, posVec, currentColor, currentColor );
+    
+    //---
+    
+    line_normals[ 0 ] = 0;
+    line_normals[ 1 ] = 0;
+    line_normals[ 2 ] = 0;
+    
+    line_lengths[ 0 ] = 0;
 }
 
 void Particle :: setInitialVelocity	( float x, float y )
@@ -176,7 +203,7 @@ void Particle :: setup ()
 void Particle :: update ()
 {
 	++lifeCount;
-	
+    
 	//--
 	
 	posPrevVec.x = posVec.x;
@@ -225,15 +252,23 @@ void Particle :: update ()
 	posVec.y += velVec.y;
 	
 	//---
+    
+    resetRibbonType();
+    
+    //---
 	
-	float d = ofDist( posLastAdded.x, posLastAdded.y, posVec.x, posVec.y );
-	if( d >= minPosDist )
+	distMoved = ofDist( posLastAdded.x, posLastAdded.y, posVec.x, posVec.y );
+	if( distMoved >= minPosDist )
 	{
 		posLastAdded.x = posVec.x;
 		posLastAdded.y = posVec.y;
+        
+        bPointAdded = true;
 	}
 	else
 	{
+        bPointAdded = false;
+        
 		return;
 	}
 	
@@ -245,6 +280,11 @@ void Particle :: update ()
 		currentColor.g += ( c.g - currentColor.g ) * colorEase;
 		currentColor.b += ( c.b - currentColor.b ) * colorEase;
 		currentColor.a += ( c.a - currentColor.a ) * colorEase;
+        
+        currentColor.r = MAX( currentColor.r, 50 );
+        currentColor.g = MAX( currentColor.g, 50 );
+        currentColor.b = MAX( currentColor.b, 50 );
+        currentColor.a = MAX( currentColor.a, 50 );
 	}
 	else
 	{
@@ -257,6 +297,8 @@ void Particle :: update ()
 	addToLineVertexArray( posVec, currentColor );
 	addToStrip();
     
+    addToLineNormals();
+    addToLineLengths();
     addToRibbonType();
 }
 
@@ -396,6 +438,60 @@ void Particle :: addToStripVertexArray ( const ofPoint& p1, const ofPoint& p2, c
 	strip_ind_total += 2;
 }
 
+void Particle :: addToLineNormals ()
+{
+    ofxVec2f q;
+    ofxVec2f p;
+    ofxVec2f v;
+    int i, j;
+    
+    //--- left to right.
+    
+    i = line_ind_total - 1;
+    j = line_ind_total - 2;
+
+    q.set( line_ver_array[ i * 3 + 0 ], line_ver_array[ i * 3 + 1 ] );
+    p.set( line_ver_array[ j * 3 + 0 ], line_ver_array[ j * 3 + 1 ] );
+    v = q - p;
+    v.perpendicular();
+    v.normalize();
+    v *= -1;            // reversed so its always pointing up.
+    
+    line_normals[ i * 3 + 0 ] = v.x;
+    line_normals[ i * 3 + 1 ] = v.y;
+    line_normals[ i * 3 + 2 ] = 0;
+
+    //--- right to left.
+    
+    i = line_ind_total - 2;
+    j = line_ind_total - 1;
+    
+    q.set( line_ver_array[ i * 3 + 0 ], line_ver_array[ i * 3 + 1 ] );
+    p.set( line_ver_array[ j * 3 + 0 ], line_ver_array[ j * 3 + 1 ] );
+    v = q - p;
+    v.perpendicular();
+    v.normalize();
+    v *= 1;             // doesn't need to be reversed as its already pointing up.
+    
+    //--- average with previous.
+    
+    v.x += line_normals[ i * 3 + 0 ];
+    v.y += line_normals[ i * 3 + 1 ];
+    v.normalize();
+    
+    line_normals[ i * 3 + 0 ] = v.x;
+    line_normals[ i * 3 + 1 ] = v.y;
+    line_normals[ i * 3 + 2 ] = 0;
+}
+
+void Particle :: addToLineLengths ()
+{
+    int i = line_ind_total - 1;
+    int j = line_ind_total - 2;
+    
+    line_lengths[ i ] = line_lengths[ j ] + distMoved;
+}
+
 void Particle :: setLineColor ( const ofColor& c )
 {
 	if( bUseImageColour )
@@ -458,21 +554,21 @@ void Particle :: setLineAlpha ( float alpha )
 //	RIBBON TYPE
 //////////////////////////////////////////////////
 
+void Particle :: resetRibbonType ()
+{
+    for( int i=0; i<ribbonLetters.size(); i++ )
+        delete ribbonLetters[ i ];
+    ribbonLetters.clear();
+}
+
 void Particle :: addToRibbonType ()
 {
     if( !ribbonType )
         return;
     
-    //--- remove old.
-    
-    for( int i=0; i<ribbonLetters.size(); i++ )
-        delete ribbonLetters[ i ];
-    ribbonLetters.clear();
-    
-    //--- add new.
-    
     ribbonType->setCopy( ribbonCopy );
-    ribbonType->setRibbon( line_ver_array, line_ind_total );
+    ribbonType->setRibbon( line_ver_array, line_ind_total, line_normals, line_col_array, line_lengths );
+    ribbonType->setFontScale( ribbonFontScale * ribbonFontScaleVar );
     
     ribbonLetters = ribbonType->generateTypeOnRibbon( ribbonPositionX, ribbonCopyIndex );
 }
@@ -511,6 +607,29 @@ void Particle :: drawLine ()
 	glDisableClientState( GL_VERTEX_ARRAY );
 }
 
+void Particle :: drawLineToFBO ()
+{
+    if( !bPointAdded )
+        return;
+    
+    if( line_ind_total < 2 )
+        return;
+    
+    int t = 2;
+    int i = line_ind_total - t;
+    
+	glEnableClientState( GL_COLOR_ARRAY );
+	glColorPointer( 4, GL_FLOAT, 0, &line_col_array[ i * 4 ] );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );		
+	glVertexPointer( 3, GL_FLOAT, 0, &line_ver_array[ i * 3 ] );
+	
+	glDrawArrays( GL_LINES, 0, t );
+	
+	glDisableClientState( GL_COLOR_ARRAY );
+	glDisableClientState( GL_VERTEX_ARRAY );
+}
+
 void Particle :: drawStrip ()
 {
 	glEnableClientState( GL_COLOR_ARRAY );
@@ -520,6 +639,29 @@ void Particle :: drawStrip ()
 	glVertexPointer( 3, GL_FLOAT, 0, strip_ver_array );
 	
 	glDrawArrays( GL_QUAD_STRIP, 0, strip_ind_total );
+	
+	glDisableClientState( GL_COLOR_ARRAY );
+	glDisableClientState( GL_VERTEX_ARRAY );
+}
+
+void Particle :: drawStripToFBO ()
+{
+    if( !bPointAdded )
+        return;
+    
+    if( strip_ind_total < 4 )
+        return;
+    
+    int t = 4;
+    int i = strip_ind_total - t;
+    
+	glEnableClientState( GL_COLOR_ARRAY );
+	glColorPointer( 4, GL_FLOAT, 0, &strip_col_array[ i * 4 ] );
+	
+	glEnableClientState( GL_VERTEX_ARRAY );		
+	glVertexPointer( 3, GL_FLOAT, 0, &strip_ver_array[ i * 3 ] );
+	
+	glDrawArrays( GL_QUAD_STRIP, 0, t );
 	
 	glDisableClientState( GL_COLOR_ARRAY );
 	glDisableClientState( GL_VERTEX_ARRAY );
@@ -562,11 +704,17 @@ void Particle :: drawTrace ()
 
 void Particle :: drawType ()
 {
-    glColor4f( 1.0, 1.0, 1.0, 0.15 );
+	glColor4f
+	( 
+        currentColor.r / 255.0,
+        currentColor.g / 255.0,
+        currentColor.b / 255.0,
+        0.7
+    );
     
     for( int i=0; i<ribbonLetters.size(); i++ )
     {
         ribbonLetters[ i ]->drawFill();
-//        ribbonLetters[ i ]->drawOutline( true );
+        ribbonLetters[ i ]->drawOutline( true );
     }
 }

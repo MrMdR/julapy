@@ -4,7 +4,6 @@
 
 #include "ofMain.h"
 #include "ofxSimpleGuiToo.h"
-#include "ofxTileSaver.h"
 #include "ofxScreenGrabUtil.h"
 
 #include "ParticleTrace.h"
@@ -30,10 +29,10 @@ public:
 	bool				bDebug;
 	bool				bStepMode;
 	bool				bStepOne;
+    bool                bUpdated;
 	
 	ParticleTrace		pt;
 	
-	ofxTileSaver		tileSaver;
 	ofxScreenGrabUtil	screenGrabber;
 };
 

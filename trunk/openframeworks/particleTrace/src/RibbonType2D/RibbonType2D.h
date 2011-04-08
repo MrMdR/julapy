@@ -26,21 +26,21 @@ public :
 	~RibbonType2D();
     
     void setFont                ( ofTrueTypeFont* font, float fontSize, float fontScale = 1.0, float fontOffsetY = 0 );
-    void setKerning             ( float value );
+    void setFontScale           ( float value );
+    void setFontKerning         ( float value );
     void setCopy                ( const string& copy );
     
     void setup                  ();
 	void initCharacterVertices  ();
 	void initCharacterOutline   ();
 	void initCharacterFill      ();
-    void initCharacterScale     ();
     void initCharacterVBOs      ();
     int  getCharacterIndex      ( int c );
 	
-    void setRibbon              ( float* ribbonPoints, int ribbonLength, float* ribbonNormals = NULL, float* ribbonColors = NULL );
+    void setRibbon              ( float* ribbonPoints, int ribbonLength, float* ribbonNormals = NULL, float* ribbonColors = NULL, float* ribbonLengths = NULL );
 
     vector<Letter*> generateTypeOnRibbon    ();
-    vector<Letter*> generateTypeOnRibbon    ( float& ribbonPositionX_ref, int& ribbonCopyIndex_ref );
+    vector<Letter*> generateTypeOnRibbon    ( float& ribbonPositionX_ref, int& ribbonCopyIndex_ref, int numOfLetters = -1 );
     void generateRibbonNormals  ();
     void generateRibbonColors   ();
     void generateRibbonLengths  ();
@@ -76,6 +76,7 @@ public :
     
     bool            bRibbonNormalsGenerated;
     bool            bRibbonColorsGenerated;
+    bool            bRibbonLengthsGenerated;
 	
 	char*           characters;
 	Letter*         letters;
