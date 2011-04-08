@@ -12,19 +12,19 @@ void testApp::setup()
 	bDebug		= true;
 	bStepMode	= false;
 	bStepOne	= false;
+    bUpdated    = false;
 	
 //	pt.loadImage( "perlin_noise.png" );
 //	pt.loadImage( "old_man.jpg" );
 //	pt.loadImage( "old_postcard.png" );
 //	pt.loadImage( "lossy_07.jpg" );
+//    pt.loadImage( "bec_500x614.png" );
     
-    pt.loadImage( "bec_500x614.png" );
+    pt.loadImage( "110403_tim/tim_400x610_darker.jpg" );
     pt.loadFont( "fonts/verdana.ttf" );
     pt.loadCopy( "110403_tim/tim_copy.txt" );
 	
 	pt.setup();
-	
-	tileSaver.init( 10, 0, true );
 	
 	screenGrabber.setup( "screengrab_movie/" );
 	screenGrabber.setPause( true );
@@ -51,6 +51,7 @@ void testApp :: initGui ()
 	gui.addSlider( "traceAlpha",			pt.traceAlpha,	0.0, 1.0 );
 	gui.addSlider( "traceBlur",				pt.traceBlur,	0, 10 );
 	gui.addSlider( "minPosDist",			pt.minPosDist,	0, 40 );
+    gui.addSlider( "fboFade",               pt.fboFade,     0, 10 );
 	
 	gui.addPage( "force toggles" );
 	gui.addToggle( "bUseImageColour  ",		pt.bUseImageColour );
@@ -73,9 +74,8 @@ void testApp :: initGui ()
 //--------------------------------------------------------------
 void testApp::update()
 {
-	if( tileSaver.bGoTiling )
-		return;
-	
+    bUpdated = false;
+    
 	if( bStepMode )
 	{
 		if( !bStepOne )
@@ -85,19 +85,14 @@ void testApp::update()
 	}
 	
 	pt.update();
+    
+    bUpdated = true;
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
-	tileSaver.begin();
-	
-	pt.draw( tileSaver.bGoTiling );
-	
-	tileSaver.end();
-	
-	if( tileSaver.bGoTiling )
-		return;
+	pt.draw( bUpdated );
 	
 	if( screenGrabber.isRecording() )
 		screenGrabber.save();
@@ -153,14 +148,6 @@ void testApp::keyPressed(int key)
 		img.grabScreen( 0, 0, ofGetWidth(), ofGetHeight() );
 		img.saveImage( str );
 		img.clear();
-	}
-	
-	if( key == 't' )
-	{
-//		char str[255];
-//		sprintf( str, "screengrab_lrg/image_%02d%02d%02d_%02d%02d%02d.png", ofGetYear() % 1000, ofGetMonth(), ofGetDay(), ofGetHours(), ofGetMinutes(), ofGetSeconds() );
-//		
-//		tileSaver.finish( str, false );
 	}
 	
 	if( key == 'm' )

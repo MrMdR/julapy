@@ -32,11 +32,13 @@ public:
 	bool checkIsInsideBounds	( const ofxVec2f& target );
 	void constrainToBounds		( const ofxVec2f& target );
 	
-	void drawHead	();
-	void drawLine	();
-	void drawStrip	();
-	void drawTrace	();
-    void drawType   ();
+	void drawHead       ();
+	void drawLine       ();
+    void drawLineToFBO  ();
+	void drawStrip      ();
+    void drawStripToFBO ();
+	void drawTrace      ();
+    void drawType       ();
 	
 	void setInitialPosition		( float x, float y );
 	void setInitialVelocity		( float x, float y );
@@ -47,7 +49,10 @@ public:
 	void addToStrip				();
 	void addToLineVertexArray	( const ofPoint& p, const ofColor& c );
 	void addToStripVertexArray	( const ofPoint& p1, const ofPoint& p2, const ofColor& c1, const ofColor& c2 );
+    void addToLineNormals       ();
+    void addToLineLengths       ();
     void addToRibbonType        ();
+    void resetRibbonType        ();
 	
 	void setLineColor			( const ofColor& c );
 	void setLineAlpha			( float alpha );
@@ -58,6 +63,7 @@ public:
 	bool		bUseWanderForce;
 	bool		bMarkAsTestParticle;
 	bool		bVerbose;
+    bool        bPointAdded;
 	
 	PixelFlow*	pfImage;
 	PixelFlow*	pfTrace;
@@ -82,6 +88,7 @@ public:
 	float		velEase;
 	ofPoint		stripPoint0;
 	ofPoint		stripPoint1;
+    float       distMoved;
 	
 	ofxVec2f	imgVec;
 	ofxVec2f	trcVec;
@@ -108,7 +115,10 @@ public:
 	GLfloat*	line_col_array;
 	int			line_ind_total;
 	int			line_ind_max;
-	
+    
+    float*      line_normals;
+    float*      line_lengths;
+    
 	GLfloat*	strip_ver_array;
 	GLfloat*	strip_col_array;
 	int			strip_ind_total;
@@ -131,5 +141,7 @@ public:
     float           ribbonPositionX;
     string          ribbonCopy;
     int             ribbonCopyIndex;
+    float           ribbonFontScale;
+    float           ribbonFontScaleVar;
     vector<Letter*> ribbonLetters;
 };

@@ -197,6 +197,8 @@ public :
     
     ofRectangle rect;
     
+    char        character;
+    
 	int         shapesTotal;
 	int         shapePointsTotal;
 	int*        shapeIndex;

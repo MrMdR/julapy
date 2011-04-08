@@ -28,7 +28,7 @@ public:
 	
 	void setup	();
 	void update	();
-	void draw	( bool bTiling = false );
+	void draw	( bool bUpdated = true );
 	
 	void loadImage			( string fileName );
     void loadFont           ( string fileName );
@@ -41,14 +41,15 @@ public:
 	void updateParticles		();
 	
 	void drawSourceImage		();
-	void drawTraceImage			();
-	void drawParticles			( bool bDrawToFbo = false, bool bTiling = false );
+	void drawToTraceImage		( bool bDrawToFbo );
+    void drawTraceImage			();
+	void drawParticles			( bool bDrawToFbo );
     void drawRectOutline        ( const ofRectangle& rect );
 	void drawSamples			();
 	void drawSampleImage		( ofImage& img );
 	void drawSampleVector		( const ofxVec2f& v );
     
-    void saveTypeFBO    ();
+    void saveFBO        ( ofxFBOTexture& fbo );
 	
 	void keyPressed		( int key );
 	void keyReleased	( int key );
@@ -87,10 +88,12 @@ public:
 	float			minPosDist;
 
 	ofxFBOTexture	fboTrace;
-	ofxFBOTexture	fboParticles;
+    ofxFBOTexture   fboLines;
+    ofxFBOTexture   fboStrips;
     ofxFBOTexture   fboType;
     float           fboLargeScale;
     ofRectangle     fboLargeRect;
+    int             fboFade;
     
     ofRectangle     activeRect;
 	
