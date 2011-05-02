@@ -35,6 +35,7 @@ void NawlzEffects :: setup()
     btnIDs.push_back( NAWLZ_GARDENER_2_APP );
     btnIDs.push_back( NAWLZ_GARDENER_3_APP );
     btnIDs.push_back( NAWLZ_GARDENER_4_APP );
+    btnIDs.push_back( NAWLZ_DANDELION_APP );
 	
     int i = 0;
     while( true )
@@ -84,10 +85,11 @@ void NawlzEffects :: setup()
 //    loadApp( NAWLZ_INFODEL_APP );
 //    loadApp( NAWLZ_QUESTIONS_APP );
 //    loadApp( NAWLZ_JACKINBOX_APP );
-    loadApp( NAWLZ_GARDENER_1_APP );
+//    loadApp( NAWLZ_GARDENER_1_APP );
 //    loadApp( NAWLZ_GARDENER_2_APP );
 //    loadApp( NAWLZ_GARDENER_3_APP );
 //    loadApp( NAWLZ_GARDENER_4_APP );
+    loadApp( NAWLZ_DANDELION_APP );
 }
 
 void NawlzEffects :: loadApp ( int appID )
@@ -491,6 +493,30 @@ void NawlzEffects :: loadApp ( int appID )
 		nawlzGardener->setup();
 		
 		nawlzApp = nawlzGardener;
+    }
+    else if( appID == NAWLZ_DANDELION_APP )
+    {
+        NawlzDandelion* nawlzDanelion;
+        nawlzDanelion = new NawlzDandelion();
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_bg.png" ), *img );
+		nawlzDanelion->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_fat_lady.png" ), *img );
+		nawlzDanelion->createFatLadyTexture( img->pixels, img->width, img->height, img->glType, 345, 135 );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_particle.png" ), *img );
+		nawlzDanelion->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzDanelion->setup();
+		
+		nawlzApp = nawlzDanelion;
     }
 }
 
