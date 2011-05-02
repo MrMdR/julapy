@@ -24,6 +24,7 @@
 #include "NawlzQuestions.h"
 #include "NawlzJackInBox.h"
 #include "NawlzGardener.h"
+#include "NawlzDandelion.h"
 
 #define NAWLZ_FLUID_APP			0
 #define NAWLZ_BLAH_APP			1
@@ -36,6 +37,7 @@
 #define NAWLZ_GARDENER_2_APP	8
 #define NAWLZ_GARDENER_3_APP	9
 #define NAWLZ_GARDENER_4_APP	10
+#define NAWLZ_DANDELION_APP     11
 
 class NawlzEffects : public ofBaseApp
 {
