@@ -6,6 +6,7 @@
 #include "ofxFlash.h"
 #include "Btn.h"
 
+#include "NawlzImage.h"
 #include "NawlzFluid.h"
 #include "NawlzBlah.h"
 #include "NawlzSand.h"
@@ -22,37 +23,6 @@
 #define NAWLZ_QUESTIONS_APP		5
 #define NAWLZ_JACKINBOX_APP		6
 
-class Image
-{
-
-public:
-	
-	Image()
-	{
-		pixels		= NULL;
-		width		= 0;
-		height		= 0;
-		pixelDepth	= 0;
-		glType		= GL_LUMINANCE;
-	};
-	
-	~Image()
-	{
-		if( pixels )
-		{
-			delete[] pixels;
-			pixels = NULL;
-		}
-	}
-	
-	unsigned char* pixels;
-	int width;
-	int height;
-	int pixelDepth;
-	int glType;
-	
-};
-
 class testApp : public ofxiPhoneApp {
 	
 public:
@@ -63,7 +33,7 @@ public:
 	void exit	();
 	
 	void loadApp		( int appID );
-	void loadImage		( string path, Image& imageOut );
+	void loadImage		( string path, NawlzImage& imageOut );
 	
 	void touchDown		( int x, int y, int id );
 	void touchMoved		( int x, int y, int id );
@@ -80,7 +50,7 @@ public:
 	vector<Btn*>	btns;
 	ofBaseApp*		nawlzApp;
 	int				appID;
-    Image*          img;
+    NawlzImage*     img;
 
 };
 
