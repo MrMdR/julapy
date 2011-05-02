@@ -75,10 +75,10 @@
 	
 	NawlzImage* img;
     
-    img = new NawlzImage();
-    [ self loadImage : @"jackinbox_bg.png" : img ];
-    nawlzJackInBox->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
-    delete img;
+//    img = new NawlzImage();
+//    [ self loadImage : @"jackinbox_bg.png" : img ];
+//    nawlzJackInBox->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+//    delete img;
     
     //--- parts.
     
