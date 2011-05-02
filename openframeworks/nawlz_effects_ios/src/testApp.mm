@@ -68,13 +68,13 @@ void testApp :: loadApp ( int appID )
 		NawlzFluid* nawlzFluid;
 		nawlzFluid = new NawlzFluid();
 		
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzFluid/whale_bg_1024x768.png" ), *img );
 		nawlzFluid->createBackgroundTexture( img->pixels, img->width, img->height, img->glType, 0, 0 );
 		delete img;
         img = NULL;
 		
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzFluid/whale_477x223.png" ), *img );
 		nawlzFluid->createImageTexture( img->pixels, img->width, img->height, img->glType, 358, 220 );
 		delete img;
@@ -93,13 +93,13 @@ void testApp :: loadApp ( int appID )
 		NawlzBlah* nawlzBlah;
 		nawlzBlah = new NawlzBlah();
 
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzBlah/blah_bg.png" ), *img );
 		nawlzBlah->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
         img = NULL;
 		
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzBlah/blah_particle_2.png" ), *img );
 		nawlzBlah->createParticleTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
@@ -114,7 +114,7 @@ void testApp :: loadApp ( int appID )
 		NawlzSand* nawlzSand;
 		nawlzSand = new NawlzSand();
 
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzSand/sand_bg.png" ), *img );
 		nawlzSand->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
@@ -129,13 +129,13 @@ void testApp :: loadApp ( int appID )
 		NawlzFishBowl* nawlzFishBowl;
 		nawlzFishBowl = new NawlzFishBowl();
 
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzFishBowl/fish_bowl_bg.png" ), *img );
 		nawlzFishBowl->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
         img = NULL;
 		
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzFishBowl/fish_bowl_trace.png" ), *img );
 		nawlzFishBowl->createBowlTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
@@ -150,24 +150,24 @@ void testApp :: loadApp ( int appID )
         NawlzInfodel* nawlzInfodel;
         nawlzInfodel = new NawlzInfodel();
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzInfodel/infodel_bg_clean.png" ), *img );
 		nawlzInfodel->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
         img = NULL;
 
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzInfodel/infodel_harley_0.png" ), *img );
 		nawlzInfodel->createHarleyOneTexture( img->pixels, img->width, img->height, img->glType, 366, 311 );
 		delete img;
         img = NULL;
 
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzInfodel/infodel_harley_1.png" ), *img );
 		nawlzInfodel->createHarleyOneTexture( img->pixels, img->width, img->height, img->glType, 438, 366 );
 		delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzInfodel/infodel_particle.png" ), *img );
 		nawlzInfodel->createParticleTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
@@ -182,12 +182,12 @@ void testApp :: loadApp ( int appID )
         NawlzQuestions* nawlzQuestions;
         nawlzQuestions = new NawlzQuestions();
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzQuestions/questions_bg.png" ), *img );
 		nawlzQuestions->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzQuestions/questions_particle.png" ), *img );
 		nawlzQuestions->createParticleTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
@@ -201,153 +201,153 @@ void testApp :: loadApp ( int appID )
         NawlzJackInBox* nawlzJackInBox;
         nawlzJackInBox = new NawlzJackInBox();
 
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_bg.png" ), *img );
 		nawlzJackInBox->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
         
         //--- parts.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_body.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 629, 247 ), ofPoint( 0, 0 ), 0, 0, false );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_tongue.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 650, 534 ), ofPoint( 0, 0 ), 0, 0, false );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_lighter.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 759, 330 ), ofPoint( -5, -95 ), 120, 70, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_bomb_holder.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 768, 325 ), ofPoint( -8, -47 ), 70, 80, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_rocket.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 645, 326 ), ofPoint( -130, -47 ), 70, 270, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_arm_right.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 751, 425 ), ofPoint( -8, -95 ), 90, 75, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_arm_left.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 646, 426 ), ofPoint( -115, -73 ), 80, 270, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_bomb.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 723, 310 ), ofPoint( -6, -65 ), 105, 75, true );
         delete img;
         
         //--- ears right.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_ears_right_3.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 725, 183 ), ofPoint( -4, -13 ), 50, 100, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_ears_right_1.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 724, 180 ), ofPoint( -3, -33 ), 55, 70, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_ears_right_2.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 726, 182 ), ofPoint( -5, -25 ), 70, 90, true );
         delete img;
         
         //--- brain.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_arrow.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 710, 157 ), ofPoint( -37, -63 ), 35, 0, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_brain.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 714, 138 ), ofPoint( -23, -71 ), 55, 10, true );
         delete img;
         
         //--- head.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_head_solo.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 667, 134 ), ofPoint( 0, 0 ), 0, 0, false );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_head_spine.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 695, 205 ), ofPoint( 0, 0 ), 0, 0, false );
         delete img;
         
         //--- eyes left.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_eyes_left_L.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 698, 150 ), ofPoint( -69, -36 ), 60, -70, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_eyes_left_M.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 703, 147 ), ofPoint( -74, -66 ), 60, -45, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_eyes_left_R.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 708, 141 ), ofPoint( -30, -54 ), 45, -20, true );
         delete img;
         
         //--- eyes right.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_eyes_right_R.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 741, 150 ), ofPoint( -9, -55 ), 80, 60, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_eyes_right_M.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 739, 149 ), ofPoint( -7, -61 ), 55, 36, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_eyes_right_L.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 735, 147 ), ofPoint( -3, -64 ), 55, 13, true );
         delete img;
         
         //--- ears left.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_ears_left_3.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 679, 177 ), ofPoint( -78, -5 ), 75, -125, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_ears_left_2.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 678, 178 ), ofPoint( -69, -13 ), 45, -110, true );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_ears_left_1.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 677, 174 ), ofPoint( -76, -44 ), 70, -75, true );
         delete img;
         
         //--- mouth.
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_mouth_base.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 699, 157 ), ofPoint( 0, 0 ), 0, 0, false );
         delete img;
         
-		img = new Image();
+		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzJackInBox/jackinbox_mouth_tongue.png" ), *img );
         nawlzJackInBox->createBionicPart( img->pixels, img->width, img->height, img->glType, ofPoint( 752, 211 ), ofPoint( -12, -7 ), 20, 135, true );
         delete img;
@@ -358,7 +358,7 @@ void testApp :: loadApp ( int appID )
     }
 }
 
-void testApp :: loadImage ( string path, Image& imageOut )
+void testApp :: loadImage ( string path, NawlzImage& imageOut )
 {
 	NSString*	imagePath;
 	UIImage*	image;
