@@ -291,6 +291,18 @@
 	}
 }
 
+/////////////////////////////////////////////////////////
+//  APP METHODS.
+/////////////////////////////////////////////////////////
+
+- (void) appInit    {}
+- (void) appKill    {}
+- (void) appUpdate  {}
+- (void) appDraw    {}
+- (void) appTouchDown   : (int) x : (int) y : (int) button  {}
+- (void) appTouchMoved  : (int) x : (int) y : (int) button  {}
+- (void) appTouchUp     : (int) x : (int) y : (int) button  {}
+
 /////////////////////////////////////////////////////
 //	TEXTURES.
 /////////////////////////////////////////////////////
