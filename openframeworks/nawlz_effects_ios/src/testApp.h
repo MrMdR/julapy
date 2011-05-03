@@ -14,6 +14,8 @@
 #include "NawlzInfodel.h"
 #include "NawlzQuestions.h"
 #include "NawlzJackInBox.h"
+#include "NawlzGardener.h"
+#include "NawlzDandelion.h"
 
 #define NAWLZ_FLUID_APP			0
 #define NAWLZ_BLAH_APP			1
@@ -22,6 +24,11 @@
 #define NAWLZ_INFODEL_APP		4
 #define NAWLZ_QUESTIONS_APP		5
 #define NAWLZ_JACKINBOX_APP		6
+#define NAWLZ_GARDENER_1_APP	7
+#define NAWLZ_GARDENER_2_APP	8
+#define NAWLZ_GARDENER_3_APP	9
+#define NAWLZ_GARDENER_4_APP	10
+#define NAWLZ_DANDELION_APP     11
 
 class testApp : public ofxiPhoneApp {
 	
@@ -48,6 +55,8 @@ public:
 	ofxFlashXFL*	xfl;
 	ofxFlashStage*	stage;
 	vector<Btn*>	btns;
+    vector<int>     btnIDs;
+    Btn*            btnSelected;
 	ofBaseApp*		nawlzApp;
 	int				appID;
     NawlzImage*     img;
