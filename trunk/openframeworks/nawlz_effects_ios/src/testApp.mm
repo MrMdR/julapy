@@ -19,8 +19,27 @@ void testApp::setup()
 	ofxFlashMovieClip* main;
 	main = (ofxFlashMovieClip*)stage->root()->getChildByName( "main" );
 	
-	for( int i=0; i<7; i++ )
-	{
+    btnIDs.push_back( NAWLZ_FLUID_APP );
+    btnIDs.push_back( NAWLZ_BLAH_APP );
+    btnIDs.push_back( NAWLZ_SAND_APP );
+    btnIDs.push_back( NAWLZ_FISH_BOWL_APP );
+    btnIDs.push_back( NAWLZ_INFODEL_APP );
+    btnIDs.push_back( NAWLZ_JACKINBOX_APP );
+    btnIDs.push_back( NAWLZ_GARDENER_1_APP );
+    btnIDs.push_back( NAWLZ_GARDENER_2_APP );
+    btnIDs.push_back( NAWLZ_GARDENER_3_APP );
+    btnIDs.push_back( NAWLZ_GARDENER_4_APP );
+    btnIDs.push_back( NAWLZ_DANDELION_APP );
+	
+    int i = 0;
+    while( true )
+    {
+        bool bUseBtn;
+        bUseBtn = ( i <= btnIDs.size() - 1 );
+        
+        int btnAppID;
+        btnAppID = btnIDs[ i ];
+        
 		string btnID = "";
 		char btnIDChar[ 255 ];
 		sprintf( btnIDChar, "btn%01d", i );
@@ -30,13 +49,25 @@ void testApp::setup()
 		btnMc = (ofxFlashMovieClip*)main->getChildByName( btnID );
 		
 		if( !btnMc )
-			continue;
-		
-		Btn* btn;
-		btn = new Btn( btnMc );
-		
-		btns.push_back( btn );
-	}
+			break;
+        
+        if( bUseBtn )
+        {
+            Btn* btn;
+            btn = new Btn( btnMc, btnAppID, i + 1 );
+            
+            btns.push_back( btn );
+        }
+        else
+        {
+            btnMc->visible( false );
+        }
+        
+        ++i;
+    }
+    
+    btnSelected = btns[ 0 ];
+    btnSelected->bSelected = true;
 	
 	nawlzApp	= NULL;
 	appID		= -1;
@@ -356,6 +387,126 @@ void testApp :: loadApp ( int appID )
 		
 		nawlzApp = nawlzJackInBox;
     }
+    else if( appID == NAWLZ_GARDENER_1_APP )
+    {
+        NawlzGardener* nawlzGardener;
+        nawlzGardener = new NawlzGardener( NAWLZ_GARDENER_APP_INDEX_0);
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_bg_01_1024x768.png" ), *img );
+		nawlzGardener->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_01.png" ), *img );
+		nawlzGardener->createParticle01Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_02.png" ), *img );
+		nawlzGardener->createParticle02Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		nawlzGardener->setup();
+		
+		nawlzApp = nawlzGardener;
+    }
+    else if( appID == NAWLZ_GARDENER_2_APP )
+    {
+        NawlzGardener* nawlzGardener;
+        nawlzGardener = new NawlzGardener( NAWLZ_GARDENER_APP_INDEX_1 );
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_bg_02_1024x768.png" ), *img );
+		nawlzGardener->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_01.png" ), *img );
+		nawlzGardener->createParticle01Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_02.png" ), *img );
+		nawlzGardener->createParticle02Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzGardener->setup();
+		
+		nawlzApp = nawlzGardener;
+    }
+    else if( appID == NAWLZ_GARDENER_3_APP )
+    {
+        NawlzGardener* nawlzGardener;
+        nawlzGardener = new NawlzGardener( NAWLZ_GARDENER_APP_INDEX_2 );
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_bg_03_1024x768.png" ), *img );
+		nawlzGardener->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_01.png" ), *img );
+		nawlzGardener->createParticle01Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_02.png" ), *img );
+		nawlzGardener->createParticle02Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzGardener->setup();
+		
+		nawlzApp = nawlzGardener;
+    }
+    else if( appID == NAWLZ_GARDENER_4_APP )
+    {
+        NawlzGardener* nawlzGardener;
+        nawlzGardener = new NawlzGardener( NAWLZ_GARDENER_APP_INDEX_3 );
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_bg_04_1024x768.png" ), *img );
+		nawlzGardener->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_01.png" ), *img );
+		nawlzGardener->createParticle01Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzGardener/gardener_particle_02.png" ), *img );
+		nawlzGardener->createParticle02Texture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzGardener->setup();
+		
+		nawlzApp = nawlzGardener;
+    }
+    else if( appID == NAWLZ_DANDELION_APP )
+    {
+        NawlzDandelion* nawlzDanelion;
+        nawlzDanelion = new NawlzDandelion();
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_bg.png" ), *img );
+		nawlzDanelion->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_fat_lady.png" ), *img );
+		nawlzDanelion->createFatLadyTexture( img->pixels, img->width, img->height, img->glType, 345, 135 );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_particle.png" ), *img );
+		nawlzDanelion->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+		nawlzDanelion->setup();
+		
+		nawlzApp = nawlzDanelion;
+    }
 }
 
 void testApp :: loadImage ( string path, NawlzImage& imageOut )
@@ -412,9 +563,17 @@ void testApp::update()
 		btn = btns[ i ];
 		btn->update();
 		
-		if( btn->isPressed() )
+		if( btn->isPressed() && ( btn != btnSelected ) )
 		{
-			loadApp( i );
+            if( btnSelected )
+            {
+                btnSelected->bSelected = false;
+            }
+            
+            btnSelected = btn;
+            btnSelected->bSelected = true;
+            
+			loadApp( btnSelected->appID );
 		}
 	}
 	
