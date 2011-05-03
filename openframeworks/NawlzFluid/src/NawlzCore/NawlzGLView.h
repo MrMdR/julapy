@@ -6,6 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#pragma once
+
 #import <UIKit/UIKit.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES1/gl.h>
@@ -14,7 +16,7 @@
 #include "ofMain.h"
 #include "NawlzImage.h"
 
-@interface NawlzGLView : UIView 
+@interface NawlzGLView : UIView
 {
 	/* The pixel dimensions of the backbuffer */
 	GLint backingWidth;
