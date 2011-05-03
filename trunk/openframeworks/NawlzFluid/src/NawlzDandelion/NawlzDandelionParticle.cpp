@@ -14,22 +14,23 @@ NawlzDandelionParticle :: NawlzDandelionParticle ()
     
     radius      = 250;
     rotY        = ofRandom( 0, TWO_PI );
-    rotYInc     = ofRandom( TWO_PI * 0.001, TWO_PI * 0.002 );
+    rotYInc     = ofRandom( TWO_PI * 0.0005, TWO_PI * 0.001 );
     
     oscAng      = ofRandom( 0, TWO_PI );
     oscAngInc   = ofRandom( TWO_PI * 0.005, TWO_PI * 0.010 );
-    oscDist     = ofRandom( 10, 20 );
+    oscDist     = ofRandom( 10, 30 );
     
-    sizeScale   = 1.0;
+    sizeScale   = ofRandom( 0.3, 0.6 );
     alpha       = 0.0;
-    alphaMax    = ofRandom( 0.6, 1.0 );
+//    alphaMax    = ofRandom( 0.6, 1.0 );
+    alphaMax    = 1.0;
     
     rotation    = ofRandom( 0, TWO_PI );
     rotationInc = ofRandom( TWO_PI * 0.01, TWO_PI * 0.02 );
     rotationInc *= ( ofRandom( 0.0, 1.0 ) < 0.5 ) ? -1 : 1;
     
-    width       = 2 * sizeScale;
-    height      = 2 * sizeScale;
+    width       = 4 * sizeScale;
+    height      = 4 * sizeScale;
     widthHalf   = width  * 0.5;
     heightHalf  = height * 0.5;
     
@@ -51,6 +52,9 @@ void NawlzDandelionParticle :: setTexture ( ofTexture* tex )
 {
     this->tex   = tex;
     
+    if( !tex )
+        return;
+        
     width       = tex->getWidth()  * sizeScale;
     height      = tex->getHeight() * sizeScale;
     widthHalf   = width  * 0.5;
@@ -89,7 +93,7 @@ void NawlzDandelionParticle :: draw ()
     else
     {
         ofFill();
-        ofSetColor( 255, 255, 255, alpha * 255 );
+        ofSetColor( 255, 0, 0, alpha * 255 );
         ofRect( -widthHalf, -heightHalf, width, height );
     }
     
@@ -113,7 +117,7 @@ void NawlzDandelionParticle :: drawBehind ()
     else
     {
         ofFill();
-        ofSetColor( 255, 255, 255, alpha * 255 );
+        ofSetColor( 255, 0, 0, alpha * 255 );
         ofRect( -widthHalf, -heightHalf, width, height );
     }
     
@@ -137,7 +141,7 @@ void NawlzDandelionParticle :: drawFront ()
     else
     {
         ofFill();
-        ofSetColor( 255, 255, 255, alpha * 255 );
+        ofSetColor( 255, 0, 0, alpha * 255 );
         ofRect( -widthHalf, -heightHalf, width, height );
     }
     

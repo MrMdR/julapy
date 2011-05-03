@@ -93,23 +93,41 @@
 //	INIT YEAH.
 /////////////////////////////////////////////////////
 
-- (void)initOpenGL {
+- (void)initOpenGL
+{
+    int w = ofGetWidth();
+    int h = ofGetHeight();
+    
+	glViewport( 0, 0, w, h );
 	
-	glMatrixMode(GL_PROJECTION);
+    glClearColor( 0.0, 0.0, 0.0, 1.0 );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    float halfFov, theTan, screenFov, aspect;
+    screenFov 		= 60.0f;
+    
+    float eyeX 		= (float)w / 2.0;
+    float eyeY 		= (float)h / 2.0;
+    halfFov 		= PI * screenFov / 360.0;
+    theTan 			= tanf(halfFov);
+    float dist 		= eyeY / theTan;
+    float nearDist 	= dist / 10.0;	// near / far clip plane
+    float farDist 	= dist * 10.0;
+    aspect 			= (float)w/(float)h;
+    
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    gluPerspective(screenFov, aspect, nearDist, farDist);
     
-	glOrthof(0, backingWidth, 0, backingHeight, -1, 1);
-	// Switch to GL_MODELVIEW so we can now draw our objects
-	glMatrixMode(GL_MODELVIEW);
-	
-	// Set the viewport
-    glViewport(0, 0, backingWidth, backingHeight);
-	
-	glDisable(GL_DEPTH_TEST);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0.0, 0.0, 1.0, 0.0);
+
+    //---
     
-    // Enable the OpenGL states we are going to be using when rendering
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_VERTEX_ARRAY);
 }
 
@@ -321,6 +339,7 @@
 	
 	CGContextRef spriteContext;
 	CGImageRef	cgImage = image.CGImage;
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
 	
 	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
 	if(bytesPerPixel == 3) bytesPerPixel = 4;
@@ -329,8 +348,12 @@
 	imageHeight	= CGImageGetHeight(cgImage);
 	
 	pixels			= (GLubyte *) malloc( imageWidth * imageHeight * bytesPerPixel);
-	spriteContext	= CGBitmapContextCreate(pixels, imageWidth, imageHeight, CGImageGetBitsPerComponent(cgImage), imageWidth * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
-	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
+	spriteContext	= CGBitmapContextCreate(pixels, imageWidth, imageHeight, CGImageGetBitsPerComponent(cgImage), imageWidth * bytesPerPixel, colorSpace, bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	
+    CGColorSpaceRelease( colorSpace );
+    CGContextClearRect( spriteContext, CGRectMake( 0, 0, imageWidth, imageHeight ) );
+    
+    CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)imageWidth, (CGFloat)imageHeight), cgImage);
 	CGContextRelease(spriteContext);
 	
 	imageOut->width         = imageWidth;

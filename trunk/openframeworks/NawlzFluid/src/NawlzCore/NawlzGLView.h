@@ -12,6 +12,7 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
+#import "glu.h"
 
 #include "ofMain.h"
 #include "NawlzImage.h"
