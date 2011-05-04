@@ -37,7 +37,8 @@
 #define NAWLZ_GARDENER_2_APP	8
 #define NAWLZ_GARDENER_3_APP	9
 #define NAWLZ_GARDENER_4_APP	10
-#define NAWLZ_DANDELION_APP     11
+#define NAWLZ_DANDELION_1_APP   11
+#define NAWLZ_DANDELION_2_APP   12
 
 class NawlzEffects : public ofBaseApp
 {

@@ -13,6 +13,8 @@ NawlzDandelion :: NawlzDandelion ()
     this->appIndex = appIndex;
     
     backgroundTexture   = NULL;
+    fatLadyTexture      = NULL;
+    speachBubbleTexture = NULL;
     particleTexture     = NULL;
 }
 
@@ -25,6 +27,20 @@ NawlzDandelion :: ~NawlzDandelion ()
         backgroundTexture->clear();
         delete backgroundTexture;
         backgroundTexture = NULL;
+    }
+    
+    if( fatLadyTexture )
+    {
+        fatLadyTexture->clear();
+        delete fatLadyTexture;
+        fatLadyTexture = NULL;
+    }
+
+    if( speachBubbleTexture )
+    {
+        speachBubbleTexture->clear();
+        delete speachBubbleTexture;
+        speachBubbleTexture = NULL;
     }
     
     if( particleTexture )
@@ -74,6 +90,12 @@ void NawlzDandelion :: addParticle ()
 	particles.push_back( particle );
 }
 
+void NawlzDandelion :: setParticleCenter ( float x, float y )
+{
+    particleCenter.x = x;
+    particleCenter.y = y;
+}
+
 /////////////////////////////////////////////
 //  TEXTURES.
 /////////////////////////////////////////////
@@ -85,14 +107,28 @@ void NawlzDandelion :: createBackgroundTexture ( unsigned char* pixels, int widt
 	backgroundTexture->loadData( pixels, width, height, glType );
 }
 
-void NawlzDandelion :: createFatLadyTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
+void NawlzDandelion :: createFatLadyTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y, int w, int h )
 {
     fatLadyTexture = new ofTexture();
 	fatLadyTexture->allocate( width, height, glType );
 	fatLadyTexture->loadData( pixels, width, height, glType );
     
-    fatLadyTexturePos.x = x;
-    fatLadyTexturePos.y = y;
+    fatLadyTextureRect.x = x;
+    fatLadyTextureRect.y = y;
+    fatLadyTextureRect.width  = w;
+    fatLadyTextureRect.height = h;
+}
+
+void NawlzDandelion :: createSpeachBubbleTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y, int w, int h )
+{
+    speachBubbleTexture = new ofTexture();
+	speachBubbleTexture->allocate( width, height, glType );
+	speachBubbleTexture->loadData( pixels, width, height, glType );
+    
+    speachBubbleTextureRect.x = x;
+    speachBubbleTextureRect.y = y;
+    speachBubbleTextureRect.width  = w;
+    speachBubbleTextureRect.height = h;
 }
 
 void NawlzDandelion :: createParticleTexture ( unsigned char* pixels, int width, int height, int glType, int x, int y )
@@ -142,8 +178,8 @@ void NawlzDandelion :: draw ()
         backgroundTexture->draw( 0, 0 );
     }
     
-    float cx = ofGetWidth()  * 0.5;
-    float cy = ofGetHeight() * 0.5 - 50;
+    float cx = particleCenter.x;
+    float cy = particleCenter.y;
     float rx = -15;
     float rz = -15;
     
@@ -163,7 +199,12 @@ void NawlzDandelion :: draw ()
     ofSetColor( 255, 255, 255 );
     if( fatLadyTexture )
     {
-        fatLadyTexture->draw( fatLadyTexturePos.x, fatLadyTexturePos.y );
+        fatLadyTexture->draw( fatLadyTextureRect.x, fatLadyTextureRect.y, fatLadyTextureRect.width, fatLadyTextureRect.height );
+    }
+    
+    if( speachBubbleTexture )
+    {
+        speachBubbleTexture->draw( speachBubbleTextureRect.x, speachBubbleTextureRect.y, speachBubbleTextureRect.width, speachBubbleTextureRect.height );
     }
     
     glBlendFunc( GL_SRC_ALPHA, GL_ONE );

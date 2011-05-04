@@ -27,8 +27,10 @@ public:
     void draw   ();
     
     void createBackgroundTexture	( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
-    void createFatLadyTexture       ( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
+    void createFatLadyTexture       ( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0, int w=0, int h=0 );
+    void createSpeachBubbleTexture  ( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0, int w=0, int h=0 );
     void createParticleTexture      ( unsigned char* pixels, int width, int height, int glType, int x=0, int y=0 );
+    void setParticleCenter          ( float x, float y );
     
     void addParticle                ();
     void killParticles              ();
@@ -47,9 +49,13 @@ public:
     
     ofTexture*      backgroundTexture;
     ofTexture*      fatLadyTexture;
+    ofTexture*      speachBubbleTexture;
     ofTexture*      particleTexture;
     
-    ofPoint         fatLadyTexturePos;
+    ofRectangle     fatLadyTextureRect;
+    ofRectangle     speachBubbleTextureRect;
+    
+    ofPoint         particleCenter;
     
     vector<NawlzDandelionParticle*>   particles;
 };
