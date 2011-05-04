@@ -35,7 +35,8 @@ void NawlzEffects :: setup()
     btnIDs.push_back( NAWLZ_GARDENER_2_APP );
     btnIDs.push_back( NAWLZ_GARDENER_3_APP );
     btnIDs.push_back( NAWLZ_GARDENER_4_APP );
-    btnIDs.push_back( NAWLZ_DANDELION_APP );
+    btnIDs.push_back( NAWLZ_DANDELION_1_APP );
+    btnIDs.push_back( NAWLZ_DANDELION_2_APP );
 	
     int i = 0;
     while( true )
@@ -78,7 +79,7 @@ void NawlzEffects :: setup()
 	nawlzApp	= NULL;
 	appID		= -1;
 	
-    loadApp( NAWLZ_FLUID_APP );
+//    loadApp( NAWLZ_FLUID_APP );
 //    loadApp( NAWLZ_BLAH_APP );
 //    loadApp( NAWLZ_SAND_APP );
 //    loadApp( NAWLZ_FISH_BOWL_APP );
@@ -89,7 +90,8 @@ void NawlzEffects :: setup()
 //    loadApp( NAWLZ_GARDENER_2_APP );
 //    loadApp( NAWLZ_GARDENER_3_APP );
 //    loadApp( NAWLZ_GARDENER_4_APP );
-//    loadApp( NAWLZ_DANDELION_APP );
+//    loadApp( NAWLZ_DANDELION_1_APP );
+    loadApp( NAWLZ_DANDELION_2_APP );
 }
 
 void NawlzEffects :: loadApp ( int appID )
@@ -495,19 +497,24 @@ void NawlzEffects :: loadApp ( int appID )
 		
 		nawlzApp = nawlzGardener;
     }
-    else if( appID == NAWLZ_DANDELION_APP )
+    else if( appID == NAWLZ_DANDELION_1_APP )
     {
         NawlzDandelion* nawlzDanelion;
         nawlzDanelion = new NawlzDandelion();
         
 		img = new NawlzImage();
-		loadImage( ofToDataPath( "NawlzDandelion/dandelion_bg.png" ), *img );
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_bg_01.png" ), *img );
 		nawlzDanelion->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
 
 		img = new NawlzImage();
 		loadImage( ofToDataPath( "NawlzDandelion/dandelion_fat_lady.png" ), *img );
-		nawlzDanelion->createFatLadyTexture( img->pixels, img->width, img->height, img->glType, 345, 135 );
+		nawlzDanelion->createFatLadyTexture( img->pixels, img->width, img->height, img->glType, 251, 112, 330, 381 );
+		delete img;
+
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_text.png" ), *img );
+		nawlzDanelion->createSpeachBubbleTexture( img->pixels, img->width, img->height, img->glType, 144, 136, 232, 134 );
 		delete img;
         
 		img = new NawlzImage();
@@ -515,6 +522,39 @@ void NawlzEffects :: loadApp ( int appID )
 		nawlzDanelion->createParticleTexture( img->pixels, img->width, img->height, img->glType );
 		delete img;
 		
+        nawlzDanelion->setParticleCenter( 423, 334 );
+        
+		nawlzDanelion->setup();
+		
+		nawlzApp = nawlzDanelion;
+    }
+    else if( appID == NAWLZ_DANDELION_2_APP )
+    {
+        NawlzDandelion* nawlzDanelion;
+        nawlzDanelion = new NawlzDandelion();
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_bg_02.png" ), *img );
+		nawlzDanelion->createBackgroundTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_fat_lady.png" ), *img );
+		nawlzDanelion->createFatLadyTexture( img->pixels, img->width, img->height, img->glType, 390, 133, 255, 294 );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_text.png" ), *img );
+		nawlzDanelion->createSpeachBubbleTexture( img->pixels, img->width, img->height, img->glType, 291, 149, 193, 111 );
+		delete img;
+        
+		img = new NawlzImage();
+		loadImage( ofToDataPath( "NawlzDandelion/dandelion_particle.png" ), *img );
+		nawlzDanelion->createParticleTexture( img->pixels, img->width, img->height, img->glType );
+		delete img;
+		
+        nawlzDanelion->setParticleCenter( 520, 292 );
+        
 		nawlzDanelion->setup();
 		
 		nawlzApp = nawlzDanelion;
