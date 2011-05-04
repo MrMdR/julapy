@@ -78,7 +78,7 @@ void NawlzEffects :: setup()
 	nawlzApp	= NULL;
 	appID		= -1;
 	
-//    loadApp( NAWLZ_FLUID_APP );
+    loadApp( NAWLZ_FLUID_APP );
 //    loadApp( NAWLZ_BLAH_APP );
 //    loadApp( NAWLZ_SAND_APP );
 //    loadApp( NAWLZ_FISH_BOWL_APP );
@@ -89,7 +89,7 @@ void NawlzEffects :: setup()
 //    loadApp( NAWLZ_GARDENER_2_APP );
 //    loadApp( NAWLZ_GARDENER_3_APP );
 //    loadApp( NAWLZ_GARDENER_4_APP );
-    loadApp( NAWLZ_DANDELION_APP );
+//    loadApp( NAWLZ_DANDELION_APP );
 }
 
 void NawlzEffects :: loadApp ( int appID )
@@ -122,6 +122,7 @@ void NawlzEffects :: loadApp ( int appID )
 		delete img;
         img = NULL;
 		
+        nawlzFluid->useCircleMotion     = true;
 		nawlzFluid->bDrawMeshGrid		= true;
 		nawlzFluid->bDrawMeshQuads		= true;
 		nawlzFluid->bDrawParticles		= true;

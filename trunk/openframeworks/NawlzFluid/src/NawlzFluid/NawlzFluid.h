@@ -58,11 +58,14 @@ public:
 	
 	CircleMotion()
 	{
-		radius		= 200;
+		radius		= 150;
 		angle		= 0;
-		angleInc	= PI * 0.04;
-		centerX		= 500;
+		angleInc	= PI * 0.011;
+		centerX		= 550;
 		centerY		= 300;
+        count       = 0;
+        
+        x = y = px = py = 0;
 		
 		update();
 	};
@@ -76,9 +79,18 @@ public:
 	float centerY;
 	float x;
 	float y;
+    float px, py;
+    int count;
 	
 	void update ()
 	{
+        ++count;
+        
+        radius = 150 * sin( count * 0.02 ) + 50;
+        
+        px = x;
+        py = y;
+        
 		x = centerX + radius * cos( angle );
 		y = centerY + radius * sin( angle );
 		
@@ -154,6 +166,7 @@ private:
 	void drawMeshLines	();
 	void drawParticles	();
 	
+    void addToFluid     ( Vec2f pos, Vec2f vel );
 	void addToFluid		( Vec2f pos, Vec2f vel, bool addColor, bool addForce );
 	void drawVectors	( float x, float y, float renderWidth, float renderHeight );
 	void drawFluid		();

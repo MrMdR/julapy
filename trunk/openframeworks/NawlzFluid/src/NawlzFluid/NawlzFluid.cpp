@@ -389,7 +389,10 @@ void NawlzFluid :: update()
 	{
 		circleMotion.update();
 		
-		mouseMoved( circleMotion.x, circleMotion.y );
+        Vec2f pos( circleMotion.x, circleMotion.y );
+        Vec2f vel( pos - Vec2f( circleMotion.px, circleMotion.py ) );
+        
+        addToFluid( pos, vel );
 	}
 	
 	if( bResizeFluid )
@@ -747,6 +750,14 @@ void NawlzFluid :: drawParticles ()
 //	FLUID.
 ///////////////////////////////////////////
 
+void NawlzFluid :: addToFluid ( Vec2f pos, Vec2f vel )
+{
+	Vec2f posNorm = Vec2f( pos.x, pos.y ) / getWindowSize();
+	Vec2f velNorm = Vec2f( vel.x, vel.y ) / getWindowSize();
+	
+    addToFluid( posNorm, velNorm, bDrawFluid, true );
+}
+
 void NawlzFluid :: addToFluid( Vec2f pos, Vec2f vel, bool addColor, bool addForce )
 {
     float speed = vel.x * vel.x  + vel.y * vel.y * getWindowAspectRatio() * getWindowAspectRatio();    // balance the x and y components of speed with the screen aspect ratio
@@ -885,14 +896,19 @@ void NawlzFluid :: mouseMoved(int x, int y )
 	mouseY = y;
 	
 	Vec2f eventPos	= Vec2f( x, y );
-	Vec2f mouseNorm	= Vec2f( eventPos ) / getWindowSize();
-	Vec2f mouseVel	= Vec2f( eventPos - pMouse ) / getWindowSize();
-	addToFluid( mouseNorm, mouseVel, bDrawFluid, true );
+	
+    addToFluid( eventPos, eventPos - pMouse );
+    
 	pMouse = eventPos;
+    
+    //---
+    
+    Vec2f pos = Vec2f( eventPos ) / getWindowSize();
+	Vec2f vel = Vec2f( eventPos - pMouse ) / getWindowSize();
 	
 	for( int i=0; i<particlesNumPerShoot; i++ )
 	{
-		Vec2f vel = mouseVel;
+		Vec2f vel = vel;
 		vel.normalize();
 		vel.rotate( ofRandom( -40, 40 ) * DEG_TO_RAD );
 		
