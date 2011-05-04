@@ -29,7 +29,7 @@
 //    app->createParticleTexture( img->pixels, img->width, img->height, img->glType );
 //    delete img;
     
-//    app->useCircleMotion		= true;
+    app->useCircleMotion	= true;
 	app->bDrawMeshGrid		= false;
 	app->bDrawMeshQuads		= true;
 	app->bDrawParticles		= true;
@@ -58,7 +58,7 @@
 
 - (void) appTouchDown   : (int) x : (int) y : (int) button
 {
-    //
+    app->mousePressed( x, y, button );
 }
 
 - (void) appTouchMoved  : (int) x : (int) y : (int) button
@@ -68,7 +68,7 @@
 
 - (void) appTouchUp     : (int) x : (int) y : (int) button
 {
-    //
+    app->mouseReleased( x, y, button );
 }
 
 @end
